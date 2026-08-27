@@ -1,15 +1,15 @@
 # Silex Benchmarks
 
-`Silex-Benchmarks` rassemble les charges de performance publiques de Silex et
-de ses packages. Le dépôt conserve ensemble chaque scénario, son protocole, ses
-témoins externes et ses résultats bruts lorsqu'ils existent.
+`Silex-Benchmarks` gathers the public performance workloads for Silex and its
+packages. The repository keeps each scenario together with its protocol,
+external reference implementations, and raw results when available.
 
-## Organisation
+## Organization
 
-Tous les benchmarks Silex vivent sous [`Sources/`](Sources/). Ils ne sont pas
-classés par package : leur nom décrit directement la charge mesurée.
+All Silex benchmarks live under [`Sources/`](Sources/). They are not grouped
+by package: each name directly describes the workload being measured.
 
-Un benchmark autonome reste un fichier direct :
+A self-contained benchmark remains a direct file:
 
 ```text
 Sources/RetainedCanvasGeometry.sx
@@ -17,9 +17,9 @@ Sources/RegexStreamingSearch.sx
 Sources/UpdatingTextLayers2D.sx
 ```
 
-Un benchmark reçoit un dossier uniquement lorsqu'il possède plusieurs
-artefacts : sources volumineuses, assets, témoin C++, runner, checker ou
-baselines. Les baselines restent toujours avec le benchmark qui les produit :
+A benchmark receives a directory only when it has multiple artifacts: large
+sources, assets, a C++ reference implementation, a runner, a checker, or
+baselines. Baselines always stay with the benchmark that produced them:
 
 ```text
 Sources/Boids2D/
@@ -29,32 +29,31 @@ Sources/Boids2D/
 └── Baselines/
 ```
 
-Le fichier [`Package.json`](Package.json) définit `Sources` comme racine du
-package et déclare toutes les dépendances nécessaires au catalogue.
+The [`Package.json`](Package.json) file defines `Sources` as the package
+source root and declares every dependency required by the catalog.
 
-## Catalogue
+## Catalog
 
-| Benchmark | Objectif |
+| Benchmark | Purpose |
 | --- | --- |
-| `Boids2D/` | comparer le parcours public Scene2D/ECS/GPU à deux témoins C++23 |
-| `FallingBodies2D/` | charger conjointement la physique 2D, le transfert des transformations et le rendu |
-| `WorldRendering3D/` | mesurer un monde 3D instancié selon plusieurs profils GPU et présentation |
-| `PhysicsWorldScale2D.sx` | mesurer mouvements épars et pile de corps à plusieurs échelles |
-| `RetainedCanvasGeometry.sx` | compiler une géométrie Canvas retenue dense |
-| `UpdatingTextLayers2D.sx` | mettre à jour des couches de texte retenues |
-| `RetainedUIInteraction.sx` | mesurer layout, sélection, snapshot et rasterisation UI |
-| `TerminalScreenRendering.sx` | mesurer le rendu d'un écran terminal complet et ses mises à jour |
-| `WebViewBridgeRoundTrips/` | exercer 1 000 messages aller-retour avec une WebView |
-| `RegexStreamingSearch.sx` | rechercher en flux dans un million de scalaires Unicode |
-| `NetworkFreshnessTracking.sx` | mesurer les comparaisons et trackers de fraîcheur réseau |
+| `Boids2D/` | compare the public Scene2D/ECS/GPU path with two C++23 reference implementations |
+| `FallingBodies2D/` | jointly load 2D physics, transform transfer, and rendering |
+| `WorldRendering3D/` | measure an instanced 3D world across several GPU and presentation profiles |
+| `PhysicsWorldScale2D.sx` | measure sparse motion and body piles at several scales |
+| `RetainedCanvasGeometry.sx` | compile dense retained Canvas geometry |
+| `UpdatingTextLayers2D.sx` | update retained text layers |
+| `RetainedUIInteraction.sx` | measure UI layout, selection, snapshots, and rasterization |
+| `TerminalScreenRendering.sx` | measure full terminal-screen rendering and updates |
+| `WebViewBridgeRoundTrips/` | exercise 1,000 round trips through a WebView |
+| `RegexStreamingSearch.sx` | stream-search through one million Unicode scalars |
+| `NetworkFreshnessTracking.sx` | measure network freshness comparisons and trackers |
 
-## Exécution
+## Running benchmarks
 
-Les mesures sont réalisées après compilation en Release. Une exécution Debug
-sert uniquement à vérifier la correction et ne constitue pas un résultat de
-performance.
+Measurements are taken from Release builds. Debug runs are only used to verify
+correctness and do not constitute performance results.
 
-Depuis la racine du workspace :
+From the workspace root:
 
 ```sh
 silex run Silex-Benchmarks/Sources/PhysicsWorldScale2D.sx --release
@@ -64,25 +63,24 @@ silex compile Silex-Benchmarks/Sources/WorldRendering3D/Main.sx --release -o /tm
 (cd Silex-Benchmarks/Sources/WorldRendering3D && /tmp/world-rendering-3d --benchmark)
 ```
 
-Les campagnes qui comparent plusieurs exécutables décrivent leur protocole
-dans leur propre `README.md`. Elles doivent conserver les sorties brutes, le
-nombre de répétitions, la variance, le mode de compilation, l'OS et
-l'architecture ; une baseline locale n'est jamais une promesse portable.
+Campaigns that compare multiple executables document their protocol in their
+own `README.md`. They must preserve raw output, repetition count, variance,
+build mode, operating system, and architecture. A local baseline is never a
+portable performance guarantee.
 
-`Boids2D/Silex.sx` est une copie fidèle du témoin historique : son algorithme,
-ses constantes et sa fenêtre de mesure ne sont pas reformulés lors de la
-migration. `FallingBodies2D` conserve de la même façon son spawn, son ordonnanceur
-asynchrone, ses buffers et ses options ; seuls les diagnostics réservés à
-`GFX.Physics` ont été retirés afin que le benchmark reste un véritable
-consommateur public. Toute évolution future de ces charges exige une nouvelle
-baseline et une justification explicite.
+`Boids2D/Silex.sx` is a faithful copy of the historical benchmark: its
+algorithm, constants, and measurement window were not rewritten during the
+migration. `FallingBodies2D` likewise preserves its spawning behavior,
+asynchronous scheduler, buffers, and options. Only diagnostics reserved for
+`GFX.Physics` were removed so the benchmark remains a genuine public
+consumer. Any future change to these workloads requires a new baseline and an
+explicit justification.
 
-Les benchmarks de l'optimiseur et du backend restent sous
-`Silex/Toolchain/Benchmarks/` : ils constituent des gates internes de la
-toolchain plutôt que des campagnes publiques de packages.
+Optimizer and backend benchmarks remain under `Silex/Toolchain/Benchmarks/`.
+They are internal toolchain gates rather than public package campaigns.
 
-Les corpus qui inspectent volontairement des détails `package` restent eux
-aussi chez leur propriétaire. C'est notamment le cas de l'oracle Box2D, des
-profils fins du solveur dans `GFX.Physics` et de la garde d'allocation du pool
-de workers dans `STD` : ils vérifient une implémentation, alors que les
-scénarios de ce dépôt franchissent une vraie frontière de package.
+Benchmark corpora that intentionally inspect `package` details also remain
+with their owners. This includes the Box2D oracle, fine-grained solver profiles
+in `GFX.Physics`, and the worker-pool allocation guard in `STD`: they verify
+an implementation, while the scenarios in this repository cross a real package
+boundary.
