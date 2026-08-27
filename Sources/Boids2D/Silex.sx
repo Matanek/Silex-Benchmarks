@@ -1,0 +1,349 @@
+use GFX.Application
+use GFX.Canvas
+use GFX.Color
+use GFX.Components
+use GFX.ECS
+use GFX.GPU
+use GFX.Plugins
+use GFX.Resources
+use STD.Math
+use STD.Process
+use STD.Time.Clock
+
+static struct Constants {
+    let neighborhood_radius:float = 72.0
+    let separation_radius:float = 28.0
+    let minimum_speed:float = 55.0
+    let maximum_speed:float = 105.0
+    let maximum_steering:float = 140.0
+    let half_width:float = 490.0
+    let half_height:float = 330.0
+    let neighborhood_squared:float = Constants.neighborhood_radius * Constants.neighborhood_radius
+    let separation_squared:float = Constants.separation_radius * Constants.separation_radius
+}
+
+struct Settings {
+    let count:int
+}
+
+struct Boid {
+    var position:Math.Vec2
+    var velocity:Math.Vec2
+}
+
+struct Sample {
+    let position_x:float
+    let position_y:float
+    let velocity_x:float
+    let velocity_y:float
+}
+
+struct Steering {
+    let x:float
+    let y:float
+}
+
+struct FlockSnapshot {
+    var boids:Sample[]
+
+    init() { self.boids = [] }
+}
+
+struct Benchmark {
+    var clock:Clock
+    var elapsed:float
+    var frames:int
+    var started:bool
+
+    init() {
+        self.clock = Clock()
+        self.elapsed = 0.0
+        self.frames = 0
+        self.started = false
+    }
+}
+
+// Matches libc++'s std::mt19937 and float uniform_real_distribution so the
+// C++ and Silex witnesses start from the same flock, not merely the same seed.
+class MersenneTwister {
+    var state:uint[]
+    var index:int
+
+    init(seed:uint) {
+        self.state = []
+        self.index = 624
+        self.initialize(seed)
+    }
+
+    func initialize(seed:uint) {
+        self.state.append(seed & 0xFFFF_FFFF)
+        for position in 1...624 {
+            let previous = self.state[position - 1]
+            let mixed = previous ^ (previous >> 30)
+            self.state.append(
+                ((1812433253 as uint) * mixed + position as uint) & 0xFFFF_FFFF
+            )
+        }
+    }
+
+    func next_uint32() uint {
+        if self.index >= 624 { self.twist() }
+        var value = self.state[self.index]
+        self.index++
+        value = value ^ (value >> 11)
+        value = value ^ ((value << 7) & 0x9D2C_5680)
+        value = value ^ ((value << 15) & 0xEFC6_0000)
+        value = value ^ (value >> 18)
+        return value & 0xFFFF_FFFF
+    }
+
+    func unit_float() float {
+        let value = self.next_uint32()
+        let high = (value >> 16) as float
+        let low = (value & 0xFFFF) as float
+        return (high * 65536.0 + low) / 4294967296.0
+    }
+
+    func twist() {
+        for position in 0...624 {
+            let next = (position + 1) % 624
+            let tap = (position + 397) % 624
+            let bits = (self.state[position] & 0x8000_0000) ^
+                (self.state[next] & 0x7FFF_FFFF)
+            var value = self.state[tap] ^ (bits >> 1)
+            if bits & 1 == 1 { value = value ^ 0x9908_B0DF }
+            self.state[position] = value & 0xFFFF_FFFF
+        }
+        self.index = 0
+    }
+}
+
+func parse_count(text:str) int {
+    var value = 0
+    for scalar in text {
+        if scalar < 48 || scalar > 57 { return 4000 }
+        let digit = (scalar - 48) as int
+        if value > (9223372036854775807 - digit) / 10 { return 4000 }
+        value = value * 10 + digit
+    }
+    if value > 0 { return value }
+    return 4000
+}
+
+func requested_count() int {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() > 1 { return parse_count(arguments[1]) }
+        }
+    }
+    return 4000
+}
+
+func random_range(randomizer:MersenneTwister, minimum:float, maximum:float) float {
+    return minimum + randomizer.unit_float() * (maximum - minimum)
+}
+
+func boid_color(index:int) Color {
+    if index % 3 == 0 { return Color(r:0.49, g:0.83, b:0.99, a:1.0) }
+    if index % 3 == 1 { return Color(r:0.13, g:0.83, b:0.93, a:1.0) }
+    return Color(r:0.51, g:0.55, b:0.97, a:1.0)
+}
+
+func boid_drawing() Canvas {
+    var shape = Canvas.Path()
+        ..move_to(Math.Vec2(15.0, 6.0))
+        ..line_to(Math.Vec2(0.0, 12.0))
+        ..line_to(Math.Vec2(0.0, 0.0))
+        ..close()
+    return Canvas()
+        ..paint(func(painter:&Canvas.Painter) {
+            painter.fill(shape, Canvas.Fill.solid(Color.white()))
+        })
+}
+
+func create_flock(settings:@Settings, world:&Resources.World) {
+    var randomizer = MersenneTwister(0x51_1E_80_1D)
+    var drawing = boid_drawing()
+    world.spawn(ECS.EntityRecipe()
+        ..with(Components.Transform2D())
+        ..with(Components.Camera2D())
+    )
+    for index in 0...settings.count {
+        let angle = random_range(randomizer, 0.0, Math.two_pi())
+        let speed = random_range(
+            randomizer,
+            Constants.minimum_speed,
+            Constants.maximum_speed
+        )
+        let position = Math.Vec2(
+            random_range(randomizer, -Constants.half_width, Constants.half_width),
+            random_range(randomizer, -Constants.half_height, Constants.half_height)
+        )
+        let velocity = Math.Vec2(Math.cos(angle), Math.sin(angle)).multiply(speed)
+        var rendered = Components.Canvas(drawing, 15, 12)
+        rendered.pivot = Math.Vec2(7.0 / 15.0, 0.5)
+        rendered.color = boid_color(index)
+        rendered.layer = 1
+        world.spawn(ECS.EntityRecipe()
+            ..with(Boid(position:position, velocity:velocity))
+            ..with(Components.Transform2D(position:position, rotation:angle))
+            ..with(rendered)
+        )
+    }
+}
+
+func capture_flock(
+    snapshot:&FlockSnapshot,
+    query:ECS.Query<(@Boid, @Components.Transform2D)>
+) {
+    snapshot.boids.clear()
+    for (boid, transform) in query {
+        snapshot.boids.append(Sample(
+            position_x:boid.position.x,
+            position_y:boid.position.y,
+            velocity_x:boid.velocity.x,
+            velocity_y:boid.velocity.y
+        ))
+    }
+}
+
+func limit(value:Math.Vec2, maximum:float) Math.Vec2 {
+    let current_length = value.length()
+    if current_length > maximum {
+        return value.multiply(maximum / current_length)
+    }
+    return value
+}
+
+func keep_speed(value:Math.Vec2) Math.Vec2 {
+    let speed = value.length()
+    if speed > Constants.maximum_speed {
+        return value.multiply(Constants.maximum_speed / speed)
+    }
+    if speed < Constants.minimum_speed && speed > 0.0 {
+        return value.multiply(Constants.minimum_speed / speed)
+    }
+    return value
+}
+
+func wrap(position:Math.Vec2) Math.Vec2 {
+    var wrapped = position
+    if wrapped.x < -Constants.half_width { wrapped.x = Constants.half_width }
+    elif wrapped.x > Constants.half_width { wrapped.x = -Constants.half_width }
+    if wrapped.y < -Constants.half_height { wrapped.y = Constants.half_height }
+    elif wrapped.y > Constants.half_height { wrapped.y = -Constants.half_height }
+    return wrapped
+}
+
+func steering(position:Math.Vec2, velocity:Math.Vec2, snapshot:@Sample[..]) Steering {
+    var separation_x = 0.0
+    var separation_y = 0.0
+    var center_x = 0.0
+    var center_y = 0.0
+    var heading_x = 0.0
+    var heading_y = 0.0
+    var neighbors = 0
+
+    for other in snapshot {
+        let offset_x = position.x - other.position_x
+        let offset_y = position.y - other.position_y
+        let distance_squared = offset_x * offset_x + offset_y * offset_y
+        if distance_squared > 0.0 && distance_squared < Constants.neighborhood_squared {
+            center_x += other.position_x
+            center_y += other.position_y
+            heading_x += other.velocity_x
+            heading_y += other.velocity_y
+            neighbors++
+            if distance_squared < Constants.separation_squared {
+                var divisor = distance_squared
+                if divisor < 1.0 { divisor = 1.0 }
+                separation_x += offset_x / divisor
+                separation_y += offset_y / divisor
+            }
+        }
+    }
+    if neighbors == 0 { return Steering(x:0.0, y:0.0) }
+    let count = neighbors as float
+    return Steering(
+        x:(center_x / count - position.x) * 0.35 +
+            (heading_x / count - velocity.x) * 0.8 + separation_x * 1400.0,
+        y:(center_y / count - position.y) * 0.35 +
+            (heading_y / count - velocity.y) * 0.8 + separation_y * 1400.0
+    )
+}
+
+func move_flock(
+    time:@Resources.FrameTime,
+    snapshot:@FlockSnapshot,
+    query:ECS.Query<(&Boid, &Components.Transform2D)>
+) {
+    let samples = @snapshot.boids[0:snapshot.boids.count()]
+    for (boid, transform) in query {
+        let raw_steering = steering(boid.position, boid.velocity, samples)
+        let acceleration = limit(
+            Math.Vec2(raw_steering.x, raw_steering.y),
+            Constants.maximum_steering
+        )
+        boid.velocity = keep_speed(
+            boid.velocity.add(acceleration.multiply(time.delta))
+        )
+        boid.position = wrap(
+            boid.position.add(boid.velocity.multiply(time.delta))
+        )
+        transform.position = boid.position
+        transform.rotation = Math.atan2(boid.velocity.y, boid.velocity.x)
+    }
+}
+
+func measure(
+    benchmark:&Benchmark,
+    settings:@Settings,
+    window:@Resources.Window,
+    controller:&Application.Controller
+) {
+    let delta = benchmark.clock.tick()
+    if !benchmark.started {
+        benchmark.started = true
+        return
+    }
+    benchmark.elapsed += delta
+    benchmark.frames++
+    if benchmark.elapsed >= 5.0 {
+        print(
+            "SILEX_GFX_BOIDS count=$(settings.count) present=immediate " +
+            "fps=$(benchmark.frames as float / benchmark.elapsed) " +
+            "window=$(window.size().x)x$(window.size().y) " +
+            "pixels=$(window.pixel_size().x)x$(window.pixel_size().y) " +
+            "scale=$(window.display_scale()) density=$(window.pixel_density())"
+        )
+        controller.stop()
+    }
+}
+
+func main() {
+    Application(1)
+        ..add_resource(Settings(count:requested_count()))
+        ..add_resource(FlockSnapshot())
+        ..add_resource(Benchmark())
+        ..add_plugin(Plugins.Window(Plugins.Window.Settings()
+            ..title = "Silex GFX Boids"
+            ..width = 960
+            ..height = 640
+            ..resizable = false
+            ..high_pixel_density = true
+        ))
+        ..add_plugin(Plugins.GPU(Plugins.GPU.Settings()
+            ..surface = GPU.SurfaceSettings(present_mode:GPU.PresentMode.immediate)
+        ))
+        ..add_plugin(Plugins.Rendering(Plugins.Rendering.Settings()
+            ..clear = Color.black()
+        ))
+        ..add_plugin(Plugins.Scene2D())
+        ..add_plugin(Plugins.Time())
+        ..add_system(Application.Schedule.startup, create_flock)
+        ..add_system(Application.Schedule.update, capture_flock)
+        ..add_system(Application.Schedule.update, move_flock)
+        ..add_after_system(Application.Schedule.render, measure)
+        ..run()
+}

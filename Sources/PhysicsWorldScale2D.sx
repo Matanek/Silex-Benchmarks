@@ -1,0 +1,120 @@
+use GFX.Physics
+use STD.Math
+use STD.Time.Clock
+
+func run_sparse_motion(body_count:int, step_count:int) {
+    var world = Physics.World2D(gravity:Math.Vec2())
+    world.enable_parallelism(4)
+    var index = 0
+    while index < body_count {
+        let column = index % 100
+        let row = index / 100
+        world.create_rigid_body(Physics.RigidBody2DSettings()
+            ..shape = Physics.Shape2D.box(Physics.Box2D(Math.Vec2(0.5)))
+            ..position = Math.Vec2(column as float * 1.25, row as float * 1.25)
+            ..velocity = Math.Vec2(2.0, 0.25)
+            ..allow_sleep = false
+        )
+        index++
+    }
+    world.set_profiling_enabled(true)
+
+    var clock = Clock()
+    clock.tick()
+    var candidate_total = 0
+    var motion_total = 0.0
+    var broad_phase_total = 0.0
+    var solve_total = 0.0
+    var sleep_total = 0.0
+    var step = 0
+    while step < step_count {
+        world.step(1.0 / 60.0)
+        candidate_total += world.candidate_pair_count()
+        let profile = world.step_profile()
+        motion_total += profile.motion_ms
+        broad_phase_total += profile.broad_phase_ms
+        solve_total += profile.solve_ms
+        sleep_total += profile.sleep_ms
+        step++
+    }
+    let elapsed = clock.tick()
+    let milliseconds = elapsed * 1000.0
+    print("sparse motion: $(body_count) Box2D, $(step_count) steps")
+    print("  elapsed: $(milliseconds) ms")
+    print("  per step: $(milliseconds / step_count as float) ms")
+    print("  body-steps/s: $(body_count as float * step_count as float / elapsed)")
+    print("  candidate average: $(candidate_total as float / step_count as float)")
+    print("  motion/step: $(motion_total / step_count as float) ms")
+    print("  broad phase/step: $(broad_phase_total / step_count as float) ms")
+    print("  solve/step: $(solve_total / step_count as float) ms")
+    print("  sleep/step: $(sleep_total / step_count as float) ms")
+}
+
+func run_pile(body_count:int, step_count:int) {
+    let columns = 50
+    var world = Physics.World2D()
+    world.enable_parallelism(4)
+    world.create_rigid_body(Physics.RigidBody2DSettings()
+        ..body_type = Physics.BodyType2D.fixed
+        ..shape = Physics.Shape2D.box(Physics.Box2D(Math.Vec2(24.0, 1.0)))
+        ..position = Math.Vec2(0.0, -0.5)
+        ..friction = 0.8
+    )
+    var index = 0
+    while index < body_count {
+        let column = index % columns
+        let row = index / columns
+        world.create_rigid_body(Physics.RigidBody2DSettings()
+            ..shape = Physics.Shape2D.box(Physics.Box2D(Math.Vec2(0.4)))
+            ..position = Math.Vec2(
+                (column as float - 24.5) * 0.405,
+                0.2 + row as float * 0.405
+            )
+            ..rotation = ((index % 3) as float - 1.0) * 0.002
+            ..friction = 0.75
+        )
+        index++
+    }
+    world.set_profiling_enabled(true)
+
+    var clock = Clock()
+    clock.tick()
+    var candidate_total = 0
+    var candidate_maximum = 0
+    var motion_total = 0.0
+    var broad_phase_total = 0.0
+    var solve_total = 0.0
+    var sleep_total = 0.0
+    var step = 0
+    while step < step_count {
+        world.step(1.0 / 60.0)
+        let candidates = world.candidate_pair_count()
+        candidate_total += candidates
+        if candidates > candidate_maximum { candidate_maximum = candidates }
+        let profile = world.step_profile()
+        motion_total += profile.motion_ms
+        broad_phase_total += profile.broad_phase_ms
+        solve_total += profile.solve_ms
+        sleep_total += profile.sleep_ms
+        step++
+    }
+    let elapsed = clock.tick()
+    let milliseconds = elapsed * 1000.0
+    print("pile: $(body_count) Box2D, $(step_count) steps")
+    print("  elapsed: $(milliseconds) ms")
+    print("  per step: $(milliseconds / step_count as float) ms")
+    print("  candidate average: $(candidate_total as float / step_count as float)")
+    print("  candidate maximum: $(candidate_maximum)")
+    print("  awake at end: $(world.awake_body_count())")
+    print("  motion/step: $(motion_total / step_count as float) ms")
+    print("  broad phase/step: $(broad_phase_total / step_count as float) ms")
+    print("  solve/step: $(solve_total / step_count as float) ms")
+    print("  sleep/step: $(sleep_total / step_count as float) ms")
+}
+
+func main() {
+    run_sparse_motion(1_000, 120)
+    run_sparse_motion(5_000, 120)
+    run_sparse_motion(10_000, 120)
+    run_pile(1_000, 240)
+}

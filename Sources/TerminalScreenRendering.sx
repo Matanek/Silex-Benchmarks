@@ -1,0 +1,98 @@
+use GFX.Canvas
+use GFX.UI
+use GFX.UI.Terminal
+use STD.Math
+use STD.Time.Stopwatch
+
+func populated_screen() Terminal.Screen {
+    var screen = Terminal.Screen(Terminal.Size(columns:100, rows:30))
+    var row = 0
+    while row < 29 {
+        screen.feed("silex> compile project --release  completed in 42 ms  warning: none  status: ready")
+        if row < 28 { screen.feed("\n") }
+        row++
+    }
+    return screen
+}
+
+func render_full(screen:@Terminal.Screen) int {
+    var drawing = Terminal.drawing(screen)
+    var snapshot = drawing.snapshot(1024, 624)
+    let text = snapshot.text()
+    assert(text.width() > 0)
+    assert(text.height() > 0)
+    return drawing.command_count()
+}
+
+func main() {
+    var full_screen = populated_screen()
+    let command_count = render_full(full_screen)
+    assert(command_count < 100)
+    var settings = Terminal.ViewSettings()
+    if let font = settings.font {
+        var measuring = Canvas()
+        var style = Canvas.TextStyle(size:settings.font_size, font:font)
+        print(
+            "single_cell_width=",
+            measuring.measure_text("x", style).width,
+            " hundred_cell_width=",
+            measuring.measure_text(
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                style
+            ).width
+        )
+    }
+
+    var full_drawing = Terminal.drawing(full_screen)
+    var retained = full_drawing.snapshot(1024, 624)
+    for layer in retained.text_layers() { let warm = layer.text_layer(2.0) }
+    var full = Stopwatch()
+    full.start()
+    var frame = 0
+    while frame < 10 {
+        full_screen.feed("x")
+        full_drawing = Terminal.drawing(full_screen)
+        var next = full_drawing.snapshot(1024, 624, reuse:retained)
+        for layer in next.text_layers() { let text = layer.text_layer(2.0) }
+        retained = next
+        frame++
+    }
+    full.stop()
+
+    var console = Terminal.Console(
+        size:Terminal.Size(columns:100, rows:30),
+        welcome:[full_screen.line(0)]
+    )
+    var runtime = UI.Runtime(console)
+    var initial = runtime.drawing(1024, 624)
+    assert(initial.command_count() > 0)
+    assert(runtime.pointer_pressed(Math.Vec2(10.0, 10.0)))
+    var retained_ui = initial.snapshot(1024, 624)
+    for layer in retained_ui.text_layers() { let warm = layer.text_layer(2.0) }
+
+    var composed = Stopwatch()
+    composed.start()
+    var invalidations = 0
+    frame = 0
+    while frame < 10 {
+        runtime.insert_text("x")
+        if runtime.update(0.0) {
+            var drawing = runtime.drawing(1024, 624)
+            var snapshot = drawing.snapshot(1024, 624, reuse:retained_ui)
+            for layer in snapshot.text_layers() { let text = layer.text_layer(2.0) }
+            retained_ui = snapshot
+            invalidations++
+        }
+        frame++
+    }
+    composed.stop()
+
+    assert(invalidations == 10)
+    print(
+        "full_10_keys_ms=", full.get_elapsed_milliseconds(),
+        " ui_10_keys_ms=", composed.get_elapsed_milliseconds(),
+        " invalidations=", invalidations,
+        " commands=", command_count
+    )
+}

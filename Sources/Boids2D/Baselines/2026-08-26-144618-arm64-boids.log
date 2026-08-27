@@ -1,0 +1,59 @@
+# captured=2026-08-26T14:46:22+0200
+# host_model=Mac15,7
+# cpu=Apple_M3_Pro
+# memory_bytes=19327352832
+# os=macOS_26.5.2_25F84
+# architecture=arm64
+# source_repositories_dirty=true
+# waited_for_competing_workloads=true
+# silex_mode=release_default
+# cpp_mode=Release
+# silex_version=0.41.0
+# silex_toolchain_commit=a48d2ddacd1ba251f07d1e8dd67bc721205522da
+# gfx_commit=a44a9784c17e2b23ce9f3a1b1d150ad0e6693971
+# gfx_assets_commit=443d9d9b64cf23a2a9ab799509be07361537c9bc
+# gfx_canvas_commit=6274897611142dd12b4204c6e83152bdbd8f749d
+# gfx_ecs_commit=33e6d48a259b86136b3dfa1ab9d0aed6d56e7ef7
+# gfx_gpu_commit=93af3caf52900c950a3e3a71a51b674f6f47991b
+# gfx_rendering_commit=dbdfe10960389930c89a1d6ca69fef35d033fb9c
+# gfx_scene2d_commit=4d52dbda16279e4bc3ca2f4ecef3ef7d1b25db47
+# std_commit=0991a055730ac2c5e4eb274cf13dee823ba01a9d
+# cpp_compiler=Apple_clang_version_21.0.0_clang-2100.1.1.101
+# cmake_version=3.31.2
+# sdl_version=3.4.8
+# entt_revision=85c6bba014049b5de8fad49d25424df2f1f6a8c1
+# protocol=1_discarded_warmups_per_executable_then_7_isolated_rotated_five_second_runs
+# rotation=silex_cpp-architectural_cpp-direct
+# count=4000
+# presentation=immediate
+# round=1
+SILEX_GFX_BOIDS count=4000 present=immediate fps=88.5908 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=90.99985 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 present=immediate fps=88.92612 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=2
+SILEX_GFX_BOIDS count=4000 present=immediate fps=88.82223 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=91.42594 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 present=immediate fps=90.96332 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=3
+SILEX_GFX_BOIDS count=4000 present=immediate fps=88.91864 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=90.01324 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 present=immediate fps=90.82246 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=4
+SILEX_GFX_BOIDS count=4000 present=immediate fps=85.242645 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=89.69976 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 present=immediate fps=87.10188 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=5
+SILEX_GFX_BOIDS count=4000 present=immediate fps=88.69263 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=91.29556 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 present=immediate fps=89.86916 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=6
+SILEX_GFX_BOIDS count=4000 present=immediate fps=87.875984 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=90.57507 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 present=immediate fps=85.92431 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=7
+SILEX_GFX_BOIDS count=4000 present=immediate fps=84.276886 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=88.10538 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 present=immediate fps=88.22472 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# summary_silex median_fps=88.590800 mad_percent=0.3701 range=84.276886..88.918640 relative_to_architectural_percent=-2.19
+# summary_cpp_architectural median_fps=90.575070 mad_percent=0.7955 range=88.105380..91.425940 relative_to_architectural_percent=0.00
+# summary_cpp_direct median_fps=88.926120 mad_percent=2.0514 range=85.924310..90.963320 relative_to_architectural_percent=-1.82

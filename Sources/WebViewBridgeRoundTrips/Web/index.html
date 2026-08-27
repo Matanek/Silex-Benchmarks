@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/app.css">
+    <script>
+        window.silex.on("inline-ping", payload => window.silex.send("inline-pong", payload));
+    </script>
+</head>
+<body>
+    <main>Silex GFX.WebView</main>
+    <script src="/app.js"></script>
+</body>
+</html>

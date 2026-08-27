@@ -1,0 +1,105 @@
+use GFX.Canvas
+use GFX.UI
+use STD.Math
+use STD.Time.Stopwatch
+
+func percentage(value:float) str { return "$(Math.round(value) as int)%" }
+
+func fixed_label() UI.Text {
+    var label = UI.Text("Retained interface label")
+    label.style.height = 20.0
+    return label
+}
+
+func benchmark_root() UI.Column {
+    var state = UI.State<float>(50.0)
+    let children:UI.View[] = [
+        fixed_label(),
+        UI.Text(state, format:percentage),
+        UI.Slider(state, 0.0, 100.0)
+    ]
+    return UI.Column(children)
+}
+
+func selection_text() str {
+    return "A native editor built with GFX.UI. Retained selection stays responsive."
+}
+
+func benchmark_selection(updates:int) {
+    var field = UI.TextField(selection_text())
+    field.style.height = 32.0
+    field.style.padding = UI.Insets(6.0)
+    var runtime = UI.Runtime(field)
+    var drawing = runtime.drawing(1000, 32)
+    var previous = drawing.snapshot(1000, 32)
+    for layer in previous.text_layers() { let warm = layer.text_layer(2.0) }
+    runtime.pointer_pressed(Math.Vec2(6.0, 16.0))
+
+    var stopwatch = Stopwatch()
+    var pointer_time = Stopwatch()
+    var drawing_time = Stopwatch()
+    var snapshot_time = Stopwatch()
+    var raster_time = Stopwatch()
+    stopwatch.start()
+    var index = 0
+    while index < updates {
+        let x = 6.0 + (index % 900) as float
+        pointer_time.start()
+        runtime.pointer_moved(Math.Vec2(x, 16.0))
+        pointer_time.stop()
+        drawing_time.start()
+        drawing = runtime.drawing(1000, 32)
+        drawing_time.stop()
+        snapshot_time.start()
+        var snapshot = drawing.snapshot(1000, 32, reuse:previous)
+        snapshot_time.stop()
+        raster_time.start()
+        for layer in snapshot.text_layers() { let text = layer.text_layer(2.0) }
+        raster_time.stop()
+        previous = snapshot
+        index++
+    }
+    stopwatch.stop()
+    print(
+        "selection_ms_per_update=",
+        stopwatch.get_elapsed_milliseconds() / updates as float,
+        " pointer_ms=",
+        pointer_time.get_elapsed_milliseconds() / updates as float,
+        " drawing_ms=",
+        drawing_time.get_elapsed_milliseconds() / updates as float,
+        " snapshot_ms=",
+        snapshot_time.get_elapsed_milliseconds() / updates as float,
+        " raster_ms=",
+        raster_time.get_elapsed_milliseconds() / updates as float
+    )
+}
+
+func main() {
+    let updates = 240
+    var root = benchmark_root()
+    var runtime = UI.Runtime(root)
+    var initial = runtime.drawing(1000, 300)
+    var previous = initial.snapshot(1000, 300)
+    for layer in previous.text_layers() { let warm = layer.text_layer(2.0) }
+    runtime.pointer_pressed(Math.Vec2(0.0, 45.0))
+
+    var stopwatch = Stopwatch()
+    stopwatch.start()
+    var index = 0
+    while index < updates {
+        let x = (index % 101) as float * 10.0
+        runtime.pointer_moved(Math.Vec2(x, 45.0))
+        var drawing = runtime.drawing(1000, 300)
+        var snapshot = drawing.snapshot(1000, 300, reuse:previous)
+        for layer in snapshot.text_layers() { let text = layer.text_layer(2.0) }
+        previous = snapshot
+        index++
+    }
+    stopwatch.stop()
+    print("updates=", updates, " retina_scale=2")
+    print(
+        "layered_presentation_ms_per_update=",
+        stopwatch.get_elapsed_milliseconds() / updates as float
+    )
+    benchmark_selection(updates)
+}

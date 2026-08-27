@@ -1,0 +1,41 @@
+use STD.Regex
+use STD.Text.UTF8
+use STD.Time.Stopwatch
+
+func compiled(pattern:str) Regex {
+    match Regex.compile(pattern) {
+        success(value) => { return value }
+        failure(error) => { panic("benchmark pattern is invalid") }
+    }
+    panic("benchmark pattern was not produced")
+}
+
+func large_text(count:int, suffix:uint32) str {
+    var scalars:uint32[] = []
+    var index = 0
+    while index < count { scalars.append(97 as uint32); index++ }
+    scalars.append(suffix)
+    match UTF8.from_scalars(@scalars[0:scalars.count()]) {
+        success(text) => { return text }
+        failure(error) => { panic("benchmark text is invalid") }
+    }
+    panic("benchmark text was not produced")
+}
+
+test "streaming search over one million scalars" {
+    let text = large_text(1_000_000, 90)
+    let suffix = compiled("Z$")
+    var stopwatch = Stopwatch()
+    stopwatch.start()
+    let found = suffix.first(text)
+    stopwatch.stop()
+    if value = found { assert(value.start() == 1_000_000, "suffix position") }
+    else { panic("suffix was not found") }
+    print("Regex one-pass search: ", stopwatch.get_elapsed_milliseconds(), " ms")
+}
+
+test "large finite repetition stays compact" {
+    let text = large_text(10_000, 90)
+    let expression = compiled("a{10000}Z")
+    assert(expression.match(text), "large bounded repetition")
+}

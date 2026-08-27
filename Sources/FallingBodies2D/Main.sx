@@ -1,0 +1,1349 @@
+use GFX.Application
+use GFX.Color
+use GFX.Canvas
+use GFX.Components
+use GFX.ECS
+use GFX.Physics
+use GFX.Plugins
+use GFX.Rendering
+use GFX.Resources
+use STD.Math
+use STD.Process
+use STD.Randomizer
+use STD.Threading
+use STD.Time.Clock
+
+static struct Constants {
+    let window_width:int = 960
+    let window_height:int = 640
+    let pixels_per_meter:float = 100.0
+    let container_width:float = 9.2
+    let container_height:float = 6.0
+    let boundary_depth:float = 4.0
+    let body_radius:float = 0.05
+    let body_size:float = 0.1
+    let body_pixels:int = 14
+    let spawn_slot_count:int = 87
+    let spawn_slot_spacing:float = 0.105
+    let emission_interval:float = 0.02
+    let fixed_delta:float = 1.0 / 60.0
+    let maximum_physics_substeps:int = 8
+    let maximum_bodies:int = 3_000
+}
+
+struct SimulatedBody {
+    var body:Physics.RigidBody2D
+    let entity:ECS.Entity
+    let is_circle:bool
+}
+
+struct CircleOverlapMetrics {
+    var maximum:float
+    var count:int
+    var first:int
+    var second:int
+}
+
+func circle_overlap_metrics(bodies:@SimulatedBody[]) CircleOverlapMetrics {
+    var metrics = CircleOverlapMetrics()
+    var first_body = 0
+    while first_body < bodies.count() {
+        if !bodies[first_body].is_circle {
+            first_body++
+            continue
+        }
+        let first_position = bodies[first_body].body.position()
+        var second_body = first_body + 1
+        while second_body < bodies.count() {
+            if !bodies[second_body].is_circle {
+                second_body++
+                continue
+            }
+            let offset = bodies[second_body]
+                .body.position().subtract(first_position)
+            let distance_squared = offset.length_squared()
+            if distance_squared <
+                Constants.body_size * Constants.body_size
+            {
+                let overlap = Constants.body_size -
+                    Math.sqrt(distance_squared)
+                if overlap > metrics.maximum {
+                    metrics.maximum = overlap
+                    metrics.first = first_body
+                    metrics.second = second_body
+                }
+                if overlap > 0.0005 { metrics.count++ }
+            }
+            second_body++
+        }
+        first_body++
+    }
+    return metrics
+}
+
+func print_worst_overlap_pair(
+    bodies:@SimulatedBody[],
+    metrics:CircleOverlapMetrics
+) {
+    let first_position = bodies[metrics.first].body.position()
+    let second_position = bodies[metrics.second].body.position()
+    print("  worst circle overlap pair: $(metrics.first) at ($(first_position.x), $(first_position.y)), awake=$(bodies[metrics.first].body.is_awake()); $(metrics.second) at ($(second_position.x), $(second_position.y)), awake=$(bodies[metrics.second].body.is_awake())")
+}
+
+func print_sleep_diagnostics(simulation:@Simulation) {
+    var left_awake = 0
+    var center_awake = 0
+    var right_awake = 0
+    var right_maximum_speed = 0.0
+    let side_limit = Constants.container_width * 0.25
+    for simulated in simulation.bodies {
+        if !simulated.body.is_awake() { continue }
+        let position = simulated.body.position()
+        if position.x < -side_limit { left_awake++ }
+        else if position.x > side_limit {
+            right_awake++
+            right_maximum_speed = Math.max(
+                right_maximum_speed,
+                simulated.body.velocity().length()
+            )
+        } else { center_awake++ }
+    }
+    print("  awake by zone: left=$(left_awake), center=$(center_awake), right=$(right_awake)")
+    print("  right maximum speed: $(right_maximum_speed) m/s")
+}
+
+func print_awake_body_details(simulation:@Simulation) {
+    var printed = 0
+    var index = 0
+    while index < simulation.bodies.count() && printed < 24 {
+        let simulated = simulation.bodies[index]
+        if simulated.body.is_awake() {
+            var shape = "box"
+            if simulated.is_circle { shape = "circle" }
+            let position = simulated.body.position()
+            let velocity = simulated.body.velocity()
+            print("  awake[$(index)] $(shape): position=($(position.x), $(position.y)), velocity=($(velocity.x), $(velocity.y)), angular=$(simulated.body.angular_velocity())")
+            printed++
+        }
+        index++
+    }
+}
+
+struct PhysicsBodyVisual {
+    let index:int
+}
+
+class PhysicsTransformBuffer {
+    var transforms:Physics.BodyTransformBuffer2D
+    var profile:Physics.World2DStepProfile
+    var physics_ms:float
+    var transfer_ms:float
+
+    init() {
+        self.transforms = Physics.BodyTransformBuffer2D()
+        self.profile = Physics.World2DStepProfile()
+        self.physics_ms = 0.0
+        self.transfer_ms = 0.0
+    }
+}
+
+struct PhysicsStepJob:Threading.Job {
+    var physics:Physics.World2D
+    var output:PhysicsTransformBuffer
+    var step_count:int
+
+    func execute() {
+        var profile = Physics.World2DStepProfile()
+        var physics_clock = Clock()
+        physics_clock.tick()
+        var step = 0
+        while step < self.step_count {
+            self.physics.step(Constants.fixed_delta)
+            let current = self.physics.step_profile()
+            profile.motion_ms += current.motion_ms
+            profile.broad_phase_ms += current.broad_phase_ms
+            profile.solve_ms += current.solve_ms
+            profile.sleep_ms += current.sleep_ms
+            profile.total_ms += current.total_ms
+            step++
+        }
+        self.output.physics_ms = physics_clock.tick() * 1_000.0
+        var transfer_clock = Clock()
+        transfer_clock.tick()
+        self.physics.write_dynamic_body_transforms(self.output.transforms)
+        self.output.transfer_ms = transfer_clock.tick() * 1_000.0
+        self.output.profile = profile
+    }
+}
+
+class PhysicsAsync {
+    var executor:Threading.Executor
+    var buffers:PhysicsTransformBuffer[]
+    var fences:Threading.Fence[]
+    var output_indices:int[]
+    var next_completion:int
+    var next_output_index:int
+    var published_index:int
+    var revision:int
+    var collected_ms:float
+    var collected_transfer_ms:float
+    var collected_latency_ms:float
+    var pending_steps:int
+    var batch_clock:Clock
+
+    init() {
+        self.executor = Threading.Executor(worker_count:1)
+        self.buffers = [
+            PhysicsTransformBuffer(),
+            PhysicsTransformBuffer(),
+            PhysicsTransformBuffer(),
+            PhysicsTransformBuffer(),
+            PhysicsTransformBuffer(),
+            PhysicsTransformBuffer(),
+            PhysicsTransformBuffer(),
+            PhysicsTransformBuffer()
+        ]
+        self.fences = []
+        self.output_indices = []
+        self.next_completion = 0
+        self.next_output_index = 0
+        self.published_index = -1
+        self.revision = 0
+        self.collected_ms = 0.0
+        self.collected_transfer_ms = 0.0
+        self.collected_latency_ms = 0.0
+        self.pending_steps = 0
+        self.batch_clock = Clock()
+    }
+
+    func submit(physics:Physics.World2D, step_count:int) {
+        if !self.is_idle() {
+            panic("FallingBody cannot replace an active physics batch")
+        }
+        if step_count < 1 || step_count > self.buffers.count() {
+            panic("FallingBody physics batch is outside its buffer capacity")
+        }
+        self.fences.clear()
+        self.output_indices.clear()
+        self.next_completion = 0
+        self.batch_clock.reset()
+        self.batch_clock.tick()
+        let first_output_index = self.next_output_index
+        var first = self.executor.submit(PhysicsStepJob(
+            physics:physics,
+            output:self.buffers[first_output_index],
+            step_count:1
+        ))
+        self.fences.append(first.fence())
+        self.output_indices.append(first_output_index)
+        var step = 1
+        while step < step_count {
+            let output_index = (self.next_output_index + step) %
+                self.buffers.count()
+            // The executor takes the newest ready job first. Chaining each
+            // fixed step preserves simulation order and makes every completed
+            // transform snapshot observable instead of publishing only the
+            // end of a catch-up batch.
+            var submitted = self.executor.submit(PhysicsStepJob(
+                physics:physics,
+                output:self.buffers[output_index],
+                step_count:1
+            ), after:self.fences[step - 1])
+            self.fences.append(submitted.fence())
+            self.output_indices.append(output_index)
+            step++
+        }
+        self.pending_steps = step_count
+    }
+
+    func collect_completed() int {
+        self.collected_ms = 0.0
+        self.collected_transfer_ms = 0.0
+        self.collected_latency_ms = 0.0
+        var completed = 0
+        while self.next_completion < self.fences.count() &&
+            self.fences[self.next_completion].is_complete()
+        {
+            self.fences[self.next_completion].complete()
+            self.published_index = self.output_indices[self.next_completion]
+            self.collected_ms += self.buffers[self.published_index].physics_ms
+            self.collected_transfer_ms +=
+                self.buffers[self.published_index].transfer_ms
+            self.next_completion++
+            self.revision++
+            completed++
+        }
+        if completed > 0 {
+            self.collected_latency_ms = self.batch_clock.tick() * 1_000.0
+        }
+        if self.next_completion == self.fences.count() &&
+            self.fences.count() > 0
+        {
+            self.fences.clear()
+            self.output_indices.clear()
+            self.next_completion = 0
+            self.next_output_index = (self.next_output_index +
+                self.pending_steps) %
+                self.buffers.count()
+            self.pending_steps = 0
+        }
+        return completed
+    }
+
+    func is_idle() bool { return self.fences.count() == 0 }
+    func current_revision() int { return self.revision }
+    func completed_physics_ms() float { return self.collected_ms }
+    func completed_transfer_ms() float { return self.collected_transfer_ms }
+    func completed_latency_ms() float { return self.collected_latency_ms }
+
+    func published_buffer() PhysicsTransformBuffer? {
+        if self.published_index < 0 { return null }
+        return self.buffers[self.published_index]
+    }
+}
+
+class CadenceMetrics {
+    var clock:Clock
+    var elapsed:float
+    var render_frames:int
+    var visual_updates:int
+    var physics_steps:int
+    var worker_ms:float
+    var transfer_ms:float
+    var latency_ms:float
+    var spawn_ms:float
+    var smoke_visual_updates:int
+    var smoke_latency_ms:float
+    var smoke_spawn_ms:float
+
+    init() {
+        self.clock = Clock()
+        self.elapsed = 0.0
+        self.render_frames = 0
+        self.visual_updates = 0
+        self.physics_steps = 0
+        self.worker_ms = 0.0
+        self.transfer_ms = 0.0
+        self.latency_ms = 0.0
+        self.spawn_ms = 0.0
+        self.smoke_visual_updates = 0
+        self.smoke_latency_ms = 0.0
+        self.smoke_spawn_ms = 0.0
+    }
+}
+
+class SpawnSlots {
+    var available:bool[]
+    var remaining:int
+
+    init() {
+        self.available = []
+        self.remaining = 0
+    }
+
+    func position(index:int) float {
+        return (index as float -
+            (Constants.spawn_slot_count - 1) as float * 0.5) *
+            Constants.spawn_slot_spacing
+    }
+
+    func rebuild(bodies:@SimulatedBody[]) {
+        while self.available.count() < Constants.spawn_slot_count {
+            self.available.append(true)
+        }
+        var slot = 0
+        while slot < self.available.count() {
+            self.available[slot] = true
+            slot++
+        }
+        self.remaining = self.available.count()
+        let spawn_y =
+            Constants.container_height * 0.5 - Constants.body_radius
+        let minimum_distance = Constants.spawn_slot_spacing
+        let minimum_distance_squared = minimum_distance * minimum_distance
+        for simulated in bodies {
+            let body_position = simulated.body.position()
+            let offset_y = body_position.y - spawn_y
+            if Math.abs(offset_y) < minimum_distance {
+                slot = 0
+                while slot < self.available.count() {
+                    if self.available[slot] {
+                        let offset_x = body_position.x - self.position(slot)
+                        if offset_x * offset_x + offset_y * offset_y <
+                            minimum_distance_squared
+                        {
+                            self.available[slot] = false
+                            self.remaining--
+                        }
+                    }
+                    slot++
+                }
+            }
+        }
+    }
+
+    func take(randomizer:&Randomizer) float? {
+        if self.remaining == 0 { return null }
+        let start = randomizer.get_int(0, self.available.count())
+        var offset = 0
+        while offset < self.available.count() {
+            let slot = (start + offset) % self.available.count()
+            if self.available[slot] {
+                self.available[slot] = false
+                self.remaining--
+                return self.position(slot)
+            }
+            offset++
+        }
+        return null
+    }
+}
+
+class BodyVisualTemplate {
+    var circle:Canvas
+    var box:Canvas
+
+    init() {
+        self.circle = circle_drawing()
+        self.box = box_drawing()
+    }
+
+    func component(is_circle:bool) Components.Canvas {
+        var drawing = self.box
+        if is_circle { drawing = self.circle }
+        return Components.Canvas(
+            drawing,
+            Constants.body_pixels,
+            Constants.body_pixels
+        )
+    }
+}
+
+struct Simulation {
+    var physics:Physics.World2D
+    var bodies:SimulatedBody[]
+    var randomizer:Randomizer
+    var accumulator:float
+    var emission_elapsed:float
+    var rendered_frames:int
+    var stats_display:ECS.Entity
+    var smoke_elapsed:float
+    var smoke_physics_ms:float
+    var smoke_transfer_ms:float
+    var smoke_physics_steps:int
+    var smoke_physics_batches:int
+    var maximum_substeps:int
+    var snapshot_revision:int
+    var warmup_remaining:int
+    var measurement_started:bool
+    let smoke_frames:int
+    let smoke_minimum_seconds:float
+    let stress_count:int
+    let render_only:bool
+    let synchronize_visuals:bool
+    let physics_batch:int
+    let show_panel:bool
+    let keep_awake:bool
+    let circles_only:bool
+    let emission_limit:int
+
+    init(
+        smoke_frames:int,
+        stress_count:int,
+        render_only:bool,
+        synchronize_visuals:bool
+    ) {
+        self.physics = Physics.World2D()
+        self.physics.set_profiling_enabled(!option_requested("--no-profile"))
+        self.bodies = []
+        self.randomizer = Randomizer(0x51_1E_20_2D)
+        self.accumulator = 0.0
+        self.emission_elapsed = Constants.emission_interval
+        self.rendered_frames = 0
+        self.stats_display = ECS.Entity()
+        self.smoke_elapsed = 0.0
+        self.smoke_physics_ms = 0.0
+        self.smoke_transfer_ms = 0.0
+        self.smoke_physics_steps = 0
+        self.smoke_physics_batches = 0
+        self.maximum_substeps = 0
+        self.snapshot_revision = 0
+        self.warmup_remaining = 0
+        self.measurement_started = smoke_frames == 0
+        if smoke_frames > 20 { self.warmup_remaining = 60 }
+        else if smoke_frames > 0 { self.warmup_remaining = 5 }
+        self.smoke_frames = smoke_frames
+        var smoke_minimum_seconds = 0.0
+        if option_requested("--smoke-30") { smoke_minimum_seconds = 30.0 }
+        else if smoke_frames > 120 { smoke_minimum_seconds = 10.0 }
+        self.smoke_minimum_seconds = smoke_minimum_seconds
+        self.stress_count = stress_count
+        self.render_only = render_only
+        self.synchronize_visuals = synchronize_visuals
+        self.show_panel = !option_requested("--no-panel") && !render_only
+        self.keep_awake = option_requested("--awake")
+        self.circles_only = option_requested("--circles-only")
+        var emission_limit = Constants.maximum_bodies
+        if option_requested("--settle-1000") { emission_limit = 1_000 }
+        if option_requested("--limit-1800") { emission_limit = 1_800 }
+        self.emission_limit = emission_limit
+        var physics_batch = Constants.maximum_physics_substeps
+        if option_requested("--batch-8") { physics_batch = 8 }
+        if option_requested("--batch-6") { physics_batch = 6 }
+        if option_requested("--batch-4") { physics_batch = 4 }
+        if option_requested("--batch-2") { physics_batch = 2 }
+        if option_requested("--batch-1") { physics_batch = 1 }
+        self.physics_batch = physics_batch
+    }
+
+    func physics_world() Physics.World2D { return self.physics }
+}
+
+func requested_stress_count() int {
+    if option_requested("--stress-5000") { return 5_000 }
+    if option_requested("--stress-3000") { return 3_000 }
+    if option_requested("--stress-2000") { return 2_000 }
+    if option_requested("--stress-1000") { return 1_000 }
+    if option_requested("--stress-600") { return 600 }
+    if option_requested("--stress-400") { return 400 }
+    if option_requested("--stress-300") { return 300 }
+    if option_requested("--stress") { return 120 }
+    return 0
+}
+
+func requested_smoke_frames() int {
+    if option_requested("--smoke-30") { return 3_600 }
+    if option_requested("--smoke-long") { return 600 }
+    if option_requested("--smoke-fast") { return 20 }
+    if option_requested("--smoke") { return 120 }
+    return 0
+}
+
+func option_requested(expected:str) bool {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            for argument in arguments {
+                if argument == expected { return true }
+            }
+        }
+    }
+    return false
+}
+
+func circle_drawing() Canvas {
+    let center = Constants.body_pixels as float * 0.5
+    let radius = Constants.body_radius * Constants.pixels_per_meter
+    return Canvas()
+        ..paint(func(painter:&Canvas.Painter) {
+            painter.fill(
+                Canvas.Circle(Math.Vec2(center), radius),
+                Canvas.Fill.solid(Color.white())
+            )
+        })
+}
+
+func box_drawing() Canvas {
+    let center = Constants.body_pixels as float * 0.5
+    let size = Constants.body_size * Constants.pixels_per_meter
+    let origin = center - size * 0.5
+    return Canvas()
+        ..paint(func(painter:&Canvas.Painter) {
+            painter.fill(
+                Canvas.Rect(Math.Vec2(origin), Math.Vec2(size)),
+                Canvas.Fill.solid(Color.white())
+            )
+        })
+}
+
+func container_drawing() Canvas {
+    return Canvas()
+        ..paint(func(painter:&Canvas.Painter) {
+            painter.stroke(
+                Canvas.Rect(
+                    Math.Vec2(2.0),
+                    Math.Vec2(
+                        Constants.container_width * Constants.pixels_per_meter - 4.0,
+                        Constants.container_height * Constants.pixels_per_meter - 4.0
+                    )
+                ),
+                Canvas.Stroke(Color.slate_500(), 3.0)
+            )
+        })
+}
+
+func physics_stats_drawing(
+    body_count:int,
+    candidate_pair_count:int,
+    awake_count:int,
+    physics_hz:float,
+    repeated_frames:float,
+    cycle_step_ms:float,
+    worker_step_ms:float,
+    resubmit_gap_ms:float,
+    queue_poll_ms:float,
+    spawn_step_ms:float,
+    capacity_hz:float,
+    profile:Physics.World2DStepProfile
+) Canvas {
+    var labels:str[] = []
+    labels.append("BODIES")
+    labels.append("ACTIVE PAIRS")
+    labels.append("AWAKE")
+    labels.append("PHYSICS HZ")
+    labels.append("SIMULATION SPEED")
+    labels.append("REPEATED FRAMES")
+    labels.append("CYCLE / STEP")
+    labels.append("WORKER / STEP")
+    labels.append("RESUBMIT GAP")
+    labels.append("QUEUE + POLL")
+    labels.append("SPAWN / STEP")
+    labels.append("PHYSICS CAPACITY")
+    labels.append("BROAD PHASE")
+    labels.append("SOLVE")
+    labels.append("SLEEP")
+
+    var values:str[] = []
+    values.append("$(body_count)")
+    values.append("$(candidate_pair_count)")
+    values.append("$(awake_count)")
+    values.append(physics_metric(physics_hz, " Hz"))
+    values.append(physics_metric(physics_hz * 100.0 / 60.0, " %"))
+    values.append(physics_metric(repeated_frames, " %"))
+    values.append(physics_metric(cycle_step_ms))
+    values.append(physics_metric(worker_step_ms))
+    values.append(physics_metric(resubmit_gap_ms))
+    values.append(physics_metric(queue_poll_ms))
+    values.append(physics_metric(spawn_step_ms))
+    values.append(physics_metric(capacity_hz, " Hz"))
+    values.append(physics_metric(profile.broad_phase_ms))
+    values.append(physics_metric(profile.solve_ms))
+    values.append(physics_metric(profile.sleep_ms))
+
+    var canvas = Canvas()
+    canvas.paint(func(painter:&Canvas.Painter) {
+        painter.fill(
+            Canvas.Rect(Math.Vec2(), Math.Vec2(252.0, 342.0), 9.0),
+            Canvas.Fill.solid(Color.black().with_alpha(0.82))
+        )
+        painter.stroke(
+            Canvas.Rect(Math.Vec2(0.5), Math.Vec2(251.0, 341.0), 9.0),
+            Canvas.Stroke(Color.cyan_400().with_alpha(0.48), 1.0)
+        )
+        painter.text(
+            "PHYSICS 2D",
+            Math.Vec2(16.0, 10.0),
+            Canvas.TextStyle(
+                size:14.0,
+                color:Color.cyan_300(),
+                weight:Canvas.TextWeight.bold
+            )
+        )
+        var index = 0
+        while index < labels.count() {
+            let y = 38.0 + index as float * 19.0
+            painter.text(
+                labels[index],
+                Math.Vec2(16.0, y),
+                Canvas.TextStyle(size:13.0, color:Color.slate_300())
+            )
+            painter.text(
+                values[index],
+                Math.Vec2(236.0, y),
+                Canvas.TextStyle(
+                    size:13.0,
+                    color:Color.white(),
+                    alignment:Canvas.TextAlignment.end
+                )
+            )
+            index++
+        }
+    })
+    return canvas
+}
+
+func physics_metric(value:float, suffix:str = " ms") str {
+    let tenths = Math.round(value * 10.0) as int
+    return "$(tenths / 10).$(tenths % 10)$(suffix)"
+}
+
+func refresh_physics_stats(
+    scene:&Resources.World,
+    simulation:&Simulation,
+    physics_hz:float,
+    repeated_frames:float,
+    cycle_step_ms:float,
+    worker_step_ms:float,
+    resubmit_gap_ms:float,
+    queue_poll_ms:float,
+    spawn_step_ms:float,
+    capacity_hz:float
+) {
+    let candidate_pair_count = simulation.physics.candidate_pair_count()
+    let awake_count = simulation.physics.awake_body_count()
+    let profile = simulation.physics.step_profile()
+    scene.update<Components.Canvas>(
+        simulation.stats_display,
+        func(display:&Components.Canvas) {
+            var drawing = physics_stats_drawing(
+                simulation.bodies.count(),
+                candidate_pair_count,
+                awake_count,
+                physics_hz,
+                repeated_frames,
+                cycle_step_ms,
+                worker_step_ms,
+                resubmit_gap_ms,
+                queue_poll_ms,
+                spawn_step_ms,
+                capacity_hz,
+                profile
+            )
+            display.replace(drawing)
+        }
+    )
+}
+
+func create_fixed_box(
+    simulation:&Simulation,
+    position:Math.Vec2,
+    size:Math.Vec2
+) {
+    simulation.physics.create_rigid_body(Physics.RigidBody2DSettings()
+        ..body_type = Physics.BodyType2D.fixed
+        ..shape = Physics.Shape2D.box(Physics.Box2D(size))
+        ..position = position
+        ..friction = 0.9
+    )
+}
+
+func create_container(scene:&Resources.World, simulation:&Simulation) {
+    let half_width = Constants.container_width * 0.5
+    let half_height = Constants.container_height * 0.5
+    let boundary_half = Constants.boundary_depth * 0.5
+
+    create_fixed_box(
+        simulation,
+        Math.Vec2(-half_width - boundary_half, 0.0),
+        Math.Vec2(Constants.boundary_depth, Constants.container_height)
+    )
+    create_fixed_box(
+        simulation,
+        Math.Vec2(half_width + boundary_half, 0.0),
+        Math.Vec2(Constants.boundary_depth, Constants.container_height)
+    )
+    create_fixed_box(
+        simulation,
+        Math.Vec2(0.0, -half_height - boundary_half),
+        Math.Vec2(
+            Constants.container_width + Constants.boundary_depth * 2.0,
+            Constants.boundary_depth
+        )
+    )
+    create_fixed_box(
+        simulation,
+        Math.Vec2(0.0, half_height + boundary_half),
+        Math.Vec2(
+            Constants.container_width + Constants.boundary_depth * 2.0,
+            Constants.boundary_depth
+        )
+    )
+
+    var frame = container_drawing()
+    scene.spawn(ECS.EntityRecipe()
+        ..with(Components.Transform2D())
+        ..with(Components.Canvas(
+            frame,
+            (Constants.container_width * Constants.pixels_per_meter) as int,
+            (Constants.container_height * Constants.pixels_per_meter) as int
+        ))
+    )
+}
+
+func body_color(index:int) Color {
+    if index % 4 == 0 { return Color.sky_400() }
+    if index % 4 == 1 { return Color.cyan_400() }
+    if index % 4 == 2 { return Color.violet_400() }
+    return Color.fuchsia_400()
+}
+
+func create_dynamic_circle(
+    simulation:&Simulation,
+    position:Math.Vec2,
+    velocity:Math.Vec2,
+    rotation:float,
+    angular_velocity:float,
+    restitution:float,
+    allow_sleep:bool
+) Physics.RigidBody2D {
+    return simulation.physics.create_rigid_body(Physics.RigidBody2DSettings()
+        ..shape = Physics.Shape2D.circle(
+            Physics.Circle2D(Constants.body_radius)
+        )
+        ..position = position
+        ..velocity = velocity
+        ..rotation = rotation
+        ..angular_velocity = angular_velocity
+        ..restitution = restitution
+        ..friction = 0.75
+        ..linear_damping = 0.2
+        ..angular_damping = 0.4
+        ..allow_sleep = allow_sleep
+    )
+}
+
+func create_dynamic_box(
+    simulation:&Simulation,
+    position:Math.Vec2,
+    velocity:Math.Vec2,
+    rotation:float,
+    angular_velocity:float,
+    restitution:float,
+    allow_sleep:bool
+) Physics.RigidBody2D {
+    return simulation.physics.create_rigid_body(Physics.RigidBody2DSettings()
+        ..shape = Physics.Shape2D.box(
+            Physics.Box2D(Math.Vec2(Constants.body_size))
+        )
+        ..position = position
+        ..velocity = velocity
+        ..rotation = rotation
+        ..angular_velocity = angular_velocity
+        ..restitution = restitution
+        ..friction = 0.75
+        ..linear_damping = 0.2
+        ..angular_damping = 0.4
+        ..allow_sleep = allow_sleep
+    )
+}
+
+func create_dynamic_body(
+    simulation:&Simulation,
+    is_circle:bool,
+    position:Math.Vec2,
+    velocity:Math.Vec2,
+    rotation:float,
+    angular_velocity:float,
+    restitution:float,
+    allow_sleep:bool
+) Physics.RigidBody2D {
+    if is_circle {
+        return create_dynamic_circle(
+            simulation,
+            position,
+            velocity,
+            rotation,
+            angular_velocity,
+            restitution,
+            allow_sleep
+        )
+    }
+    return create_dynamic_box(
+        simulation,
+        position,
+        velocity,
+        rotation,
+        angular_velocity,
+        restitution,
+        allow_sleep
+    )
+}
+
+func emit_body(
+    scene:&Resources.World,
+    simulation:&Simulation,
+    visual:@BodyVisualTemplate,
+    requested_position:Math.Vec2? = null,
+    randomize_requested_motion:bool = false
+) {
+    let horizontal_limit =
+        Constants.container_width * 0.5 - Constants.body_radius
+    var x = 0.0
+    x = (simulation.randomizer.get_float() * 2.0 - 1.0) * horizontal_limit
+    var horizontal_velocity =
+        (simulation.randomizer.get_float() * 2.0 - 1.0) * 0.35
+    var rotation = (simulation.randomizer.get_float() * 2.0 - 1.0) * 0.28
+    var angular_velocity =
+        (simulation.randomizer.get_float() * 2.0 - 1.0) * 0.9
+    var restitution = 0.0
+    var position = Math.Vec2(
+        x,
+        Constants.container_height * 0.5 - Constants.body_radius
+    )
+    let allow_sleep = !simulation.keep_awake
+    if let requested = requested_position {
+        position = requested
+        if !randomize_requested_motion {
+            horizontal_velocity = 0.0
+            rotation = 0.0
+            angular_velocity = 0.0
+            restitution = 0.0
+        }
+    }
+    let is_circle = simulation.circles_only ||
+        simulation.bodies.count() % 2 == 0
+    if !is_circle {
+        // Adjacent spawn slots are separated by one body width. Starting a
+        // square axis-aligned prevents its rotated corners from overlapping a
+        // neighbour at birth; its angular velocity exercises rotation later.
+        rotation = 0.0
+    }
+    let velocity = Math.Vec2(horizontal_velocity, 0.0)
+    var body = create_dynamic_body(
+        simulation,
+        is_circle,
+        position,
+        velocity,
+        rotation,
+        angular_velocity,
+        restitution,
+        allow_sleep
+    )
+    var drawing = visual.component(is_circle)
+    drawing.color = body_color(simulation.bodies.count())
+    drawing.layer = 1
+    if !is_circle { drawing.layer = 2 }
+    let entity = scene.spawn(ECS.EntityRecipe()
+        ..with(PhysicsBodyVisual(index:simulation.bodies.count()))
+        ..with(Components.Transform2D(
+            position:body.position().multiply(Constants.pixels_per_meter),
+            rotation:body.rotation()
+        ))
+        ..with(drawing)
+    )
+    simulation.bodies.append(SimulatedBody(
+        body:body,
+        entity:entity,
+        is_circle:is_circle
+    ))
+}
+
+func synchronize_body_transforms(
+    bodies:@SimulatedBody[..],
+    query:ECS.Query<(@PhysicsBodyVisual, &Components.Transform2D)>,
+    refresh_sleeping:bool
+) {
+    for (visual, transform) in query {
+        let simulated = bodies[visual.index]
+        if simulated.body.is_awake() || refresh_sleeping {
+            transform.position = simulated.body.position().multiply(
+                Constants.pixels_per_meter
+            )
+            transform.rotation = simulated.body.rotation()
+        }
+    }
+}
+
+func synchronize_snapshot_transforms(
+    query:ECS.Query<(@PhysicsBodyVisual, &Components.Transform2D)>,
+    snapshots:PhysicsTransformBuffer
+) {
+    for (visual, transform) in query {
+        transform.position = snapshots.transforms.position(
+            visual.index
+        ).multiply(
+            Constants.pixels_per_meter
+        )
+        transform.rotation = snapshots.transforms.rotation(visual.index)
+    }
+}
+
+func create_scene(
+    scene:&Resources.World,
+    simulation:&Simulation,
+    visual:@BodyVisualTemplate
+) {
+    scene.spawn(ECS.EntityRecipe()
+        ..with(Components.Transform2D())
+        ..with(Components.Camera2D())
+    )
+    create_container(scene, simulation)
+    if simulation.show_panel {
+        var stats = physics_stats_drawing(
+            0,
+            0,
+            0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            simulation.physics.step_profile()
+        )
+        simulation.stats_display = scene.spawn(ECS.EntityRecipe()
+            ..with(Components.Transform2D(position:Math.Vec2(16.0, 284.0)))
+            ..with(Components.Canvas(stats, 252, 342)
+                ..space = Components.CanvasSpace.viewport
+                ..pivot = Math.Vec2()
+                ..layer = 101
+            )
+        )
+    }
+    if simulation.stress_count > 0 {
+        var columns = 40
+        if simulation.stress_count > 600 { columns = 80 }
+        if simulation.stress_count > 2_000 { columns = 88 }
+        let spacing = Constants.body_size
+        while simulation.bodies.count() < simulation.stress_count {
+            let next = simulation.bodies.count()
+            let column = next % columns
+            let row = next / columns
+            emit_body(
+                scene,
+                simulation,
+                visual,
+                Math.Vec2(
+                    (column as float - (columns - 1) as float * 0.5) * spacing,
+                    -Constants.container_height * 0.5 +
+                        Constants.body_radius +
+                        row as float * spacing
+                )
+            )
+        }
+        simulation.emission_elapsed = 0.0
+    }
+}
+
+func print_cadence_summary(
+    simulation:&Simulation,
+    cadence:&CadenceMetrics
+) {
+    var repeated_render_frames = simulation.rendered_frames -
+        cadence.smoke_visual_updates
+    if repeated_render_frames < 0 { repeated_render_frames = 0 }
+    let measured_steps = Math.max(
+        1.0,
+        simulation.smoke_physics_steps as float
+    )
+    let measured_cycle_ms =
+        simulation.smoke_elapsed * 1_000.0 / measured_steps
+    let measured_worker_ms = simulation.smoke_physics_ms / measured_steps
+    let measured_latency_ms = cadence.smoke_latency_ms / measured_steps
+    let measured_resubmit_ms = Math.max(
+        0.0,
+        measured_cycle_ms - measured_latency_ms
+    )
+    let measured_queue_poll_ms = Math.max(
+        0.0,
+        (cadence.smoke_latency_ms - simulation.smoke_physics_ms -
+            simulation.smoke_transfer_ms) / measured_steps
+    )
+    print("  average render FPS: $(simulation.rendered_frames as float / simulation.smoke_elapsed)")
+    print("  visual Hz: $(cadence.smoke_visual_updates as float / simulation.smoke_elapsed)")
+    print("  repeated render frames: $(repeated_render_frames as float * 100.0 / simulation.rendered_frames as float) %")
+    print("  physics Hz: $(simulation.smoke_physics_steps as float / simulation.smoke_elapsed)")
+    print("  physics capacity: $(simulation.smoke_physics_steps as float * 1_000.0 / Math.max(simulation.smoke_physics_ms, 0.000001)) Hz")
+    print("  cycle/step: $(measured_cycle_ms) ms")
+    print("  worker/step: $(measured_worker_ms) ms")
+    print("  resubmit gap/step: $(measured_resubmit_ms) ms")
+    print("  queue + poll/step: $(measured_queue_poll_ms) ms")
+    print("  spawn/step: $(cadence.smoke_spawn_ms / measured_steps) ms")
+}
+
+func update_simulation(
+    time:@Resources.FrameTime,
+    scene:&Resources.World,
+    simulation:&Simulation,
+    renderer:@Rendering.Renderer,
+    controller:&Application.Controller,
+    async:&PhysicsAsync,
+    cadence:&CadenceMetrics,
+    spawn_slots:&SpawnSlots,
+    visual:@BodyVisualTemplate
+) {
+    let substeps = async.collect_completed()
+    let physics_frame_ms = async.completed_physics_ms()
+    let transfer_frame_ms = async.completed_transfer_ms()
+    let latency_frame_ms = async.completed_latency_ms()
+    simulation.emission_elapsed += time.delta
+    if async.is_idle() && simulation.stress_count == 0 &&
+        simulation.emission_elapsed >= Constants.emission_interval &&
+        simulation.bodies.count() < simulation.emission_limit
+    {
+        var spawn_clock = Clock()
+        spawn_clock.tick()
+        spawn_slots.rebuild(simulation.bodies)
+        while simulation.stress_count == 0 &&
+            simulation.emission_elapsed >= Constants.emission_interval &&
+            simulation.bodies.count() < simulation.emission_limit
+        {
+            if let x = spawn_slots.take(simulation.randomizer) {
+                emit_body(
+                    scene,
+                    simulation,
+                    visual,
+                    Math.Vec2(
+                        x,
+                        Constants.container_height * 0.5 -
+                            Constants.body_radius
+                    ),
+                    true
+                )
+            } else { break }
+            simulation.emission_elapsed -= Constants.emission_interval
+        }
+        let spawn_ms = spawn_clock.tick() * 1_000.0
+        cadence.spawn_ms += spawn_ms
+        if simulation.measurement_started {
+            cadence.smoke_spawn_ms += spawn_ms
+        }
+    }
+    if !simulation.render_only {
+        simulation.accumulator = Math.min(
+            simulation.accumulator + time.delta,
+            Constants.fixed_delta * Constants.maximum_physics_substeps as float
+        )
+    }
+    let wall_delta = cadence.clock.tick()
+    cadence.elapsed += wall_delta
+    cadence.render_frames++
+    cadence.physics_steps += substeps
+    cadence.worker_ms += physics_frame_ms
+    cadence.transfer_ms += transfer_frame_ms
+    cadence.latency_ms += latency_frame_ms
+    if simulation.synchronize_visuals && substeps > 0 {
+        cadence.visual_updates++
+    }
+    if simulation.show_panel && !simulation.render_only &&
+        async.is_idle() &&
+        cadence.elapsed >= 1.0
+    {
+        let physics_hz = cadence.physics_steps as float / cadence.elapsed
+        let step_count = Math.max(1.0, cadence.physics_steps as float)
+        let cycle_step_ms = cadence.elapsed * 1_000.0 / step_count
+        let worker_step_ms = cadence.worker_ms / step_count
+        let latency_step_ms = cadence.latency_ms / step_count
+        let resubmit_gap_ms = Math.max(
+            0.0,
+            cycle_step_ms - latency_step_ms
+        )
+        let queue_poll_ms = Math.max(
+            0.0,
+            (cadence.latency_ms - cadence.worker_ms - cadence.transfer_ms) /
+                step_count
+        )
+        let spawn_step_ms = cadence.spawn_ms / step_count
+        let capacity_hz = cadence.physics_steps as float * 1_000.0 /
+            Math.max(cadence.worker_ms, 0.000001)
+        var repeated_frames = cadence.render_frames - cadence.visual_updates
+        if repeated_frames < 0 { repeated_frames = 0 }
+        refresh_physics_stats(
+            scene,
+            simulation,
+            physics_hz,
+            repeated_frames as float * 100.0 /
+                cadence.render_frames as float,
+            cycle_step_ms,
+            worker_step_ms,
+            resubmit_gap_ms,
+            queue_poll_ms,
+            spawn_step_ms,
+            capacity_hz
+        )
+        cadence.elapsed = 0.0
+        cadence.render_frames = 0
+        cadence.visual_updates = 0
+        cadence.physics_steps = 0
+        cadence.worker_ms = 0.0
+        cadence.transfer_ms = 0.0
+        cadence.latency_ms = 0.0
+        cadence.spawn_ms = 0.0
+    }
+
+    if !simulation.render_only && async.is_idle() &&
+        simulation.accumulator >= Constants.fixed_delta &&
+        (simulation.measurement_started || simulation.warmup_remaining > 0) &&
+        (simulation.smoke_frames == 0 ||
+            simulation.rendered_frames + 1 < simulation.smoke_frames ||
+            simulation.smoke_elapsed < simulation.smoke_minimum_seconds)
+    {
+        var step_count = Math.floor(
+            simulation.accumulator / Constants.fixed_delta
+        ) as int
+        if step_count > simulation.physics_batch {
+            step_count = simulation.physics_batch
+        }
+        simulation.accumulator -= Constants.fixed_delta * step_count as float
+        var physics = simulation.physics_world()
+        async.submit(physics, step_count)
+    }
+
+    if simulation.warmup_remaining > 0 {
+        simulation.warmup_remaining--
+        return
+    }
+    if !simulation.measurement_started {
+        if !async.is_idle() { return }
+        simulation.measurement_started = true
+        simulation.accumulator = 0.0
+        return
+    }
+    simulation.smoke_physics_ms += physics_frame_ms
+    simulation.smoke_transfer_ms += transfer_frame_ms
+    cadence.smoke_latency_ms += latency_frame_ms
+    simulation.smoke_physics_steps += substeps
+    if substeps > 0 { simulation.smoke_physics_batches++ }
+    if simulation.synchronize_visuals && substeps > 0 {
+        cadence.smoke_visual_updates++
+    }
+    if substeps > simulation.maximum_substeps {
+        simulation.maximum_substeps = substeps
+    }
+    simulation.rendered_frames++
+    simulation.smoke_elapsed += wall_delta
+    if simulation.smoke_frames > 0 &&
+        simulation.rendered_frames >= simulation.smoke_frames &&
+        simulation.smoke_elapsed >= simulation.smoke_minimum_seconds &&
+        async.is_idle()
+    {
+        let profile = simulation.physics.step_profile()
+        var maximum_speed = 0.0
+        var maximum_angular_speed = 0.0
+        var base_maximum_speed = 0.0
+        var base_maximum_angular_speed = 0.0
+        var base_awake_count = 0
+        var base_count = 0
+        var floor_maximum_speed = 0.0
+        var minimum_y = Constants.container_height * 0.5
+        var floor_maximum_velocity = Math.Vec2()
+        var oldest_maximum_speed = 0.0
+        var body_index = 0
+        for simulated in simulation.bodies {
+            maximum_speed = Math.max(
+                maximum_speed,
+                simulated.body.velocity().length()
+            )
+            maximum_angular_speed = Math.max(
+                maximum_angular_speed,
+                Math.abs(simulated.body.angular_velocity())
+            )
+            if simulated.body.position().y < -2.0 {
+                base_count++
+                if simulated.body.is_awake() { base_awake_count++ }
+                base_maximum_speed = Math.max(
+                    base_maximum_speed,
+                    simulated.body.velocity().length()
+                )
+                base_maximum_angular_speed = Math.max(
+                    base_maximum_angular_speed,
+                    Math.abs(simulated.body.angular_velocity())
+                )
+            }
+            if simulated.body.position().y < -2.8 {
+                let floor_speed = simulated.body.velocity().length()
+                if floor_speed > floor_maximum_speed {
+                    floor_maximum_speed = floor_speed
+                    floor_maximum_velocity = simulated.body.velocity()
+                }
+            }
+            minimum_y = Math.min(minimum_y, simulated.body.position().y)
+            if body_index < 100 {
+                oldest_maximum_speed = Math.max(
+                    oldest_maximum_speed,
+                    simulated.body.velocity().length()
+                )
+            }
+            body_index++
+        }
+        let overlap = circle_overlap_metrics(simulation.bodies)
+        var circle_count = simulation.bodies.count() / 2
+        if simulation.circles_only { circle_count = simulation.bodies.count() }
+        else if simulation.bodies.count() % 2 != 0 { circle_count++ }
+        let box_count = simulation.bodies.count() - circle_count
+        print("FallingBody smoke: $(simulation.bodies.count()) dynamic bodies ($(circle_count) circles, $(box_count) boxes)")
+        print_cadence_summary(simulation, cadence)
+        print("  physics steps/frame: $(simulation.smoke_physics_steps as float / simulation.rendered_frames as float)")
+        print("  average physics/frame: $(simulation.smoke_physics_ms / simulation.rendered_frames as float) ms")
+        print("  average transform transfer/batch: $(simulation.smoke_transfer_ms / Math.max(1.0, simulation.smoke_physics_batches as float)) ms")
+        print("  maximum substeps: $(simulation.maximum_substeps)")
+        print("  awake: $(simulation.physics.awake_body_count())")
+        print("  active pairs: $(simulation.physics.candidate_pair_count())")
+        print("  physics step: $(profile.total_ms) ms")
+        print("  motion: $(profile.motion_ms) ms")
+        print("  broad phase: $(profile.broad_phase_ms) ms")
+        print("  solve: $(profile.solve_ms) ms")
+        print("  sleep: $(profile.sleep_ms) ms")
+        print("  maximum speed: $(maximum_speed) m/s")
+        print("  maximum angular speed: $(maximum_angular_speed) rad/s")
+        print("  base maximum speed: $(base_maximum_speed) m/s")
+        print("  base maximum angular speed: $(base_maximum_angular_speed) rad/s")
+        print("  floor layer maximum speed: $(floor_maximum_speed) m/s")
+        print("  floor layer maximum velocity: ($(floor_maximum_velocity.x), $(floor_maximum_velocity.y)) m/s")
+        print("  minimum y: $(minimum_y) m")
+        print("  oldest 100 maximum speed: $(oldest_maximum_speed) m/s")
+        print("  maximum circle overlap: $(overlap.maximum * 1_000.0) mm ($(overlap.maximum * Constants.pixels_per_meter) px)")
+        print_worst_overlap_pair(simulation.bodies, overlap)
+        print("  overlapping circle pairs above 0.5 mm: $(overlap.count)")
+        print("  base awake below -2 m: $(base_awake_count) / $(base_count)")
+        print_sleep_diagnostics(simulation)
+        print_awake_body_details(simulation)
+        print("  draw calls: $(renderer.stats().draw_calls())")
+        print("  pipeline binds: $(renderer.stats().pipeline_bindings())")
+        print("  rendered instances: $(renderer.stats().instances())")
+        controller.stop()
+    }
+}
+
+func synchronize_physics_visuals(
+    simulation:&Simulation,
+    async:@PhysicsAsync,
+    body_visuals:ECS.Query<(@PhysicsBodyVisual, &Components.Transform2D)>
+) {
+    if simulation.render_only || !simulation.synchronize_visuals { return }
+    let revision = async.current_revision()
+    if revision == simulation.snapshot_revision { return }
+    if var snapshots = async.published_buffer() {
+        for (visual, transform) in body_visuals {
+            if visual.index >= snapshots.transforms.count() { continue }
+            transform.position = snapshots.transforms.position(
+                visual.index
+            ).multiply(Constants.pixels_per_meter)
+            transform.rotation = snapshots.transforms.rotation(
+                visual.index
+            )
+        }
+    }
+    simulation.snapshot_revision = revision
+}
+
+func main() {
+    var rendering_settings = Plugins.Rendering.Settings()
+        ..clear = Color.slate_950()
+    if option_requested("--immediate") {
+        rendering_settings.present_mode = Rendering.PresentMode.immediate
+    } elif option_requested("--mailbox") {
+        rendering_settings.present_mode = Rendering.PresentMode.mailbox
+    } elif option_requested("--synchronized") {
+        rendering_settings.present_mode = Rendering.PresentMode.synchronized
+    }
+    var application = Application()
+        ..add_resource(Simulation(
+            requested_smoke_frames(),
+            requested_stress_count(),
+            option_requested("--render-only"),
+            !option_requested("--no-visual-sync")
+        ))
+        ..add_resource(PhysicsAsync())
+        ..add_resource(CadenceMetrics())
+        ..add_resource(SpawnSlots())
+        ..add_resource(BodyVisualTemplate())
+        ..add_plugin(Plugins.Window(Plugins.Window.Settings()
+            ..title = "GFX.Physics — Falling circles and boxes"
+            ..width = Constants.window_width
+            ..height = Constants.window_height
+            ..resizable = false
+        ))
+        ..add_plugin(Plugins.Rendering(rendering_settings))
+        ..add_plugin(Plugins.Scene2D())
+        ..add_plugin(Plugins.Time())
+        ..add_system(Application.Schedule.startup, create_scene)
+        ..add_system(Application.Schedule.update, update_simulation)
+        ..add_system(Application.Schedule.update, synchronize_physics_visuals)
+    if !option_requested("--no-panel") {
+        application.add_plugin(Plugins.PerformancePanel())
+    }
+    application.run()
+}

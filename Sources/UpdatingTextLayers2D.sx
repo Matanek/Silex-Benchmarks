@@ -1,0 +1,122 @@
+use GFX.Application
+use GFX.Canvas
+use GFX.Color
+use GFX.ECS
+use GFX.Rendering
+use GFX.Scene2D
+use GFX.Window.Plugin as WindowPlugin
+use STD.Math
+use STD.Text
+use STD.Time.Clock
+
+static struct Workload {
+    let columns:int = 50
+    let rows:int = 30
+    let warmup_frames:int = 10
+    let measured_frames:int = 120
+}
+
+class TextLayerBenchmark {
+    var entity:ECS.Entity? = null
+    var updates:int = 0
+    var frames:int = 0
+    var elapsed:float = 0.0
+    var measuring:bool = false
+    var clock:Clock
+}
+
+func text_drawing(changed:int) Canvas {
+    return Canvas()..paint(func(painter:&Canvas.Painter) {
+        var row = 0
+        while row < Workload.rows {
+            var cells:str[] = []
+            var column = 0
+            while column < Workload.columns {
+                var value = "x"
+                if row * Workload.columns + column == changed { value = "y" }
+                cells.append(value)
+                column++
+            }
+            painter.text(
+                Text.join(cells, ""),
+                Math.Vec2(0.0, row as float * 10.0),
+                Canvas.TextStyle(
+                    size:9.0,
+                    font:Canvas.Font.monospace(),
+                    fixed_advance:10.0
+                )
+            )
+            row++
+        }
+    })
+}
+
+func create_text_layers(world:&ECS.World, benchmark:&TextLayerBenchmark) {
+    benchmark.entity = world.spawn(ECS.EntityRecipe()
+        ..with(Scene2D.Transform())
+        ..with(Scene2D.Canvas(text_drawing(0), 500, 300)
+            ..space = Scene2D.CanvasSpace.viewport
+            ..pivot = Math.Vec2()
+        )
+    )
+    benchmark.clock.tick()
+}
+
+func update_text_layers(world:&ECS.World, benchmark:&TextLayerBenchmark) {
+    if let entity = benchmark.entity {
+        let changed = benchmark.updates % (Workload.columns * Workload.rows)
+        var drawing = text_drawing(changed)
+        world.update<Scene2D.Canvas>(entity, func(canvas:&Scene2D.Canvas) {
+            canvas.replace(drawing)
+        })
+        benchmark.updates++
+    }
+}
+
+func measure_text_layers(
+    benchmark:&TextLayerBenchmark,
+    controller:&Application.Controller
+) {
+    let delta = benchmark.clock.tick()
+    if !benchmark.measuring {
+        if benchmark.updates < Workload.warmup_frames { return }
+        benchmark.measuring = true
+        benchmark.frames = 0
+        benchmark.elapsed = 0.0
+        return
+    }
+    benchmark.elapsed += delta
+    benchmark.frames++
+    if benchmark.frames < Workload.measured_frames { return }
+    print(
+        "SILEX_GFX_TEXT_LAYERS cells=",
+        Workload.columns * Workload.rows,
+        " layers=",
+        Workload.rows,
+        " frames=",
+        benchmark.frames,
+        " ms_per_frame=",
+        benchmark.elapsed * 1000.0 / benchmark.frames as float
+    )
+    controller.stop()
+}
+
+func main() {
+    var application = Application()
+    application.add_resource(TextLayerBenchmark())
+    application.add_plugin(WindowPlugin(WindowPlugin.Settings()
+        ..title = "GFX.Scene2D retained text layers"
+        ..width = 500
+        ..height = 300
+        ..hidden = true
+    ))
+    application.add_plugin(Rendering.Plugin())
+    application.add_plugin(Scene2D.Plugin())
+    application.add_system(Application.Schedule.startup, create_text_layers)
+    application.add_system(Application.Schedule.update, update_text_layers)
+    application.add_after_system(
+        Application.Schedule.render,
+        measure_text_layers
+    )
+    assert(application.run() == 0)
+}

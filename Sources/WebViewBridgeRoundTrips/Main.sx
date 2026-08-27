@@ -1,0 +1,39 @@
+use GFX.Window
+use GFX.Input
+use GFX.WebView
+
+test "batch WebView bridge round trips" {
+    var window = Window(Window.Settings(
+        title:"GFX.WebView bridge benchmark",
+        width:320,
+        height:240,
+        hidden:true
+    ))
+    var site = WebView.Site.html(embed_text("Web/index.html"))
+    site.add(WebView.Asset.javascript(
+        embed_text("Web/app.js")
+    ))
+
+    var view = WebView.View(window, site)
+    var input = Input()
+    while view.status() == WebView.Status.loading {
+        input.wait(1)
+        input.update()
+    }
+
+    let message_count = 1_000
+    for index in 0...message_count { view.send("ping", "$(index)") }
+    assert(view.flush())
+
+    var received = 0
+    var attempts = 0
+    while received < message_count && attempts < 10_000 {
+        input.wait(1)
+        input.update()
+        let messages = view.receive()
+        received += messages.count()
+        attempts++
+    }
+    assert(received == message_count)
+    print(message_count, " round trips completed")
+}

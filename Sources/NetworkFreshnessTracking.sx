@@ -1,0 +1,140 @@
+use Sync
+use Sync.Netcode
+use Sync.Netcode.Freshness
+use Sync.Netcode.Statistics
+use STD.Network
+use STD.Time.Stopwatch
+
+func endpoint(last:uint8) Network.Endpoint {
+    return Network.Endpoint(
+        address:Network.IpAddress.ipv4([127, 0, 0, last]),
+        port:9_000,
+        scope_id:0
+    )
+}
+
+func benchmark_comparison(observations:int, repetitions:int) {
+    var repetition = 0
+    var checksum = 0
+    while repetition < repetitions {
+        var stopwatch = Stopwatch()
+        stopwatch.start()
+        var index = 0
+        while index < observations {
+            let previous = index as uint32
+            if Netcode.is_newer(previous + 1, previous) { checksum++ }
+            index++
+        }
+        stopwatch.stop()
+        print(
+            "comparison repetition=$(repetition + 1) observations=$(observations) " +
+            "milliseconds=$(stopwatch.get_elapsed_milliseconds())"
+        )
+        repetition++
+    }
+    assert(checksum == observations * repetitions)
+}
+
+func benchmark_tracker(observations:int, repetitions:int) Result<void, Sync.Error> {
+    var tracker = try Freshness.tracker(64)
+    var endpoints:Network.Endpoint[] = []
+    var sequences:uint32[] = []
+    var stream = 0
+    while stream < 64 {
+        endpoints.append(endpoint((stream + 1) as uint8))
+        sequences.append(0 as uint32)
+        let first = try tracker.observe_sequence(endpoints[stream], 1, sequences[stream])
+        assert(first.kind == Freshness.Kind.first)
+        sequences[stream]++
+        stream++
+    }
+
+    var repetition = 0
+    var checksum = 0
+    while repetition < repetitions {
+        var stopwatch = Stopwatch()
+        stopwatch.start()
+        var index = 0
+        while index < observations {
+            stream = index % 64
+            let decision = try tracker.observe_sequence(
+                endpoints[stream],
+                1,
+                sequences[stream]
+            )
+            if decision.should_apply() { checksum++ }
+            sequences[stream]++
+            index++
+        }
+        stopwatch.stop()
+        print(
+            "tracker repetition=$(repetition + 1) observations=$(observations) " +
+            "milliseconds=$(stopwatch.get_elapsed_milliseconds())"
+        )
+        repetition++
+    }
+    assert(checksum == observations * repetitions)
+    return Result<void, Sync.Error>.success()
+}
+
+func benchmark_tracker_with_statistics(
+    observations:int,
+    repetitions:int
+) Result<void, Sync.Error> {
+    var freshness = try Freshness.tracker(64)
+    var statistics = Statistics.tracker()
+    var endpoints:Network.Endpoint[] = []
+    var sequences:uint32[] = []
+    var stream = 0
+    while stream < 64 {
+        endpoints.append(endpoint((stream + 1) as uint8))
+        sequences.append(0 as uint32)
+        let first = try freshness.observe_sequence(endpoints[stream], 1, sequences[stream])
+        assert(first.kind == Freshness.Kind.first)
+        sequences[stream]++
+        stream++
+    }
+
+    var repetition = 0
+    var checksum = 0
+    while repetition < repetitions {
+        var stopwatch = Stopwatch()
+        stopwatch.start()
+        var index = 0
+        while index < observations {
+            stream = index % 64
+            let decision = try freshness.observe_sequence(
+                endpoints[stream],
+                1,
+                sequences[stream]
+            )
+            statistics.observe(decision)
+            if decision.should_apply() { checksum++ }
+            sequences[stream]++
+            index++
+        }
+        stopwatch.stop()
+        print(
+            "tracker+statistics repetition=$(repetition + 1) observations=$(observations) " +
+            "milliseconds=$(stopwatch.get_elapsed_milliseconds())"
+        )
+        repetition++
+    }
+    assert(checksum == observations * repetitions)
+    assert(statistics.snapshot().received_packets == (observations * repetitions) as uint64)
+    return Result<void, Sync.Error>.success()
+}
+
+func main() {
+    let observations = 1_000_000
+    let repetitions = 5
+    benchmark_comparison(observations, repetitions)
+    match benchmark_tracker(observations, repetitions) {
+        success => {}
+        failure(error) => { panic(error.operation + ": " + error.detail) }
+    }
+    match benchmark_tracker_with_statistics(observations, repetitions) {
+        success => {}
+        failure(error) => { panic(error.operation + ": " + error.detail) }
+    }
+}

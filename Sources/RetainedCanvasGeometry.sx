@@ -1,0 +1,50 @@
+use GFX.Color
+use GFX.Canvas
+use STD.Math
+use STD.Time.Stopwatch
+
+func primitive_count() int { return 10_000 }
+
+test "compile a dense retained drawing" {
+    var drawing = Canvas()
+    var elapsed = Stopwatch()
+    elapsed.start()
+    drawing.paint(func(painter:&Canvas.Painter) {
+        var index = 0
+        while index < primitive_count() {
+            let x = (index % 200) as float * 6.0
+            let y = (index / 200) as float * 6.0
+            if index % 3 == 0 {
+                painter.fill(
+                    Canvas.Rect(Math.Vec2(x, y), Math.Vec2(5.0), 1.5),
+                    Canvas.Fill.solid(Color.indigo_500())
+                )
+            } else if index % 3 == 1 {
+                painter.stroke(
+                    Canvas.Circle(Math.Vec2(x + 2.5, y + 2.5), 2.0),
+                    Canvas.Stroke(Color.cyan_400(), 1.0)
+                )
+            } else {
+                painter.stroke(
+                    Canvas.Line(Math.Vec2(x, y), Math.Vec2(x + 5.0, y + 5.0)),
+                    Canvas.Stroke(Color.amber_400(), 1.0)
+                )
+            }
+            index++
+        }
+    })
+    let geometry = drawing.vector_geometry()
+    elapsed.stop()
+
+    let analytic = 6_667
+    let retained_lines = 3_333
+    let expected_vertices = analytic * 6 + retained_lines * 30
+    let expected_gpu_bytes = expected_vertices * 36
+    assert(geometry.vertex_count() == expected_vertices)
+    print(
+        primitive_count(), " retained primitives: ",
+        geometry.vertex_count(), " vertices, ",
+        expected_gpu_bytes, " GPU bytes, ",
+        elapsed.get_elapsed_milliseconds(), " ms"
+    )
+}
