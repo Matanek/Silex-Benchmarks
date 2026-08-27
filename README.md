@@ -79,8 +79,8 @@ explicit justification.
 Optimizer and backend benchmarks remain under `Silex/Toolchain/Benchmarks/`.
 They are internal toolchain gates rather than public package campaigns.
 
-Benchmark corpora that intentionally inspect `package` details also remain
-with their owners. This includes the Box2D oracle, fine-grained solver profiles
-in `GFX.Physics`, and the worker-pool allocation guard in `STD`: they verify
-an implementation, while the scenarios in this repository cross a real package
-boundary.
+Performance artifacts that intentionally inspect `package` details also
+remain with their owners. This includes the Box2D oracle and fine-grained
+solver profiles in `GFX.Physics`, as well as the worker-pool regression test
+in `STD`: they verify an implementation, while the scenarios in this
+repository cross a real package boundary.
