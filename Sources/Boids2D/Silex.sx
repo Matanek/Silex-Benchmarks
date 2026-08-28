@@ -152,9 +152,9 @@ func boid_color(index:int) Color {
 
 func boid_drawing() Canvas {
     var shape = Canvas.Path()
-        ..move_to(Math.Vec2(15.0, 6.0))
-        ..line_to(Math.Vec2(0.0, 12.0))
-        ..line_to(Math.Vec2(0.0, 0.0))
+        ..move_to(Math.Vec2(8.0, 0.0))
+        ..line_to(Math.Vec2(-7.0, 6.0))
+        ..line_to(Math.Vec2(-7.0, -6.0))
         ..close()
     return Canvas()
         ..paint(func(painter:&Canvas.Painter) {
@@ -181,8 +181,7 @@ func create_flock(settings:@Settings, world:&Resources.World) {
             random_range(randomizer, -Constants.half_height, Constants.half_height)
         )
         let velocity = Math.Vec2(Math.cos(angle), Math.sin(angle)).multiply(speed)
-        var rendered = Components.Canvas(drawing, 15, 12)
-        rendered.pivot = Math.Vec2(7.0 / 15.0, 0.5)
+        var rendered = Components.Canvas(drawing)
         rendered.color = boid_color(index)
         rendered.layer = 1
         world.spawn(ECS.EntityRecipe()
