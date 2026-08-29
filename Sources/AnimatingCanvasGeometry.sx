@@ -1,0 +1,57 @@
+use GFX.Canvas
+use GFX.Color
+use STD.Math
+use STD.Time.Stopwatch
+
+func primitive_count() int { return 1_000 }
+func frame_count() int { return 240 }
+
+func paint_frame(drawing:&Canvas, phase:float) {
+    drawing.clear()
+    drawing.paint(func(painter:&Canvas.Painter) {
+        var index = 0
+        while index < primitive_count() {
+            let x = (index % 40) as float * 12.0 + phase
+            let y = (index / 40) as float * 12.0
+            if index % 3 == 0 {
+                painter.fill(
+                    Canvas.Circle(Math.Vec2(x, y), 4.0 + phase * 0.01),
+                    Canvas.Fill.solid(Color.cyan_400())
+                )
+            } else {
+                painter.stroke(
+                    Canvas.Line(
+                        Math.Vec2(x - 4.0 - phase, y),
+                        Math.Vec2(x + 4.0 + phase, y)
+                    ),
+                    Canvas.Stroke(Color.amber_400(), 3.0)
+                        ..cap = Canvas.StrokeCap.round
+                )
+            }
+            index++
+        }
+    })
+}
+
+test "update animated Canvas geometry in retained mesh storage" {
+    var drawing = Canvas()
+    paint_frame(drawing, 0.0)
+    var prepared = Canvas.Prepared()
+    drawing.prepare(prepared)
+    var observed_vertices = prepared.geometry().vertex_count()
+    var elapsed = Stopwatch()
+    elapsed.start()
+    var frame = 0
+    while frame < frame_count() {
+        paint_frame(drawing, (frame % 100) as float * 0.01)
+        drawing.prepare(prepared)
+        observed_vertices += prepared.geometry().vertex_count()
+        frame++
+    }
+    elapsed.stop()
+    assert(observed_vertices == primitive_count() * 6 * (frame_count() + 1))
+    print(
+        primitive_count(), " animated primitives x ", frame_count(), " frames: ",
+        elapsed.get_elapsed_milliseconds(), " ms"
+    )
+}

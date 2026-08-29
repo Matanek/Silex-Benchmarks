@@ -36,9 +36,7 @@ test "compile a dense retained drawing" {
     let geometry = drawing.vector_geometry()
     elapsed.stop()
 
-    let analytic = 6_667
-    let retained_lines = 3_333
-    let expected_vertices = analytic * 6 + retained_lines * 30
+    let expected_vertices = primitive_count() * 6
     let expected_gpu_bytes = expected_vertices * 36
     assert(geometry.vertex_count() == expected_vertices)
     print(

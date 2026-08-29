@@ -41,6 +41,7 @@ source root and declares every dependency required by the catalog.
 | `WorldRendering3D/` | measure an instanced 3D world across several GPU and presentation profiles |
 | `PhysicsWorldScale2D.sx` | measure sparse motion and body piles at several scales |
 | `RetainedCanvasGeometry.sx` | compile dense retained Canvas geometry |
+| `AnimatingCanvasGeometry.sx` | update animated circles and lines through reusable Canvas preparation |
 | `UpdatingTextLayers2D.sx` | update retained text layers |
 | `RetainedUIInteraction.sx` | measure UI layout, selection, snapshots, and rasterization |
 | `TerminalScreenRendering.sx` | measure full terminal-screen rendering and updates |
