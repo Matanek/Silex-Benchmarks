@@ -107,6 +107,9 @@ The benchmark-owned runner applies this protocol and produces a timestamped log:
 Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
-Future records should retain the raw sentinel lines and enough host, compiler,
-package, and dependency revisions to reproduce the configuration. Do not
-archive serial numbers, hardware UUIDs, usernames, or absolute home paths.
+Future records retain the raw sentinel lines and the commits of every
+user-linked repository in the resolved package closure. This includes
+transitive packages such as `GFX.Application` and manifest dependencies such
+as `GFX.Physics`, because either can change the produced executable without a
+direct import in `Silex.sx`. Do not archive serial numbers, hardware UUIDs,
+usernames, or absolute home paths.

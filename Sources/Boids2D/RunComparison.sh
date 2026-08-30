@@ -220,18 +220,28 @@ if [[ -d "${cpp_build_directory}/_deps/entt-src/.git" ]]; then
     entt_revision="$(git_commit "${cpp_build_directory}/_deps/entt-src")"
 fi
 
+resolved_packages="$("${silex_compiler}" packages resolve "${script_directory}/Silex.sx")" || \
+    fail "could not resolve the Silex witness package closure"
+resolved_package_names=()
+resolved_package_versions=()
+resolved_package_origins=()
+resolved_package_paths=()
+while read -r package_name package_version package_origin package_path; do
+    [[ -n "${package_name}" ]] || continue
+    resolved_package_names+=("${package_name}")
+    resolved_package_versions+=("${package_version}")
+    resolved_package_origins+=("${package_origin}")
+    resolved_package_paths+=("${package_path}")
+done <<< "${resolved_packages}"
+
 source_repositories_dirty=false
-for repository in \
-    "${package_directory}" \
-    "${workspace_directory}/Silex" \
-    "${workspace_directory}/Packages/GFX" \
-    "${workspace_directory}/Packages/GFX.Assets" \
-    "${workspace_directory}/Packages/GFX.Canvas" \
-    "${workspace_directory}/Packages/GFX.ECS" \
-    "${workspace_directory}/Packages/GFX.GPU" \
-    "${workspace_directory}/Packages/GFX.Rendering" \
-    "${workspace_directory}/Packages/GFX.Scene2D" \
-    "${workspace_directory}/Packages/STD"
+source_repositories=("${package_directory}" "${workspace_directory}/Silex")
+for package_index in "${!resolved_package_names[@]}"; do
+    if [[ "${resolved_package_origins[package_index]}" == user-link ]]; then
+        source_repositories+=("${resolved_package_paths[package_index]}")
+    fi
+done
+for repository in "${source_repositories[@]}"
 do
     if [[ "$(repository_is_dirty "${repository}")" == true ]]; then
         source_repositories_dirty=true
@@ -254,14 +264,18 @@ mkdir -p "$(dirname "${output_path}")"
     printf '# silex_version=%s\n' "$(sanitize_metadata "${silex_version}")"
     printf '# benchmarks_commit=%s\n' "$(git_commit "${package_directory}")"
     printf '# silex_toolchain_commit=%s\n' "$(git_commit "${workspace_directory}/Silex")"
-    printf '# gfx_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/GFX")"
-    printf '# gfx_assets_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/GFX.Assets")"
-    printf '# gfx_canvas_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/GFX.Canvas")"
-    printf '# gfx_ecs_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/GFX.ECS")"
-    printf '# gfx_gpu_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/GFX.GPU")"
-    printf '# gfx_rendering_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/GFX.Rendering")"
-    printf '# gfx_scene2d_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/GFX.Scene2D")"
-    printf '# std_commit=%s\n' "$(git_commit "${workspace_directory}/Packages/STD")"
+    for package_index in "${!resolved_package_names[@]}"; do
+        package_key="$(printf '%s' "${resolved_package_names[package_index]}" | \
+            tr '[:upper:].' '[:lower:]_')"
+        printf '# %s_version=%s\n' \
+            "${package_key}" "${resolved_package_versions[package_index]}"
+        printf '# %s_source=%s\n' \
+            "${package_key}" "${resolved_package_origins[package_index]}"
+        if [[ "${resolved_package_origins[package_index]}" == user-link ]]; then
+            printf '# %s_commit=%s\n' \
+                "${package_key}" "$(git_commit "${resolved_package_paths[package_index]}")"
+        fi
+    done
     printf '# cpp_compiler=%s\n' "$(sanitize_metadata "${cpp_compiler}")"
     printf '# cmake_version=%s\n' "${cmake_version}"
     printf '# sdl_version=%s\n' "${sdl_version}"

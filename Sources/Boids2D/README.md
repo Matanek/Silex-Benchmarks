@@ -85,6 +85,10 @@ direct order, validates their count and normalized display metadata, and writes
 a timestamped raw log under `Baselines/`. The final terminal table
 and log comments report the median, range, median absolute deviation (MAD), and
 relative difference from the architectural C++ witness.
+It also rejects clean-baseline status when any repository in the resolved
+Silex package closure is dirty and records every corresponding commit,
+including `GFX.Application` and `GFX.Physics` even though Boids does not import
+them directly.
 
 Run it from an external terminal with `--wait` when the Codex process or other
 workloads may affect the result. After the build finishes, close those workloads
