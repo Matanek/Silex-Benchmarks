@@ -23,6 +23,9 @@ class TextLayerBenchmark {
     var elapsed:float = 0.0
     var measuring:bool = false
     var clock:Clock
+    var update_cpu_ms:float = 0.0
+    var drawing_cpu_ms:float = 0.0
+    var replace_cpu_ms:float = 0.0
 }
 
 func text_drawing(changed:int) Canvas {
@@ -63,14 +66,25 @@ func create_text_layers(world:&ECS.World, benchmark:&TextLayerBenchmark) {
 }
 
 func update_text_layers(world:&ECS.World, benchmark:&TextLayerBenchmark) {
+    var update_clock = Clock()
+    update_clock.tick()
     if let entity = benchmark.entity {
         let changed = benchmark.updates % (Workload.columns * Workload.rows)
+        var phase_clock = Clock()
+        phase_clock.tick()
         var drawing = text_drawing(changed)
+        let drawing_ms = phase_clock.tick() * 1000.0
         world.update<Scene2D.Canvas>(entity, func(canvas:&Scene2D.Canvas) {
             canvas.replace(drawing)
         })
+        let replace_ms = phase_clock.tick() * 1000.0
+        if benchmark.measuring {
+            benchmark.drawing_cpu_ms += drawing_ms
+            benchmark.replace_cpu_ms += replace_ms
+        }
         benchmark.updates++
     }
+    if benchmark.measuring { benchmark.update_cpu_ms += update_clock.tick() * 1000.0 }
 }
 
 func measure_text_layers(
@@ -83,6 +97,9 @@ func measure_text_layers(
         benchmark.measuring = true
         benchmark.frames = 0
         benchmark.elapsed = 0.0
+        benchmark.update_cpu_ms = 0.0
+        benchmark.drawing_cpu_ms = 0.0
+        benchmark.replace_cpu_ms = 0.0
         return
     }
     benchmark.elapsed += delta
@@ -96,7 +113,13 @@ func measure_text_layers(
         " frames=",
         benchmark.frames,
         " ms_per_frame=",
-        benchmark.elapsed * 1000.0 / benchmark.frames as float
+        benchmark.elapsed * 1000.0 / benchmark.frames as float,
+        " update_cpu_ms_per_frame=",
+        benchmark.update_cpu_ms / benchmark.frames as float,
+        " drawing_cpu_ms_per_frame=",
+        benchmark.drawing_cpu_ms / benchmark.frames as float,
+        " replace_cpu_ms_per_frame=",
+        benchmark.replace_cpu_ms / benchmark.frames as float
     )
     controller.stop()
 }

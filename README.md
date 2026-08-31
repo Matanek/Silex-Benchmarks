@@ -45,6 +45,7 @@ source root and declares every dependency required by the catalog.
 | `UpdatingTextLayers2D.sx` | update retained text layers |
 | `RetainedUIInteraction.sx` | measure UI layout, selection, snapshots, and rasterization |
 | `TerminalScreenRendering.sx` | measure full terminal-screen rendering and updates |
+| `TerminalScaleRendering.sx` | measure Retina local edits and full-row scrolls at 80×24 and 200×60 |
 | `WebViewBridgeRoundTrips/` | exercise 1,000 round trips through a WebView |
 | `RegexStreamingSearch.sx` | stream-search through one million Unicode scalars |
 | `NetworkFreshnessTracking.sx` | measure network freshness comparisons and trackers |
@@ -58,6 +59,7 @@ From the workspace root:
 
 ```sh
 silex run Silex-Benchmarks/Sources/PhysicsWorldScale2D.sx --release
+silex run Silex-Benchmarks/Sources/TerminalScaleRendering.sx --release
 silex compile Silex-Benchmarks/Sources/FallingBodies2D/Main.sx --release -o /tmp/falling-bodies-2d
 /tmp/falling-bodies-2d --smoke --immediate --no-panel
 silex compile Silex-Benchmarks/Sources/WorldRendering3D/Main.sx --release -o /tmp/world-rendering-3d

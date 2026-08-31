@@ -48,13 +48,25 @@ func main() {
     var retained = full_drawing.snapshot(1024, 624)
     for layer in retained.text_layers() { let warm = layer.text_layer(2.0) }
     var full = Stopwatch()
+    var full_feed = Stopwatch()
+    var full_drawing_time = Stopwatch()
+    var full_snapshot = Stopwatch()
+    var full_raster = Stopwatch()
     full.start()
     var frame = 0
     while frame < 10 {
+        full_feed.start()
         full_screen.feed("x")
+        full_feed.stop()
+        full_drawing_time.start()
         full_drawing = Terminal.drawing(full_screen)
+        full_drawing_time.stop()
+        full_snapshot.start()
         var next = full_drawing.snapshot(1024, 624, reuse:retained)
+        full_snapshot.stop()
+        full_raster.start()
         for layer in next.text_layers() { let text = layer.text_layer(2.0) }
+        full_raster.stop()
         retained = next
         frame++
     }
@@ -72,15 +84,31 @@ func main() {
     for layer in retained_ui.text_layers() { let warm = layer.text_layer(2.0) }
 
     var composed = Stopwatch()
+    var ui_input = Stopwatch()
+    var ui_update = Stopwatch()
+    var ui_drawing = Stopwatch()
+    var ui_snapshot = Stopwatch()
+    var ui_raster = Stopwatch()
     composed.start()
     var invalidations = 0
     frame = 0
     while frame < 10 {
+        ui_input.start()
         runtime.insert_text("x")
-        if runtime.update(0.0) {
+        ui_input.stop()
+        ui_update.start()
+        let changed = runtime.update(0.0)
+        ui_update.stop()
+        if changed {
+            ui_drawing.start()
             var drawing = runtime.drawing(1024, 624)
+            ui_drawing.stop()
+            ui_snapshot.start()
             var snapshot = drawing.snapshot(1024, 624, reuse:retained_ui)
+            ui_snapshot.stop()
+            ui_raster.start()
             for layer in snapshot.text_layers() { let text = layer.text_layer(2.0) }
+            ui_raster.stop()
             retained_ui = snapshot
             invalidations++
         }
@@ -93,6 +121,15 @@ func main() {
         "full_10_keys_ms=", full.get_elapsed_milliseconds(),
         " ui_10_keys_ms=", composed.get_elapsed_milliseconds(),
         " invalidations=", invalidations,
-        " commands=", command_count
+        " commands=", command_count,
+        " full_feed_ms=", full_feed.get_elapsed_milliseconds(),
+        " full_drawing_ms=", full_drawing_time.get_elapsed_milliseconds(),
+        " full_snapshot_ms=", full_snapshot.get_elapsed_milliseconds(),
+        " full_raster_ms=", full_raster.get_elapsed_milliseconds(),
+        " ui_input_ms=", ui_input.get_elapsed_milliseconds(),
+        " ui_update_ms=", ui_update.get_elapsed_milliseconds(),
+        " ui_drawing_ms=", ui_drawing.get_elapsed_milliseconds(),
+        " ui_snapshot_ms=", ui_snapshot.get_elapsed_milliseconds(),
+        " ui_raster_ms=", ui_raster.get_elapsed_milliseconds()
     )
 }

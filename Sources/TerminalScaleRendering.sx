@@ -1,0 +1,105 @@
+use GFX.Canvas
+use GFX.UI.Terminal
+use STD.Text
+use STD.Time.Stopwatch
+
+func line_for(columns:int, row:int, frame:int) str {
+    let ascii = " INFO src/main.sx:42 let glyph = run.glyphs()[index] 0123456789 abcdef "
+    let unicode = " WARN café e\u{301} déjà-vu Ω Ж λ baseline marks ligature office "
+    var seed = ascii
+    if row % 5 == 0 { seed = unicode }
+    var line = "[$(frame):$(row)] "
+    while line.count() < columns { line = line + seed }
+    return Text.slice(line, 0, columns)
+}
+
+func populated_screen(columns:int, rows:int) Terminal.Screen {
+    var screen = Terminal.Screen(Terminal.Size(columns:columns, rows:rows))
+    var row = 0
+    while row < rows {
+        screen.feed(line_for(columns - 12, row, 0))
+        if row < rows - 1 { screen.feed("\n") }
+        row++
+    }
+    return screen
+}
+
+func raster_layers(snapshot:@Canvas.Snapshot) int {
+    var signature = 0
+    for layer in snapshot.text_layers() {
+        let text = layer.text_layer(2.0)
+        signature += text.image.width() + text.image.height()
+    }
+    return signature
+}
+
+func measure(columns:int, rows:int) {
+    let width = columns * 10 + 24
+    let height = rows * 20 + 24
+    var screen = populated_screen(columns, rows)
+    var drawing = Terminal.drawing(screen)
+    var retained = drawing.snapshot(width, height)
+    var signature = raster_layers(retained)
+
+    var edit_clock = Stopwatch()
+    var edit_drawing = Stopwatch()
+    var edit_snapshot = Stopwatch()
+    var edit_raster = Stopwatch()
+    edit_clock.start()
+    var index = 0
+    while index < 10 {
+        screen.feed("x")
+        edit_drawing.start()
+        drawing = Terminal.drawing(screen)
+        edit_drawing.stop()
+        edit_snapshot.start()
+        var next = drawing.snapshot(width, height, reuse:retained)
+        edit_snapshot.stop()
+        edit_raster.start()
+        signature += raster_layers(next)
+        edit_raster.stop()
+        retained = next
+        index++
+    }
+    edit_clock.stop()
+
+    var scroll = Stopwatch()
+    var scroll_drawing = Stopwatch()
+    var scroll_snapshot = Stopwatch()
+    var scroll_raster = Stopwatch()
+    scroll.start()
+    index = 0
+    while index < 10 {
+        screen.feed("\n" + line_for(columns - 12, rows + index, index + 1))
+        scroll_drawing.start()
+        drawing = Terminal.drawing(screen)
+        scroll_drawing.stop()
+        scroll_snapshot.start()
+        var next = drawing.snapshot(width, height, reuse:retained)
+        scroll_snapshot.stop()
+        scroll_raster.start()
+        signature += raster_layers(next)
+        scroll_raster.stop()
+        retained = next
+        index++
+    }
+    scroll.stop()
+
+    print(
+        "SILEX_TERMINAL_SCALE case=$(columns)x$(rows)",
+        " local_10_ms=", edit_clock.get_elapsed_milliseconds(),
+        " local_drawing_ms=", edit_drawing.get_elapsed_milliseconds(),
+        " local_snapshot_ms=", edit_snapshot.get_elapsed_milliseconds(),
+        " local_raster_ms=", edit_raster.get_elapsed_milliseconds(),
+        " scroll_10_ms=", scroll.get_elapsed_milliseconds(),
+        " scroll_drawing_ms=", scroll_drawing.get_elapsed_milliseconds(),
+        " scroll_snapshot_ms=", scroll_snapshot.get_elapsed_milliseconds(),
+        " scroll_raster_ms=", scroll_raster.get_elapsed_milliseconds(),
+        " signature=", signature
+    )
+}
+
+func main() {
+    measure(80, 24)
+    measure(200, 60)
+}
