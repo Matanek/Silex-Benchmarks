@@ -1,0 +1,5184 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "captured": "2026-09-02T00:22:14+0200",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "architecture": "arm64",
+    "processor": "arm",
+    "runs": 5,
+    "warmups": 1,
+    "workspace": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02",
+    "silex_binary": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+    "silex_version": "silex 0.43.0",
+    "silex_commit": "8465e082219862925d831c8aeb6205282217e746",
+    "benchmarks_commit": "31fe651d3990edd1235f70d1d0baf71c78d4528b",
+    "examples_commit": "3172344d43585b975b03b4baf691a2183243f5da",
+    "primary": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+    "warm_source": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/AnalogClock.sx",
+    "minimal": "generated func main() {}",
+    "non_gfx": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+    "packages": [
+      {
+        "name": "GFX",
+        "version": "0.39.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX",
+        "commit": "ddb5f09b615aeb36c75f9b2073dfefbacc77e6cd",
+        "dirty": "false"
+      },
+      {
+        "name": "STD",
+        "version": "0.21.0",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/STD",
+        "commit": "5a018305fb470dfe00e94466150b3c04f207e252",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Animation",
+        "version": "0.3.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Animation",
+        "commit": "205ef7146e6490c0eb60595d914bfd2cb5234f98",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Application",
+        "version": "0.1.0",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Application",
+        "commit": "62c55fc5b2b91f6825c681528a6a81aa7c310732",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Canvas",
+        "version": "0.3.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Canvas",
+        "commit": "8c5e3178c222c7bd087dc2d5766a79bb438335ed",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Assets",
+        "version": "0.2.2",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Assets",
+        "commit": "75170e3c260d7901537534afd55b6d9036e22280",
+        "dirty": "false"
+      },
+      {
+        "name": "JSON",
+        "version": "0.2.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/JSON",
+        "commit": "046f6411f8146eeae1c51dac5f590918997b8541",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Font",
+        "version": "0.1.0",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Font",
+        "commit": "a1207ecd14cadfae438b4b7c8a4644610a0b30b6",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.ECS",
+        "version": "0.2.2",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.ECS",
+        "commit": "0fb019cf2f5bf0fc56078ba0a01618fca868fd87",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Scene2D",
+        "version": "0.2.3",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Scene2D",
+        "commit": "3b5c1ece0e1e18a2da8f6223e6b6c50d77e66950",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.GPU",
+        "version": "0.2.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.GPU",
+        "commit": "82ff7bda26b914a46155d48f5c122adcc50f3138",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Rendering",
+        "version": "0.3.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Rendering",
+        "commit": "f77863b4a6135b0ef634d0a6d7a459fda3c0c342",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Scene3D",
+        "version": "0.2.2",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Scene3D",
+        "commit": "eb11063a3a4e13249c140c644150228923236df9",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Audio",
+        "version": "0.3.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Audio",
+        "commit": "8f0ef81c7dfbdafca6a033f80f35d9446b416dd1",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Physics",
+        "version": "0.5.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Physics",
+        "commit": "f05a703b3519a256b522b0a5e92eacd2931836c0",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Stats",
+        "version": "0.3.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Stats",
+        "commit": "2ce7377b97aa838301378c0f19c2628908927815",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.UI",
+        "version": "0.1.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.UI",
+        "commit": "6b990ac700840255afbbd38d7107054d9e9ee7b2",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.UI.Terminal",
+        "version": "0.1.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.UI.Terminal",
+        "commit": "14989cd9f316d86ae369b844376ca0508c368e98",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.Viewer",
+        "version": "0.3.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.Viewer",
+        "commit": "45af08d16b57d67bf53b9215a0bde8bb6e52791e",
+        "dirty": "false"
+      },
+      {
+        "name": "GFX.WebView",
+        "version": "0.4.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/GFX.WebView",
+        "commit": "d01862e239bba698cf2ba142a37d4466cd46730c",
+        "dirty": "false"
+      },
+      {
+        "name": "HTML",
+        "version": "0.4.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/HTML",
+        "commit": "7522333dd4300dc4e60cd41efa2d94a2a3fb6e27",
+        "dirty": "false"
+      },
+      {
+        "name": "Plot",
+        "version": "0.5.1",
+        "origin": "workspace-link",
+        "path": "/Users/nekmata/Projects/SilexProject/Packages/Plot",
+        "commit": "8a054f19354fdf670543757b9a2eceefd9ef52e7",
+        "dirty": "false"
+      }
+    ],
+    "comparison_key": {
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "architecture": "arm64",
+      "target": "macos-arm64",
+      "mode": "release",
+      "worker_count": 1,
+      "runs": 5,
+      "warmups": 1,
+      "primary_sha256": "312c1725bedde4fbf3def996923cfa3e11172fad5408ad38ac87b52eadb18ec0",
+      "warm_source_sha256": "7f649d0fb3d7ccdd63177fdf4e686cede7d12b12833469cbd778e795662f10d3",
+      "non_gfx_sha256": "3dffd881c9c9b6cbf30bc0eedbe1512fa060b2a0367a8d7fd6fadf777b9e0da1",
+      "minimal_sha256": "8b40983dc977111e79664a1c21c49a2b2fa1b3936a447a11d82d5df171bf574f",
+      "cache_protocol": "single-disposable-root-workspace-links-v1",
+      "packages": [
+        {
+          "name": "GFX",
+          "version": "0.39.1",
+          "commit": "ddb5f09b615aeb36c75f9b2073dfefbacc77e6cd",
+          "dirty": "false"
+        },
+        {
+          "name": "STD",
+          "version": "0.21.0",
+          "commit": "5a018305fb470dfe00e94466150b3c04f207e252",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Animation",
+          "version": "0.3.1",
+          "commit": "205ef7146e6490c0eb60595d914bfd2cb5234f98",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Application",
+          "version": "0.1.0",
+          "commit": "62c55fc5b2b91f6825c681528a6a81aa7c310732",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Canvas",
+          "version": "0.3.1",
+          "commit": "8c5e3178c222c7bd087dc2d5766a79bb438335ed",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Assets",
+          "version": "0.2.2",
+          "commit": "75170e3c260d7901537534afd55b6d9036e22280",
+          "dirty": "false"
+        },
+        {
+          "name": "JSON",
+          "version": "0.2.1",
+          "commit": "046f6411f8146eeae1c51dac5f590918997b8541",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Font",
+          "version": "0.1.0",
+          "commit": "a1207ecd14cadfae438b4b7c8a4644610a0b30b6",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.ECS",
+          "version": "0.2.2",
+          "commit": "0fb019cf2f5bf0fc56078ba0a01618fca868fd87",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Scene2D",
+          "version": "0.2.3",
+          "commit": "3b5c1ece0e1e18a2da8f6223e6b6c50d77e66950",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.GPU",
+          "version": "0.2.1",
+          "commit": "82ff7bda26b914a46155d48f5c122adcc50f3138",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Rendering",
+          "version": "0.3.1",
+          "commit": "f77863b4a6135b0ef634d0a6d7a459fda3c0c342",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Scene3D",
+          "version": "0.2.2",
+          "commit": "eb11063a3a4e13249c140c644150228923236df9",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Audio",
+          "version": "0.3.1",
+          "commit": "8f0ef81c7dfbdafca6a033f80f35d9446b416dd1",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Physics",
+          "version": "0.5.1",
+          "commit": "f05a703b3519a256b522b0a5e92eacd2931836c0",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Stats",
+          "version": "0.3.1",
+          "commit": "2ce7377b97aa838301378c0f19c2628908927815",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.UI",
+          "version": "0.1.1",
+          "commit": "6b990ac700840255afbbd38d7107054d9e9ee7b2",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.UI.Terminal",
+          "version": "0.1.1",
+          "commit": "14989cd9f316d86ae369b844376ca0508c368e98",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.Viewer",
+          "version": "0.3.1",
+          "commit": "45af08d16b57d67bf53b9215a0bde8bb6e52791e",
+          "dirty": "false"
+        },
+        {
+          "name": "GFX.WebView",
+          "version": "0.4.1",
+          "commit": "d01862e239bba698cf2ba142a37d4466cd46730c",
+          "dirty": "false"
+        },
+        {
+          "name": "HTML",
+          "version": "0.4.1",
+          "commit": "7522333dd4300dc4e60cd41efa2d94a2a3fb6e27",
+          "dirty": "false"
+        },
+        {
+          "name": "Plot",
+          "version": "0.5.1",
+          "commit": "8a054f19354fdf670543757b9a2eceefd9ef52e7",
+          "dirty": "false"
+        }
+      ]
+    }
+  },
+  "profiles": {
+    "cold_no_trace": [
+      {
+        "repetition": 1,
+        "wall_seconds": 2.69,
+        "user_cpu_seconds": 2.39,
+        "system_cpu_seconds": 0.37,
+        "total_cpu_seconds": 2.7600000000000002,
+        "peak_rss_bytes": 1792622592,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": null,
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-trace-1",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 2,
+        "wall_seconds": 2.8,
+        "user_cpu_seconds": 2.44,
+        "system_cpu_seconds": 0.37,
+        "total_cpu_seconds": 2.81,
+        "peak_rss_bytes": 1792622592,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": null,
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-trace-2",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 3,
+        "wall_seconds": 2.78,
+        "user_cpu_seconds": 2.45,
+        "system_cpu_seconds": 0.38,
+        "total_cpu_seconds": 2.83,
+        "peak_rss_bytes": 1792622592,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": null,
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-trace-3",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 4,
+        "wall_seconds": 2.84,
+        "user_cpu_seconds": 2.5,
+        "system_cpu_seconds": 0.38,
+        "total_cpu_seconds": 2.88,
+        "peak_rss_bytes": 1792622592,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": null,
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-trace-4",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 5,
+        "wall_seconds": 2.85,
+        "user_cpu_seconds": 2.5,
+        "system_cpu_seconds": 0.4,
+        "total_cpu_seconds": 2.9,
+        "peak_rss_bytes": 1792622592,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": null,
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-trace-5",
+          "--nocache"
+        ]
+      }
+    ],
+    "cold_no_cache": [
+      {
+        "repetition": 1,
+        "wall_seconds": 2.68,
+        "user_cpu_seconds": 2.39,
+        "system_cpu_seconds": 0.37,
+        "total_cpu_seconds": 2.7600000000000002,
+        "peak_rss_bytes": 1792638976,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 2669842917,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 42,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1741182250,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1958875,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5104875,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76510000,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 166303333,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 161603708,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 665292,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1329016417,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 42,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4569334,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 96006208,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 400645458,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44163792,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 378864458,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 4077875,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 374,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268339,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-cache-1",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 2,
+        "wall_seconds": 2.78,
+        "user_cpu_seconds": 2.48,
+        "system_cpu_seconds": 0.36,
+        "total_cpu_seconds": 2.84,
+        "peak_rss_bytes": 1792638976,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 2768016375,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 84,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1744037250,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1544333,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 4696041,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 74970458,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 165544834,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 161061958,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 684375,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1335512625,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 5338500,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 98047583,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 490190667,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44529542,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 383828042,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 1749792,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 374,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268339,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-cache-2",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 3,
+        "wall_seconds": 2.87,
+        "user_cpu_seconds": 2.54,
+        "system_cpu_seconds": 0.39,
+        "total_cpu_seconds": 2.93,
+        "peak_rss_bytes": 1792638976,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 2856382208,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 84,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1785367750,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1589625,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 4697041,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76028292,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 167529000,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 165102375,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 664708,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1369731875,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 208,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4430083,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 102498375,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 487137833,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 46297875,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 424908166,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 5271125,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 374,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268339,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-cache-3",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 4,
+        "wall_seconds": 2.91,
+        "user_cpu_seconds": 2.55,
+        "system_cpu_seconds": 0.41,
+        "total_cpu_seconds": 2.96,
+        "peak_rss_bytes": 1792638976,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 2897446417,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 42,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1860842375,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 2097750,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5324708,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 84367458,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 193650875,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 172503417,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 682458,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1402194083,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 83,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 5431125,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 111038208,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 459295791,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44898375,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 410721250,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 4815375,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 374,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268339,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-cache-4",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 5,
+        "wall_seconds": 2.75,
+        "user_cpu_seconds": 2.43,
+        "system_cpu_seconds": 0.38,
+        "total_cpu_seconds": 2.81,
+        "peak_rss_bytes": 1792638976,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 2737374000,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 125,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1782952750,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1590625,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 4930375,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 78222334,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 169933458,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 162435084,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 653416,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1365166708,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4477500,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 98084875,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 415277459,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44268625,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 389939625,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 2048917,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 374,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268339,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/cold-no-cache-5",
+          "--nocache"
+        ]
+      }
+    ],
+    "shared_packages": [
+      {
+        "repetition": 1,
+        "wall_seconds": 2.78,
+        "user_cpu_seconds": 2.45,
+        "system_cpu_seconds": 0.41,
+        "total_cpu_seconds": 2.8600000000000003,
+        "peak_rss_bytes": 1801994240,
+        "cache_bytes_before": 39618451,
+        "cache_bytes_after": 77879788,
+        "cache_classes_before": {
+          "artifacts": 39305008,
+          "cache": 311899,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 77542480,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2770237875,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 13143500,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1797256625,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1973833,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5104375,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 77517958,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 170424666,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 149403500,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 695125,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1392115500,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 434625,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4489583,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 98040833,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 421034416,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44403333,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 388407000,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 1844917,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 286542,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268360,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/shared-packages-1"
+        ]
+      },
+      {
+        "repetition": 2,
+        "wall_seconds": 2.86,
+        "user_cpu_seconds": 2.5,
+        "system_cpu_seconds": 0.42,
+        "total_cpu_seconds": 2.92,
+        "peak_rss_bytes": 1808482304,
+        "cache_bytes_before": 77879788,
+        "cache_bytes_after": 116117260,
+        "cache_classes_before": {
+          "artifacts": 77542480,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 115779952,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2850908833,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 28168000,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1827856917,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1827542,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5307209,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 78224334,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 170368250,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 156272875,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 679875,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1415153916,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 510000,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 5145792,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 100280416,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 453696834,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44799125,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 387196041,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 2012500,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 275875,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268360,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/shared-packages-2"
+        ]
+      },
+      {
+        "repetition": 3,
+        "wall_seconds": 2.74,
+        "user_cpu_seconds": 2.42,
+        "system_cpu_seconds": 0.39,
+        "total_cpu_seconds": 2.81,
+        "peak_rss_bytes": 1808449536,
+        "cache_bytes_before": 116117260,
+        "cache_bytes_after": 154354732,
+        "cache_classes_before": {
+          "artifacts": 115779952,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 154017424,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2730354084,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27119125,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1747704083,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1738958,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5053625,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76371625,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 168779708,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 156100917,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 638084,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1338999125,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 481500,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4560875,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 97298334,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 417430958,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 45423750,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 385211125,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 3909042,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 289833,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268360,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/shared-packages-3"
+        ]
+      },
+      {
+        "repetition": 4,
+        "wall_seconds": 2.75,
+        "user_cpu_seconds": 2.42,
+        "system_cpu_seconds": 0.4,
+        "total_cpu_seconds": 2.82,
+        "peak_rss_bytes": 1808498688,
+        "cache_bytes_before": 154354732,
+        "cache_bytes_after": 192592204,
+        "cache_classes_before": {
+          "artifacts": 154017424,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 192254896,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2736686500,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27710333,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1755710042,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1733791,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 4959417,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76247666,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 167609334,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 155715959,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 765041,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1348649833,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 536083,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4590834,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 97089167,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 409742250,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44297833,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 394275417,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 1552458,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 274458,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268360,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/shared-packages-4"
+        ]
+      },
+      {
+        "repetition": 5,
+        "wall_seconds": 2.75,
+        "user_cpu_seconds": 2.42,
+        "system_cpu_seconds": 0.39,
+        "total_cpu_seconds": 2.81,
+        "peak_rss_bytes": 1808465920,
+        "cache_bytes_before": 192592204,
+        "cache_bytes_after": 230829676,
+        "cache_classes_before": {
+          "artifacts": 192254896,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 230492368,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2736428584,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27943167,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1741502541,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1951666,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5023959,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 75672167,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 166528791,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 154873000,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 669417,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1336760375,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 476833,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4249666,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 98293750,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 420695792,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 43937125,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 395613333,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 2472333,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 285833,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268360,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/shared-packages-5"
+        ]
+      }
+    ],
+    "entry_modified": [
+      {
+        "repetition": 1,
+        "wall_seconds": 2.76,
+        "user_cpu_seconds": 2.43,
+        "system_cpu_seconds": 0.4,
+        "total_cpu_seconds": 2.83,
+        "peak_rss_bytes": 1808465920,
+        "cache_bytes_before": 230829676,
+        "cache_bytes_after": 269067148,
+        "cache_classes_before": {
+          "artifacts": 230492368,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 268729840,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2744882750,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27418541,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1747678042,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1799875,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 4968125,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76382917,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 166968000,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 154864209,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 798459,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1341873292,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 556209,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4667708,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 97526209,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 423169250,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44761834,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 396266584,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 1606584,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 287708,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268364,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/entry-modified"
+        ]
+      },
+      {
+        "repetition": 2,
+        "wall_seconds": 2.77,
+        "user_cpu_seconds": 2.42,
+        "system_cpu_seconds": 0.39,
+        "total_cpu_seconds": 2.81,
+        "peak_rss_bytes": 1808465920,
+        "cache_bytes_before": 269067148,
+        "cache_bytes_after": 267999612,
+        "cache_classes_before": {
+          "artifacts": 268729840,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 267662304,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2754355958,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27656584,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1750093667,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1805292,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5069750,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76544500,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 168459875,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 153642125,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 664542,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1343884291,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 508208,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4548166,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 97839792,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 413852125,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44161375,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 410298125,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 4135000,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 279542,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268364,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/entry-modified"
+        ]
+      },
+      {
+        "repetition": 3,
+        "wall_seconds": 2.75,
+        "user_cpu_seconds": 2.41,
+        "system_cpu_seconds": 0.4,
+        "total_cpu_seconds": 2.81,
+        "peak_rss_bytes": 1808465920,
+        "cache_bytes_before": 267999612,
+        "cache_bytes_after": 306237084,
+        "cache_classes_before": {
+          "artifacts": 267662304,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899776,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2733623500,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27320750,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1745461000,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1745542,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 4931458,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76000458,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 168208459,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 155302083,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 654125,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1338596417,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 501333,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4542833,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 98815209,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 412147833,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44307833,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 395371458,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 3822750,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 266250,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268364,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/entry-modified"
+        ]
+      },
+      {
+        "repetition": 4,
+        "wall_seconds": 2.75,
+        "user_cpu_seconds": 2.42,
+        "system_cpu_seconds": 0.4,
+        "total_cpu_seconds": 2.82,
+        "peak_rss_bytes": 1808465920,
+        "cache_bytes_before": 306237084,
+        "cache_bytes_after": 306237084,
+        "cache_classes_before": {
+          "artifacts": 305899776,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899776,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2740513167,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27321542,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1750263834,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1730125,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 4984000,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76137750,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 168156250,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 154312167,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 677166,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1344243333,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 478958,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4193583,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 97739041,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 414241250,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44702291,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 394880334,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 4278208,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 1232292,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268364,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/entry-modified"
+        ]
+      },
+      {
+        "repetition": 5,
+        "wall_seconds": 2.74,
+        "user_cpu_seconds": 2.42,
+        "system_cpu_seconds": 0.4,
+        "total_cpu_seconds": 2.82,
+        "peak_rss_bytes": 1808465920,
+        "cache_bytes_before": 306237084,
+        "cache_bytes_after": 306237084,
+        "cache_classes_before": {
+          "artifacts": 305899776,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899776,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "miss",
+          "success": true,
+          "total_nanoseconds": 2730564583,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 27246167,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 1745397667,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 1746041,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 5062209,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 76651417,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 167417875,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 154978625,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 680333,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 1338833417,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 571667,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 4670625,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 98385917,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 415389000,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 45492625,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 390237833,
+              "invocations": 1
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 1871333,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 303375,
+              "invocations": 1
+            }
+          ],
+          "metrics": {
+            "packages": 23,
+            "discovered_modules": 375,
+            "loaded_modules": 183,
+            "parsed_modules": 188,
+            "source_bytes_read": 2268364,
+            "ast_functions": 1438,
+            "portable_functions": 5230,
+            "reachable_portable_functions": 2436,
+            "boundaries": 457,
+            "boundary_providers": 9,
+            "dependency_files": 205,
+            "machine_functions": 2436,
+            "output_bytes": 38237472
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/entry-modified"
+        ]
+      }
+    ],
+    "exact_hit": [
+      {
+        "repetition": 1,
+        "wall_seconds": 0.02,
+        "user_cpu_seconds": 0.01,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.01,
+        "peak_rss_bytes": 12288000,
+        "cache_bytes_before": 306237076,
+        "cache_bytes_after": 306237076,
+        "cache_classes_before": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "link": 0,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "hit_before_frontend",
+          "success": true,
+          "total_nanoseconds": 14765375,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 14762208,
+              "invocations": 1
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 286792,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 0,
+            "discovered_modules": 0,
+            "loaded_modules": 0,
+            "parsed_modules": 0,
+            "source_bytes_read": 0,
+            "ast_functions": 0,
+            "portable_functions": 0,
+            "reachable_portable_functions": 0,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 0,
+            "machine_functions": 0,
+            "output_bytes": 38237464
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/exact-hit"
+        ]
+      },
+      {
+        "repetition": 2,
+        "wall_seconds": 0.01,
+        "user_cpu_seconds": 0.01,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.01,
+        "peak_rss_bytes": 12288000,
+        "cache_bytes_before": 306237076,
+        "cache_bytes_after": 306237076,
+        "cache_classes_before": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "hit_before_frontend",
+          "success": true,
+          "total_nanoseconds": 13380458,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 13376958,
+              "invocations": 1
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 289417,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 0,
+            "discovered_modules": 0,
+            "loaded_modules": 0,
+            "parsed_modules": 0,
+            "source_bytes_read": 0,
+            "ast_functions": 0,
+            "portable_functions": 0,
+            "reachable_portable_functions": 0,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 0,
+            "machine_functions": 0,
+            "output_bytes": 38237464
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/exact-hit"
+        ]
+      },
+      {
+        "repetition": 3,
+        "wall_seconds": 0.02,
+        "user_cpu_seconds": 0.01,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.01,
+        "peak_rss_bytes": 12288000,
+        "cache_bytes_before": 306237076,
+        "cache_bytes_after": 306237076,
+        "cache_classes_before": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "hit_before_frontend",
+          "success": true,
+          "total_nanoseconds": 13762334,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 13758708,
+              "invocations": 1
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 297792,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 0,
+            "discovered_modules": 0,
+            "loaded_modules": 0,
+            "parsed_modules": 0,
+            "source_bytes_read": 0,
+            "ast_functions": 0,
+            "portable_functions": 0,
+            "reachable_portable_functions": 0,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 0,
+            "machine_functions": 0,
+            "output_bytes": 38237464
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/exact-hit"
+        ]
+      },
+      {
+        "repetition": 4,
+        "wall_seconds": 0.02,
+        "user_cpu_seconds": 0.01,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.01,
+        "peak_rss_bytes": 12288000,
+        "cache_bytes_before": 306237076,
+        "cache_bytes_after": 306237076,
+        "cache_classes_before": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "hit_before_frontend",
+          "success": true,
+          "total_nanoseconds": 14291917,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 14289000,
+              "invocations": 1
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 280333,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 0,
+            "discovered_modules": 0,
+            "loaded_modules": 0,
+            "parsed_modules": 0,
+            "source_bytes_read": 0,
+            "ast_functions": 0,
+            "portable_functions": 0,
+            "reachable_portable_functions": 0,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 0,
+            "machine_functions": 0,
+            "output_bytes": 38237464
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/exact-hit"
+        ]
+      },
+      {
+        "repetition": 5,
+        "wall_seconds": 0.02,
+        "user_cpu_seconds": 0.01,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.01,
+        "peak_rss_bytes": 12288000,
+        "cache_bytes_before": 306237076,
+        "cache_bytes_after": 306237076,
+        "cache_classes_before": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "cache_classes_after": {
+          "artifacts": 305899768,
+          "cache": 335764,
+          "compilation-performance-owner": 32,
+          "compiler-identity-v1": 64,
+          "links": 1448,
+          "maintenance-v5": 0
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": true,
+          "cache_result": "hit_before_frontend",
+          "success": true,
+          "total_nanoseconds": 13908791,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 13905667,
+              "invocations": 1
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 288458,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 0,
+            "discovered_modules": 0,
+            "loaded_modules": 0,
+            "parsed_modules": 0,
+            "source_bytes_read": 0,
+            "ast_functions": 0,
+            "portable_functions": 0,
+            "reachable_portable_functions": 0,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 0,
+            "machine_functions": 0,
+            "output_bytes": 38237464
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/exact-hit"
+        ]
+      }
+    ],
+    "minimal_no_cache": [
+      {
+        "repetition": 1,
+        "wall_seconds": 0.01,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 6438912,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 9522583,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 83,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 9295416,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 2465625,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 6760625,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 28916,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 15750,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 4292,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 1541,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 14709,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 42,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1708,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 8666,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 11791,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 42000,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 142042,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 28,
+            "discovered_modules": 355,
+            "loaded_modules": 1,
+            "parsed_modules": 13,
+            "source_bytes_read": 389254,
+            "ast_functions": 1,
+            "portable_functions": 1,
+            "reachable_portable_functions": 1,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 13,
+            "machine_functions": 1,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/minimal-no-cache-1",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 2,
+        "wall_seconds": 0.01,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 6438912,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 8467125,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 42,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 8262584,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 2021541,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 6181417,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 21459,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 14958,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 4041,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 1417,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 13500,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 42,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1750,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 8083,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 11292,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 32375,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 134292,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 28,
+            "discovered_modules": 355,
+            "loaded_modules": 1,
+            "parsed_modules": 13,
+            "source_bytes_read": 389254,
+            "ast_functions": 1,
+            "portable_functions": 1,
+            "reachable_portable_functions": 1,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 13,
+            "machine_functions": 1,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/minimal-no-cache-2",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 3,
+        "wall_seconds": 0.01,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 6438912,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 8430416,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 83,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 8219500,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 2006584,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 6151125,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 21250,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 15709,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 4875,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 1375,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 14666,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 41,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1583,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 8000,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 12625,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 32500,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 138458,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 28,
+            "discovered_modules": 355,
+            "loaded_modules": 1,
+            "parsed_modules": 13,
+            "source_bytes_read": 389254,
+            "ast_functions": 1,
+            "portable_functions": 1,
+            "reachable_portable_functions": 1,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 13,
+            "machine_functions": 1,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/minimal-no-cache-3",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 4,
+        "wall_seconds": 0.01,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 6438912,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 9537541,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 126,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 8830542,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 2355792,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 6414208,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 21250,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 15250,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 4375,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 1417,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 14250,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1584,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 9209,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 11916,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 32750,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 632250,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 28,
+            "discovered_modules": 355,
+            "loaded_modules": 1,
+            "parsed_modules": 13,
+            "source_bytes_read": 389254,
+            "ast_functions": 1,
+            "portable_functions": 1,
+            "reachable_portable_functions": 1,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 13,
+            "machine_functions": 1,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/minimal-no-cache-4",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 5,
+        "wall_seconds": 0.01,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 6438912,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 8445000,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 42,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 8246292,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 2066500,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 6119542,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 21083,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 14958,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 4291,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 1708,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 14208,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 42,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1625,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 8083,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 11167,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 32625,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 128834,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 28,
+            "discovered_modules": 355,
+            "loaded_modules": 1,
+            "parsed_modules": 13,
+            "source_bytes_read": 389254,
+            "ast_functions": 1,
+            "portable_functions": 1,
+            "reachable_portable_functions": 1,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 13,
+            "machine_functions": 1,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/Minimal.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/minimal-no-cache-5",
+          "--nocache"
+        ]
+      }
+    ],
+    "non_gfx_no_cache": [
+      {
+        "repetition": 1,
+        "wall_seconds": 0.01,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 4915200,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 10867875,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 125,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 10616625,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 4291000,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 381666,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 5825334,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 27250,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 19625,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 4000,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 64708,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 0,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1750,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 20708,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 36833,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 44334,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 127791,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 2,
+            "discovered_modules": 95,
+            "loaded_modules": 2,
+            "parsed_modules": 2,
+            "source_bytes_read": 2264,
+            "ast_functions": 19,
+            "portable_functions": 19,
+            "reachable_portable_functions": 2,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 2,
+            "machine_functions": 2,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/non-gfx-no-cache-1",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 2,
+        "wall_seconds": 0.0,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 4898816,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 1214833,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 166,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 946708,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 346917,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 329625,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 145208,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 28291,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 20292,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 3375,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 69958,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 41,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1708,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 25500,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 38375,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 50167,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 135208,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 2,
+            "discovered_modules": 95,
+            "loaded_modules": 2,
+            "parsed_modules": 2,
+            "source_bytes_read": 2264,
+            "ast_functions": 19,
+            "portable_functions": 19,
+            "reachable_portable_functions": 2,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 2,
+            "machine_functions": 2,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/non-gfx-no-cache-2",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 3,
+        "wall_seconds": 0.0,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 4898816,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 1166458,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 125,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 924708,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 349750,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 322125,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 129333,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 28125,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 20708,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 3417,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 68125,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 125,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1833,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 20750,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 38042,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 47709,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 116250,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 2,
+            "discovered_modules": 95,
+            "loaded_modules": 2,
+            "parsed_modules": 2,
+            "source_bytes_read": 2264,
+            "ast_functions": 19,
+            "portable_functions": 19,
+            "reachable_portable_functions": 2,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 2,
+            "machine_functions": 2,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/non-gfx-no-cache-3",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 4,
+        "wall_seconds": 0.0,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 4898816,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 1206416,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 84,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 952875,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 360416,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 336875,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 129000,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 28917,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 21041,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 3959,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 69625,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 166,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1834,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 22291,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 38958,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 53166,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 118750,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 2,
+            "discovered_modules": 95,
+            "loaded_modules": 2,
+            "parsed_modules": 2,
+            "source_bytes_read": 2264,
+            "ast_functions": 19,
+            "portable_functions": 19,
+            "reachable_portable_functions": 2,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 2,
+            "machine_functions": 2,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/non-gfx-no-cache-4",
+          "--nocache"
+        ]
+      },
+      {
+        "repetition": 5,
+        "wall_seconds": 0.0,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.0,
+        "total_cpu_seconds": 0.0,
+        "peak_rss_bytes": 4898816,
+        "cache_bytes_before": 178747,
+        "cache_bytes_after": 178747,
+        "cache_classes_before": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "cache_classes_after": {
+          "cache": 177267,
+          "compilation-performance-owner": 32,
+          "link": 0,
+          "links": 1448
+        },
+        "trace": {
+          "schema_version": 1,
+          "command": "compile",
+          "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "target": "macos-arm64",
+          "mode": "release",
+          "compiler_version": "0.43.0",
+          "worker_count": 1,
+          "cache_enabled": false,
+          "cache_result": "disabled",
+          "success": true,
+          "total_nanoseconds": 1220458,
+          "phases": [
+            {
+              "name": "cache_validation",
+              "nanoseconds": 42,
+              "invocations": 2
+            },
+            {
+              "name": "frontend_total",
+              "nanoseconds": 953625,
+              "invocations": 1
+            },
+            {
+              "name": "package_resolution",
+              "nanoseconds": 349958,
+              "invocations": 1
+            },
+            {
+              "name": "module_discovery",
+              "nanoseconds": 346833,
+              "invocations": 1
+            },
+            {
+              "name": "module_loading",
+              "nanoseconds": 130083,
+              "invocations": 1
+            },
+            {
+              "name": "composition",
+              "nanoseconds": 29542,
+              "invocations": 1
+            },
+            {
+              "name": "specialization",
+              "nanoseconds": 21959,
+              "invocations": 1
+            },
+            {
+              "name": "interface_building",
+              "nanoseconds": 4125,
+              "invocations": 1
+            },
+            {
+              "name": "semantic_analysis",
+              "nanoseconds": 67792,
+              "invocations": 1
+            },
+            {
+              "name": "cache_update",
+              "nanoseconds": 42,
+              "invocations": 1
+            },
+            {
+              "name": "program_closure",
+              "nanoseconds": 1750,
+              "invocations": 1
+            },
+            {
+              "name": "optimization",
+              "nanoseconds": 24791,
+              "invocations": 1
+            },
+            {
+              "name": "lowering",
+              "nanoseconds": 38667,
+              "invocations": 1
+            },
+            {
+              "name": "register_allocation",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "emission",
+              "nanoseconds": 48042,
+              "invocations": 1
+            },
+            {
+              "name": "linking",
+              "nanoseconds": 0,
+              "invocations": 0
+            },
+            {
+              "name": "output_write",
+              "nanoseconds": 132292,
+              "invocations": 1
+            },
+            {
+              "name": "cache_publication",
+              "nanoseconds": 0,
+              "invocations": 0
+            }
+          ],
+          "metrics": {
+            "packages": 2,
+            "discovered_modules": 95,
+            "loaded_modules": 2,
+            "parsed_modules": 2,
+            "source_bytes_read": 2264,
+            "ast_functions": 19,
+            "portable_functions": 19,
+            "reachable_portable_functions": 2,
+            "boundaries": 0,
+            "boundary_providers": 0,
+            "dependency_files": 2,
+            "machine_functions": 2,
+            "output_bytes": 49368
+          }
+        },
+        "command": [
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Toolchain/zig-out/bin/silex",
+          "compile",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex/Examples/Distribution/Hello.sx",
+          "--release",
+          "--output",
+          "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/.compilation-performance/non-gfx-no-cache-5",
+          "--nocache"
+        ]
+      }
+    ]
+  },
+  "summaries": {
+    "cold_no_trace": {
+      "runs": 5,
+      "median_wall_seconds": 2.8,
+      "min_wall_seconds": 2.69,
+      "max_wall_seconds": 2.85,
+      "median_cpu_seconds": 2.83,
+      "median_peak_rss_bytes": 1792622592,
+      "maximum_cache_bytes": 178747
+    },
+    "cold_no_cache": {
+      "runs": 5,
+      "median_wall_seconds": 2.78,
+      "min_wall_seconds": 2.68,
+      "max_wall_seconds": 2.91,
+      "median_cpu_seconds": 2.84,
+      "median_peak_rss_bytes": 1792638976,
+      "maximum_cache_bytes": 178747
+    },
+    "shared_packages": {
+      "runs": 5,
+      "median_wall_seconds": 2.75,
+      "min_wall_seconds": 2.74,
+      "max_wall_seconds": 2.86,
+      "median_cpu_seconds": 2.82,
+      "median_peak_rss_bytes": 1808465920,
+      "maximum_cache_bytes": 230829676
+    },
+    "entry_modified": {
+      "runs": 5,
+      "median_wall_seconds": 2.75,
+      "min_wall_seconds": 2.74,
+      "max_wall_seconds": 2.77,
+      "median_cpu_seconds": 2.82,
+      "median_peak_rss_bytes": 1808465920,
+      "maximum_cache_bytes": 306237084
+    },
+    "exact_hit": {
+      "runs": 5,
+      "median_wall_seconds": 0.02,
+      "min_wall_seconds": 0.01,
+      "max_wall_seconds": 0.02,
+      "median_cpu_seconds": 0.01,
+      "median_peak_rss_bytes": 12288000,
+      "maximum_cache_bytes": 306237076
+    },
+    "minimal_no_cache": {
+      "runs": 5,
+      "median_wall_seconds": 0.01,
+      "min_wall_seconds": 0.01,
+      "max_wall_seconds": 0.01,
+      "median_cpu_seconds": 0.0,
+      "median_peak_rss_bytes": 6438912,
+      "maximum_cache_bytes": 178747
+    },
+    "non_gfx_no_cache": {
+      "runs": 5,
+      "median_wall_seconds": 0.0,
+      "min_wall_seconds": 0.0,
+      "max_wall_seconds": 0.01,
+      "median_cpu_seconds": 0.0,
+      "median_peak_rss_bytes": 4898816,
+      "maximum_cache_bytes": 178747
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "command": "compile",
+  "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/CompilationPerformanceEntry.sx",
+  "target": "macos-arm64",
+  "mode": "release",
+  "compiler_version": "0.43.0",
+  "worker_count": 1,
+  "cache_enabled": true,
+  "cache_result": "hit_before_frontend",
+  "success": true,
+  "total_nanoseconds": 14765375,
+  "phases": [
+    {
+      "name": "cache_validation",
+      "nanoseconds": 14762208,
+      "invocations": 1
+    },
+    {
+      "name": "frontend_total",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "package_resolution",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "module_discovery",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "module_loading",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "composition",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "specialization",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "interface_building",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "semantic_analysis",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "cache_update",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "program_closure",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "optimization",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "lowering",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "register_allocation",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "emission",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "linking",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "output_write",
+      "nanoseconds": 286792,
+      "invocations": 1
+    },
+    {
+      "name": "cache_publication",
+      "nanoseconds": 0,
+      "invocations": 0
+    }
+  ],
+  "metrics": {
+    "packages": 0,
+    "discovered_modules": 0,
+    "loaded_modules": 0,
+    "parsed_modules": 0,
+    "source_bytes_read": 0,
+    "ast_functions": 0,
+    "portable_functions": 0,
+    "reachable_portable_functions": 0,
+    "boundaries": 0,
+    "boundary_providers": 0,
+    "dependency_files": 0,
+    "machine_functions": 0,
+    "output_bytes": 38237464
+  }
+}

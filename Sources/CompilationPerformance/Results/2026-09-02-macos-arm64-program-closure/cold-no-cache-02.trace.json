@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "command": "compile",
+  "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-02/Silex-Examples/Sources/ShapeGallery2D/Main.sx",
+  "target": "macos-arm64",
+  "mode": "release",
+  "compiler_version": "0.43.0",
+  "worker_count": 1,
+  "cache_enabled": false,
+  "cache_result": "disabled",
+  "success": true,
+  "total_nanoseconds": 2768016375,
+  "phases": [
+    {
+      "name": "cache_validation",
+      "nanoseconds": 84,
+      "invocations": 2
+    },
+    {
+      "name": "frontend_total",
+      "nanoseconds": 1744037250,
+      "invocations": 1
+    },
+    {
+      "name": "package_resolution",
+      "nanoseconds": 1544333,
+      "invocations": 1
+    },
+    {
+      "name": "module_discovery",
+      "nanoseconds": 4696041,
+      "invocations": 1
+    },
+    {
+      "name": "module_loading",
+      "nanoseconds": 74970458,
+      "invocations": 1
+    },
+    {
+      "name": "composition",
+      "nanoseconds": 165544834,
+      "invocations": 1
+    },
+    {
+      "name": "specialization",
+      "nanoseconds": 161061958,
+      "invocations": 1
+    },
+    {
+      "name": "interface_building",
+      "nanoseconds": 684375,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_analysis",
+      "nanoseconds": 1335512625,
+      "invocations": 1
+    },
+    {
+      "name": "cache_update",
+      "nanoseconds": 0,
+      "invocations": 1
+    },
+    {
+      "name": "program_closure",
+      "nanoseconds": 5338500,
+      "invocations": 1
+    },
+    {
+      "name": "optimization",
+      "nanoseconds": 98047583,
+      "invocations": 1
+    },
+    {
+      "name": "lowering",
+      "nanoseconds": 490190667,
+      "invocations": 1
+    },
+    {
+      "name": "register_allocation",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "emission",
+      "nanoseconds": 44529542,
+      "invocations": 1
+    },
+    {
+      "name": "linking",
+      "nanoseconds": 383828042,
+      "invocations": 1
+    },
+    {
+      "name": "output_write",
+      "nanoseconds": 1749792,
+      "invocations": 1
+    },
+    {
+      "name": "cache_publication",
+      "nanoseconds": 0,
+      "invocations": 0
+    }
+  ],
+  "metrics": {
+    "packages": 23,
+    "discovered_modules": 374,
+    "loaded_modules": 183,
+    "parsed_modules": 188,
+    "source_bytes_read": 2268339,
+    "ast_functions": 1438,
+    "portable_functions": 5230,
+    "reachable_portable_functions": 2436,
+    "boundaries": 457,
+    "boundary_providers": 9,
+    "dependency_files": 205,
+    "machine_functions": 2436,
+    "output_bytes": 38237472
+  }
+}
