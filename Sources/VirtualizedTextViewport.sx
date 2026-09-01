@@ -1,0 +1,1320 @@
+use GFX.Canvas
+use GFX.Color
+use GFX.Font as VectorFont
+use GFX.Input.Keyboard
+use GFX.UI
+use GFX.Viewer
+use STD.Math
+use STD.Process
+use STD.Text.UTF8
+use STD.Time.Stopwatch
+
+static struct Document {
+    let line_count:int = 5_000
+    let font_size:float = 14.0
+    let line_height:float = 19.0
+    let padding:float = 12.0
+    let status_height:float = 28.0
+    let wheel_step:float = 3.0
+    let precise_wheel_scale:float = 0.5
+    let precise_wheel_epsilon:float = 0.001
+    let maximum_target_viewports:float = 8.0
+    let minimum_target_distance:float = 96.0
+    let maximum_wheel_step:float = 32.0
+    let scroll_response:float = 48.0
+    let scroll_snap_distance:float = 0.1
+    let maximum_animation_delta:float = 0.05
+    let block_lines:int = 8
+    let block_cache_capacity:int = 128
+    let prefetch_blocks_per_frame:int = 1
+    let prefetch_blocks_ahead:int = 40
+}
+
+struct ScrollProfile {
+    let total_ms:float
+    let input_ms:float
+    let drawing_ms:float
+    let snapshot_ms:float
+    let preparation_ms:float
+    let shaping_ms:float
+    let outlines_ms:float
+}
+
+struct GlyphCorpus {
+    let samples:str[]
+    let glyph_count:int
+}
+
+func scroll_smoothing_factor(response:float, delta:float) float {
+    if response <= 0.0 || delta <= 0.0 { return 0.0 }
+    let scaled = response * delta
+    var power = 1.0 + scaled / 256.0
+    var iteration = 0
+    while iteration < 8 { power *= power; iteration++ }
+    return 1.0 - 1.0 / power
+}
+
+// SDL reports discrete wheel notches as exact integer deltas while precise
+// trackpads retain a fractional component. Keep notches unchanged, but avoid
+// multiplying every high-resolution trackpad sample by the full line step.
+func scaled_wheel_delta(value:float) float {
+    let nearest_integer = Math.round(value)
+    if Math.abs(value - nearest_integer) <= Document.precise_wheel_epsilon {
+        return value
+    }
+    return value * Document.precise_wheel_scale
+}
+
+func line_prefix(number:int) str {
+    if number < 10 { return "    $(number)  " }
+    if number < 100 { return "   $(number)  " }
+    if number < 1_000 { return "  $(number)  " }
+    if number < 10_000 { return " $(number)  " }
+    return "$(number)  "
+}
+
+func has_argument(expected:str) bool {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            for argument in arguments {
+                if argument == expected { return true }
+            }
+        }
+    }
+    return false
+}
+
+func verification_mode() bool { return has_argument("--verify") }
+func depth_profile_mode() bool { return has_argument("--profile-depth") }
+
+func automatic_profile_mode() bool {
+    return has_argument("--profile-vector") || has_argument("--profile-coverage") ||
+        has_argument("--profile-settle") || has_argument("--profile-wheel") ||
+        has_argument("--profile-depth-wheel")
+}
+
+func settle_profile_mode() bool { return has_argument("--profile-settle") }
+func wheel_profile_mode() bool { return has_argument("--profile-wheel") }
+func depth_wheel_profile_mode() bool { return has_argument("--profile-depth-wheel") }
+
+func document_wheel_direction() UI.ScrollWheelDirection {
+    if has_argument("--normal-wheel") {
+        return UI.ScrollWheelDirection.normal
+    }
+    return UI.ScrollWheelDirection.inverted
+}
+
+func viewer_text_mode() Viewer.CanvasTextMode {
+    if has_argument("--vector") || has_argument("--profile-vector") {
+        return Viewer.CanvasTextMode.vector
+    }
+    return Viewer.CanvasTextMode.coverage
+}
+
+func scalar_text(scalar:uint32) str {
+    var values:uint32[] = [scalar]
+    let view = @values[0:values.count()]
+    match UTF8.from_scalars(view) {
+        failure(error) => { panic("invalid glyph corpus scalar $(scalar)") }
+        success(value) => { return value }
+    }
+}
+
+func required_instance(
+    result:Result<VectorFont.Instance, VectorFont.Error>
+) VectorFont.Instance {
+    match result {
+        failure(error) => { panic(error.detail) }
+        success(value) => { return value }
+    }
+}
+
+func has_vector_outline(instance:VectorFont.Instance, value:str) bool {
+    var retained = instance
+    match retained.shape(value) {
+        failure(error) => { return false }
+        success(run) => {
+            match run.outlines() {
+                failure(error) => { return false }
+                success(placements) => {
+                    if placements.is_empty() { return false }
+                    for placement in placements {
+                        if placement.outline == null { return false }
+                    }
+                    return true
+                }
+            }
+        }
+    }
+}
+
+func glyph_corpus(font:Canvas.Font, require_outlines:bool = false) GlyphCorpus {
+    var face = font.face()
+    var vector_instance = required_instance(VectorFont.Instance.create(face, size:14.0))
+    var glyphs:str[] = []
+    var scalar:uint32 = 33
+    while scalar <= 1_327 as uint32 {
+        let control = scalar >= 127 as uint32 && scalar <= 160 as uint32
+        if !control && face.supports(scalar) {
+            let value = scalar_text(scalar)
+            if !require_outlines || has_vector_outline(vector_instance, value) {
+                glyphs.append(value)
+            }
+        }
+        scalar++
+    }
+    assert(glyphs.count() > 256)
+
+    var samples:str[] = []
+    var sample_index = 0
+    while sample_index < 256 {
+        var sample = ""
+        var glyph_index = 0
+        while glyph_index < 12 {
+            let index = (sample_index * 17 + glyph_index * 29) % glyphs.count()
+            sample = sample + glyphs[index]
+            glyph_index++
+        }
+        samples.append(sample)
+        sample_index++
+    }
+    return GlyphCorpus(samples:samples, glyph_count:glyphs.count())
+}
+
+func document_line(index:int, samples:@str[]) str {
+    let number = index + 1
+    let prefix = line_prefix(number)
+    let suffix = "  // glyphs " + samples[index % samples.count()]
+    let pattern = index % 8
+    if pattern == 0 {
+        return prefix + "func render_document_$(number)(viewport:Rect, first_line:int) Drawing {" + suffix
+    }
+    if pattern == 1 {
+        return prefix + "    let visible_$(number) = document.lines(first_line, viewport.rows())" + suffix
+    }
+    if pattern == 2 {
+        return prefix + "    // sample $(number): office AVATAR café a\u{0323}\u{0301} Ελληνικά" + suffix
+    }
+    if pattern == 3 {
+        return prefix + "    for line_$(number) in visible { painter.text(line.value, line.position, style) }" + suffix
+    }
+    if pattern == 4 {
+        return prefix + "    metrics.record(frame:$(index), retained:true, invalidated:false)" + suffix
+    }
+    if pattern == 5 {
+        return prefix + "    let token_$(number) = lexer.next() // identifiers and punctuation" + suffix
+    }
+    if pattern == 6 {
+        return prefix + "    cache.reuse(key:$(number), font:monospace, size:14, density:2)" + suffix
+    }
+    return prefix + "} // block $(number): visible window only" + suffix
+}
+
+func preload_document(samples:@str[]) str[] {
+    var lines:str[] = []
+    var index = 0
+    while index < Document.line_count {
+        lines.append(document_line(index, samples))
+        index++
+    }
+    return lines
+}
+
+func preload_document_blocks(lines:@str[]) str[] {
+    var blocks:str[] = []
+    var first_line = 0
+    while first_line < lines.count() {
+        let final_line = Math.min(
+            first_line + Document.block_lines,
+            lines.count()
+        ) as int
+        var value = ""
+        var line = first_line
+        while line < final_line {
+            if line > first_line { value = value + "\n" }
+            value = value + lines[line]
+            line++
+        }
+        blocks.append(value)
+        first_line = final_line
+    }
+    return blocks
+}
+
+func empty_block_indices(count:int) int[] {
+    var result:int[] = []
+    while result.count() < count { result.append(-1) }
+    return result
+}
+
+class RetainedDocumentBlock {
+    var index:int
+    var block:Canvas.TextBlock
+    var gpu_ready:bool
+
+    init(index:int, block:Canvas.TextBlock, gpu_ready:bool = false) {
+        self.index = index
+        self.block = block
+        self.gpu_ready = gpu_ready
+    }
+}
+
+class DocumentContent:UI.Content {
+    private var lines:str[]
+    private var block_values:str[]
+    private var scroll:UI.ScrollState
+    private var font:Canvas.Font
+    private var blocks:RetainedDocumentBlock[]
+    // Document block identities are dense and bounded. A direct-address table
+    // keeps lookup cost independent from the amount of prior scrolling.
+    private var block_indices:int[]
+    private var next_block_eviction:int = 0
+    private var block_cache_hits:int = 0
+    private var block_cache_misses:int = 0
+    private var block_cache_evictions:int = 0
+    private var paint_count:int = 0
+    private var focused:bool = false
+    private var sample_elapsed:float = 0.0
+    private var sample_frames:int = 0
+    private var frames_per_second:int = 0
+    private var maximum_frame_ms:float = 0.0
+    private var reported_maximum_frame_ms:float = 0.0
+    private var status_first_line:int = 0
+    private var status_block:Canvas.TextBlock? = null
+    private var prefetch_more:bool = false
+    private var current_visible_rows:int = 1
+    private let automatic_profile:bool
+    private let settle_profile:bool
+    private let wheel_profile:bool
+    private let depth_wheel_profile:bool
+    private let wheel_direction:UI.ScrollWheelDirection
+    private var wheel_target_offset:float
+    private var wheel_applied_offset:float
+    private var wheel_scrolling:bool = false
+    private var profile_phase:int = 0
+    private var profile_frames:int = 0
+    private var profile_elapsed:float = 0.0
+    private var profile_maximum_frame_ms:float = 0.0
+    private var profile_done:bool = false
+
+    init(
+        lines:str[],
+        block_values:str[],
+        scroll:UI.ScrollState,
+        automatic_profile:bool = false,
+        settle_profile:bool = false,
+        wheel_profile:bool = false,
+        depth_wheel_profile:bool = false,
+        wheel_direction:UI.ScrollWheelDirection = UI.ScrollWheelDirection.normal
+    ) {
+        self.lines = lines
+        self.block_values = block_values
+        self.scroll = scroll
+        self.font = Canvas.Font.monospace()
+        self.blocks = []
+        self.block_indices = empty_block_indices(block_values.count())
+        self.automatic_profile = automatic_profile
+        self.settle_profile = settle_profile
+        self.wheel_profile = wheel_profile
+        self.depth_wheel_profile = depth_wheel_profile
+        self.wheel_direction = wheel_direction
+        self.wheel_target_offset = scroll.offset()
+        self.wheel_applied_offset = scroll.offset()
+    }
+
+    func measure(maximum:Math.Vec2) Math.Vec2 {
+        return Math.Vec2(1040.0, 520.0)
+    }
+
+    func paint(
+        painter:&Canvas.Painter,
+        frame:Canvas.Rect,
+        opacity:float
+    ) {
+        self.paint_count++
+        painter.fill(
+            frame,
+            Canvas.Fill.solid(Color.bytes(30, 33, 39).with_alpha(opacity))
+        )
+        let usable_height = frame.size.y - Document.padding * 2.0 - Document.status_height
+        var visible_rows = Math.floor(usable_height / Document.line_height) as int
+        if visible_rows < 1 { visible_rows = 1 }
+        self.current_visible_rows = visible_rows
+        self.scroll.set_viewport_extent(visible_rows as float)
+
+        let current_line = Math.floor(self.scroll.offset()) as int
+        var first_line = current_line
+        if first_line > 0 { first_line-- }
+        // Keep one row on each side of the logical visible window. The clip
+        // resolves partial pixels; culling must not remove either row first.
+        let painted_rows = visible_rows + (current_line - first_line) + 1
+
+        let text_clip = Canvas.Rect(
+            frame.position,
+            Math.Vec2(
+                frame.size.x,
+                frame.size.y - Document.status_height
+            )
+        )
+        let x = frame.position.x + Document.padding
+        var block_index = first_line / Document.block_lines
+        let final_line = Math.min(
+            first_line + painted_rows,
+            self.lines.count()
+        ) as int
+        let final_block = (final_line + Document.block_lines - 1) /
+            Document.block_lines
+        while block_index < final_block {
+            let block_line = block_index * Document.block_lines
+            var slot = self.retained_block(block_index)
+            painter.text_block(
+                slot.block,
+                Math.Vec2(
+                    x,
+                    frame.position.y + Document.padding +
+                        (block_line as float - self.scroll.offset()) *
+                            Document.line_height
+                ),
+                clip:text_clip
+            )
+            slot.gpu_ready = true
+            block_index++
+        }
+        self.paint_prefetch_blocks(
+            painter,
+            frame,
+            text_clip,
+            x,
+            first_line / Document.block_lines,
+            final_block
+        )
+        self.status_first_line = first_line
+        self.paint_status(painter, frame, opacity)
+    }
+
+    private func retained_block(index:int) RetainedDocumentBlock {
+        if self.block_indices[index] >= 0 {
+            self.block_cache_hits++
+            let slot_index = self.block_indices[index]
+            return self.blocks[slot_index]
+        }
+        self.block_cache_misses++
+        var style = Canvas.TextStyle(
+            size:Document.font_size,
+            color:Color.slate_200(),
+            font:self.font,
+            line_height:Document.line_height
+        )
+        var block = Canvas.TextBlock(self.block_values[index], style)
+        if self.blocks.count() < Document.block_cache_capacity {
+            var retained = RetainedDocumentBlock(
+                index,
+                block
+            )
+            self.blocks.append(retained)
+            self.block_indices[index] = self.blocks.count() - 1
+            return retained
+        }
+        // A fixed ring makes eviction O(1); visible blocks are refreshed before
+        // prefetching, so the ring never grows with document traversal depth.
+        let selected = self.next_block_eviction
+        self.next_block_eviction =
+            (self.next_block_eviction + 1) % Document.block_cache_capacity
+        let previous_index = self.blocks[selected].index
+        self.block_cache_evictions++
+        self.block_indices[previous_index] = -1
+        self.blocks[selected].index = index
+        self.blocks[selected].block = block
+        self.blocks[selected].gpu_ready = false
+        self.block_indices[index] = selected
+        return self.blocks[selected]
+    }
+
+    private func block_is_ready(index:int) bool {
+        if self.block_indices[index] >= 0 {
+            let slot_index = self.block_indices[index]
+            return self.blocks[slot_index].gpu_ready
+        }
+        return false
+    }
+
+    private func next_prefetch_block(
+        first_visible_block:int,
+        final_visible_block:int
+    ) int {
+        let maximum_block = (self.lines.count() + Document.block_lines - 1) /
+            Document.block_lines
+        let current = self.scroll.offset()
+        let target = self.wheel_target_offset
+        if target < current {
+            var first = Math.floor(target) as int / Document.block_lines -
+                Document.prefetch_blocks_ahead
+            if first < 0 { first = 0 }
+            var index = first_visible_block - 1
+            while index >= first {
+                if !self.block_is_ready(index) { return index }
+                index--
+            }
+            return -1
+        }
+        var target_block = Math.floor(target) as int / Document.block_lines
+        var final = target_block + Document.prefetch_blocks_ahead
+        if final > maximum_block { final = maximum_block }
+        var index = final_visible_block
+        while index < final {
+            if !self.block_is_ready(index) { return index }
+            index++
+        }
+        return -1
+    }
+
+    private func paint_prefetch_blocks(
+        painter:&Canvas.Painter,
+        frame:Canvas.Rect,
+        text_clip:Canvas.Rect,
+        x:float,
+        first_visible_block:int,
+        final_visible_block:int
+    ) {
+        var prepared = 0
+        var next = self.next_prefetch_block(first_visible_block, final_visible_block)
+        while next >= 0 && prepared < Document.prefetch_blocks_per_frame {
+            var slot = self.retained_block(next)
+            painter.text_block(
+                slot.block,
+                Math.Vec2(x, frame.position.y - 10_000.0 - prepared as float),
+                clip:text_clip
+            )
+            slot.gpu_ready = true
+            prepared++
+            next = self.next_prefetch_block(first_visible_block, final_visible_block)
+        }
+        self.prefetch_more = next >= 0
+    }
+
+    func focusable() bool { return true }
+    // GFX.UI currently routes keyboard focus through accepts_text_input even
+    // for read-only custom content. insert_text remains deliberately inert.
+    func accepts_text_input() bool { return true }
+
+    func focus_changed(focused:bool) bool {
+        if self.focused == focused { return false }
+        self.focused = focused
+        return true
+    }
+
+    func update(delta:float) bool {
+        var changed = self.advance_wheel_motion(delta) || self.prefetch_more
+        self.sample_elapsed += delta
+        self.sample_frames++
+        let frame_ms = delta * 1_000.0
+        if frame_ms > self.maximum_frame_ms { self.maximum_frame_ms = frame_ms }
+        if self.sample_elapsed >= 0.5 {
+            self.frames_per_second = Math.round(
+                self.sample_frames as float / self.sample_elapsed
+            ) as int
+            self.reported_maximum_frame_ms = self.maximum_frame_ms
+            self.maximum_frame_ms = 0.0
+            self.sample_elapsed = 0.0
+            self.sample_frames = 0
+            self.status_block = null
+            changed = true
+        }
+        if self.automatic_profile && !self.profile_done {
+            let profile_changed = self.advance_profile(delta)
+            return changed || profile_changed
+        }
+        return changed
+    }
+    func insert_text(value:str) bool { return false }
+
+    func pointer_scrolled(delta:Math.Vec2) bool {
+        if delta.y == 0.0 { return false }
+        if !self.wheel_scrolling {
+            self.wheel_target_offset = self.scroll.offset()
+            self.wheel_applied_offset = self.scroll.offset()
+        }
+        var distance = -scaled_wheel_delta(delta.y) * Document.wheel_step
+        if self.wheel_direction == UI.ScrollWheelDirection.inverted {
+            distance = -distance
+        }
+        let maximum_target_distance = self.maximum_wheel_target_distance()
+        let minimum_target = Math.max(
+            0.0,
+            self.scroll.offset() - maximum_target_distance
+        )
+        let maximum_target = Math.min(
+            self.scroll.maximum_offset(),
+            self.scroll.offset() + maximum_target_distance
+        )
+        let target = Math.clamp(
+            self.wheel_target_offset + distance,
+            minimum_target,
+            maximum_target
+        )
+        if target == self.wheel_target_offset { return false }
+        self.wheel_target_offset = target
+        self.wheel_scrolling = true
+        return true
+    }
+
+    func key_pressed(
+        key:Keyboard.Key,
+        modifiers:Keyboard.Modifiers
+    ) bool {
+        if key == Keyboard.Key.up { return self.move_by(-1) }
+        if key == Keyboard.Key.down { return self.move_by(1) }
+        if key == Keyboard.Key.page_up {
+            return self.move_by(-self.current_visible_rows)
+        }
+        if key == Keyboard.Key.page_down {
+            return self.move_by(self.current_visible_rows)
+        }
+        if key == Keyboard.Key.home { return self.move_to(0) }
+        if key == Keyboard.Key.end {
+            return self.move_to(Document.line_count - self.current_visible_rows)
+        }
+        return false
+    }
+
+    func visible_row_count() int { return self.current_visible_rows }
+    func profile_complete() bool { return self.profile_done }
+    func wheel_motion_active() bool { return self.wheel_scrolling }
+    func wheel_target_distance() float {
+        return Math.abs(self.wheel_target_offset - self.scroll.offset())
+    }
+    func maximum_wheel_target_distance() float {
+        return Math.max(
+            Document.minimum_target_distance,
+            self.current_visible_rows as float * Document.maximum_target_viewports
+        )
+    }
+    func jump_to(value:int) bool { return self.move_to(value) }
+    func block_cache_count() int { return self.blocks.count() }
+    func block_cache_index_count() int { return self.blocks.count() }
+    func block_cache_index_is_consistent() bool {
+        var active = 0
+        var index = 0
+        while index < self.block_indices.count() {
+            let slot = self.block_indices[index]
+            if slot >= 0 {
+                if slot >= self.blocks.count() || self.blocks[slot].index != index {
+                    return false
+                }
+                active++
+            }
+            index++
+        }
+        return active == self.blocks.count()
+    }
+    func block_cache_hit_count() int { return self.block_cache_hits }
+    func block_cache_miss_count() int { return self.block_cache_misses }
+    func block_cache_eviction_count() int { return self.block_cache_evictions }
+    func repaint_count() int { return self.paint_count }
+    func ready_block_count() int {
+        var count = 0
+        for block in self.blocks {
+            if block.gpu_ready { count++ }
+        }
+        return count
+    }
+
+    private func move_by(distance:int) bool {
+        let current = Math.round(self.scroll.offset()) as int
+        return self.move_to(current + distance)
+    }
+
+    private func move_to(value:int) bool {
+        self.wheel_scrolling = false
+        let changed = self.scroll.set_offset(value as float)
+        self.wheel_target_offset = self.scroll.offset()
+        self.wheel_applied_offset = self.scroll.offset()
+        return changed
+    }
+
+    private func advance_wheel_motion(delta:float) bool {
+        if !self.wheel_scrolling {
+            self.wheel_target_offset = self.scroll.offset()
+            self.wheel_applied_offset = self.scroll.offset()
+            return false
+        }
+        if self.scroll.offset() != self.wheel_applied_offset {
+            self.wheel_scrolling = false
+            self.wheel_target_offset = self.scroll.offset()
+            self.wheel_applied_offset = self.scroll.offset()
+            return false
+        }
+        let remaining = self.wheel_target_offset - self.scroll.offset()
+        if Math.abs(remaining) <= Document.scroll_snap_distance {
+            self.wheel_scrolling = false
+            let changed = self.scroll.set_offset(self.wheel_target_offset)
+            self.wheel_applied_offset = self.scroll.offset()
+            return changed
+        }
+        let amount = scroll_smoothing_factor(
+            Document.scroll_response,
+            Math.clamp(delta, 0.0, Document.maximum_animation_delta)
+        )
+        var next = Math.lerp(
+            self.scroll.offset(),
+            self.wheel_target_offset,
+            amount
+        )
+        next = Math.clamp(
+            next,
+            self.scroll.offset() - Document.maximum_wheel_step,
+            self.scroll.offset() + Document.maximum_wheel_step
+        )
+        let changed = self.scroll.set_offset(next)
+        self.wheel_applied_offset = self.scroll.offset()
+        return changed
+    }
+
+    private func advance_profile(delta:float) bool {
+        if self.settle_profile {
+            return self.advance_settle_profile(delta)
+        }
+        if self.wheel_profile {
+            return self.advance_wheel_profile(delta)
+        }
+        if self.depth_wheel_profile {
+            return self.advance_depth_wheel_profile(delta)
+        }
+        let warmup = 30
+        let measured = 120
+        if self.profile_frames >= warmup {
+            self.profile_elapsed += delta
+            let frame_ms = delta * 1_000.0
+            if frame_ms > self.profile_maximum_frame_ms {
+                self.profile_maximum_frame_ms = frame_ms
+            }
+        }
+        self.profile_frames++
+        let maximum = self.scroll.maximum_offset() as int
+        let step = self.current_visible_rows * 37
+        let current = Math.round(self.scroll.offset()) as int
+        if current + step > maximum { self.move_to(0) }
+        else { self.move_by(step) }
+        if self.profile_frames < warmup + measured { return true }
+        let fps = measured as float / self.profile_elapsed
+        print(
+            "SILEX_GFX_UI_TEXT_VIEWPORT interactive_profile frames=$(measured) " +
+            "fps=$(fps) max_frame_ms=$(self.profile_maximum_frame_ms)"
+        )
+        self.profile_done = true
+        return true
+    }
+
+    private func advance_wheel_profile(delta:float) bool {
+        let measured = 30
+        var changed = false
+        if self.profile_phase < 3 {
+            var wheel_delta = 1.0
+            if self.wheel_direction == UI.ScrollWheelDirection.normal {
+                wheel_delta = -1.0
+            }
+            changed = self.pointer_scrolled(Math.Vec2(0.0, wheel_delta))
+        }
+        self.profile_elapsed += delta
+        let frame_ms = delta * 1_000.0
+        if frame_ms > self.profile_maximum_frame_ms {
+            self.profile_maximum_frame_ms = frame_ms
+        }
+        self.profile_frames++
+        if self.profile_frames < measured { return changed }
+        var label = "wheel_$(self.profile_phase + 1)"
+        if self.profile_phase == 3 { label = "idle_after_wheel" }
+        let fps = measured as float / self.profile_elapsed
+        print(
+            "SILEX_GFX_UI_TEXT_VIEWPORT wheel_profile phase=$(label) " +
+            "offset=$(self.scroll.offset()) fps=$(fps) " +
+            "max_frame_ms=$(self.profile_maximum_frame_ms)"
+        )
+        self.profile_phase++
+        self.profile_frames = 0
+        self.profile_elapsed = 0.0
+        self.profile_maximum_frame_ms = 0.0
+        if self.profile_phase > 3 { self.profile_done = true }
+        return true
+    }
+
+    private func advance_depth_wheel_profile(delta:float) bool {
+        // Revisit both ends after saturation so the profile catches state that
+        // accumulates with traversal history instead of document depth alone.
+        let offsets:int[] = [0, 1_000, 2_000, 3_000, 4_000, 0, 4_000]
+        let measured = 30
+        var changed = false
+        if self.profile_frames == 0 {
+            changed = self.move_to(offsets[self.profile_phase])
+        }
+        var wheel_delta = 1.0
+        if self.wheel_direction == UI.ScrollWheelDirection.normal {
+            wheel_delta = -1.0
+        }
+        changed = self.pointer_scrolled(Math.Vec2(0.0, wheel_delta)) || changed
+        self.profile_elapsed += delta
+        let frame_ms = delta * 1_000.0
+        if frame_ms > self.profile_maximum_frame_ms {
+            self.profile_maximum_frame_ms = frame_ms
+        }
+        self.profile_frames++
+        if self.profile_frames < measured { return changed }
+        let fps = measured as float / self.profile_elapsed
+        print(
+            "SILEX_GFX_UI_TEXT_VIEWPORT depth_wheel offset=$(self.scroll.offset()) " +
+            "events=$(measured) target_distance=$(self.wheel_target_distance()) " +
+            "fps=$(fps) max_frame_ms=$(self.profile_maximum_frame_ms) " +
+            "cache=$(self.block_cache_count()) index=$(self.block_cache_index_count()) " +
+            "hits=$(self.block_cache_hit_count()) misses=$(self.block_cache_miss_count()) " +
+            "evictions=$(self.block_cache_eviction_count()) repaints=$(self.repaint_count())"
+        )
+        self.profile_phase++
+        self.profile_frames = 0
+        self.profile_elapsed = 0.0
+        self.profile_maximum_frame_ms = 0.0
+        if self.profile_phase >= offsets.count() {
+            assert(self.block_cache_count() == Document.block_cache_capacity)
+            assert(self.block_cache_index_count() == self.block_cache_count())
+            assert(self.block_cache_index_is_consistent())
+            self.profile_done = true
+        }
+        return true
+    }
+
+    private func advance_settle_profile(delta:float) bool {
+        let warmup = 30
+        let measured = 120
+        var changed = false
+        if self.profile_phase == 1 {
+            let maximum = self.scroll.maximum_offset() as int
+            let step = self.current_visible_rows * 37
+            let current = Math.round(self.scroll.offset()) as int
+            if current + step > maximum { changed = self.move_to(0) }
+            else { changed = self.move_by(step) }
+        }
+        if self.profile_frames >= warmup {
+            self.profile_elapsed += delta
+            let frame_ms = delta * 1_000.0
+            if frame_ms > self.profile_maximum_frame_ms {
+                self.profile_maximum_frame_ms = frame_ms
+            }
+        }
+        self.profile_frames++
+        if self.profile_frames < warmup + measured { return changed }
+        var label = "idle_before"
+        if self.profile_phase == 1 { label = "churn" }
+        elif self.profile_phase == 2 { label = "idle_after" }
+        elif self.profile_phase == 3 { label = "idle_home" }
+        let fps = measured as float / self.profile_elapsed
+        print(
+            "SILEX_GFX_UI_TEXT_VIEWPORT settle_profile phase=$(label) frames=$(measured) " +
+            "fps=$(fps) max_frame_ms=$(self.profile_maximum_frame_ms)"
+        )
+        self.profile_phase++
+        self.profile_frames = 0
+        self.profile_elapsed = 0.0
+        self.profile_maximum_frame_ms = 0.0
+        if self.profile_phase == 3 { changed = self.move_to(0) }
+        if self.profile_phase > 3 { self.profile_done = true }
+        return true
+    }
+
+    private func paint_status(
+        painter:&Canvas.Painter,
+        frame:Canvas.Rect,
+        opacity:float
+    ) {
+        let y = frame.position.y + frame.size.y - Document.status_height
+        painter.fill(
+            Canvas.Rect(
+                Math.Vec2(frame.position.x, y),
+                Math.Vec2(frame.size.x, Document.status_height)
+            ),
+            Canvas.Fill.solid(Color.bytes(38, 42, 50).with_alpha(opacity))
+        )
+        var style = Canvas.TextStyle(
+            size:12.0,
+            color:Color.slate_300().with_alpha(opacity),
+            font:self.font
+        )
+        if self.status_block == null {
+            let maximum = Math.round(self.reported_maximum_frame_ms * 100.0) / 100.0
+            self.status_block = Canvas.TextBlock(
+                "FPS $(self.frames_per_second)  ·  max frame $(maximum) ms  ·  " +
+                "top line $(self.status_first_line + 1) / $(self.lines.count())",
+                style
+            )
+        }
+        if let block = self.status_block {
+            painter.text_block(
+                block,
+                Math.Vec2(frame.position.x + Document.padding, y + 6.0)
+            )
+        }
+    }
+}
+
+class DocumentView:UI.CustomView {
+    init(content:UI.Content):super(content) {}
+}
+
+func label(value:str, size:float, color:Color) UI.Text {
+    var result = UI.Text(value)
+    result.style.font_size = size
+    result.style.foreground = color
+    return result
+}
+
+func header(lines:int) UI.Row {
+    var title = label("GFX.UI — virtualized text viewport", 22.0, Color.slate_100())
+    title.style.font_weight = UI.FontWeight.bold
+    title.style.grow = 1.0
+
+    var badge = label("$(lines) PRELOADED LINES", 11.0, Color.slate_300())
+    badge.style.padding = UI.Insets(vertical:7.0, horizontal:10.0)
+    badge.style.background = Color.bytes(48, 52, 61)
+    badge.style.border = UI.Border(1.0, Color.bytes(75, 80, 91))
+    badge.style.radius = 4.0
+
+    let children:UI.View[] = [title, badge]
+    return UI.Row(children, alignment:UI.Alignment.center)
+}
+
+func facts(lines:int, glyphs:int, preload_ms:float) UI.Text {
+    let preload = Math.round(preload_ms * 100.0) / 100.0
+    var result = label(
+        "$(lines) unique lines  ·  $(glyphs) supported glyphs  ·  visible rows only  ·  preload $(preload) ms",
+        13.0,
+        Color.slate_200()
+    )
+    result.style.padding = UI.Insets(vertical:10.0, horizontal:12.0)
+    result.style.background = Color.bytes(42, 46, 54)
+    result.style.border = UI.Border(1.0, Color.bytes(63, 68, 78))
+    result.style.radius = 4.0
+    return result
+}
+
+func navigation_hint() UI.Text {
+    return label(
+        "Focus the viewport · mouse wheel · Up/Down line · Page Up/Down · Home/End",
+        12.0,
+        Color.slate_400()
+    )
+}
+
+func document_viewport(
+    content:DocumentContent,
+    scroll:UI.ScrollState,
+    wheel_direction:UI.ScrollWheelDirection
+) UI.Row {
+    var viewport = DocumentView(content)
+    viewport.style.grow = 1.0
+    viewport.style.minimum_height = 300.0
+    // Keyboard focus remains active, but this editor-like composition uses
+    // row selection instead of the default cyan focus ring.
+    viewport.style.accent = Color.transparent()
+
+    var scrollbar = UI.Scrollbar(
+        scroll,
+        wheel_step:3.0,
+        wheel_direction:wheel_direction,
+        appearance:UI.ScrollbarAppearance(
+            track_width:0.0,
+            thumb_width:5.0,
+            minimum_thumb_length:26.0
+        )
+    )
+    // The invisible lane stays wider than the painted thumb so it remains
+    // easy to grab without giving the control a heavy visual weight.
+    scrollbar.style.width = 12.0
+    scrollbar.style.background = Color.bytes(58, 63, 72)
+    scrollbar.style.accent = Color.bytes(117, 123, 135)
+    scrollbar.style.radius = 3.0
+
+    var separator = UI.Container()
+    separator.style.width = 1.0
+    separator.style.background = Color.bytes(61, 66, 76)
+
+    let children:UI.View[] = [viewport, separator, scrollbar]
+    var result = UI.Row(children)
+    result.style.gap = 0.0
+    result.style.grow = 1.0
+    result.style.padding = UI.Insets(0.0)
+    result.style.radius = 0.0
+    return result
+}
+
+func interface(
+    content:DocumentContent,
+    lines:str[],
+    scroll:UI.ScrollState,
+    wheel_direction:UI.ScrollWheelDirection,
+    glyphs:int,
+    preload_ms:float
+) UI.Column {
+    let children:UI.View[] = [
+        header(lines.count()),
+        facts(lines.count(), glyphs, preload_ms),
+        document_viewport(content, scroll, wheel_direction),
+        navigation_hint()
+    ]
+    var root = UI.Column(children)
+    root.style.padding = UI.Insets(18.0)
+    root.style.gap = 10.0
+    root.style.background = Color.bytes(36, 39, 46)
+    root.style.foreground = Color.slate_100()
+    return root
+}
+
+func required_vector_glyphs(layer:Canvas.TextLayer) int {
+    match layer.vector_outlines() {
+        failure(error) => { panic(error.detail) }
+        success(placements) => { return placements.count() }
+    }
+}
+
+func measured_scroll(
+    runtime:UI.Runtime,
+    key:Keyboard.Key,
+    updates:int,
+    vector:bool,
+    repetitions:int = 1
+) ScrollProfile {
+    var drawing = runtime.drawing(1100, 600)
+    var previous = drawing.snapshot(1100, 600)
+    for layer in previous.text_layers() {
+        if vector {
+            var warm_runs = layer.glyph_runs()
+            let warm_glyphs = required_vector_glyphs(layer)
+        }
+        else { var warm_runs = layer.coverage_runs(2.0) }
+    }
+    var total = Stopwatch()
+    var input = Stopwatch()
+    var drawing_time = Stopwatch()
+    var snapshot_time = Stopwatch()
+    var preparation = Stopwatch()
+    var shaping = Stopwatch()
+    var outlines = Stopwatch()
+    total.start()
+    var update = 0
+    while update < updates {
+        input.start()
+        var repetition = 0
+        while repetition < repetitions {
+            assert(runtime.key_pressed(key))
+            repetition++
+        }
+        input.stop()
+        drawing_time.start()
+        drawing = runtime.drawing(1100, 600)
+        drawing_time.stop()
+        snapshot_time.start()
+        var snapshot = drawing.snapshot(1100, 600, reuse:previous)
+        snapshot_time.stop()
+        preparation.start()
+        if vector {
+            shaping.start()
+            for layer in snapshot.text_layers() { var runs = layer.glyph_runs() }
+            shaping.stop()
+            outlines.start()
+            for layer in snapshot.text_layers() {
+                let glyphs = required_vector_glyphs(layer)
+            }
+            outlines.stop()
+        }
+        else {
+            for layer in snapshot.text_layers() { var runs = layer.coverage_runs(2.0) }
+        }
+        preparation.stop()
+        previous = snapshot
+        update++
+    }
+    total.stop()
+    let divisor = updates as float
+    return ScrollProfile(
+        total_ms:total.get_elapsed_milliseconds() / divisor,
+        input_ms:input.get_elapsed_milliseconds() / divisor,
+        drawing_ms:drawing_time.get_elapsed_milliseconds() / divisor,
+        snapshot_ms:snapshot_time.get_elapsed_milliseconds() / divisor,
+        preparation_ms:preparation.get_elapsed_milliseconds() / divisor,
+        shaping_ms:shaping.get_elapsed_milliseconds() / divisor,
+        outlines_ms:outlines.get_elapsed_milliseconds() / divisor
+    )
+}
+
+func profile_text(name:str, profile:ScrollProfile) str {
+    return name + " total=$(profile.total_ms) input=$(profile.input_ms) " +
+        "drawing=$(profile.drawing_ms) snapshot=$(profile.snapshot_ms) " +
+        "prepare=$(profile.preparation_ms) shaping=$(profile.shaping_ms) " +
+        "outlines=$(profile.outlines_ms)"
+}
+
+func drawing_text_block_count(drawing:@Canvas) int {
+    var count = 0
+    for command in drawing.commands() {
+        match command {
+            text(value) => { if value.block_identity > 0 { count++ } }
+            else => {}
+        }
+    }
+    return count
+}
+
+func profile_document_depth(
+    lines:str[],
+    block_values:str[],
+    scroll:UI.ScrollState,
+    wheel_direction:UI.ScrollWheelDirection
+) {
+    var repeated_values:str[] = []
+    var block_index = 0
+    while block_index < block_values.count() {
+        repeated_values.append(block_values[block_index % 128])
+        block_index++
+    }
+    var content = DocumentContent(
+        lines,
+        repeated_values,
+        scroll,
+        wheel_direction:wheel_direction
+    )
+    var viewport = DocumentView(content)
+    var runtime = UI.Runtime(viewport)
+    var drawing = runtime.drawing(1100, 600)
+    assert(runtime.pointer_pressed(Math.Vec2(10.0, 10.0)))
+    let warm_offsets:int[] = [0, 1_024, 2_048, 3_072]
+    for warm_offset in warm_offsets {
+        content.jump_to(warm_offset)
+        drawing = runtime.drawing(1100, 600)
+        measured_scroll(
+            runtime,
+            Keyboard.Key.page_down,
+            8,
+            false
+        )
+    }
+    assert(content.block_cache_count() == Document.block_cache_capacity)
+    assert(content.block_cache_index_is_consistent())
+    let offsets:int[] = [0, 1_024, 2_048, 3_072, 4_096, 0, 4_096]
+    for requested in offsets {
+        content.jump_to(requested)
+        let hits_before = content.block_cache_hit_count()
+        let misses_before = content.block_cache_miss_count()
+        let evictions_before = content.block_cache_eviction_count()
+        let repaints_before = content.repaint_count()
+        drawing = runtime.drawing(1100, 600)
+        let profile = measured_scroll(
+            runtime,
+            Keyboard.Key.page_down,
+            8,
+            false
+        )
+        drawing = runtime.drawing(1100, 600)
+        var snapshot = drawing.snapshot(1100, 600)
+        var layers = snapshot.text_layers()
+        assert(content.block_cache_count() <= Document.block_cache_capacity)
+        assert(content.block_cache_index_count() == content.block_cache_count())
+        assert(content.block_cache_index_is_consistent())
+        print(
+            "SILEX_GFX_UI_TEXT_VIEWPORT depth_profile offset=$(scroll.offset()) " +
+            "navigation_steps=8 target_distance=$(content.wheel_target_distance()) " +
+            "repaints=$(content.repaint_count() - repaints_before) " +
+            "ui_ms=$(profile.drawing_ms) snapshot_ms=$(profile.snapshot_ms) " +
+            "prepare_ms=$(profile.preparation_ms) commands=$(drawing.command_count()) " +
+            "text_blocks=$(drawing_text_block_count(drawing)) layers=$(layers.count()) " +
+            "snapshot_id=$(snapshot.id()) text_revision=$(snapshot.text_revision()) " +
+            "cache=$(content.block_cache_count()) " +
+            "index=$(content.block_cache_index_count()) ready=$(content.ready_block_count()) " +
+            "hits=$(content.block_cache_hit_count() - hits_before) " +
+            "misses=$(content.block_cache_miss_count() - misses_before) " +
+            "evictions=$(content.block_cache_eviction_count() - evictions_before)"
+        )
+    }
+}
+
+func verify(
+    lines:str[],
+    block_values:str[],
+    scroll:UI.ScrollState,
+    wheel_direction:UI.ScrollWheelDirection
+) {
+    var content = DocumentContent(
+        lines,
+        block_values,
+        scroll,
+        wheel_direction:wheel_direction
+    )
+    var viewport = DocumentView(content)
+    var runtime = UI.Runtime(viewport)
+    var drawing = runtime.drawing(1100, 600)
+    assert(drawing.command_count() >= 6)
+    assert(drawing.command_count() < 12)
+    assert(drawing_text_block_count(drawing) >= 4)
+    assert(drawing_text_block_count(drawing) <= 7)
+    assert(runtime.pointer_pressed(Math.Vec2(10.0, 10.0)))
+    assert(runtime.key_pressed(Keyboard.Key.page_down))
+    assert(scroll.offset() == content.visible_row_count() as float)
+    assert(runtime.key_pressed(Keyboard.Key.end))
+    assert(scroll.offset() == scroll.maximum_offset())
+    assert(runtime.key_pressed(Keyboard.Key.home))
+    assert(scroll.offset() == 0.0)
+    var wheel_delta = 1.0
+    if wheel_direction == UI.ScrollWheelDirection.normal { wheel_delta = -1.0 }
+    assert(runtime.pointer_scrolled(
+        Math.Vec2(10.0, 10.0),
+        Math.Vec2(0.0, wheel_delta)
+    ))
+    assert(scroll.offset() == 0.0)
+    assert(Math.abs(content.wheel_target_distance() - Document.wheel_step) < 0.001)
+    assert(runtime.update(0.016))
+    assert(scroll.offset() > 0.0)
+    assert(scroll.offset() < Document.wheel_step)
+    drawing = runtime.drawing(1100, 600)
+    assert(drawing.command_count() >= 6)
+    assert(drawing.command_count() < 12)
+    var settle_step = 0
+    while content.wheel_motion_active() && settle_step < 60 {
+        let changed = runtime.update(0.016)
+        drawing = runtime.drawing(1100, 600)
+        settle_step++
+    }
+    assert(!content.wheel_motion_active())
+    assert(Math.abs(scroll.offset() - Document.wheel_step) < 0.001)
+    drawing = runtime.drawing(1100, 600)
+    assert(drawing_text_block_count(drawing) >= 4)
+    assert(drawing_text_block_count(drawing) <= 7)
+    assert(drawing.command_count() < 12)
+    assert(runtime.key_pressed(Keyboard.Key.home))
+    drawing = runtime.drawing(1100, 600)
+    assert(drawing.command_count() >= 6)
+    assert(drawing.command_count() < 12)
+
+    // Model a dense precise-trackpad burst received before the next presented
+    // frame. Its target must saturate near the viewport instead of accumulating
+    // seconds of latent animation, then converge in a short bounded interval.
+    var burst_delta = 6.75
+    if wheel_direction == UI.ScrollWheelDirection.normal { burst_delta = -6.75 }
+    var burst_sample = 0
+    while burst_sample < 48 {
+        let accepted = runtime.pointer_scrolled(
+            Math.Vec2(10.0, 10.0),
+            Math.Vec2(0.0, burst_delta)
+        )
+        burst_sample++
+    }
+    let burst_target_distance = content.wheel_target_distance()
+    assert(
+        burst_target_distance <= content.maximum_wheel_target_distance() + 0.001
+    )
+    assert(
+        Math.abs(
+            burst_target_distance - content.maximum_wheel_target_distance()
+        ) < 0.001
+    )
+    var burst_settle_frames = 0
+    while content.wheel_motion_active() && burst_settle_frames < 60 {
+        let changed = runtime.update(1.0 / 120.0)
+        drawing = runtime.drawing(1100, 600)
+        burst_settle_frames++
+    }
+    assert(!content.wheel_motion_active())
+    assert(burst_settle_frames <= 24)
+    assert(runtime.key_pressed(Keyboard.Key.home))
+
+    let line_coverage = measured_scroll(runtime, Keyboard.Key.down, 60, false)
+    assert(runtime.key_pressed(Keyboard.Key.home))
+    let page_coverage = measured_scroll(runtime, Keyboard.Key.page_down, 20, false)
+    assert(runtime.key_pressed(Keyboard.Key.home))
+    let fling_coverage = measured_scroll(
+        runtime,
+        Keyboard.Key.page_down,
+        10,
+        false,
+        repetitions:9
+    )
+    assert(runtime.key_pressed(Keyboard.Key.home))
+    let page_vector = measured_scroll(runtime, Keyboard.Key.page_down, 20, true)
+    assert(content.block_cache_count() == Document.block_cache_capacity)
+    assert(content.block_cache_index_count() == content.block_cache_count())
+    assert(content.block_cache_index_is_consistent())
+    print(
+        "SILEX_GFX_UI_TEXT_VIEWPORT verification=passed commands=$(drawing.command_count()) " +
+        "burst_target=$(burst_target_distance) " +
+        "burst_settle_frames=$(burst_settle_frames) cache=" +
+        "$(content.block_cache_count()) index=$(content.block_cache_index_count()) " +
+        "evictions=$(content.block_cache_eviction_count())"
+    )
+    print(profile_text("coverage_line", line_coverage))
+    print(profile_text("coverage_page", page_coverage))
+    print(profile_text("coverage_fling_250", fling_coverage))
+    print(profile_text("vector_page", page_vector))
+}
+
+func main() {
+    var font = Canvas.Font.monospace()
+    let corpus = glyph_corpus(
+        font,
+        has_argument("--vector") || has_argument("--profile-vector")
+    )
+    var preload = Stopwatch()
+    preload.start()
+    let lines = preload_document(corpus.samples)
+    let block_values = preload_document_blocks(lines)
+    preload.stop()
+    let preload_ms = preload.get_elapsed_milliseconds()
+    print(
+        "SILEX_GFX_UI_TEXT_VIEWPORT lines=$(lines.count()) glyphs=$(corpus.glyph_count) " +
+        "preload_ms=$(preload_ms) policy=visible-rows-only"
+    )
+
+    var scroll = UI.ScrollState(Document.line_count as float)
+    let wheel_direction = document_wheel_direction()
+    if depth_profile_mode() {
+        profile_document_depth(lines, block_values, scroll, wheel_direction)
+        return
+    }
+    if verification_mode() {
+        verify(lines, block_values, scroll, wheel_direction)
+        return
+    }
+    let profiling = automatic_profile_mode()
+    let text_mode = viewer_text_mode()
+    var content = DocumentContent(
+        lines,
+        block_values,
+        scroll,
+        profiling,
+        settle_profile_mode(),
+        wheel_profile_mode(),
+        depth_wheel_profile_mode(),
+        wheel_direction
+    )
+    var root = interface(
+        content,
+        lines,
+        scroll,
+        wheel_direction,
+        corpus.glyph_count,
+        preload_ms
+    )
+    let settings = Viewer.CanvasSettings(
+        width:1220,
+        height:820,
+        title:"GFX.UI — virtualized text viewport",
+        background:Color.bytes(36, 39, 46),
+        text_mode:text_mode,
+        hidden:profiling
+    )
+    if profiling {
+        let code = Viewer.show_until(
+            UI.Session(root, autofocus:true),
+            func() bool { return content.profile_complete() },
+            settings
+        )
+        assert(code == 0)
+        return
+    }
+    Viewer.show(UI.Session(root, autofocus:true), settings)
+}

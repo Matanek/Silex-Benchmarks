@@ -44,6 +44,7 @@ source root and declares every dependency required by the catalog.
 | `AnimatingCanvasGeometry.sx` | update animated circles and lines through reusable Canvas preparation |
 | `UpdatingTextLayers2D.sx` | update retained text layers |
 | `RetainedUIInteraction.sx` | measure UI layout, selection, snapshots, and rasterization |
+| `VirtualizedTextViewport.sx` | stress GFX.UI scrolling, culling, retained text tiles, and bounded CPU/GPU residency |
 | `TerminalScreenRendering.sx` | measure full terminal-screen rendering and updates |
 | `TerminalScaleRendering.sx` | measure Retina local edits and full-row scrolls at 80×24 and 200×60 |
 | `WebViewBridgeRoundTrips/` | exercise 1,000 round trips through a WebView |
@@ -60,6 +61,7 @@ From the workspace root:
 ```sh
 silex run Silex-Benchmarks/Sources/PhysicsWorldScale2D.sx --release
 silex run Silex-Benchmarks/Sources/TerminalScaleRendering.sx --release
+silex run Silex-Benchmarks/Sources/VirtualizedTextViewport.sx --release
 silex compile Silex-Benchmarks/Sources/FallingBodies2D/Main.sx --release -o /tmp/falling-bodies-2d
 /tmp/falling-bodies-2d --smoke --immediate --no-panel
 silex compile Silex-Benchmarks/Sources/WorldRendering3D/Main.sx --release -o /tmp/world-rendering-3d
@@ -78,6 +80,22 @@ asynchronous scheduler, buffers, and options. Only diagnostics reserved for
 `GFX.Physics` were removed so the benchmark remains a genuine public
 consumer. Any future change to these workloads requires a new baseline and an
 explicit justification.
+
+`VirtualizedTextViewport.sx` preloads a logical document of 5,000 unique lines
+and renders only the viewport intersection through a custom GFX.UI content
+view. It is a public scrolling and virtualization workload for the future
+overflow/TextArea contract, not a claim that GFX.UI already provides a
+scrollable `TextArea`. The logical strings remain available for future search,
+selection and copy operations, while retained text tiles and Scene2D GPU blocks
+are independently bounded to 128 entries.
+
+The interactive workload supports keyboard navigation, natural or normal mouse
+wheel direction, an inertial trackpad target, and a controlled vertical
+scrollbar. A compiled executable accepts `--verify` for the headless structural
+gate and `--profile-depth-wheel` for a bounded top/middle/bottom traversal that
+revisits both ends after cache saturation. `--vector` remains a diagnostic
+comparison of the underlying text renderer; it does not change the benchmark's
+GFX.UI ownership.
 
 Optimizer and backend benchmarks remain under `Silex/Toolchain/Benchmarks/`.
 They are internal toolchain gates rather than public package campaigns.
