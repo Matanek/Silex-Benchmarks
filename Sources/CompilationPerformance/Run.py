@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import platform
@@ -76,6 +77,10 @@ def cache_class_bytes(path: Path) -> dict[str, int]:
             except FileNotFoundError:
                 pass
     return classes
+
+
+def file_digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def elapsed_gnu(value: str) -> float:
@@ -519,7 +524,32 @@ def main() -> int:
             "non_gfx": str(non_gfx),
             "packages": packages,
         }
+        reference_trace = profiles["cold_no_cache"][0]["trace"]
+        metadata["comparison_key"] = {
+            "platform": metadata["platform"],
+            "architecture": metadata["architecture"],
+            "target": reference_trace["target"],
+            "mode": reference_trace["mode"],
+            "worker_count": reference_trace["worker_count"],
+            "runs": arguments.runs,
+            "warmups": arguments.warmups,
+            "primary_sha256": file_digest(primary),
+            "warm_source_sha256": file_digest(warm_source),
+            "non_gfx_sha256": file_digest(non_gfx),
+            "minimal_sha256": hashlib.sha256(b"func main() {}\n").hexdigest(),
+            "cache_protocol": "single-disposable-root-workspace-links-v1",
+            "packages": [
+                {
+                    "name": package["name"],
+                    "version": package["version"],
+                    "commit": package["commit"],
+                    "dirty": package["dirty"],
+                }
+                for package in packages
+            ],
+        }
         report = {
+            "schema_version": 1,
             "metadata": metadata,
             "profiles": profiles,
             "summaries": {name: profile_summary(samples) for name, samples in profiles.items()},
