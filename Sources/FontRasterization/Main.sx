@@ -1,0 +1,311 @@
+use GFX.Assets.Image
+use GFX.Canvas
+use GFX.Color
+use Interop.C
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+
+static struct Workload {
+    let density:float = 2.0
+    let retained_iterations:int = 1_000
+    let retained_soak_repetitions:int = 10
+    let forced_static_iterations:int = 1_000
+    let dynamic_iterations:int = 400
+    let script_iterations:int = 240
+    let pressure_entries:int = 640
+}
+
+struct Signature {
+    var width_milli:int = 0
+    var height_milli:int = 0
+    var lines:int = 0
+    var pixels:int = 0
+    var alpha:int = 0
+
+    func add(other:Signature) {
+        self.width_milli += other.width_milli
+        self.height_milli += other.height_milli
+        self.lines += other.lines
+        self.pixels += other.pixels
+        self.alpha += other.alpha
+    }
+}
+
+func image_signature(image:@Image) Signature {
+    var result = Signature()
+    let pixels = image.packed_pixels()
+    var index:uint = 3
+    let byte_count = image.byte_count() as uint
+    while index < byte_count {
+        let alpha = C.byte_at(pixels, index) as int
+        if alpha > 0 { result.pixels++ }
+        result.alpha += alpha
+        index += 4 as uint
+    }
+    return result
+}
+
+func render_on(
+    drawing:&Canvas,
+    value:str,
+    style:Canvas.TextStyle,
+    measure_clock:&Stopwatch,
+    raster_clock:&Stopwatch
+) Signature {
+    drawing.clear()
+    measure_clock.start()
+    let metrics = drawing.measure_text(value, style)
+    measure_clock.stop()
+    assert(metrics.width > 0.0)
+    assert(metrics.height > 0.0)
+    drawing.paint(func(painter:&Canvas.Painter) {
+        painter.text(value, Math.Vec2(2.0, 2.0), style)
+    })
+    raster_clock.start()
+    var snapshot = drawing.snapshot(1_024, 64)
+    var layers = snapshot.text_layers()
+    assert(layers.count() == 1)
+    var text = layers[0].text_layer(Workload.density)
+    raster_clock.stop()
+    var signature = image_signature(text.image)
+    signature.width_milli = Math.round(metrics.width * 1_000.0) as int
+    signature.height_milli = Math.round(metrics.height * 1_000.0) as int
+    signature.lines = metrics.lines
+    assert(signature.pixels > 0)
+    assert(signature.alpha > 0)
+    return signature
+}
+
+func render_label(
+    value:str,
+    style:Canvas.TextStyle,
+    measure_clock:&Stopwatch,
+    raster_clock:&Stopwatch
+) Signature {
+    var drawing = Canvas()
+    return render_on(drawing, value, style, measure_clock, raster_clock)
+}
+
+func report(
+    name:str,
+    iterations:int,
+    load_ms:float,
+    measure:@Stopwatch,
+    raster:@Stopwatch,
+    signature:Signature
+) {
+    print(
+        "SILEX_FONT_RASTER case=$(name) iterations=$(iterations) " +
+        "load_ms=$(load_ms) measure_ms=$(measure.get_elapsed_milliseconds()) " +
+        "raster_ms=$(raster.get_elapsed_milliseconds()) " +
+        "width_milli=$(signature.width_milli) height_milli=$(signature.height_milli) " +
+        "lines=$(signature.lines) " +
+        "nonzero=$(signature.pixels) alpha=$(signature.alpha)"
+    )
+}
+
+func dynamic_label(index:int) str {
+    return "FPS $(100 + index % 45) · frame $(index % 100).$(index % 10) ms · item $(index % 97)"
+}
+
+func pressure_label(index:int) str {
+    return "diagnostic $(index): cache pressure office AVATAR café Ω Ж $(index * 17 + 3)"
+}
+
+func script_labels() str[] {
+    return [
+        "office AVATAR café e\u{301} déjà-vu",
+        "Ελληνικά κείμενο και αριθμοί 12345",
+        "Кириллица интерфейс 67890",
+        "naïve façade coöperate Ångström",
+        "Ligatures ffi fi fl · kerning WA To",
+        "monospace terminal []{}() -> := 0xCAFE"
+    ]
+}
+
+func selected_case() str {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() > 1 { return arguments[1] }
+        }
+    }
+    return "all"
+}
+
+func run_retained(style:Canvas.TextStyle, name:str, repetitions:int) {
+    var drawing = Canvas()
+    drawing.paint(func(painter:&Canvas.Painter) {
+        painter.text(
+            "Static retained UI label — office 120 FPS",
+            Math.Vec2(2.0, 2.0),
+            style
+        )
+    })
+    var snapshot = drawing.snapshot(1_024, 64)
+    var layers = snapshot.text_layers()
+    assert(layers.count() == 1)
+    var measure = Stopwatch()
+    var raster = Stopwatch()
+    let iterations = Workload.retained_iterations * repetitions
+    measure.start()
+    let metrics = drawing.measure_text("Static retained UI label — office 120 FPS", style)
+    measure.stop()
+    raster.start()
+    var text = layers[0].text_layer(Workload.density)
+    raster.stop()
+    var index = 1
+    while index < iterations {
+        measure.start()
+        drawing.measure_text("Static retained UI label — office 120 FPS", style)
+        measure.stop()
+        raster.start()
+        text = layers[0].text_layer(Workload.density)
+        raster.stop()
+        index++
+    }
+    var signature = image_signature(text.image)
+    signature.width_milli = Math.round(metrics.width * 1_000.0) as int
+    signature.height_milli = Math.round(metrics.height * 1_000.0) as int
+    signature.lines = metrics.lines
+    report(name, iterations, 0.0, measure, raster, signature)
+}
+
+func run_forced_static(style:Canvas.TextStyle) {
+    var measure = Stopwatch()
+    var raster = Stopwatch()
+    var signature = Signature()
+    var index = 0
+    while index < Workload.forced_static_iterations {
+        signature.add(render_label(
+            "Static retained UI label — office 120 FPS",
+            style,
+            measure,
+            raster
+        ))
+        index++
+    }
+    report(
+        "forced_static_raster", Workload.forced_static_iterations,
+        0.0, measure, raster, signature
+    )
+}
+
+func run_dynamic(style:Canvas.TextStyle) {
+    var drawing = Canvas()
+    var measure = Stopwatch()
+    var raster = Stopwatch()
+    var signature = Signature()
+    var index = 0
+    while index < Workload.dynamic_iterations {
+        signature.add(render_on(drawing, dynamic_label(index), style, measure, raster))
+        index++
+    }
+    report("dynamic_short", Workload.dynamic_iterations, 0.0, measure, raster, signature)
+}
+
+func run_scripts() {
+    var font = Canvas.Font.default()
+    var style = Canvas.TextStyle(size:14.0, color:Color.white(), font:font)
+    let labels = script_labels()
+    var measure = Stopwatch()
+    var raster = Stopwatch()
+    var signature = Signature()
+    var index = 0
+    while index < Workload.script_iterations {
+        signature.add(render_label(
+            labels[index % labels.count()], style, measure, raster
+        ))
+        index++
+    }
+    report("multi_script", Workload.script_iterations, 0.0, measure, raster, signature)
+}
+
+func run_pressure(style:Canvas.TextStyle, report_first:bool, run_revisit:bool) {
+    var first_measure = Stopwatch()
+    var first_raster = Stopwatch()
+    var first_signature = Signature()
+    var index = 0
+    while index < Workload.pressure_entries {
+        first_signature.add(render_label(
+            pressure_label(index), style, first_measure, first_raster
+        ))
+        index++
+    }
+    if report_first {
+        report(
+            "pressure_first", Workload.pressure_entries, 0.0,
+            first_measure, first_raster, first_signature
+        )
+    }
+    if !run_revisit { return }
+
+    var revisit_measure = Stopwatch()
+    var revisit_raster = Stopwatch()
+    var revisit_signature = Signature()
+    index = Workload.pressure_entries - 1
+    while index >= 0 {
+        revisit_signature.add(render_label(
+            pressure_label(index), style, revisit_measure, revisit_raster
+        ))
+        index--
+    }
+    report(
+        "pressure_revisit", Workload.pressure_entries, 0.0,
+        revisit_measure, revisit_raster, revisit_signature
+    )
+}
+
+func main() {
+    let requested = selected_case()
+    var load_clock = Stopwatch()
+    load_clock.start()
+    var mono = Canvas.Font.monospace()
+    load_clock.stop()
+    var mono_style = Canvas.TextStyle(
+        size:14.0,
+        color:Color.white(),
+        font:mono
+    )
+
+    var cold_measure = Stopwatch()
+    var cold_raster = Stopwatch()
+    let cold = render_label(
+        "office AVATAR café e\u{301} — first UI label",
+        mono_style,
+        cold_measure,
+        cold_raster
+    )
+    if requested == "all" || requested == "cold_first" {
+        report(
+            "cold_first", 1, load_clock.get_elapsed_milliseconds(),
+            cold_measure, cold_raster, cold
+        )
+    }
+    if requested == "cold_first" { return }
+    if requested == "all" || requested == "retained_static" {
+        run_retained(mono_style, "retained_static", 1)
+    }
+    if requested == "all" || requested == "retained_static_soak" {
+        run_retained(
+            mono_style,
+            "retained_static_soak",
+            Workload.retained_soak_repetitions
+        )
+    }
+    if requested == "all" || requested == "forced_static_raster" {
+        run_forced_static(mono_style)
+    }
+    if requested == "all" || requested == "dynamic_short" { run_dynamic(mono_style) }
+    if requested == "all" || requested == "multi_script" { run_scripts() }
+    if requested == "all" {
+        run_pressure(mono_style, true, true)
+    }
+    if requested == "pressure_first" {
+        run_pressure(mono_style, true, false)
+    }
+    if requested == "pressure_revisit" {
+        run_pressure(mono_style, false, true)
+    }
+}

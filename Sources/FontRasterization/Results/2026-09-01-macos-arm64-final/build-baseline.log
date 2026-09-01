@@ -1,0 +1,5 @@
+silex: linked GFX@0.39.1 to /Users/nekmata/Projects/SilexProject/.specs/GFX-Vector-Font-System/Worktrees/spec-gfx-vector-fonts-09/Packages/GFX for this workspace
+silex: linked GFX.Assets@0.2.2 to /Users/nekmata/Projects/SilexProject/Packages/GFX.Assets for this workspace
+silex: linked GFX.Canvas@0.3.1 to /Users/nekmata/Projects/SilexProject/Packages/GFX.Canvas for this workspace
+silex: linked GFX.Font@0.1.0 to /Users/nekmata/Projects/SilexProject/.specs/GFX-Vector-Font-System/Worktrees/spec-gfx-vector-fonts-09/Packages/GFX.Font for this workspace
+silex: linked STD@0.21.0 to /Users/nekmata/Projects/SilexProject/Packages/STD for this workspace

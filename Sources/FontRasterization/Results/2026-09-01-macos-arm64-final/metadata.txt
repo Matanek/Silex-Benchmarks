@@ -1,0 +1,17 @@
+date=2026-09-01T09:27:53Z
+os=macOS 26.6.2 25G83
+architecture=arm64
+silex=silex 0.43.0
+compiler_commit=a7abd029060e6ebaa8b78d4c0426a8f3bf8e2b64
+compiler_binary=/Users/nekmata/Projects/SilexProject/.specs/GFX-Vector-Font-System/Worktrees/spec-gfx-vector-fonts-09/Silex/Toolchain/zig-out/bin/silex
+mode=release
+density=2.0
+repetitions=7
+baseline_canvas=4975f3f8db0628c9bb5740b6f2b77b676599072a
+candidate_canvas=8c5e3178c222c7bd087dc2d5766a79bb438335ed
+candidate_font=a1207ecd14cadfae438b4b7c8a4644610a0b30b6
+common_gfx=ddb5f09b615aeb36c75f9b2073dfefbacc77e6cd
+common_assets=75170e3c260d7901537534afd55b6d9036e22280
+common_std=5a018305fb470dfe00e94466150b3c04f207e252
+monospace_sha256=65b5e2b2c4a1fba9ae8be1f026cb35b03dcb8886d9b2a4147054fde12f7e767d
+default_sha256=bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d

@@ -1,0 +1,1 @@
+SILEX_FONT_RASTER case=retained_static_soak iterations=10000 load_ms=0.0 measure_ms=2.0540128 raster_ms=1.5540065 width_milli=345000 height_milli=20000 lines=1 nonzero=4361 alpha=757776

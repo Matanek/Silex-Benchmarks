@@ -1,0 +1,11 @@
+{
+  "sources": "Sources",
+  "requires": { "silex": ">=0.43.0" },
+  "dependencies": {
+    "GFX": "^0.39.0",
+    "GFX.Assets": "^0.2.0",
+    "GFX.Canvas": "^0.3.0",
+    "GFX.Font": "^0.1.0",
+    "STD": "^0.20.0"
+  }
+}

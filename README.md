@@ -42,6 +42,7 @@ source root and declares every dependency required by the catalog.
 | `PhysicsWorldScale2D.sx` | measure sparse motion and body piles at several scales |
 | `RetainedCanvasGeometry.sx` | compile dense retained Canvas geometry |
 | `AnimatingCanvasGeometry.sx` | update animated circles and lines through reusable Canvas preparation |
+| `FontRasterization/` | compare direct Canvas SDL_ttf and vector-font rasterization under identical Release workloads |
 | `UpdatingTextLayers2D.sx` | update retained text layers |
 | `RetainedUIInteraction.sx` | measure UI layout, selection, snapshots, and rasterization |
 | `VirtualizedTextViewport.sx` | stress GFX.UI scrolling, culling, retained text tiles, and bounded CPU/GPU residency |
