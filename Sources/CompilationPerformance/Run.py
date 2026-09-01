@@ -21,8 +21,14 @@ from typing import Any
 TRACE_ENVIRONMENT = "SILEX_COMPILATION_TRACE"
 OWNER_MARKER = "compilation-performance-owner"
 REAL_DARWIN = re.compile(r"^\s*([0-9.]+)\s+real\b", re.MULTILINE)
+CPU_DARWIN = re.compile(
+    r"^\s*[0-9.]+\s+real\s+([0-9.]+)\s+user\s+([0-9.]+)\s+sys\b",
+    re.MULTILINE,
+)
 RSS_DARWIN = re.compile(r"^\s*(\d+)\s+maximum resident set size\b", re.MULTILINE)
 REAL_GNU = re.compile(r"^\s*Elapsed \(wall clock\) time.*:\s*([0-9:.]+)\s*$", re.MULTILINE)
+USER_GNU = re.compile(r"^\s*User time \(seconds\):\s*([0-9.]+)\s*$", re.MULTILINE)
+SYSTEM_GNU = re.compile(r"^\s*System time \(seconds\):\s*([0-9.]+)\s*$", re.MULTILINE)
 RSS_GNU = re.compile(r"^\s*Maximum resident set size \(kbytes\):\s*(\d+)\s*$", re.MULTILINE)
 
 
@@ -55,6 +61,23 @@ def directory_bytes(path: Path) -> int:
     return total
 
 
+def cache_class_bytes(path: Path) -> dict[str, int]:
+    if not path.exists():
+        return {}
+    classes: dict[str, int] = {}
+    for candidate in sorted(path.iterdir(), key=lambda item: item.name):
+        if candidate.is_symlink():
+            classes[candidate.name] = candidate.lstat().st_size
+        elif candidate.is_dir():
+            classes[candidate.name] = directory_bytes(candidate)
+        else:
+            try:
+                classes[candidate.name] = candidate.stat().st_size
+            except FileNotFoundError:
+                pass
+    return classes
+
+
 def elapsed_gnu(value: str) -> float:
     fields = value.split(":")
     if len(fields) == 2:
@@ -64,18 +87,31 @@ def elapsed_gnu(value: str) -> float:
     return float(value)
 
 
-def external_metrics(source: str) -> tuple[float, int]:
+def external_metrics(source: str) -> tuple[float, float, float, int]:
     if platform.system() == "Darwin":
         real = REAL_DARWIN.search(source)
+        cpu = CPU_DARWIN.search(source)
         rss = RSS_DARWIN.search(source)
-        if real is None or rss is None:
+        if real is None or cpu is None or rss is None:
             fail("cannot parse macOS /usr/bin/time output")
-        return float(real.group(1)), int(rss.group(1))
+        return (
+            float(real.group(1)),
+            float(cpu.group(1)),
+            float(cpu.group(2)),
+            int(rss.group(1)),
+        )
     real = REAL_GNU.search(source)
+    user = USER_GNU.search(source)
+    system = SYSTEM_GNU.search(source)
     rss = RSS_GNU.search(source)
-    if real is None or rss is None:
+    if real is None or user is None or system is None or rss is None:
         fail("cannot parse GNU /usr/bin/time output")
-    return elapsed_gnu(real.group(1)), int(rss.group(1)) * 1024
+    return (
+        elapsed_gnu(real.group(1)),
+        float(user.group(1)),
+        float(system.group(1)),
+        int(rss.group(1)) * 1024,
+    )
 
 
 def resolve_packages(silex: Path, workspace: Path, source: Path) -> list[dict[str, str]]:
@@ -171,6 +207,7 @@ def run_sample(
 
     cache_path = workspace / ".silex"
     cache_before = directory_bytes(cache_path)
+    cache_classes_before = cache_class_bytes(cache_path)
     with stdout_path.open("wb") as stdout_file, time_path.open("wb") as time_file:
         result = subprocess.run(
             command,
@@ -182,16 +219,23 @@ def run_sample(
     if result.returncode != 0:
         fail(f"{profile} repetition {repetition} failed; inspect {time_path}")
     timing = time_path.read_text(errors="replace")
-    wall_seconds, peak_rss_bytes = external_metrics(timing)
+    wall_seconds, user_cpu_seconds, system_cpu_seconds, peak_rss_bytes = external_metrics(timing)
     trace = json.loads(trace_path.read_text()) if trace_enabled else None
     if trace is not None and not trace.get("success", False):
         fail(f"compiler trace reports failure for {profile} repetition {repetition}")
+    if trace is not None and trace.get("worker_count", 0) < 1:
+        fail(f"compiler trace has no worker count for {profile} repetition {repetition}")
     return {
         "repetition": repetition,
         "wall_seconds": wall_seconds,
+        "user_cpu_seconds": user_cpu_seconds,
+        "system_cpu_seconds": system_cpu_seconds,
+        "total_cpu_seconds": user_cpu_seconds + system_cpu_seconds,
         "peak_rss_bytes": peak_rss_bytes,
         "cache_bytes_before": cache_before,
         "cache_bytes_after": directory_bytes(cache_path),
+        "cache_classes_before": cache_classes_before,
+        "cache_classes_after": cache_class_bytes(cache_path),
         "trace": trace,
         "command": command[len(timed_command()) :],
     }
@@ -203,6 +247,9 @@ def profile_summary(samples: list[dict[str, Any]]) -> dict[str, Any]:
         "median_wall_seconds": statistics.median(sample["wall_seconds"] for sample in samples),
         "min_wall_seconds": min(sample["wall_seconds"] for sample in samples),
         "max_wall_seconds": max(sample["wall_seconds"] for sample in samples),
+        "median_cpu_seconds": statistics.median(
+            sample["total_cpu_seconds"] for sample in samples
+        ),
         "median_peak_rss_bytes": int(
             statistics.median(sample["peak_rss_bytes"] for sample in samples)
         ),
@@ -223,13 +270,14 @@ def write_reports(results: Path, report: dict[str, Any]) -> None:
         f"- Benchmarks commit: `{report['metadata']['benchmarks_commit']}`",
         f"- Examples commit: `{report['metadata']['examples_commit']}`",
         "",
-        "| Profile | Median wall | Range | Median peak RSS | Maximum root cache |",
-        "| --- | ---: | ---: | ---: | ---: |",
+        "| Profile | Median wall | Range | Median CPU | Median peak RSS | Maximum root cache |",
+        "| --- | ---: | ---: | ---: | ---: | ---: |",
     ]
     for name, summary in report["summaries"].items():
         lines.append(
             f"| `{name}` | {summary['median_wall_seconds']:.3f} s | "
             f"{summary['min_wall_seconds']:.3f}–{summary['max_wall_seconds']:.3f} s | "
+            f"{summary['median_cpu_seconds']:.3f} s | "
             f"{summary['median_peak_rss_bytes'] / 1024 / 1024:.1f} MiB | "
             f"{summary['maximum_cache_bytes'] / 1024 / 1024:.1f} MiB |"
         )
@@ -244,7 +292,8 @@ def write_reports(results: Path, report: dict[str, Any]) -> None:
             "`cold_no_cache` measures a real compiler miss with `--nocache`. "
             "`shared_packages` compiles a distinct entry after another GFX entry. "
             "`entry_modified` changes only the entry text. `exact_hit` repeats the "
-            "same source, options and output after priming.",
+            "same source, options and output after priming. `minimal_no_cache` and "
+            "`non_gfx_no_cache` expose fixed and non-GFX closure costs.",
             "",
         ]
     )
@@ -258,6 +307,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--silex", type=Path, required=True)
     parser.add_argument("--primary", type=Path, required=True)
     parser.add_argument("--warm-source", type=Path, required=True)
+    parser.add_argument("--non-gfx", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--warmups", type=int, default=1)
@@ -271,6 +321,7 @@ def main() -> int:
     silex = arguments.silex.resolve()
     primary = arguments.primary.resolve()
     warm_source = arguments.warm_source.resolve()
+    non_gfx = arguments.non_gfx.resolve()
     results = arguments.output.resolve()
     if arguments.runs < 1 or arguments.warmups < 0:
         fail("--runs must be positive and --warmups must be non-negative")
@@ -279,12 +330,13 @@ def main() -> int:
             fail(f"{label} is not a directory: {path}")
     if not os.access(silex, os.X_OK):
         fail(f"Silex binary is not executable: {silex}")
-    for source in (primary, warm_source):
+    for source in (primary, warm_source, non_gfx):
         if not source.is_file():
             fail(f"source does not exist: {source}")
 
     cache = workspace / ".silex"
     scratch = workspace / ".compilation-performance"
+    minimal = scratch / "Minimal.sx"
     entry = primary.parent / "CompilationPerformanceEntry.sx"
     if cache.exists():
         fail(f"refusing to touch pre-existing cache: {cache}")
@@ -300,11 +352,14 @@ def main() -> int:
         "shared_packages": [],
         "entry_modified": [],
         "exact_hit": [],
+        "minimal_no_cache": [],
+        "non_gfx_no_cache": [],
     }
     try:
         cache.mkdir()
         marker = cache / OWNER_MARKER
         marker.write_text(token)
+        minimal.write_text("func main() {}\n")
         packages = install_workspace_links(silex, workspace, packages_root, primary)
 
         primary_source = primary.read_text()
@@ -343,6 +398,34 @@ def main() -> int:
                         trace_enabled=trace_enabled,
                     )
                 )
+
+        for repetition in range(1, arguments.runs + 1):
+            profiles["minimal_no_cache"].append(
+                run_sample(
+                    profile="minimal-no-cache",
+                    repetition=repetition,
+                    silex=silex,
+                    workspace=workspace,
+                    source=minimal,
+                    output=scratch / f"minimal-no-cache-{repetition}",
+                    results=results,
+                    cache_enabled=False,
+                    trace_enabled=True,
+                )
+            )
+            profiles["non_gfx_no_cache"].append(
+                run_sample(
+                    profile="non-gfx-no-cache",
+                    repetition=repetition,
+                    silex=silex,
+                    workspace=workspace,
+                    source=non_gfx,
+                    output=scratch / f"non-gfx-no-cache-{repetition}",
+                    results=results,
+                    cache_enabled=False,
+                    trace_enabled=True,
+                )
+            )
 
         run_sample(
             profile="shared-prime",
@@ -432,6 +515,8 @@ def main() -> int:
             "examples_commit": git(workspace / "Silex-Examples", "rev-parse", "HEAD"),
             "primary": str(primary),
             "warm_source": str(warm_source),
+            "minimal": "generated func main() {}",
+            "non_gfx": str(non_gfx),
             "packages": packages,
         }
         report = {
