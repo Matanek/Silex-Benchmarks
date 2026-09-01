@@ -36,6 +36,7 @@ source root and declares every dependency required by the catalog.
 
 | Benchmark | Purpose |
 | --- | --- |
+| `CompilationPerformance/` | separate cold compilation, shared-package misses, entry edits, and exact executable hits |
 | `Boids2D/` | compare the public Scene2D/ECS/GPU path with two C++23 reference implementations |
 | `FallingBodies2D/` | jointly load 2D physics, transform transfer, and rendering |
 | `WorldRendering3D/` | measure an instanced 3D world across several GPU and presentation profiles |
