@@ -3,8 +3,7 @@ set -eu
 
 font_script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 font_benchmark_repo=$(CDPATH= cd -- "$font_script_dir/../.." && pwd)
-font_worktree_root=$(CDPATH= cd -- "$font_benchmark_repo/.." && pwd)
-font_workspace_root=$(CDPATH= cd -- "$font_worktree_root/../../../.." && pwd)
+font_candidate_root=$(CDPATH= cd -- "$font_benchmark_repo/.." && pwd)
 font_results=${1:-"$font_script_dir/Results/$(date +%Y-%m-%d-%H%M%S)"}
 font_run_root=$(mktemp -d /private/tmp/silex-font-raster.XXXXXX)
 font_baseline_workspace="$font_run_root/baseline"
@@ -12,13 +11,13 @@ font_candidate_workspace="$font_run_root/candidate"
 font_baseline_binary="$font_run_root/font-raster-baseline"
 font_candidate_binary="$font_run_root/font-raster-candidate"
 font_direct_binary="$font_run_root/font-raster-direct"
-font_baseline_canvas="$font_workspace_root/Packages/GFX.Canvas"
-font_candidate_canvas="$font_worktree_root/Packages/GFX.Canvas"
-font_candidate_font="$font_worktree_root/Packages/GFX.Font"
-font_common_gfx="$font_worktree_root/Packages/GFX"
-font_common_assets="$font_workspace_root/Packages/GFX.Assets"
-font_common_std="$font_workspace_root/Packages/STD"
-font_toolchain="$font_worktree_root/Silex"
+font_baseline_canvas="$font_run_root/GFX.Canvas-baseline"
+font_candidate_canvas="$font_candidate_root/Packages/GFX.Canvas"
+font_candidate_font="$font_candidate_root/Packages/GFX.Font"
+font_common_gfx="$font_candidate_root/Packages/GFX"
+font_common_assets="$font_candidate_root/Packages/GFX.Assets"
+font_common_std="$font_candidate_root/Packages/STD"
+font_toolchain="$font_candidate_root/Silex"
 font_silex=${SILEX_BIN:-"$font_toolchain/Toolchain/zig-out/bin/silex"}
 font_baseline_commit=4975f3f8db0628c9bb5740b6f2b77b676599072a
 font_candidate_canvas_commit=8c5e3178c222c7bd087dc2d5766a79bb438335ed
@@ -73,10 +72,21 @@ run_one() {
         2>"$font_results/$font_engine-$font_case-$font_repetition.time"
 }
 
-require_commit "$font_baseline_canvas" "$font_baseline_commit"
 require_commit "$font_candidate_canvas" "$font_candidate_canvas_commit"
 require_commit "$font_candidate_font" "$font_candidate_font_commit"
 require_commit "$font_toolchain" "$font_toolchain_commit"
+
+if ! git -C "$font_candidate_canvas" cat-file -e "$font_baseline_commit^{commit}"; then
+    echo "missing baseline commit in $font_candidate_canvas: $font_baseline_commit" >&2
+    exit 1
+fi
+mkdir -p "$font_baseline_canvas"
+git -C "$font_candidate_canvas" archive "$font_baseline_commit" |
+    tar -x -C "$font_baseline_canvas"
+if [ -d "$font_candidate_canvas/Boundary" ]; then
+    mkdir -p "$font_baseline_canvas/Boundary"
+    cp -R "$font_candidate_canvas/Boundary/." "$font_baseline_canvas/Boundary/"
+fi
 
 font_baseline_mono=$(shasum -a 256 "$font_baseline_canvas/Assets/Fonts/NotoSansMono-Regular.ttf" | cut -d ' ' -f 1)
 font_candidate_mono=$(shasum -a 256 "$font_candidate_font/Assets/Fonts/NotoSansMono-Regular.ttf" | cut -d ' ' -f 1)

@@ -16,7 +16,7 @@ well below one logical pixel per typical label. Pixel signatures are expected
 to be deterministic per engine, not byte-identical between two different
 rasterizers.
 
-`RunComparison.sh` requires clean owner repositories at these exact commits:
+`RunComparison.sh` requires clean candidate repositories at these exact commits:
 
 - SDL_ttf baseline `GFX.Canvas`:
   `4975f3f8db0628c9bb5740b6f2b77b676599072a`;
@@ -38,11 +38,17 @@ their execution order, and runs every case in seven independent Release
 processes per engine. Per-case processes prevent unrelated allocator
 high-water marks from accumulating across the campaign. The runner records raw
 output, build logs, maximum RSS, metadata, a CSV, and a Markdown summary below
-`Results/`.
+`Results/`. It extracts the SDL_ttf baseline from the recorded historical
+`GFX.Canvas` commit, so the direct checkout remains on the current vector-font
+implementation and no persistent baseline worktree is required.
+Already downloaded SDL_ttf boundary archives are reused from the current
+`GFX.Canvas` checkout; if the host archive is absent, normal package linking
+downloads and verifies the historical artifact declared by the baseline.
 
-By default the runner uses the Silex binary built inside the Spec worktree at
-the exact compiler commit above. `SILEX_BIN` may override the binary, but the
-owning Toolchain repository must still be clean at that recorded commit.
+By default the runner uses the Silex binary built in the sibling `Silex`
+repository at the exact compiler commit above. `SILEX_BIN` may override the
+binary, but the owning Toolchain repository must still be clean at that
+recorded commit.
 
 `retained_static` creates one Canvas snapshot and one text layer, then reuses
 that exact layer 1,000 times. `retained_static_soak` repeats the same path
