@@ -1,0 +1,240 @@
+use GFX.Canvas
+use GFX.Color
+use GFX.GPU
+use GFX.Scene2D
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+
+func paint_filtered(drawing:&Canvas, width:int, height:int, phase:float) {
+    drawing.clear()
+    drawing.paint(func(painter:&Canvas.Painter) {
+        painter.layer(
+            [Canvas.Effect.blur(12.0), Canvas.Effect.opacity(0.92)],
+            func(layer:&Canvas.Painter) {
+                let travel = Math.max(1.0, width as float - 112.0)
+                let x = 24.0 + phase * travel
+                layer.fill(
+                    Canvas.Rect(Math.Vec2(x, 24.0), Math.Vec2(88.0, 56.0), 10.0),
+                    Canvas.Fill.solid(Color.indigo_500().with_alpha(0.84))
+                )
+                layer.fill(
+                    Canvas.Circle(
+                        Math.Vec2(width as float * 0.68, height as float * 0.62),
+                        Math.max(12.0, Math.min(width, height) as float * 0.12)
+                    ),
+                    Canvas.Fill.solid(Color.cyan_300().with_alpha(0.72))
+                )
+                layer.text(
+                    "office O — filtered Canvas",
+                    Math.Vec2(30.0, height as float * 0.46),
+                    Canvas.TextStyle(size:18.0, color:Color.white())
+                )
+            }
+        )
+    })
+}
+
+func report(
+    name:str,
+    warmup:int,
+    iterations:int,
+    elapsed:@Stopwatch,
+    renderer:@Scene2D.CanvasSurfaceRenderer,
+    extra_gpu_bytes:int = 0
+) {
+    let milliseconds = elapsed.get_elapsed_milliseconds()
+    print(
+        "SILEX_FILTERED_CANVAS case=$(name) warmup=$(warmup) " +
+        "iterations=$(iterations) elapsed_ms=$(milliseconds) " +
+        "per_iteration_ms=$(milliseconds / iterations as float) " +
+        "gpu_bytes=$(renderer.texture_byte_count() + extra_gpu_bytes) " +
+        "allocations=$(renderer.texture_allocation_count()) " +
+        "renders=$(renderer.render_count()) cache_hits=$(renderer.cache_hit_count()) " +
+        "rgba_uploads=$(renderer.rgba_upload_count())"
+    )
+}
+
+func run_static() {
+    let warmup = 64
+    let iterations = 4_096
+    var device = GPU.Device()
+    var renderer = Scene2D.CanvasSurfaceRenderer(device)
+    var drawing = Canvas()
+    paint_filtered(drawing, 320, 180, 0.25)
+    var snapshot = drawing.snapshot(320, 180)
+    let frame = Canvas.Rect(Math.Vec2(), Math.Vec2(320.0, 180.0))
+    var surface = renderer.render(snapshot, frame, 1.0)
+    device.wait_until_idle()
+    let rendered_once = renderer.render_count()
+
+    var index = 0
+    while index < warmup {
+        surface = renderer.render(snapshot, frame, 1.0)
+        index++
+    }
+    var elapsed = Stopwatch()
+    elapsed.start()
+    index = 0
+    while index < iterations {
+        surface = renderer.render(snapshot, frame, 1.0)
+        index++
+    }
+    elapsed.stop()
+    assert(surface.is_valid())
+    assert(renderer.render_count() == rendered_once)
+    assert(renderer.rgba_upload_count() == 0)
+    report("static", warmup, iterations, elapsed, renderer)
+}
+
+func sample_transformed(
+    device:@GPU.Device,
+    pipeline:@GPU.GraphicsPipeline,
+    sampler:@GPU.Sampler,
+    target:GPU.Texture,
+    surface:@Scene2D.CanvasSurface,
+    index:int
+) {
+    let x = (index % 97) as float * 2.0
+    let y = (index % 53) as float
+    var commands = device.commands()
+    var pass = commands.render(GPU.ColorTarget(
+        texture:target,
+        clear:Color.transparent(),
+        load:GPU.Load.clear,
+        store:GPU.Store.preserve
+    ))
+    pass.viewport(x, y, 320.0, 180.0)
+    pass.bind(pipeline)
+    pass.fragment_sampler(0, surface.texture(), sampler)
+    pass.draw(3)
+    pass.finish()
+    var completed = commands.submit_and_track()
+    completed.wait()
+}
+
+func run_transform() {
+    let warmup = 24
+    let iterations = 160
+    var device = GPU.Device()
+    var renderer = Scene2D.CanvasSurfaceRenderer(device)
+    var drawing = Canvas()
+    paint_filtered(drawing, 320, 180, 0.25)
+    var snapshot = drawing.snapshot(320, 180)
+    var surface = renderer.render(
+        snapshot,
+        Canvas.Rect(Math.Vec2(), Math.Vec2(320.0, 180.0)),
+        1.0
+    )
+    device.wait_until_idle()
+    let rendered_once = renderer.render_count()
+
+    var target_formats:GPU.ColorTargetFormat[] = []
+    target_formats.append(GPU.ColorTargetFormat(format:GPU.TextureFormat.rgba8_unorm))
+    var pipeline = device.graphics_pipeline(
+        GPU.ShaderProgram.hlsl(file:"Shaders/Compose.hlsl"),
+        GPU.GraphicsPipelineSettings(
+            color_targets:target_formats,
+            name:"Filtered Canvas transform-only benchmark"
+        )
+    )
+    var sampler = device.sampler(GPU.SamplerSettings(
+        min_filter:GPU.Filter.linear,
+        mag_filter:GPU.Filter.linear,
+        address_u:GPU.AddressMode.clamp_to_edge,
+        address_v:GPU.AddressMode.clamp_to_edge
+    ))
+    var target = device.texture(GPU.TextureSettings(
+        format:GPU.TextureFormat.rgba8_unorm,
+        width:640,
+        height:360,
+        usage:GPU.TextureUsage.as_color_target()
+    ))
+
+    var index = 0
+    while index < warmup {
+        sample_transformed(device, pipeline, sampler, target, surface, index)
+        index++
+    }
+    var elapsed = Stopwatch()
+    elapsed.start()
+    index = 0
+    while index < iterations {
+        sample_transformed(device, pipeline, sampler, target, surface, index)
+        index++
+    }
+    elapsed.stop()
+    assert(renderer.render_count() == rendered_once)
+    assert(renderer.rgba_upload_count() == 0)
+    report("transform_only", warmup, iterations, elapsed, renderer, target.byte_count())
+}
+
+func run_mutation_case(
+    name:str,
+    width:int,
+    height:int,
+    warmup:int,
+    iterations:int
+) {
+    var device = GPU.Device()
+    var renderer = Scene2D.CanvasSurfaceRenderer(device)
+    var drawing = Canvas()
+    paint_filtered(drawing, width, height, 0.0)
+    var snapshot = drawing.snapshot(width, height)
+    let frame = Canvas.Rect(
+        Math.Vec2(),
+        Math.Vec2(width as float, height as float)
+    )
+    var surface = renderer.render(snapshot, frame, 1.0)
+    device.wait_until_idle()
+    let cache_entries = renderer.cache_entry_count()
+
+    var index = 0
+    while index < warmup {
+        paint_filtered(drawing, width, height, (index % 31) as float / 30.0)
+        snapshot = drawing.snapshot(width, height, reuse:snapshot)
+        surface = renderer.render(snapshot, frame, 1.0)
+        device.wait_until_idle()
+        index++
+    }
+    var elapsed = Stopwatch()
+    elapsed.start()
+    index = 0
+    while index < iterations {
+        paint_filtered(drawing, width, height, (index % 61) as float / 60.0)
+        snapshot = drawing.snapshot(width, height, reuse:snapshot)
+        surface = renderer.render(snapshot, frame, 1.0)
+        device.wait_until_idle()
+        index++
+    }
+    elapsed.stop()
+    assert(surface.is_valid())
+    assert(renderer.cache_entry_count() == cache_entries)
+    assert(renderer.rgba_upload_count() == 0)
+    report(name, warmup, iterations, elapsed, renderer)
+}
+
+func selected_case() str {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() > 1 { return arguments[1] }
+        }
+    }
+    return ""
+}
+
+func main() {
+    let requested = selected_case()
+    if requested == "static" { run_static(); return }
+    if requested == "transform_only" { run_transform(); return }
+    if requested == "content_mutation" {
+        run_mutation_case("content_mutation", 320, 180, 12, 80)
+        return
+    }
+    if requested == "fullscreen" {
+        run_mutation_case("fullscreen", 1_920, 1_080, 2, 8)
+        return
+    }
+    panic("expected static, transform_only, content_mutation or fullscreen")
+}

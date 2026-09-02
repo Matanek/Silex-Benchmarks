@@ -43,6 +43,7 @@ source root and declares every dependency required by the catalog.
 | `RetainedCanvasGeometry.sx` | compile dense retained Canvas geometry |
 | `AnimatingCanvasGeometry.sx` | update animated circles and lines through reusable Canvas preparation |
 | `DynamicCanvasShadows2D.sx` | compare dynamic retained Canvas placements without shadows and with analytic shadows |
+| `FilteredCanvasSurfaces/` | measure static reuse, transform-only composition, bounded mutation and fullscreen GPU filtering |
 | `FontRasterization/` | compare direct Canvas SDL_ttf and vector-font rasterization under identical Release workloads |
 | `UpdatingTextLayers2D.sx` | update retained text layers |
 | `RetainedUIInteraction.sx` | measure UI layout, selection, snapshots, and rasterization |
@@ -67,6 +68,7 @@ silex run Silex-Benchmarks/Sources/VirtualizedTextViewport.sx --release
 silex compile Silex-Benchmarks/Sources/DynamicCanvasShadows2D.sx --release -o /tmp/dynamic-canvas-shadows2d
 /tmp/dynamic-canvas-shadows2d --baseline
 /tmp/dynamic-canvas-shadows2d --analytic
+Silex-Benchmarks/Sources/FilteredCanvasSurfaces/RunCampaign.sh
 silex compile Silex-Benchmarks/Sources/FallingBodies2D/Main.sx --release -o /tmp/falling-bodies-2d
 /tmp/falling-bodies-2d --smoke --immediate --no-panel
 silex compile Silex-Benchmarks/Sources/WorldRendering3D/Main.sx --release -o /tmp/world-rendering-3d
@@ -84,9 +86,9 @@ cases compare the ordinary analytic drawing pipeline with the direct analytic
 shadow pipeline. Each result prints the compilation target, GPU, draw calls,
 pipeline and texture bindings, CPU-frame mean, variance and range. The public
 renderer does not currently expose GPU timestamps, so the workload reports
-that metric as unavailable rather than substituting CPU time. The filtered
-fallback is likewise reported as unavailable until `gfx-canvas-effects-04`;
-adding that third case belongs to the Part that implements it.
+that metric as unavailable rather than substituting CPU time. Filtered group
+costs are measured separately by `FilteredCanvasSurfaces/` so the analytic
+placement benchmark keeps its original workload and baseline.
 
 `Boids2D/Silex.sx` is a faithful copy of the historical benchmark: its
 algorithm, constants, and measurement window were not rewritten during the
