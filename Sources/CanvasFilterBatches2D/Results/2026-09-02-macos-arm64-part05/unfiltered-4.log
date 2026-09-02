@@ -1,0 +1,1 @@
+SILEX_CANVAS_FILTER_BATCHES case=unfiltered placements=16 warmup=4 iterations=32 elapsed_ms=6.02 per_frame_ms=0.188125 source_renders=1 source_cache_hits=575 filter_renders=0 filter_cache_hits=0 pipelines=0 pipeline_creations=0 pipeline_cache_hits=0 allocations=2 gpu_bytes=131072 rgba_uploads=0

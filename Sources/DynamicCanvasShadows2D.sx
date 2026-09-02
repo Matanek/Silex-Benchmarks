@@ -1,0 +1,193 @@
+use GFX.Application
+use GFX.Canvas
+use GFX.Color
+use GFX.Components
+use GFX.ECS
+use GFX.GPU
+use GFX.Rendering
+use GFX.Scene2D
+use GFX.Window.Plugin as WindowPlugin
+use STD.Math
+use STD.Process
+use STD.System
+use STD.Time.Clock
+
+func instance_count() int { return 1_024 }
+func warmup_frames() int { return 30 }
+func measured_frames() int { return 120 }
+
+class BenchmarkProbe {
+    let shadow:bool
+    var entities:ECS.Entity[]
+    var frame:int
+    var clock:Clock
+    var total:float
+    var squared:float
+    var minimum:float
+    var maximum:float
+
+    init(shadow:bool) {
+        self.shadow = shadow
+        self.entities = []
+        self.frame = 0
+        self.clock = Clock()
+        self.total = 0.0
+        self.squared = 0.0
+        self.minimum = 1_000_000.0
+        self.maximum = 0.0
+    }
+}
+
+func benchmark_drawing(shadow:bool) Canvas {
+    var drawing = Canvas()
+    drawing.paint(func(painter:&Canvas.Painter) {
+        if shadow {
+            painter.layer(
+                [Canvas.Effect.shadow(
+                    offset:Math.Vec2(2.0, 3.0),
+                    radius:6.0,
+                    color:Color.black().with_alpha(0.3)
+                )],
+                func(layer:&Canvas.Painter) {
+                    layer.fill(
+                        Canvas.Rect(Math.Vec2(2.0), Math.Vec2(20.0, 12.0), 3.0),
+                        Canvas.Fill.solid(Color.indigo_500())
+                    )
+                }
+            )
+        } else {
+            painter.fill(
+                Canvas.Rect(Math.Vec2(2.0), Math.Vec2(20.0, 12.0), 3.0),
+                Canvas.Fill.solid(Color.indigo_500())
+            )
+        }
+    })
+    return drawing
+}
+
+func create_benchmark(world:&ECS.World, probe:&BenchmarkProbe) {
+    var drawing = benchmark_drawing(probe.shadow)
+    var index = 0
+    while index < instance_count() {
+        let column = index % 32
+        let row = index / 32
+        probe.entities.append(world.spawn(ECS.EntityRecipe()
+            ..with(Components.Transform2D(
+                position:Math.Vec2(column as float * 24.0, row as float * 16.0),
+                scale:Math.Vec2(1.0, 0.8)
+            ))
+            ..with(Components.Canvas(drawing, 28, 24))
+        ))
+        index++
+    }
+    probe.clock.tick()
+}
+
+func animate_benchmark(world:&ECS.World, probe:&BenchmarkProbe) {
+    let phase = probe.frame as float * 0.015
+    var index = 0
+    while index < probe.entities.count() {
+        let entity = probe.entities[index]
+        world.update<Components.Transform2D>(entity, func(transform:&Components.Transform2D) {
+            transform.rotation = phase + index as float * 0.0005
+            transform.scale = Math.Vec2(
+                1.0 + Math.sin(phase + index as float * 0.01) * 0.08,
+                0.8 + Math.cos(phase + index as float * 0.013) * 0.06
+            )
+        })
+        index++
+    }
+}
+
+func device_name(device:@GPU.Device) str {
+    let info = device.info()
+    if let name = info.name { return name }
+    return device.driver()
+}
+
+func finish_benchmark(
+    renderer:@Rendering.Renderer,
+    device:@GPU.Device,
+    probe:&BenchmarkProbe,
+    controller:&Application.Controller
+) {
+    let elapsed = probe.clock.tick() * 1000.0
+    if probe.frame >= warmup_frames() {
+        probe.total += elapsed
+        probe.squared += elapsed * elapsed
+        if elapsed < probe.minimum { probe.minimum = elapsed }
+        if elapsed > probe.maximum { probe.maximum = elapsed }
+    }
+    probe.frame++
+    if probe.frame < warmup_frames() + measured_frames() { return }
+
+    let samples = measured_frames() as float
+    let mean = probe.total / samples
+    let variance = Math.max(0.0, probe.squared / samples - mean * mean)
+    var mode = "no-shadow"
+    if probe.shadow { mode = "analytic-shadow" }
+    let stats = renderer.stats()
+    print("DynamicCanvasShadows2D $(mode)")
+    print("  target: $(System.target_name(System.target()))")
+    print("  gpu: $(device_name(device))")
+    print("  build: Release required")
+    print("  instances: $(instance_count())")
+    print("  warmup frames: $(warmup_frames())")
+    print("  repetitions: $(measured_frames())")
+    print("  CPU frame mean: $(mean) ms")
+    print("  CPU frame variance: $(variance) ms^2")
+    print("  CPU frame range: $(probe.minimum)..$(probe.maximum) ms")
+    print("  draw calls: $(stats.draw_calls())")
+    print("  pipeline bindings: $(stats.pipeline_bindings())")
+    print("  texture bindings: $(stats.texture_bindings())")
+    print("  uploads after warmup: 1 instance buffer/frame; 0 geometry/effect texture")
+    print("  GPU frame time: unavailable from the public renderer API")
+    if probe.shadow {
+        print("  filtered fallback: unavailable until gfx-canvas-effects-04")
+    }
+    controller.stop()
+}
+
+func run_case(shadow:bool, title:str) int {
+    var application = Application()
+    application.add_resource(BenchmarkProbe(shadow))
+    application.add_plugin(WindowPlugin(WindowPlugin.Settings()
+        ..title = title
+        ..width = 768
+        ..height = 512
+        ..hidden = true
+    ))
+    application.add_plugin(Rendering.Plugin())
+    application.add_plugin(Scene2D.Plugin())
+    application.add_system(Application.Schedule.startup, create_benchmark)
+    application.add_system(Application.Schedule.update, animate_benchmark)
+    application.add_after_system(Application.Schedule.render, finish_benchmark)
+    return application.run()
+}
+
+test "measure dynamic Canvas placements without shadows" {
+    assert(run_case(false, "DynamicCanvasShadows2D baseline") == 0)
+}
+
+test "measure dynamic analytic Canvas shadows" {
+    assert(run_case(true, "DynamicCanvasShadows2D analytic") == 0)
+}
+
+func main() {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            for argument in arguments {
+                if argument == "--analytic" {
+                    assert(run_case(true, "DynamicCanvasShadows2D analytic") == 0)
+                    return
+                }
+                if argument == "--baseline" {
+                    assert(run_case(false, "DynamicCanvasShadows2D baseline") == 0)
+                    return
+                }
+            }
+        }
+    }
+    print("pass --baseline or --analytic; filtered fallback arrives in Part 04")
+}

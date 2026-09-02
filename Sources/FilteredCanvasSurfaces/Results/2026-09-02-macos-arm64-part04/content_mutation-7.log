@@ -1,0 +1,1 @@
+SILEX_FILTERED_CANVAS case=content_mutation warmup=12 iterations=80 elapsed_ms=223.888 per_iteration_ms=2.7986 gpu_bytes=1372536 allocations=644 renders=184 cache_hits=93 rgba_uploads=0
