@@ -28,3 +28,15 @@ The backend has no reliable public GPU timestamp. The report therefore keeps
 CPU preparation/submit and queue-drain observations separate and leaves GPU
 time unavailable. The full-screen result is informative and is not used to
 accept or reject ordinary retained paths.
+
+`RunLegacyRegression.sh` separately builds the four unchanged no-effect
+workloads against the exact pre-Part07 and candidate package commits. After one
+discarded process per executable, it alternates seven Release processes for
+each version and applies the 5% primary-metric gate required by the spec:
+
+```sh
+Silex-Benchmarks/Sources/CanvasEffects2D/RunLegacyRegression.sh
+```
+
+The script derives temporary baseline packages with `git archive`; it does not
+move a repository checkout or alter a branch.
