@@ -85,3 +85,23 @@ Silex-Examples commit `dc5a4413b97155c3aa049b924c4b8c2852e9a208`;
 the measured ShapeGallery2D corpus is unchanged. The validation workspace
 contained one root `.silex` directory, no nested caches, and only 404 KiB of
 package-link metadata after the no-cache sweeps.
+
+## Final local integration
+
+The accepted Spec was combined with the newer local default-branch changes at
+Silex commit `3d21c0ee22c26539262e361711b8f7106c3e8499` and Silex-Examples
+commit `be8dbb1fe4fe904b3f1b02cbba96450dd0ee4673`. Both `zig build check` and
+`zig build test` remain green with 154 of 154 executable scenarios. The
+current catalogue has grown to 35 entry points; all 35 compile without cache
+from relative root paths in both Debug and Release with four workers.
+
+A fresh five-run campaign on the current translated ShapeGallery2D source
+records a `1.17 s` cold median, `0.94 s` for both shared packages and an entry
+modification, a `0.01 s` exact hit, and a maximum cache of `342.8 MiB`. Because
+the translated source has a different content hash, a second campaign used a
+byte-identical copy of the accepted corpus with the same package commits. The
+strict comparison gate accepts it: its cold median is `1.25 s` (`+2.46%` from
+the Part 05 capture), shared packages `1.01 s` (`+6.32%`), entry modification
+`1.00 s` (`+3.09%`), exact hit `0.01 s`, maximum cache `342.8 MiB`, and cold
+peak RSS `1030.5 MiB`. Every measured change remains below the 10% regression
+gate while preserving the Spec-wide improvement over the `4.11 s` baseline.
