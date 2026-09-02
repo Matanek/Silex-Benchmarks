@@ -185,6 +185,7 @@ def run_sample(
     results: Path,
     cache_enabled: bool,
     trace_enabled: bool,
+    worker_count: int | None,
 ) -> dict[str, Any]:
     stem = f"{profile}-{repetition:02d}"
     trace_path = results / f"{stem}.trace.json"
@@ -209,6 +210,9 @@ def run_sample(
         environment[TRACE_ENVIRONMENT] = str(trace_path)
     else:
         environment.pop(TRACE_ENVIRONMENT, None)
+    environment.pop("SILEX_COMPILATION_WORKERS", None)
+    if worker_count is not None:
+        environment["SILEX_COMPILATION_WORKERS"] = str(worker_count)
 
     cache_path = workspace / ".silex"
     cache_before = directory_bytes(cache_path)
@@ -316,6 +320,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--warmups", type=int, default=1)
+    parser.add_argument("--workers", type=int)
     return parser.parse_args()
 
 
@@ -330,6 +335,8 @@ def main() -> int:
     results = arguments.output.resolve()
     if arguments.runs < 1 or arguments.warmups < 0:
         fail("--runs must be positive and --warmups must be non-negative")
+    if arguments.workers is not None and arguments.workers < 1:
+        fail("--workers must be positive")
     for path, label in ((workspace, "workspace"), (packages_root, "packages root")):
         if not path.is_dir():
             fail(f"{label} is not a directory: {path}")
@@ -379,6 +386,7 @@ def main() -> int:
                 results=results,
                 cache_enabled=False,
                 trace_enabled=False,
+                worker_count=arguments.workers,
             )
 
         for repetition in range(1, arguments.runs + 1):
@@ -401,6 +409,7 @@ def main() -> int:
                         results=results,
                         cache_enabled=False,
                         trace_enabled=trace_enabled,
+                        worker_count=arguments.workers,
                     )
                 )
 
@@ -416,6 +425,7 @@ def main() -> int:
                     results=results,
                     cache_enabled=False,
                     trace_enabled=True,
+                    worker_count=arguments.workers,
                 )
             )
             profiles["non_gfx_no_cache"].append(
@@ -429,6 +439,7 @@ def main() -> int:
                     results=results,
                     cache_enabled=False,
                     trace_enabled=True,
+                    worker_count=arguments.workers,
                 )
             )
 
@@ -442,6 +453,7 @@ def main() -> int:
             results=results,
             cache_enabled=True,
             trace_enabled=True,
+            worker_count=arguments.workers,
         )
         for repetition in range(1, arguments.runs + 1):
             entry.write_text(primary_source + f"\n// shared profile {repetition}\n")
@@ -456,6 +468,7 @@ def main() -> int:
                     results=results,
                     cache_enabled=True,
                     trace_enabled=True,
+                    worker_count=arguments.workers,
                 )
             )
 
@@ -472,6 +485,7 @@ def main() -> int:
                     results=results,
                     cache_enabled=True,
                     trace_enabled=True,
+                    worker_count=arguments.workers,
                 )
             )
 
@@ -486,6 +500,7 @@ def main() -> int:
             results=results,
             cache_enabled=True,
             trace_enabled=True,
+            worker_count=arguments.workers,
         )
         for repetition in range(1, arguments.runs + 1):
             sample = run_sample(
@@ -498,6 +513,7 @@ def main() -> int:
                 results=results,
                 cache_enabled=True,
                 trace_enabled=True,
+                worker_count=arguments.workers,
             )
             if sample["trace"]["cache_result"] != "hit_before_frontend":
                 fail("exact hit profile did not hit before the frontend")
@@ -510,6 +526,7 @@ def main() -> int:
             "processor": platform.processor(),
             "runs": arguments.runs,
             "warmups": arguments.warmups,
+            "requested_workers": arguments.workers if arguments.workers is not None else "auto",
             "workspace": str(workspace),
             "silex_binary": str(silex),
             "silex_version": subprocess.run(

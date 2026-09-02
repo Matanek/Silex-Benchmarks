@@ -56,7 +56,10 @@ python3 Silex-Benchmarks/Sources/CompilationPerformance/Run.py \
 Each sample preserves the compiler's structured phase trace, `/usr/bin/time`
 output, stdout, command, user/system CPU, peak RSS, and total plus per-class
 cache size before and after compilation. The trace records the compiler worker
-count; it is currently one because the native compilation pipeline is serial.
+count. Omit `--workers` to exercise the compiler's bounded automatic policy, or
+pass `--workers 1`, `--workers 2`, or `--workers 4` for a controlled comparison.
+Small programs can still report one worker because ranges below the internal
+threshold stay on the direct path.
 `report.json` contains the complete machine-readable campaign and `SUMMARY.md`
 contains medians and ranges. Performance comparisons must use the raw samples
 and matching commits; timing is not a correctness assertion.
@@ -64,4 +67,6 @@ and matching commits; timing is not a correctness assertion.
 Compare two captures with `Compare.py <baseline>/report.json
 <candidate>/report.json`. It refuses the comparison unless target, mode,
 machine, worker count, repetitions, corpus hashes, package commits, and the
-single disposable-root cache protocol all match exactly.
+single disposable-root cache protocol all match exactly. A Part 05 comparison
+that intentionally changes only the worker count must pass
+`--allow-worker-change`; every other provenance field remains mandatory.

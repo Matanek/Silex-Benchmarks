@@ -29,14 +29,26 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", type=Path)
     parser.add_argument("candidate", type=Path)
+    parser.add_argument(
+        "--allow-worker-change",
+        action="store_true",
+        help="compare otherwise identical campaigns whose worker counts differ",
+    )
     arguments = parser.parse_args()
     baseline = load_report(arguments.baseline)
     candidate = load_report(arguments.candidate)
-    if baseline["metadata"]["comparison_key"] != candidate["metadata"]["comparison_key"]:
+    baseline_key = dict(baseline["metadata"]["comparison_key"])
+    candidate_key = dict(candidate["metadata"]["comparison_key"])
+    baseline_workers = baseline_key.pop("worker_count", None)
+    candidate_workers = candidate_key.pop("worker_count", None)
+    if baseline_key != candidate_key or (
+        not arguments.allow_worker_change and baseline_workers != candidate_workers
+    ):
         fail("reports differ in target, mode, corpus, machine, workers, runs, packages, or cache provenance")
     if baseline["summaries"].keys() != candidate["summaries"].keys():
         fail("reports do not contain the same profiles")
 
+    print(f"workers\t{baseline_workers}\t{candidate_workers}")
     print("profile\tbaseline_seconds\tcandidate_seconds\tdelta_percent")
     for profile in baseline["summaries"]:
         before = baseline["summaries"][profile]["median_wall_seconds"]
