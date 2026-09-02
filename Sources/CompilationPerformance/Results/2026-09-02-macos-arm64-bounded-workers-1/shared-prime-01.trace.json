@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "command": "compile",
+  "source_path": "/Users/nekmata/Projects/SilexProject/.specs/Silex-Compilation-Performance/Worktrees/spec-silex-compilation-performance-05/Silex-Examples/Sources/AnalogClock.sx",
+  "target": "macos-arm64",
+  "mode": "release",
+  "compiler_version": "0.43.0",
+  "worker_count": 1,
+  "cache_enabled": true,
+  "cache_result": "miss",
+  "success": true,
+  "total_nanoseconds": 1283342958,
+  "phases": [
+    {
+      "name": "cache_validation",
+      "nanoseconds": 9577208,
+      "invocations": 2
+    },
+    {
+      "name": "frontend_total",
+      "nanoseconds": 604077500,
+      "invocations": 1
+    },
+    {
+      "name": "package_resolution",
+      "nanoseconds": 2565167,
+      "invocations": 1
+    },
+    {
+      "name": "module_discovery",
+      "nanoseconds": 38484375,
+      "invocations": 1
+    },
+    {
+      "name": "module_loading",
+      "nanoseconds": 48014708,
+      "invocations": 1
+    },
+    {
+      "name": "composition",
+      "nanoseconds": 91280958,
+      "invocations": 1
+    },
+    {
+      "name": "specialization",
+      "nanoseconds": 56088125,
+      "invocations": 1
+    },
+    {
+      "name": "interface_building",
+      "nanoseconds": 570292,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_analysis",
+      "nanoseconds": 367054083,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_materialization",
+      "nanoseconds": 118166,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_preparation",
+      "nanoseconds": 2125125,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_validation",
+      "nanoseconds": 1051000,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_source_functions",
+      "nanoseconds": 52545750,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_generated_functions",
+      "nanoseconds": 299426292,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_constructors",
+      "nanoseconds": 19024750,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_methods",
+      "nanoseconds": 277019583,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_drops",
+      "nanoseconds": 520125,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_class_fields",
+      "nanoseconds": 2861375,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_bound_methods",
+      "nanoseconds": 167,
+      "invocations": 1
+    },
+    {
+      "name": "semantic_finalization",
+      "nanoseconds": 11307667,
+      "invocations": 1
+    },
+    {
+      "name": "package_cache_read",
+      "nanoseconds": 16458,
+      "invocations": 1
+    },
+    {
+      "name": "package_cache_relocation",
+      "nanoseconds": 30927,
+      "invocations": 1756
+    },
+    {
+      "name": "package_cache_write",
+      "nanoseconds": 11069417,
+      "invocations": 1
+    },
+    {
+      "name": "cache_update",
+      "nanoseconds": 195458,
+      "invocations": 1
+    },
+    {
+      "name": "program_closure",
+      "nanoseconds": 2788542,
+      "invocations": 1
+    },
+    {
+      "name": "optimization",
+      "nanoseconds": 69001667,
+      "invocations": 1
+    },
+    {
+      "name": "lowering",
+      "nanoseconds": 177208500,
+      "invocations": 1
+    },
+    {
+      "name": "register_allocation",
+      "nanoseconds": 0,
+      "invocations": 0
+    },
+    {
+      "name": "emission",
+      "nanoseconds": 30700167,
+      "invocations": 1
+    },
+    {
+      "name": "linking",
+      "nanoseconds": 385154959,
+      "invocations": 1
+    },
+    {
+      "name": "output_write",
+      "nanoseconds": 3785208,
+      "invocations": 1
+    },
+    {
+      "name": "cache_publication",
+      "nanoseconds": 338083,
+      "invocations": 1
+    }
+  ],
+  "metrics": {
+    "packages": 23,
+    "discovered_modules": 374,
+    "loaded_modules": 115,
+    "parsed_modules": 123,
+    "indexed_declarations": 69,
+    "source_bytes_read": 1584079,
+    "ast_functions": 996,
+    "portable_functions": 3090,
+    "package_functions_reused": 0,
+    "package_function_misses": 1756,
+    "package_function_relocation_failures": 0,
+    "package_functions_stored": 1700,
+    "reachable_portable_functions": 1581,
+    "boundaries": 412,
+    "boundary_providers": 6,
+    "dependency_files": 129,
+    "machine_functions": 1581,
+    "output_bytes": 35121776,
+    "cache_entry_hits": 0,
+    "cache_entry_misses": 27,
+    "cache_bytes_read": 0,
+    "cache_bytes_written": 7247901
+  }
+}
