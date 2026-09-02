@@ -75,3 +75,13 @@ campaigns therefore used temporary clean local clones at the exact recorded
 Part 04 commits; all other packages were linked from clean matching checkouts.
 The comparison gate accepted the two reports with worker count as their only
 provenance difference.
+
+After the campaign, the acceptance sweep rebuilt the exact compiler commit and
+compiled every one of the 34 `Silex-Examples` entry points from the shared
+worktree root with relative paths and `--nocache`. All 34 compile in Debug and
+all 34 compile in Release with four workers. The sweep exposed and corrected a
+missing explicit `GFX.GPU.Commands` extension import in `DirectGPUTriangle` at
+Silex-Examples commit `dc5a4413b97155c3aa049b924c4b8c2852e9a208`;
+the measured ShapeGallery2D corpus is unchanged. The validation workspace
+contained one root `.silex` directory, no nested caches, and only 404 KiB of
+package-link metadata after the no-cache sweeps.
