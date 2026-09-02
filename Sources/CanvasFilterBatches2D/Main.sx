@@ -1,0 +1,266 @@
+use GFX.Canvas
+use GFX.Color
+use GFX.GPU
+use GFX.Scene2D
+use STD.Process
+use STD.Time.Stopwatch
+
+func paint(drawing:&Canvas, size:int) {
+    drawing.paint(func(painter:&Canvas.Painter) {
+        painter.fill(
+            Canvas.Rect(STD.Math.Vec2(), STD.Math.Vec2(size as float)),
+            Canvas.Fill.solid(Color.indigo_500())
+        )
+        painter.text(
+            "CanvasFilter batches",
+            STD.Math.Vec2(12.0, size as float * 0.5),
+            Canvas.TextStyle(size:18.0, color:Color.white())
+        )
+    })
+}
+
+func identity_parameters() uint8[] {
+    return [
+        0, 0, 128, 63,
+        0, 0, 128, 63,
+        0, 0, 128, 63,
+        0, 0, 128, 63
+    ]
+}
+
+func report(
+    name:str,
+    placements:int,
+    warmup:int,
+    iterations:int,
+    elapsed:@Stopwatch,
+    renderer:@Scene2D.CanvasSurfaceRenderer
+) {
+    let milliseconds = elapsed.get_elapsed_milliseconds()
+    print(
+        "SILEX_CANVAS_FILTER_BATCHES case=$(name) placements=$(placements) " +
+        "warmup=$(warmup) iterations=$(iterations) elapsed_ms=$(milliseconds) " +
+        "per_frame_ms=$(milliseconds / iterations as float) " +
+        "source_renders=$(renderer.render_count()) " +
+        "source_cache_hits=$(renderer.cache_hit_count()) " +
+        "filter_renders=$(renderer.filter_render_count()) " +
+        "filter_cache_hits=$(renderer.filter_cache_hit_count()) " +
+        "pipelines=$(renderer.filter_pipeline_count()) " +
+        "pipeline_creations=$(renderer.filter_pipeline_creation_count()) " +
+        "pipeline_cache_hits=$(renderer.filter_pipeline_cache_hit_count()) " +
+        "allocations=$(renderer.texture_allocation_count()) " +
+        "gpu_bytes=$(renderer.texture_byte_count()) " +
+        "rgba_uploads=$(renderer.rgba_upload_count())"
+    )
+}
+
+func render_unfiltered_frame(
+    device:@GPU.Device,
+    renderer:&Scene2D.CanvasSurfaceRenderer,
+    snapshot:Canvas.Snapshot,
+    frame:Canvas.Rect,
+    placements:int
+) {
+    var index = 0
+    while index < placements {
+        var surface = renderer.render(snapshot, frame, 1.0)
+        assert(surface.is_valid())
+        index++
+    }
+    device.wait_until_idle()
+}
+
+func render_shared_frame(
+    device:@GPU.Device,
+    renderer:&Scene2D.CanvasSurfaceRenderer,
+    snapshot:Canvas.Snapshot,
+    frame:Canvas.Rect,
+    filter:Scene2D.CanvasFilter,
+    placements:int
+) {
+    var selected = filter
+    selected.replace(identity_parameters())
+    var index = 0
+    while index < placements {
+        var surface = renderer.render(
+            snapshot,
+            frame,
+            1.0,
+            Scene2D.CanvasTextMode.automatic,
+            selected
+        )
+        assert(surface.is_valid())
+        index++
+    }
+    device.wait_until_idle()
+}
+
+func render_fragmented_frame(
+    device:@GPU.Device,
+    renderer:&Scene2D.CanvasSurfaceRenderer,
+    snapshot:Canvas.Snapshot,
+    frame:Canvas.Rect,
+    filters:Scene2D.CanvasFilter[]
+) {
+    var selected_filters = filters
+    var index = 0
+    while index < selected_filters.count() {
+        var filter = selected_filters[index]
+        filter.replace(identity_parameters())
+        var surface = renderer.render(
+            snapshot,
+            frame,
+            1.0,
+            Scene2D.CanvasTextMode.automatic,
+            filter
+        )
+        assert(surface.is_valid())
+        index++
+    }
+    device.wait_until_idle()
+}
+
+func run_unfiltered(placements:int, warmup:int, iterations:int) {
+    var device = GPU.Device()
+    var renderer = Scene2D.CanvasSurfaceRenderer(device)
+    var drawing = Canvas.Canvas()
+    paint(drawing, 128)
+    var snapshot = drawing.snapshot(128, 128)
+    let frame = Canvas.Rect(STD.Math.Vec2(), STD.Math.Vec2(128.0))
+
+    var index = 0
+    while index < warmup {
+        render_unfiltered_frame(device, renderer, snapshot, frame, placements)
+        index++
+    }
+    var elapsed = Stopwatch()
+    elapsed.start()
+    index = 0
+    while index < iterations {
+        render_unfiltered_frame(device, renderer, snapshot, frame, placements)
+        index++
+    }
+    elapsed.stop()
+
+    assert(renderer.render_count() == 1)
+    assert(renderer.filter_render_count() == 0)
+    assert(renderer.filter_pipeline_count() == 0)
+    assert(renderer.rgba_upload_count() == 0)
+    report("unfiltered", placements, warmup, iterations, elapsed, renderer)
+}
+
+func run_shared(placements:int, warmup:int, iterations:int) {
+    var device = GPU.Device()
+    var renderer = Scene2D.CanvasSurfaceRenderer(device)
+    var drawing = Canvas.Canvas()
+    paint(drawing, 128)
+    var snapshot = drawing.snapshot(128, 128)
+    let frame = Canvas.Rect(STD.Math.Vec2(), STD.Math.Vec2(128.0))
+    let program = GPU.ShaderProgram.hlsl(file:"Shaders/CanvasFilterA.hlsl")
+    var filter = Scene2D.CanvasFilter(program, identity_parameters())
+
+    var index = 0
+    while index < warmup {
+        render_shared_frame(
+            device,
+            renderer,
+            snapshot,
+            frame,
+            filter,
+            placements
+        )
+        index++
+    }
+    var elapsed = Stopwatch()
+    elapsed.start()
+    index = 0
+    while index < iterations {
+        render_shared_frame(
+            device,
+            renderer,
+            snapshot,
+            frame,
+            filter,
+            placements
+        )
+        index++
+    }
+    elapsed.stop()
+
+    assert(renderer.render_count() == 1)
+    assert(renderer.filter_render_count() == warmup + iterations)
+    assert(renderer.filter_pipeline_count() == 1)
+    assert(renderer.filter_pipeline_creation_count() == 1)
+    assert(renderer.rgba_upload_count() == 0)
+    report("shared", placements, warmup, iterations, elapsed, renderer)
+}
+
+func run_fragmented(placements:int, warmup:int, iterations:int) {
+    var device = GPU.Device()
+    var renderer = Scene2D.CanvasSurfaceRenderer(device)
+    var drawing = Canvas.Canvas()
+    paint(drawing, 128)
+    var snapshot = drawing.snapshot(128, 128)
+    let frame = Canvas.Rect(STD.Math.Vec2(), STD.Math.Vec2(128.0))
+    let first_program = GPU.ShaderProgram.hlsl(file:"Shaders/CanvasFilterA.hlsl")
+    let second_program = GPU.ShaderProgram.hlsl(file:"Shaders/CanvasFilterB.hlsl")
+    var filters:Scene2D.CanvasFilter[] = []
+    var index = 0
+    while index < placements {
+        var program = first_program
+        if index % 2 == 1 { program = second_program }
+        filters.append(Scene2D.CanvasFilter(program, identity_parameters()))
+        index++
+    }
+
+    index = 0
+    while index < warmup {
+        render_fragmented_frame(device, renderer, snapshot, frame, filters)
+        index++
+    }
+    var elapsed = Stopwatch()
+    elapsed.start()
+    index = 0
+    while index < iterations {
+        render_fragmented_frame(device, renderer, snapshot, frame, filters)
+        index++
+    }
+    elapsed.stop()
+
+    assert(renderer.render_count() == 1)
+    assert(renderer.filter_render_count() == placements * (warmup + iterations))
+    assert(renderer.filter_pipeline_count() == 2)
+    assert(renderer.filter_pipeline_creation_count() == 2)
+    assert(renderer.rgba_upload_count() == 0)
+    report("fragmented", placements, warmup, iterations, elapsed, renderer)
+}
+
+func selected_case() str {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() > 1 { return arguments[1] }
+        }
+    }
+    return ""
+}
+
+func main() {
+    let placements = 16
+    let warmup = 4
+    let iterations = 32
+    let requested = selected_case()
+    if requested == "unfiltered" {
+        run_unfiltered(placements, warmup, iterations)
+        return
+    }
+    if requested == "shared" {
+        run_shared(placements, warmup, iterations)
+        return
+    }
+    if requested == "fragmented" {
+        run_fragmented(placements, warmup, iterations)
+        return
+    }
+    panic("expected unfiltered, shared or fragmented")
+}
