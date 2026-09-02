@@ -43,6 +43,7 @@ source root and declares every dependency required by the catalog.
 | `RetainedCanvasGeometry.sx` | compile dense retained Canvas geometry |
 | `AnimatingCanvasGeometry.sx` | update animated circles and lines through reusable Canvas preparation |
 | `DynamicCanvasShadows2D.sx` | compare dynamic retained Canvas placements without shadows and with analytic shadows |
+| `CanvasEffects2D/` | run the final analytic, filtered, mutable, and full-screen Canvas effect gates |
 | `FilteredCanvasSurfaces/` | measure static reuse, transform-only composition, bounded mutation and fullscreen GPU filtering |
 | `FontRasterization/` | compare direct Canvas SDL_ttf and vector-font rasterization under identical Release workloads |
 | `UpdatingTextLayers2D.sx` | update retained text layers |
@@ -69,6 +70,7 @@ silex compile Silex-Benchmarks/Sources/DynamicCanvasShadows2D.sx --release -o /t
 /tmp/dynamic-canvas-shadows2d --baseline
 /tmp/dynamic-canvas-shadows2d --analytic
 Silex-Benchmarks/Sources/FilteredCanvasSurfaces/RunCampaign.sh
+Silex-Benchmarks/Sources/CanvasEffects2D/RunCampaign.sh
 silex compile Silex-Benchmarks/Sources/FallingBodies2D/Main.sx --release -o /tmp/falling-bodies-2d
 /tmp/falling-bodies-2d --smoke --immediate --no-panel
 silex compile Silex-Benchmarks/Sources/WorldRendering3D/Main.sx --release -o /tmp/world-rendering-3d

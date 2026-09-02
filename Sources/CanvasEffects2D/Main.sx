@@ -1,0 +1,492 @@
+use GFX.Application
+use GFX.Assets.Image
+use GFX.Canvas
+use GFX.Color
+use GFX.Components
+use GFX.ECS
+use GFX.GPU
+use GFX.Rendering
+use GFX.Scene2D
+use GFX.Window.Plugin as WindowPlugin
+use STD.Math
+use STD.Process
+use STD.Time.Clock
+
+static struct Workload {
+    let width:int = 1_920
+    let height:int = 1_080
+    let warmup_frames:int = 120
+    let measured_frames:int = 600
+    let analytic_placements:int = 4_096
+    let filtered_static_groups:int = 128
+    let filtered_dynamic_groups:int = 64
+    let seed:int = 12_648_430
+}
+
+class Probe {
+    let name:str
+    var entities:ECS.Entity[]
+    var drawings:Canvas[]
+    var paths:Canvas.Path[]
+    var labels:Canvas.TextBlock[]
+    var even_labels:str[]
+    var odd_labels:str[]
+    var image:Canvas.ImagePaint? = null
+    var frame:int
+    var clock:Clock
+    var cpu_total_ms:float
+    var gpu_drain_total_ms:float
+    var mutation_total_ms:float
+    var minimum_ms:float
+    var maximum_ms:float
+    var draw_calls:int
+    var pipeline_bindings:int
+    var texture_bindings:int
+    var triangles:int
+    var instances:int
+    var uniform_bytes:int
+    var start_renders:int
+    var start_hits:int
+    var start_allocations:int
+    var start_geometry_uploads:int
+    var start_images:int
+    var start_tessellations:int
+    var start_rasters:int
+    var start_coverage_pixels:int
+
+    init(name:str) {
+        self.name = name
+        self.entities = []
+        self.drawings = []
+        self.paths = []
+        self.labels = []
+        self.even_labels = []
+        self.odd_labels = []
+        self.frame = 0
+        self.clock = Clock()
+        self.cpu_total_ms = 0.0
+        self.gpu_drain_total_ms = 0.0
+        self.mutation_total_ms = 0.0
+        self.minimum_ms = 1_000_000.0
+        self.maximum_ms = 0.0
+        self.draw_calls = 0
+        self.pipeline_bindings = 0
+        self.texture_bindings = 0
+        self.triangles = 0
+        self.instances = 0
+        self.uniform_bytes = 0
+        self.start_renders = 0
+        self.start_hits = 0
+        self.start_allocations = 0
+        self.start_geometry_uploads = 0
+        self.start_images = 0
+        self.start_tessellations = 0
+        self.start_rasters = 0
+        self.start_coverage_pixels = 0
+    }
+
+    func replace_label(index:int, odd:bool) {
+        var block = self.labels[index]
+        if odd {
+            block.replace(self.odd_labels[index] + "")
+        } else {
+            block.replace(self.even_labels[index] + "")
+        }
+    }
+}
+
+func analytic_drawing() Canvas {
+    var drawing = Canvas()
+    drawing.paint(func(painter:&Canvas.Painter) {
+        painter.layer(
+            [Canvas.Effect.shadow(
+                Math.Vec2(0.0, 4.0),
+                12.0,
+                Color.black().with_alpha(0.36)
+            )],
+            func(layer:&Canvas.Painter) {
+                layer.fill(
+                    Canvas.Rect(Math.Vec2(), Math.Vec2(64.0, 32.0), 8.0),
+                    Canvas.Fill.solid(Color.indigo_500())
+                )
+            }
+        )
+    })
+    return drawing
+}
+
+func retained_image() Canvas.ImagePaint {
+    return Canvas.ImagePaint(Image.rgba8(2, 2, [
+        45, 212, 191, 255, 59, 130, 246, 255,
+        139, 92, 246, 255, 244, 114, 182, 255
+    ]))
+}
+
+func update_filtered_path(
+    path:&Canvas.Path,
+    width:int,
+    height:int,
+    phase:int
+) {
+    let shift = (phase % 17) as float * 0.25
+    path.reset()
+        ..move_to(Math.Vec2(8.0, height as float - 12.0))
+        ..line_to(Math.Vec2(width as float * 0.34, 10.0 + shift))
+        ..line_to(Math.Vec2(width as float * 0.62, height as float - 16.0))
+        ..line_to(Math.Vec2(width as float - 8.0, 14.0))
+}
+
+func filtered_drawing(
+    path:Canvas.Path,
+    label:Canvas.TextBlock,
+    image:@Canvas.ImagePaint,
+    width:int,
+    height:int,
+    radius:float
+) Canvas {
+    var drawing = Canvas()
+    drawing.paint(func(painter:&Canvas.Painter) {
+        painter.layer(
+            [Canvas.Effect.blur(radius)],
+            func(layer:&Canvas.Painter) {
+                layer.stroke(
+                    path,
+                    Canvas.Stroke(Color.cyan_300(), 3.0)
+                        ..cap = Canvas.StrokeCap.round
+                )
+                let image_frame = Canvas.Rect(
+                    Math.Vec2(8.0, 8.0),
+                    Math.Vec2(Math.min(42.0, width as float * 0.28), 28.0),
+                    5.0
+                )
+                layer.fill(
+                    image_frame,
+                    Canvas.Fill.image(
+                        image,
+                        Canvas.ImageMapping.fit(
+                            frame:image_frame,
+                            mode:Canvas.ImageFit.cover
+                        )
+                    )
+                )
+                layer.text_block(
+                    label,
+                    Math.Vec2(56.0, height as float * 0.46)
+                )
+            }
+        )
+    })
+    return drawing
+}
+
+func viewport_canvas(drawing:Canvas, width:int, height:int, layer:int) Scene2D.Canvas {
+    var canvas = Scene2D.Canvas(drawing, width, height)
+    canvas.space = Scene2D.CanvasSpace.viewport
+    canvas.pivot = Math.Vec2()
+    canvas.layer = layer
+    canvas.text_mode = Scene2D.CanvasTextMode.vector
+    canvas.coverage_density = 1.0
+    return canvas
+}
+
+func create_analytic(world:&ECS.World, probe:&Probe) {
+    var drawing = analytic_drawing()
+    var index = 0
+    while index < Workload.analytic_placements {
+        let column = index % 64
+        let row = index / 64
+        probe.entities.append(world.spawn(ECS.EntityRecipe()
+            ..with(Scene2D.Transform(
+                position:Math.Vec2(
+                    column as float * 30.0,
+                    row as float * 16.5
+                )
+            ))
+            ..with(viewport_canvas(drawing, 64, 32, index % 4))
+        ))
+        index++
+    }
+}
+
+func create_filtered(
+    world:&ECS.World,
+    probe:&Probe,
+    count:int,
+    width:int,
+    height:int,
+    radius:float
+) {
+    var image = retained_image()
+    var index = 0
+    while index < count {
+        var path = Canvas.Path()
+        update_filtered_path(path, width, height, 0)
+        let even_label = "group $(index) phase A"
+        let odd_label = "group $(index) phase B"
+        var label = Canvas.TextBlock(
+            even_label,
+            Canvas.TextStyle(size:14.0, color:Color.white())
+        )
+        var drawing = filtered_drawing(path, label, image, width, height, radius)
+        probe.drawings.append(drawing)
+        probe.paths.append(path)
+        probe.labels.append(label)
+        probe.even_labels.append(even_label)
+        probe.odd_labels.append(odd_label)
+        probe.image = image
+        var columns = 16
+        if count == Workload.filtered_dynamic_groups { columns = 8 }
+        let column = index % columns
+        let row = index / columns
+        let x = column as float * (Workload.width as float / columns as float)
+        let rows = (count + columns - 1) / columns
+        let y = row as float * (Workload.height as float / rows as float)
+        probe.entities.append(world.spawn(ECS.EntityRecipe()
+            ..with(Scene2D.Transform(position:Math.Vec2(x, y)))
+            ..with(viewport_canvas(drawing, width, height, index % 4))
+        ))
+        index++
+    }
+}
+
+func create_case(world:&ECS.World, probe:&Probe) {
+    if probe.name == "analytic-static" || probe.name == "analytic-transform" {
+        create_analytic(world, probe)
+    } elif probe.name == "filtered-static" {
+        create_filtered(
+            world,
+            probe,
+            Workload.filtered_static_groups,
+            128,
+            64,
+            6.0
+        )
+    } elif probe.name == "filtered-dynamic" {
+        create_filtered(
+            world,
+            probe,
+            Workload.filtered_dynamic_groups,
+            256,
+            128,
+            8.0
+        )
+    } elif probe.name == "fullscreen" {
+        create_filtered(world, probe, 1, Workload.width, Workload.height, 24.0)
+    } else {
+        panic("unknown CanvasEffects2D case '" + probe.name + "'")
+    }
+    probe.clock.tick()
+}
+
+func update_case(
+    transforms:ECS.Query<(&Scene2D.Transform, @Scene2D.Canvas)>,
+    probe:&Probe
+) {
+    var mutation = Clock()
+    mutation.tick()
+    if probe.name == "analytic-transform" {
+        let phase = probe.frame as float * 0.0025
+        var index = 0
+        for (transform, canvas) in transforms {
+            if canvas.visible {
+                transform.position.x += Math.sin(phase + index as float * 0.013) * 0.18
+                transform.position.y += Math.cos(phase + index as float * 0.017) * 0.12
+                transform.rotation = Math.sin(phase + index as float * 0.001) * 0.08
+            }
+            index++
+        }
+    } elif probe.name == "filtered-dynamic" {
+        var index = 0
+        while index < probe.paths.count() {
+            update_filtered_path(
+                probe.paths[index],
+                256,
+                128,
+                probe.frame
+            )
+            probe.replace_label(index, probe.frame % 2 == 1)
+            index++
+        }
+    }
+    if probe.frame >= Workload.warmup_frames {
+        probe.mutation_total_ms += mutation.tick() * 1000.0
+    }
+}
+
+func capture_warmup(
+    probe:&Probe,
+    surfaces:&Scene2D.CanvasSurfaceRenderer
+) {
+    probe.start_renders = surfaces.render_count()
+    probe.start_hits = surfaces.cache_hit_count()
+    probe.start_allocations = surfaces.texture_allocation_count()
+    probe.start_geometry_uploads = surfaces.content_geometry_upload_count()
+    probe.start_images = surfaces.image_upload_count()
+    probe.start_tessellations = surfaces.vector_tessellation_count()
+    probe.start_rasters = surfaces.coverage_raster_count()
+    probe.start_coverage_pixels = surfaces.coverage_uploaded_pixel_count()
+}
+
+func filtered_pixels(name:@str) int {
+    if name == "filtered-static" {
+        return Workload.filtered_static_groups * 128 * 64
+    }
+    if name == "filtered-dynamic" {
+        return Workload.filtered_dynamic_groups * 256 * 128
+    }
+    if name == "fullscreen" { return Workload.width * Workload.height }
+    return 0
+}
+
+func report_case(
+    probe:&Probe,
+    renderer:&Rendering.Renderer,
+    surfaces:&Scene2D.CanvasSurfaceRenderer
+) {
+    let renders = surfaces.render_count() - probe.start_renders
+    let hits = surfaces.cache_hit_count() - probe.start_hits
+    let allocations = surfaces.texture_allocation_count() - probe.start_allocations
+    let geometry_uploads = surfaces.content_geometry_upload_count() -
+        probe.start_geometry_uploads
+    let images = surfaces.image_upload_count() - probe.start_images
+    let tessellations = surfaces.vector_tessellation_count() - probe.start_tessellations
+    let rasters = surfaces.coverage_raster_count() - probe.start_rasters
+    let coverage_pixels = surfaces.coverage_uploaded_pixel_count() -
+        probe.start_coverage_pixels
+    if probe.name == "analytic-static" || probe.name == "analytic-transform" {
+        assert(renders == 0)
+        assert(allocations == 0)
+        assert(geometry_uploads == 0)
+        assert(surfaces.texture_byte_count() == 0)
+    }
+    if probe.name == "filtered-static" || probe.name == "fullscreen" {
+        assert(renders == 0)
+        assert(allocations == 0)
+        assert(geometry_uploads == 0)
+        assert(images == 0)
+        assert(tessellations == 0)
+        assert(rasters == 0)
+        assert(coverage_pixels == 0)
+        assert(hits > 0)
+    }
+    if probe.name == "filtered-dynamic" {
+        assert(renders > 0)
+        assert(allocations == 0)
+        assert(images == 0)
+        assert(geometry_uploads > 0)
+        assert(geometry_uploads <= Workload.filtered_dynamic_groups *
+            Workload.measured_frames * 2)
+        assert(tessellations == 0)
+        assert(rasters == 0)
+        assert(coverage_pixels == 0)
+    }
+    assert(surfaces.rgba_upload_count() == 0)
+    assert(!renderer.presentation_enabled())
+    let samples = Workload.measured_frames as float
+    print(
+        "SILEX_CANVAS_EFFECTS_2D case=$(probe.name) " +
+        "warmup=$(Workload.warmup_frames) frames=$(Workload.measured_frames) " +
+        "width=$(Workload.width) height=$(Workload.height) density=1 seed=$(Workload.seed) " +
+        "cpu_prepare_submit_ms=$(probe.cpu_total_ms / samples) " +
+        "gpu_queue_drain_ms=$(probe.gpu_drain_total_ms / samples) " +
+        "mutation_ms=$(probe.mutation_total_ms / samples) " +
+        "minimum_ms=$(probe.minimum_ms) maximum_ms=$(probe.maximum_ms) " +
+        "draw_calls=$(probe.draw_calls / Workload.measured_frames) " +
+        "pipeline_bindings=$(probe.pipeline_bindings / Workload.measured_frames) " +
+        "texture_bindings=$(probe.texture_bindings / Workload.measured_frames) " +
+        "triangles=$(probe.triangles / Workload.measured_frames) " +
+        "instances=$(probe.instances / Workload.measured_frames) " +
+        "uniform_bytes=$(probe.uniform_bytes / Workload.measured_frames) " +
+        "surface_renders=$(renders) cache_hits=$(hits) " +
+        "texture_allocations=$(allocations) texture_bytes=$(surfaces.texture_byte_count()) " +
+        "geometry_uploads=$(geometry_uploads) " +
+        "filtered_pixels=$(filtered_pixels(probe.name)) image_uploads=$(images) " +
+        "vector_tessellations=$(tessellations) coverage_rasters=$(rasters) " +
+        "coverage_pixels=$(coverage_pixels) rgba_uploads=$(surfaces.rgba_upload_count()) " +
+        "gpu_ms=unavailable presentation=false"
+    )
+}
+
+func finish_case(
+    renderer:&Rendering.Renderer,
+    surfaces:&Scene2D.CanvasSurfaceRenderer,
+    device:&GPU.Device,
+    probe:&Probe,
+    controller:&Application.Controller
+) {
+    let elapsed = probe.clock.tick() * 1000.0
+    var drain = Clock()
+    drain.tick()
+    device.wait_until_idle()
+    let drain_ms = drain.tick() * 1000.0
+    probe.clock.tick()
+    if probe.frame > 0 && probe.frame % 120 == 0 {
+        print(
+            "SILEX_CANVAS_EFFECTS_2D_PROGRESS case=$(probe.name) frame=$(probe.frame) " +
+            "entries=$(surfaces.cache_entry_count()) " +
+            "allocations=$(surfaces.texture_allocation_count()) " +
+            "texture_bytes=$(surfaces.texture_byte_count()) " +
+            "geometry_caches=$(surfaces.content_geometry_cache_count()) " +
+            "image_caches=$(surfaces.content_image_cache_count()) " +
+            "vector_layers=$(surfaces.content_vector_layer_cache_count()) " +
+            "glyph_meshes=$(surfaces.content_glyph_mesh_count())"
+        )
+    }
+    if probe.frame == Workload.warmup_frames - 1 {
+        capture_warmup(probe, surfaces)
+        probe.cpu_total_ms = 0.0
+        probe.gpu_drain_total_ms = 0.0
+        probe.mutation_total_ms = 0.0
+        probe.minimum_ms = 1_000_000.0
+        probe.maximum_ms = 0.0
+    } elif probe.frame >= Workload.warmup_frames {
+        probe.cpu_total_ms += elapsed
+        probe.gpu_drain_total_ms += drain_ms
+        if elapsed < probe.minimum_ms { probe.minimum_ms = elapsed }
+        if elapsed > probe.maximum_ms { probe.maximum_ms = elapsed }
+        let stats = renderer.stats()
+        probe.draw_calls += stats.draw_calls()
+        probe.pipeline_bindings += stats.pipeline_bindings()
+        probe.texture_bindings += stats.texture_bindings()
+        probe.triangles += stats.triangles()
+        probe.instances += stats.instances()
+        probe.uniform_bytes += stats.uniform_bytes()
+    }
+    probe.frame++
+    if probe.frame < Workload.warmup_frames + Workload.measured_frames { return }
+    report_case(probe, renderer, surfaces)
+    controller.stop()
+}
+
+func selected_case() str {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() > 1 { return arguments[1] }
+        }
+    }
+    return ""
+}
+
+func main() {
+    let name = selected_case()
+    var application = Application()
+    application.add_resource(Probe(name))
+    application.add_plugin(WindowPlugin(WindowPlugin.Settings()
+        ..title = "CanvasEffects2D $(name)"
+        ..width = Workload.width
+        ..height = Workload.height
+        ..high_pixel_density = false
+        ..hidden = true
+    ))
+    application.add_plugin(Rendering.Plugin(Rendering.Plugin.Settings(
+        antialiasing:Rendering.Antialiasing.none,
+        present_mode:Rendering.PresentMode.immediate,
+        presentation:false
+    )))
+    application.add_plugin(Scene2D.Plugin())
+    application.add_system(Application.Schedule.startup, create_case)
+    application.add_system(Application.Schedule.update, update_case)
+    application.add_after_system(Application.Schedule.render, finish_case)
+    assert(application.run() == 0)
+}
