@@ -1,0 +1,1 @@
+SILEX_FILTERED_CANVAS case=static warmup=64 iterations=4096 elapsed_ms=188.732 per_iteration_ms=0.046077147 gpu_bytes=1372536 allocations=7 renders=2 cache_hits=4161 rgba_uploads=0
