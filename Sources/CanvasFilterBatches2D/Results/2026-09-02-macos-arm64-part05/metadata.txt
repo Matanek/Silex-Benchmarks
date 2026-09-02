@@ -1,0 +1,11 @@
+date=2026-09-02T01:48:24Z
+os=macOS 26.6.2 25G83
+architecture=arm64
+silex=silex 0.43.0
+mode=release
+processes_per_case=7
+placements=16
+benchmark_commit=377e781819e85a86f4e9a78212a525b58447df80
+gpu_commit=e8a512b93346c3139760f6d5675d8044565f79f9
+canvas_commit=9115713dbad490eef927fa4d553d4aa2599e7bcd
+scene2d_commit=4ac06362a4246e2148ac31a42370a62db74ba16e
