@@ -79,6 +79,10 @@ translation time are not part of the FPS measurement.
 Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
+The default temporary build directory is keyed by the resolved workspace root.
+Direct checkouts and Spec worktrees therefore never reuse the same CMake cache.
+Use `--build-dir` only when an explicit reusable location is desired.
+
 By default it builds all three Release executables, discards one warm-up per
 witness, records seven processes per witness in Silex, C++ architectural, C++
 direct order, validates their count and normalized display metadata, and writes

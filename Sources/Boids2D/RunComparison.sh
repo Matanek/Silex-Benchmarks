@@ -13,8 +13,6 @@ runs=7
 warmups=1
 wait_before_run=false
 skip_build=false
-build_directory="${TMPDIR:-/tmp}"
-build_directory="${build_directory%/}/gfx-scene2d-boids"
 capture_timestamp="$(date '+%Y-%m-%d-%H%M%S')"
 architecture="$(uname -m)"
 output_path="${baseline_directory}/${capture_timestamp}-${architecture}-boids.log"
@@ -32,7 +30,7 @@ Options:
   --runs N           Recorded processes per executable (default: 7)
   --warmups N        Discarded warm-up processes per executable (default: 1)
   --output PATH      Final log path (default: timestamped Baselines log)
-  --build-dir PATH   Reusable build directory (default: system temp directory)
+  --build-dir PATH   Reusable build directory (default: workspace-isolated temp directory)
   --skip-build       Reuse executables already present in --build-dir
   --wait             Pause after building so competing workloads can be closed
   -h, --help         Show this help
@@ -43,6 +41,12 @@ fail() {
     printf 'error: %s\n' "$*" >&2
     exit 1
 }
+
+command -v awk >/dev/null || fail "awk is required"
+command -v cksum >/dev/null || fail "cksum is required"
+workspace_cache_key="$(printf '%s' "${workspace_directory}" | cksum | awk '{print $1}')"
+build_directory="${TMPDIR:-/tmp}"
+build_directory="${build_directory%/}/gfx-scene2d-boids-${workspace_cache_key}"
 
 require_value() {
     local option="$1"
@@ -128,7 +132,6 @@ cpp_build_directory="${build_directory}/cpp"
 cpp_architectural_executable="${cpp_build_directory}/BoidsCppArchitectural"
 cpp_direct_executable="${cpp_build_directory}/BoidsCppDirect"
 
-command -v awk >/dev/null || fail "awk is required"
 command -v git >/dev/null || fail "git is required"
 [[ -x "${silex_compiler}" ]] || fail "build the workspace Silex compiler first: ${silex_compiler}"
 
