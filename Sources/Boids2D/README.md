@@ -94,11 +94,12 @@ Silex package closure is dirty and records every corresponding commit,
 including `GFX.Application` and `GFX.Physics` even though Boids does not import
 them directly.
 
-Run it from an external terminal with `--wait` when the Codex process or other
-workloads may affect the result. After the build finishes, close those workloads
-and press Return in the terminal. Use `--runs`, `--warmups`, `--output`, or
-`--build-dir` to override the capture without editing the script; `--skip-build`
-reuses executables already present in that build directory.
+Run it from an external terminal with `--wait` when Codex has active agents or
+another workload may affect the result. After the build finishes, stop active
+competing work and press Return in the terminal; idle Codex, editor, and other
+application processes need not be closed. Use `--runs`, `--warmups`, `--output`,
+or `--build-dir` to override the capture without editing the script;
+`--skip-build` reuses executables already present in that build directory.
 
 The architectural C++ witness is the closest comparison for Silex/GFX. It
 matches the major ECS, GPU upload, shader, instancing, presentation, and data

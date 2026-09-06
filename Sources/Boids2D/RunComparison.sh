@@ -32,7 +32,7 @@ Options:
   --output PATH      Final log path (default: timestamped Baselines log)
   --build-dir PATH   Reusable build directory (default: workspace-isolated temp directory)
   --skip-build       Reuse executables already present in --build-dir
-  --wait             Pause after building so competing workloads can be closed
+  --wait             Pause after building so active competing workloads can stop
   -h, --help         Show this help
 EOF
 }
@@ -163,7 +163,7 @@ fi
 [[ -x "${cpp_direct_executable}" ]] || fail "missing C++ direct executable: ${cpp_direct_executable}"
 
 if [[ "${wait_before_run}" == true ]]; then
-    printf '\nBuild complete. Close Codex and other competing workloads, then press Return.\n'
+    printf '\nBuild complete. Ensure no competing workload is active, then press Return. Idle applications may remain open.\n'
     IFS= read -r _
 fi
 
@@ -188,6 +188,10 @@ repository_is_dirty() {
 
 sanitize_metadata() {
     printf '%s' "$1" | tr ' /' '__' | tr -cd '[:alnum:]_.:+,-'
+}
+
+is_linked_repository() {
+    [[ "$1" == user-link || "$1" == workspace-link ]]
 }
 
 host_model="unknown"
@@ -241,7 +245,7 @@ done <<< "${resolved_packages}"
 source_repositories_dirty=false
 source_repositories=("${package_directory}" "${workspace_directory}/Silex")
 for package_index in "${!resolved_package_names[@]}"; do
-    if [[ "${resolved_package_origins[package_index]}" == user-link ]]; then
+    if is_linked_repository "${resolved_package_origins[package_index]}"; then
         source_repositories+=("${resolved_package_paths[package_index]}")
     fi
 done
@@ -275,7 +279,7 @@ mkdir -p "$(dirname "${output_path}")"
             "${package_key}" "${resolved_package_versions[package_index]}"
         printf '# %s_source=%s\n' \
             "${package_key}" "${resolved_package_origins[package_index]}"
-        if [[ "${resolved_package_origins[package_index]}" == user-link ]]; then
+        if is_linked_repository "${resolved_package_origins[package_index]}"; then
             printf '# %s_commit=%s\n' \
                 "${package_key}" "$(git_commit "${resolved_package_paths[package_index]}")"
         fi
