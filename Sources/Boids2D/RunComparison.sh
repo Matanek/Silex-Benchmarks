@@ -14,6 +14,8 @@ runs=7
 warmups=1
 wait_before_run=false
 skip_build=false
+silex_compiler="${workspace_directory}/Silex/Toolchain/zig-out/bin/silex"
+build_directory=""
 capture_timestamp="$(date '+%Y-%m-%d-%H%M%S')"
 architecture="$(uname -m)"
 output_path="${baseline_directory}/${capture_timestamp}-${architecture}-boids.log"
@@ -32,7 +34,9 @@ Options:
   --runs N           Recorded processes per executable (default: 7)
   --warmups N        Discarded warm-up processes per executable (default: 1)
   --output PATH      Final log path (default: timestamped Baselines log)
-  --build-dir PATH   Reusable build directory (default: workspace-isolated temp directory)
+  --silex-compiler PATH
+                      Silex compiler used to build the witness (default: worktree compiler)
+  --build-dir PATH   Reusable build directory (default: compiler-isolated temp directory)
   --skip-build       Reuse executables already present in --build-dir
   --wait             Pause after building so active competing workloads can stop
   -h, --help         Show this help
@@ -46,9 +50,6 @@ fail() {
 
 command -v awk >/dev/null || fail "awk is required"
 command -v cksum >/dev/null || fail "cksum is required"
-workspace_cache_key="$(printf '%s' "${workspace_directory}" | cksum | awk '{print $1}')"
-build_directory="${TMPDIR:-/tmp}"
-build_directory="${build_directory%/}/gfx-scene2d-boids-${workspace_cache_key}"
 
 require_value() {
     local option="$1"
@@ -91,6 +92,11 @@ while (( $# > 0 )); do
             output_path="$2"
             shift 2
             ;;
+        --silex-compiler)
+            require_value "$1" "${2:-}"
+            silex_compiler="$2"
+            shift 2
+            ;;
         --build-dir)
             require_value "$1" "${2:-}"
             build_directory="$2"
@@ -126,6 +132,17 @@ case "${output_path}" in
     /*) ;;
     *) output_path="${PWD}/${output_path}" ;;
 esac
+case "${silex_compiler}" in
+    /*) ;;
+    *) silex_compiler="${PWD}/${silex_compiler}" ;;
+esac
+[[ -x "${silex_compiler}" ]] || fail "Silex compiler is not executable: ${silex_compiler}"
+silex_compiler="$(cd "$(dirname "${silex_compiler}")" && pwd)/$(basename "${silex_compiler}")"
+if [[ -z "${build_directory}" ]]; then
+    build_cache_key="$(printf '%s\n%s' "${workspace_directory}" "${silex_compiler}" | cksum | awk '{print $1}')"
+    build_directory="${TMPDIR:-/tmp}"
+    build_directory="${build_directory%/}/gfx-scene2d-boids-${build_cache_key}"
+fi
 case "${build_directory}" in
     /*) ;;
     *) build_directory="${PWD}/${build_directory}" ;;
@@ -135,14 +152,12 @@ partial_output_path="${output_path}.partial"
 [[ ! -e "${output_path}" ]] || fail "refusing to overwrite ${output_path}"
 [[ ! -e "${partial_output_path}" ]] || fail "refusing to overwrite ${partial_output_path}"
 
-silex_compiler="${workspace_directory}/Silex/Toolchain/zig-out/bin/silex"
 silex_executable="${build_directory}/gfx-boids-silex"
 cpp_build_directory="${build_directory}/cpp"
 cpp_architectural_executable="${cpp_build_directory}/BoidsCppArchitectural"
 cpp_direct_executable="${cpp_build_directory}/BoidsCppDirect"
 
 command -v git >/dev/null || fail "git is required"
-[[ -x "${silex_compiler}" ]] || fail "build the workspace Silex compiler first: ${silex_compiler}"
 
 if [[ "${skip_build}" == false ]]; then
     command -v cmake >/dev/null || fail "cmake is required"
@@ -179,6 +194,8 @@ fi
 git_commit() {
     git -C "$1" rev-parse HEAD 2>/dev/null || printf 'unavailable'
 }
+
+silex_repository="$(git -C "$(dirname "${silex_compiler}")" rev-parse --show-toplevel 2>/dev/null || true)"
 
 repository_is_dirty() {
     local repository="$1"
@@ -252,7 +269,12 @@ while read -r package_name package_version package_origin package_path; do
 done <<< "${resolved_packages}"
 
 source_repositories_dirty=false
-source_repositories=("${package_directory}" "${workspace_directory}/Silex")
+source_repositories=("${package_directory}")
+if [[ -n "${silex_repository}" ]]; then
+    source_repositories+=("${silex_repository}")
+else
+    source_repositories_dirty=true
+fi
 for package_index in "${!resolved_package_names[@]}"; do
     if is_linked_repository "${resolved_package_origins[package_index]}"; then
         source_repositories+=("${resolved_package_paths[package_index]}")
@@ -277,10 +299,15 @@ mkdir -p "$(dirname "${output_path}")"
     printf '# source_repositories_dirty=%s\n' "${source_repositories_dirty}"
     printf '# waited_for_competing_workloads=%s\n' "${wait_before_run}"
     printf '# silex_mode=release_default\n'
+    printf '# silex_compiler=%s\n' "$(sanitize_metadata "${silex_compiler}")"
     printf '# cpp_mode=Release\n'
     printf '# silex_version=%s\n' "$(sanitize_metadata "${silex_version}")"
     printf '# benchmarks_commit=%s\n' "$(git_commit "${package_directory}")"
-    printf '# silex_toolchain_commit=%s\n' "$(git_commit "${workspace_directory}/Silex")"
+    if [[ -n "${silex_repository}" ]]; then
+        printf '# silex_toolchain_commit=%s\n' "$(git_commit "${silex_repository}")"
+    else
+        printf '# silex_toolchain_commit=unavailable\n'
+    fi
     for package_index in "${!resolved_package_names[@]}"; do
         package_key="$(printf '%s' "${resolved_package_names[package_index]}" | \
             tr '[:upper:].' '[:lower:]_')"

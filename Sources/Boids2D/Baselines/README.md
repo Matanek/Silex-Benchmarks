@@ -115,6 +115,11 @@ The benchmark-owned runner applies this protocol and produces a timestamped log:
 Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
+For compiler A/B qualification, use `--silex-compiler` with a dedicated
+worktree compiler. The runner keys its default build directory by that compiler
+path and records the containing repository commit, so both captures may use the
+same benchmark source and package closure without silently reusing a binary.
+
 Future records retain the raw sentinel lines and the commits of every
 user-linked repository in the resolved package closure. This includes
 transitive packages such as `GFX.Application` and manifest dependencies such

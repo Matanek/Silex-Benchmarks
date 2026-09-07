@@ -83,9 +83,25 @@ FPS measurement.
 Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
-The default temporary build directory is keyed by the resolved workspace root.
-Direct checkouts and Spec worktrees therefore never reuse the same CMake cache.
-Use `--build-dir` only when an explicit reusable location is desired.
+The default temporary build directory is keyed by both the resolved workspace
+root and the selected Silex compiler. Direct checkouts, Spec worktrees, and A/B
+compiler runs therefore never reuse the same witness or CMake cache. Use
+`--build-dir` only when an explicit reusable location is desired.
+
+The worktree compiler is selected by default. To compare another compiler
+against the exact same benchmark source and package closure, pass its executable
+explicitly:
+
+```sh
+Silex-Benchmarks/Sources/Boids2D/RunComparison.sh \
+    --silex-compiler /path/to/Silex/Toolchain/zig-out/bin/silex \
+    --wait
+```
+
+The log records the selected compiler path and the Git commit of the repository
+that contains it. A compiler outside a Git worktree remains runnable, but its
+commit is recorded as unavailable and the capture cannot be considered clean
+acceptance evidence.
 
 By default it builds all three Release executables, discards one warm-up per
 witness, records seven 480-frame processes per witness in Silex, C++
@@ -104,8 +120,9 @@ Run it from an external terminal with `--wait` when Codex has active agents or
 another workload may affect the result. After the build finishes, stop active
 competing work and press Return in the terminal; idle Codex, editor, and other
 application processes need not be closed. Use `--frames`, `--runs`, `--warmups`,
-`--output`, or `--build-dir` to override the capture without editing the script;
-`--skip-build` reuses executables already present in that build directory.
+`--output`, `--silex-compiler`, or `--build-dir` to override the capture without
+editing the script; `--skip-build` reuses executables already present in that
+compiler-specific build directory.
 
 The architectural C++ witness is the closest comparison for Silex/GFX. It
 matches the major ECS, GPU upload, shader, instancing, presentation, and data
