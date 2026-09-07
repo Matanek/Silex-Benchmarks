@@ -94,12 +94,20 @@ regression.
 ## Capture protocol
 
 Build all three executables before starting the measurements, close other
-graphical workloads, and pass `4000` explicitly. Discard one warm-up process
+graphical workloads, and pass `4000 480` explicitly. Each process performs one
+untimed rendered frame, then measures exactly 480 rendered frames with one
+simulation step of 1/60 second per frame. Discard one complete warm-up process
 for each executable, then rotate between the three executables for at least
-seven recorded processes each. Reject any run whose count, presentation mode,
-logical window, pixel dimensions, scale, or density differs from the archived
-configuration. Compare medians and report median absolute deviation (MAD) as a
-percentage of the median.
+seven recorded processes each. Reject any run whose count, measured frame
+count, fixed delta, initial-state summary, four-step state summary,
+presentation mode, logical window, pixel dimensions, scale, or density differs
+from the archived configuration. Compare medians and report median absolute
+deviation (MAD) as a percentage of the median.
+
+Logs captured before this fixed-workload protocol used five seconds of
+wall-clock time and each witness's real frame delta. They remain historical
+controls for their original revisions, but their absolute FPS and boid
+trajectories are not acceptance evidence for the fixed-workload protocol.
 
 The benchmark-owned runner applies this protocol and produces a timestamped log:
 

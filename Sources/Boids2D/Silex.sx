@@ -16,6 +16,7 @@ static struct Constants {
     let minimum_speed:float = 55.0
     let maximum_speed:float = 105.0
     let maximum_steering:float = 140.0
+    let fixed_delta:float = 1.0 / 60.0
     let half_width:float = 490.0
     let half_height:float = 330.0
     let neighborhood_squared:float = Constants.neighborhood_radius * Constants.neighborhood_radius
@@ -24,6 +25,7 @@ static struct Constants {
 
 struct Settings {
     let count:int
+    let frames:int
 }
 
 struct Boid {
@@ -49,17 +51,39 @@ struct FlockSnapshot {
     init() { self.boids = [] }
 }
 
+struct StateWitness {
+    var position_x:float
+    var position_y:float
+    var velocity_x:float
+    var velocity_y:float
+    var position_energy:float
+    var velocity_energy:float
+
+    init() {
+        self.position_x = 0.0
+        self.position_y = 0.0
+        self.velocity_x = 0.0
+        self.velocity_y = 0.0
+        self.position_energy = 0.0
+        self.velocity_energy = 0.0
+    }
+}
+
 struct Benchmark {
     var clock:Clock
     var elapsed:float
     var frames:int
     var started:bool
+    var initial_witness:StateWitness
+    var witness:StateWitness
 
     init() {
         self.clock = Clock()
         self.elapsed = 0.0
         self.frames = 0
         self.started = false
+        self.initial_witness = StateWitness()
+        self.witness = StateWitness()
     }
 }
 
@@ -118,26 +142,29 @@ class MersenneTwister {
     }
 }
 
-func parse_count(text:str) int {
+func parse_positive(text:str, fallback:int) int {
     var value = 0
     for scalar in text {
-        if scalar < 48 || scalar > 57 { return 4000 }
+        if scalar < 48 || scalar > 57 { return fallback }
         let digit = (scalar - 48) as int
-        if value > (9223372036854775807 - digit) / 10 { return 4000 }
+        if value > (9223372036854775807 - digit) / 10 { return fallback }
         value = value * 10 + digit
     }
     if value > 0 { return value }
-    return 4000
+    return fallback
 }
 
-func requested_count() int {
+func requested_settings() Settings {
+    var count = 4000
+    var frames = 480
     match Process.arguments() {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
-            if arguments.count() > 1 { return parse_count(arguments[1]) }
+            if arguments.count() > 1 { count = parse_positive(arguments[1], count) }
+            if arguments.count() > 2 { frames = parse_positive(arguments[2], frames) }
         }
     }
-    return 4000
+    return Settings(count:count, frames:frames)
 }
 
 func random_range(randomizer:MersenneTwister, minimum:float, maximum:float) float {
@@ -273,7 +300,6 @@ func steering(position:Math.Vec2, velocity:Math.Vec2, snapshot:@Sample[..]) Stee
 }
 
 func move_flock(
-    time:@Resources.FrameTime,
     snapshot:@FlockSnapshot,
     query:ECS.Query<(&Boid, &Components.Transform2D)>
 ) {
@@ -285,32 +311,67 @@ func move_flock(
             Constants.maximum_steering
         )
         boid.velocity = keep_speed(
-            boid.velocity.add(acceleration.multiply(time.delta))
+            boid.velocity.add(acceleration.multiply(Constants.fixed_delta))
         )
         boid.position = wrap(
-            boid.position.add(boid.velocity.multiply(time.delta))
+            boid.position.add(boid.velocity.multiply(Constants.fixed_delta))
         )
         transform.position = boid.position
         transform.rotation = Math.atan2(boid.velocity.y, boid.velocity.x)
     }
 }
 
+func state_witness(snapshot:@FlockSnapshot) StateWitness {
+    var witness = StateWitness()
+    for sample in snapshot.boids {
+        witness.position_x += sample.position_x
+        witness.position_y += sample.position_y
+        witness.velocity_x += sample.velocity_x
+        witness.velocity_y += sample.velocity_y
+        witness.position_energy += sample.position_x * sample.position_x +
+            sample.position_y * sample.position_y
+        witness.velocity_energy += sample.velocity_x * sample.velocity_x +
+            sample.velocity_y * sample.velocity_y
+    }
+    return witness
+}
+
 func measure(
     benchmark:&Benchmark,
     settings:@Settings,
+    snapshot:@FlockSnapshot,
     window:@Resources.Window,
     controller:&Application.Controller
 ) {
-    let delta = benchmark.clock.tick()
     if !benchmark.started {
+        benchmark.initial_witness = state_witness(snapshot)
         benchmark.started = true
+        benchmark.clock.tick()
         return
     }
-    benchmark.elapsed += delta
     benchmark.frames++
-    if benchmark.elapsed >= 5.0 {
+    var witness_step = 4
+    if settings.frames < witness_step { witness_step = settings.frames }
+    if benchmark.frames == witness_step {
+        benchmark.witness = state_witness(snapshot)
+    }
+    benchmark.elapsed += benchmark.clock.tick()
+    if benchmark.frames >= settings.frames {
         print(
-            "SILEX_GFX_BOIDS count=$(settings.count) present=immediate " +
+            "SILEX_GFX_BOIDS count=$(settings.count) frames=$(settings.frames) " +
+            "fixed_delta=$(Constants.fixed_delta) state_step=$(witness_step) " +
+            "initial_px=$(benchmark.initial_witness.position_x) " +
+            "initial_py=$(benchmark.initial_witness.position_y) " +
+            "initial_vx=$(benchmark.initial_witness.velocity_x) " +
+            "initial_vy=$(benchmark.initial_witness.velocity_y) " +
+            "initial_p2=$(benchmark.initial_witness.position_energy) " +
+            "initial_v2=$(benchmark.initial_witness.velocity_energy) " +
+            "state_px=$(benchmark.witness.position_x) " +
+            "state_py=$(benchmark.witness.position_y) " +
+            "state_vx=$(benchmark.witness.velocity_x) " +
+            "state_vy=$(benchmark.witness.velocity_y) " +
+            "state_p2=$(benchmark.witness.position_energy) " +
+            "state_v2=$(benchmark.witness.velocity_energy) present=immediate " +
             "fps=$(benchmark.frames as float / benchmark.elapsed) " +
             "window=$(window.size().x)x$(window.size().y) " +
             "pixels=$(window.pixel_size().x)x$(window.pixel_size().y) " +
@@ -322,7 +383,7 @@ func measure(
 
 func main() {
     Application(1)
-        ..add_resource(Settings(count:requested_count()))
+        ..add_resource(requested_settings())
         ..add_resource(FlockSnapshot())
         ..add_resource(Benchmark())
         ..add_plugin(Plugins.Window(Plugins.Window.Settings()

@@ -12,10 +12,13 @@ from the architectural cost of GFX's public Scene2D path:
 
 All three programs preserve the same quadratic algorithm, one flock snapshot per
 frame, the same simulation constants, a 960 × 640 logical window requesting a
-high-density framebuffer, immediate presentation without VSync, and a
-five-second measurement period. Pass `4000` explicitly to every executable for
-a valid comparison. Always compare the reported logical and pixel dimensions;
-a run whose presentation mode or dimensions differ is invalid.
+high-density framebuffer, and immediate presentation without VSync. Every
+measured process performs one untimed warm-up frame followed by the same fixed
+number of frames at a fixed simulation delta of 1/60 second. Pass `4000 480`
+explicitly to every executable for a valid default comparison. Always compare
+the reported workload, semantic witness, logical and pixel dimensions; a run
+whose frame count, fixed delta, state, presentation mode, or dimensions differ
+is invalid.
 
 ## Silex/GFX
 
@@ -25,13 +28,13 @@ From the SilexProject workspace root:
 Silex/Toolchain/zig-out/bin/silex compile \
     Silex-Benchmarks/Sources/Boids2D/Silex.sx \
     -o /private/tmp/gfx-boids-silex
-/private/tmp/gfx-boids-silex 4000
+/private/tmp/gfx-boids-silex 4000 480
 ```
 
 The output has this form:
 
 ```text
-SILEX_GFX_BOIDS count=4000 present=immediate fps=80.0 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=... state_px=... present=immediate fps=80.0 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
 ```
 
 ## C++23 witnesses
@@ -50,28 +53,29 @@ cmake \
     -B /private/tmp/gfx-boids-cpp \
     -DCMAKE_BUILD_TYPE=Release
 cmake --build /private/tmp/gfx-boids-cpp --config Release
-/private/tmp/gfx-boids-cpp/BoidsCppDirect 4000
-/private/tmp/gfx-boids-cpp/BoidsCppArchitectural 4000
+/private/tmp/gfx-boids-cpp/BoidsCppDirect 4000 480
+/private/tmp/gfx-boids-cpp/BoidsCppArchitectural 4000 480
 ```
 
 The direct output has this form:
 
 ```text
-CPP_DIRECT_BOIDS count=4000 present=immediate fps=86.0 window=960x640 pixels=1920x1280 scale=2.0 density=2.0
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=... state_px=... present=immediate fps=86.0 window=960x640 pixels=1920x1280 scale=2.0 density=2.0
 ```
 
 The architectural output has this form:
 
 ```text
-CPP_ARCHITECTURAL_BOIDS count=4000 ecs=entt renderer=sdl_gpu present=immediate fps=86.0 window=960x640 pixels=1920x1280 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=... state_px=... ecs=entt renderer=sdl_gpu present=immediate fps=86.0 window=960x640 pixels=1920x1280 scale=2.0 density=2.0
 ```
 
 ## Comparison protocol
 
 Compile before starting the series, close other graphical workloads, perform
 several warm-up runs, and then rotate between the three executables. Compare at
-least five results per version and use the medians. Compilation and shader
-translation time are not part of the FPS measurement.
+least five results per version and use the medians. Compilation, shader
+translation, initialization, and the first rendered frame are not part of the
+FPS measurement.
 
 `RunComparison.sh` automates that complete protocol from any working directory:
 
@@ -84,9 +88,11 @@ Direct checkouts and Spec worktrees therefore never reuse the same CMake cache.
 Use `--build-dir` only when an explicit reusable location is desired.
 
 By default it builds all three Release executables, discards one warm-up per
-witness, records seven processes per witness in Silex, C++ architectural, C++
-direct order, validates their count and normalized display metadata, and writes
-a timestamped raw log under `Baselines/`. The final terminal table
+witness, records seven 480-frame processes per witness in Silex, C++
+architectural, C++ direct order, and writes a timestamped raw log under
+`Baselines/`. Before accepting any timing it validates the boid count, frame
+count, fixed delta, normalized display metadata, and numerical summaries of the
+initial state and state after four simulation steps. The final terminal table
 and log comments report the median, range, median absolute deviation (MAD), and
 relative difference from the architectural C++ witness.
 It also rejects clean-baseline status when any repository in the resolved
@@ -97,8 +103,8 @@ them directly.
 Run it from an external terminal with `--wait` when Codex has active agents or
 another workload may affect the result. After the build finishes, stop active
 competing work and press Return in the terminal; idle Codex, editor, and other
-application processes need not be closed. Use `--runs`, `--warmups`, `--output`,
-or `--build-dir` to override the capture without editing the script;
+application processes need not be closed. Use `--frames`, `--runs`, `--warmups`,
+`--output`, or `--build-dir` to override the capture without editing the script;
 `--skip-build` reuses executables already present in that build directory.
 
 The architectural C++ witness is the closest comparison for Silex/GFX. It

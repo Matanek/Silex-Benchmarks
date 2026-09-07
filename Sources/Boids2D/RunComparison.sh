@@ -9,6 +9,7 @@ workspace_directory="$(cd "${script_directory}/../../.." && pwd)"
 baseline_directory="${script_directory}/Baselines"
 
 count=4000
+frames=480
 runs=7
 warmups=1
 wait_before_run=false
@@ -23,10 +24,11 @@ Usage: RunComparison.sh [options]
 
 Build and compare the Silex, C++ architectural, and C++ direct Boids
 witnesses. The default protocol discards one warm-up process per executable,
-then records seven five-second runs in rotating witness order.
+then records seven fixed-workload runs in rotating witness order.
 
 Options:
   --count N          Boid count passed to every executable (default: 4000)
+  --frames N         Measured fixed-delta frames per executable (default: 480)
   --runs N           Recorded processes per executable (default: 7)
   --warmups N        Discarded warm-up processes per executable (default: 1)
   --output PATH      Final log path (default: timestamped Baselines log)
@@ -74,6 +76,11 @@ while (( $# > 0 )); do
             runs="$2"
             shift 2
             ;;
+        --frames)
+            require_value "$1" "${2:-}"
+            frames="$2"
+            shift 2
+            ;;
         --warmups)
             require_value "$1" "${2:-}"
             warmups="$2"
@@ -108,9 +115,11 @@ while (( $# > 0 )); do
 done
 
 require_nonnegative_integer --count "${count}"
+require_nonnegative_integer --frames "${frames}"
 require_nonnegative_integer --runs "${runs}"
 require_nonnegative_integer --warmups "${warmups}"
 (( count > 0 )) || fail "--count must be greater than zero"
+(( frames > 0 )) || fail "--frames must be greater than zero"
 (( runs > 0 )) || fail "--runs must be greater than zero"
 
 case "${output_path}" in
@@ -288,13 +297,17 @@ mkdir -p "$(dirname "${output_path}")"
     printf '# cmake_version=%s\n' "${cmake_version}"
     printf '# sdl_version=%s\n' "${sdl_version}"
     printf '# entt_revision=%s\n' "${entt_revision}"
-    printf '# protocol=%s_discarded_warmups_per_executable_then_%s_isolated_rotated_five_second_runs\n' "${warmups}" "${runs}"
+    printf '# protocol=%s_discarded_warmups_per_executable_then_%s_isolated_rotated_fixed_workload_runs\n' "${warmups}" "${runs}"
     printf '# rotation=silex_cpp-architectural_cpp-direct\n'
     printf '# count=%s\n' "${count}"
+    printf '# frames=%s\n' "${frames}"
+    printf '# simulation_delta=1_over_60_seconds\n'
     printf '# presentation=immediate\n'
 } > "${partial_output_path}"
 
 expected_signature=""
+expected_state=""
+expected_state_label=""
 
 sentinel_signature() {
     awk '
@@ -327,6 +340,61 @@ sentinel_signature() {
     '
 }
 
+state_vector() {
+    awk '
+        {
+            for (field_index = 1; field_index <= NF; field_index++) {
+                split($field_index, pair, "=")
+                if (pair[1] == "fixed_delta") { fixed_delta = pair[2] + 0; found_delta = 1 }
+                if (pair[1] == "state_step") { state_step = pair[2] + 0; found_step = 1 }
+                if (pair[1] == "initial_px") { initial_px = pair[2] + 0; found_initial_px = 1 }
+                if (pair[1] == "initial_py") { initial_py = pair[2] + 0; found_initial_py = 1 }
+                if (pair[1] == "initial_vx") { initial_vx = pair[2] + 0; found_initial_vx = 1 }
+                if (pair[1] == "initial_vy") { initial_vy = pair[2] + 0; found_initial_vy = 1 }
+                if (pair[1] == "initial_p2") { initial_p2 = pair[2] + 0; found_initial_p2 = 1 }
+                if (pair[1] == "initial_v2") { initial_v2 = pair[2] + 0; found_initial_v2 = 1 }
+                if (pair[1] == "state_px") { state_px = pair[2] + 0; found_px = 1 }
+                if (pair[1] == "state_py") { state_py = pair[2] + 0; found_py = 1 }
+                if (pair[1] == "state_vx") { state_vx = pair[2] + 0; found_vx = 1 }
+                if (pair[1] == "state_vy") { state_vy = pair[2] + 0; found_vy = 1 }
+                if (pair[1] == "state_p2") { state_p2 = pair[2] + 0; found_p2 = 1 }
+                if (pair[1] == "state_v2") { state_v2 = pair[2] + 0; found_v2 = 1 }
+            }
+        }
+        END {
+            if (!found_delta || !found_step || !found_initial_px ||
+                !found_initial_py || !found_initial_vx || !found_initial_vy ||
+                !found_initial_p2 || !found_initial_v2 || !found_px || !found_py ||
+                !found_vx || !found_vy || !found_p2 || !found_v2) exit 1
+            printf "%.9g|%d|%.9g|%.9g|%.9g|%.9g|%.9g|%.9g|%.9g|%.9g|%.9g|%.9g|%.9g|%.9g", fixed_delta,
+                state_step, initial_px, initial_py, initial_vx, initial_vy,
+                initial_p2, initial_v2, state_px, state_py, state_vx, state_vy,
+                state_p2, state_v2
+        }
+    '
+}
+
+state_vectors_match() {
+    local reference="$1"
+    local observed="$2"
+    awk -F'|' -v reference="${reference}" -v observed="${observed}" '
+        function absolute(value) { return value < 0 ? -value : value }
+        BEGIN {
+            split(reference, expected, "|")
+            split(observed, actual, "|")
+            if (actual[2] != expected[2]) exit 1
+            if (absolute(actual[1] - expected[1]) > 0.0000001) exit 1
+            for (item = 3; item <= 14; item++) {
+                scale = absolute(expected[item])
+                if (absolute(actual[item]) > scale) scale = absolute(actual[item])
+                if (absolute(actual[item] - expected[item]) > 0.05 + scale * 0.00002) {
+                    exit 1
+                }
+            }
+        }
+    '
+}
+
 run_witness() {
     local label="$1"
     local prefix="$2"
@@ -336,14 +404,16 @@ run_witness() {
     local sentinel
     local sentinel_count
     local signature
+    local state
 
     printf '%s\n' "${label}"
-    process_output="$("${executable}" "${count}")"
+    process_output="$("${executable}" "${count}" "${frames}")"
     printf '%s\n' "${process_output}"
     sentinel="$(printf '%s\n' "${process_output}" | awk -v prefix="${prefix} " 'index($0, prefix) == 1 { print }')"
     sentinel_count="$(printf '%s\n' "${sentinel}" | awk 'NF > 0 { count++ } END { print count + 0 }')"
     [[ "${sentinel_count}" == 1 ]] || fail "${label} emitted ${sentinel_count} matching sentinels"
     [[ "${sentinel}" == *"count=${count} "* ]] || fail "${label} reported the wrong boid count"
+    [[ "${sentinel}" == *"frames=${frames} "* ]] || fail "${label} reported the wrong frame count"
     [[ "${sentinel}" == *"present=immediate "* ]] || fail "${label} did not use immediate presentation"
 
     signature="$(printf '%s\n' "${sentinel}" | sentinel_signature)" || fail "${label} omitted window or display metadata"
@@ -351,6 +421,14 @@ run_witness() {
         expected_signature="${signature}"
     elif [[ "${signature}" != "${expected_signature}" ]]; then
         fail "${label} display signature ${signature} differs from ${expected_signature}"
+    fi
+
+    state="$(printf '%s\n' "${sentinel}" | state_vector)" || fail "${label} omitted the deterministic state witness"
+    if [[ -z "${expected_state}" ]]; then
+        expected_state="${state}"
+        expected_state_label="${label}"
+    elif ! state_vectors_match "${expected_state}" "${state}"; then
+        fail "${label} state ${state} differs from ${expected_state_label} state ${expected_state}"
     fi
 
     if [[ "${record}" == true ]]; then

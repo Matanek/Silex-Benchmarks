@@ -21,6 +21,7 @@ constexpr float k_separationRadius = 28.0F;
 constexpr float k_minimumSpeed = 55.0F;
 constexpr float k_maximumSpeed = 105.0F;
 constexpr float k_maximumSteering = 140.0F;
+constexpr float k_fixedDelta = 1.0F / 60.0F;
 constexpr float k_halfWidth = 490.0F;
 constexpr float k_halfHeight = 330.0F;
 constexpr int k_windowWidth = 960;
@@ -38,6 +39,15 @@ struct Vector2 {
 struct Boid {
     Vector2 position;
     Vector2 velocity;
+};
+
+struct StateWitness {
+    float positionX { 0.0F };
+    float positionY { 0.0F };
+    float velocityX { 0.0F };
+    float velocityY { 0.0F };
+    float positionEnergy { 0.0F };
+    float velocityEnergy { 0.0F };
 };
 
 // -----------------------------------------------------------------------------
@@ -157,14 +167,29 @@ void renderBoid(SDL_Renderer* renderer, const Boid& boid, int index) {
     );
 }
 
-int parseCount(const char* text) {
-    int value = 100;
+int parsePositive(const char* text, int fallback) {
+    int value = fallback;
     const auto result = std::from_chars(
         text,
         text + std::char_traits<char>::length(text),
         value
     );
-    return result.ec == std::errc {} && value > 0 ? value : 100;
+    return result.ec == std::errc {} && value > 0 ? value : fallback;
+}
+
+StateWitness summarizeState(std::span<const Boid> snapshot) {
+    StateWitness witness;
+    for (const Boid& boid : snapshot) {
+        witness.positionX += boid.position.x;
+        witness.positionY += boid.position.y;
+        witness.velocityX += boid.velocity.x;
+        witness.velocityY += boid.velocity.y;
+        witness.positionEnergy += boid.position.x * boid.position.x
+            + boid.position.y * boid.position.y;
+        witness.velocityEnergy += boid.velocity.x * boid.velocity.x
+            + boid.velocity.y * boid.velocity.y;
+    }
+    return witness;
 }
 
 // -----------------------------------------------------------------------------
@@ -172,7 +197,8 @@ int parseCount(const char* text) {
 } // namespace
 
 int main(int argc, char** argv) {
-    const int count = argc > 1 ? parseCount(argv[1]) : 100;
+    const int count = argc > 1 ? parsePositive(argv[1], 4000) : 4000;
+    const int frames = argc > 2 ? parsePositive(argv[2], 480) : 480;
     if (!SDL_Init(SDL_INIT_VIDEO)) return EXIT_FAILURE;
 
     SDL_Window* window = nullptr;
@@ -247,23 +273,17 @@ int main(int argc, char** argv) {
         });
     }
 
-    using Clock = std::chrono::steady_clock;
-    auto previous = Clock::now();
-    const auto start = previous;
-    int frames = 0;
-    while (std::chrono::duration<float>(Clock::now() - start).count() < 5.0F) {
+    std::vector<Boid> snapshot;
+    snapshot.reserve(static_cast<std::size_t>(count));
+    const auto renderFrame = [&]() {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {}
-
-        const auto now = Clock::now();
-        const float delta = std::chrono::duration<float>(now - previous).count();
-        previous = now;
-        const std::vector<Boid> snapshot = boids;
+        snapshot = boids;
         for (Boid& boid : boids) {
             boid.velocity = keepSpeed(
-                boid.velocity + steering(boid, snapshot) * delta
+                boid.velocity + steering(boid, snapshot) * k_fixedDelta
             );
-            boid.position = wrap(boid.position + boid.velocity * delta);
+            boid.position = wrap(boid.position + boid.velocity * k_fixedDelta);
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -272,14 +292,44 @@ int main(int argc, char** argv) {
             renderBoid(renderer, boids[static_cast<std::size_t>(index)], index);
         }
         SDL_RenderPresent(renderer);
-        ++frames;
+    };
+
+    renderFrame();
+    const StateWitness initialWitness = summarizeState(snapshot);
+    const int witnessStep = std::min(frames, 4);
+    StateWitness witness;
+    using Clock = std::chrono::steady_clock;
+    const auto start = Clock::now();
+    for (int frame = 1; frame <= frames; ++frame) {
+        renderFrame();
+        if (frame == witnessStep) witness = summarizeState(snapshot);
     }
 
     const float seconds = std::chrono::duration<float>(Clock::now() - start).count();
     std::printf(
-        "CPP_DIRECT_BOIDS count=%d present=immediate fps=%.5f "
+        "CPP_DIRECT_BOIDS count=%d frames=%d fixed_delta=%.9g "
+        "state_step=%d initial_px=%.9g initial_py=%.9g initial_vx=%.9g "
+        "initial_vy=%.9g initial_p2=%.9g initial_v2=%.9g "
+        "state_px=%.9g state_py=%.9g state_vx=%.9g "
+        "state_vy=%.9g state_p2=%.9g state_v2=%.9g "
+        "present=immediate fps=%.5f "
         "window=%dx%d pixels=%dx%d scale=%.5f density=%.5f\n",
         count,
+        frames,
+        static_cast<double>(k_fixedDelta),
+        witnessStep,
+        static_cast<double>(initialWitness.positionX),
+        static_cast<double>(initialWitness.positionY),
+        static_cast<double>(initialWitness.velocityX),
+        static_cast<double>(initialWitness.velocityY),
+        static_cast<double>(initialWitness.positionEnergy),
+        static_cast<double>(initialWitness.velocityEnergy),
+        static_cast<double>(witness.positionX),
+        static_cast<double>(witness.positionY),
+        static_cast<double>(witness.velocityX),
+        static_cast<double>(witness.velocityY),
+        static_cast<double>(witness.positionEnergy),
+        static_cast<double>(witness.velocityEnergy),
         static_cast<double>(frames) / seconds,
         windowWidth,
         windowHeight,

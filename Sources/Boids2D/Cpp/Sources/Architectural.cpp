@@ -23,6 +23,7 @@ constexpr float k_separationRadius = 28.0F;
 constexpr float k_minimumSpeed = 55.0F;
 constexpr float k_maximumSpeed = 105.0F;
 constexpr float k_maximumSteering = 140.0F;
+constexpr float k_fixedDelta = 1.0F / 60.0F;
 constexpr float k_halfWidth = 490.0F;
 constexpr float k_halfHeight = 330.0F;
 constexpr int k_windowWidth = 960;
@@ -64,6 +65,15 @@ struct Sample {
 struct Steering {
     float x { 0.0F };
     float y { 0.0F };
+};
+
+struct StateWitness {
+    float positionX { 0.0F };
+    float positionY { 0.0F };
+    float velocityX { 0.0F };
+    float velocityY { 0.0F };
+    float positionEnergy { 0.0F };
+    float velocityEnergy { 0.0F };
 };
 
 struct DrawingVertex {
@@ -176,14 +186,29 @@ Steering steering(Vector2 position, Vector2 velocity, std::span<const Sample> sn
     };
 }
 
-int parseCount(const char* text) {
-    int value = 100;
+int parsePositive(const char* text, int fallback) {
+    int value = fallback;
     const auto result = std::from_chars(
         text,
         text + std::char_traits<char>::length(text),
         value
     );
-    return result.ec == std::errc {} && value > 0 ? value : 100;
+    return result.ec == std::errc {} && value > 0 ? value : fallback;
+}
+
+StateWitness summarizeState(std::span<const Sample> snapshot) {
+    StateWitness witness;
+    for (const Sample& sample : snapshot) {
+        witness.positionX += sample.positionX;
+        witness.positionY += sample.positionY;
+        witness.velocityX += sample.velocityX;
+        witness.velocityY += sample.velocityY;
+        witness.positionEnergy += sample.positionX * sample.positionX
+            + sample.positionY * sample.positionY;
+        witness.velocityEnergy += sample.velocityX * sample.velocityX
+            + sample.velocityY * sample.velocityY;
+    }
+    return witness;
 }
 
 // -----------------------------------------------------------------------------
@@ -193,7 +218,8 @@ class ArchitecturalBenchmark {
     // -------------------------------------------------------------------------
     // LIFECYCLE
 
-    public: explicit ArchitecturalBenchmark(int count) : count(count) {}
+    public: ArchitecturalBenchmark(int count, int frames)
+        : count(count), frames(frames) {}
     public: ArchitecturalBenchmark(const ArchitecturalBenchmark&) = delete;
     public: ArchitecturalBenchmark& operator=(const ArchitecturalBenchmark&) = delete;
     public: ~ArchitecturalBenchmark();
@@ -225,6 +251,7 @@ class ArchitecturalBenchmark {
     private: bool fail(const char* action) const;
 
     private: int count { 0 };
+    private: int frames { 0 };
     private: entt::registry registry;
     private: std::vector<Sample> snapshot;
     private: std::vector<DrawingInstance> instances;
@@ -265,23 +292,23 @@ bool ArchitecturalBenchmark::initialize() {
 
 int ArchitecturalBenchmark::run() {
     using Clock = std::chrono::steady_clock;
-    auto previous = Clock::now();
-    const auto start = previous;
-    int frames = 0;
-
-    while (std::chrono::duration<float>(Clock::now() - start).count() < 5.0F) {
+    const auto renderFrame = [this]() {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {}
-
-        const auto now = Clock::now();
-        const float delta = std::chrono::duration<float>(now - previous).count();
-        previous = now;
-
         captureFlock();
-        moveFlock(delta);
+        moveFlock(k_fixedDelta);
         collectScene();
-        if (!uploadInstances() || !render()) return EXIT_FAILURE;
-        ++frames;
+        return uploadInstances() && render();
+    };
+
+    if (!renderFrame()) return EXIT_FAILURE;
+    const StateWitness initialWitness = summarizeState(snapshot);
+    const int witnessStep = std::min(frames, 4);
+    StateWitness witness;
+    const auto start = Clock::now();
+    for (int frame = 1; frame <= frames; ++frame) {
+        if (!renderFrame()) return EXIT_FAILURE;
+        if (frame == witnessStep) witness = summarizeState(snapshot);
     }
 
     const float seconds = std::chrono::duration<float>(Clock::now() - start).count();
@@ -296,10 +323,30 @@ int ArchitecturalBenchmark::run() {
     }
 
     std::printf(
-        "CPP_ARCHITECTURAL_BOIDS count=%d ecs=entt renderer=sdl_gpu "
-        "present=immediate fps=%.5f window=%dx%d pixels=%dx%d "
+        "CPP_ARCHITECTURAL_BOIDS count=%d frames=%d fixed_delta=%.9g "
+        "state_step=%d initial_px=%.9g initial_py=%.9g initial_vx=%.9g "
+        "initial_vy=%.9g initial_p2=%.9g initial_v2=%.9g "
+        "state_px=%.9g state_py=%.9g state_vx=%.9g "
+        "state_vy=%.9g state_p2=%.9g state_v2=%.9g "
+        "ecs=entt renderer=sdl_gpu present=immediate fps=%.5f "
+        "window=%dx%d pixels=%dx%d "
         "scale=%.5f density=%.5f\n",
         count,
+        frames,
+        static_cast<double>(k_fixedDelta),
+        witnessStep,
+        static_cast<double>(initialWitness.positionX),
+        static_cast<double>(initialWitness.positionY),
+        static_cast<double>(initialWitness.velocityX),
+        static_cast<double>(initialWitness.velocityY),
+        static_cast<double>(initialWitness.positionEnergy),
+        static_cast<double>(initialWitness.velocityEnergy),
+        static_cast<double>(witness.positionX),
+        static_cast<double>(witness.positionY),
+        static_cast<double>(witness.velocityX),
+        static_cast<double>(witness.velocityY),
+        static_cast<double>(witness.positionEnergy),
+        static_cast<double>(witness.velocityEnergy),
         static_cast<double>(frames) / seconds,
         windowWidth,
         windowHeight,
@@ -702,8 +749,9 @@ bool ArchitecturalBenchmark::fail(const char* action) const {
 } // namespace Boids
 
 int main(int argc, char** argv) {
-    const int count = argc > 1 ? Boids::parseCount(argv[1]) : 100;
-    Boids::ArchitecturalBenchmark benchmark(count);
+    const int count = argc > 1 ? Boids::parsePositive(argv[1], 4000) : 4000;
+    const int frames = argc > 2 ? Boids::parsePositive(argv[2], 480) : 480;
+    Boids::ArchitecturalBenchmark benchmark(count, frames);
     if (!benchmark.initialize()) return EXIT_FAILURE;
     return benchmark.run();
 }
