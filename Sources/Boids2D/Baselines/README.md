@@ -4,6 +4,37 @@ This directory archives raw output from the three witnesses in
 [`../Boids`](../Boids). The records are performance controls, not correctness
 tests or portable timing claims.
 
+## 2026-09-07 Part 05 fixed-workload acceptance
+
+[`2026-09-07-170658-arm64-boids.log`](2026-09-07-170658-arm64-boids.log) is the
+accepted macOS ARM64 qualification of Silex compiler commit `65471f1` with
+benchmark commit `50f6dc9`. It uses the fixed 4,000-boid, 480-frame workload,
+discards one warm-up process per executable, then records seven isolated
+rotations. Every witness passes the workload and state-signature oracle.
+
+| Witness | Median | MAD | Range | Relative to C++ architectural |
+| --- | ---: | ---: | ---: | ---: |
+| Silex/GFX | 87.165 FPS | 0.69% | 85.948-88.356 FPS | -1.37% |
+| C++ architectural | 88.375 FPS | 0.20% | 88.167-89.791 FPS | reference |
+| C++ direct | 87.210 FPS | 1.16% | 86.116-89.112 FPS | -1.32% |
+
+Silex is 0.052% below the direct witness by the independently computed
+medians, well inside the dispersion of both series; it is above the direct
+witness in three of the seven paired rotations. The 1.37% remaining distance
+to the architectural witness is almost exactly the 1.32% distance between the
+two C++ witnesses and is not attributed to an unproven loop or vectorization
+transformation.
+
+The log reports dirty source repositories because the benchmark checkout was
+already removing rejected historical logs and adding the two fixed-workload
+qualification records. No benchmark source changed: `Silex.sx` remains
+byte-identical to commit `50f6dc9`, with SHA-256
+`45d3bb1f2b5fb95c5f358727a9f5ad86daea4533fa23c19d08129b1ce05fde94`.
+The earlier
+[`2026-09-07-141637-arm64-boids.log`](2026-09-07-141637-arm64-boids.log)
+qualifies the preceding compiler commit `00f71d5` under the same protocol and
+is retained as the immediate pre-candidate control.
+
 ## 2026-08-26 clean pre-fix regression control
 
 [`2026-08-26-101358-arm64-boids.log`](2026-08-26-101358-arm64-boids.log) is a
