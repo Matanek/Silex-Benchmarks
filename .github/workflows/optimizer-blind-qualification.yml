@@ -1,0 +1,333 @@
+name: Qualify the sealed optimizer corpus
+
+run-name: Qualify optimizer Part 09 (${{ inputs.target }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Native target or complete admission matrix
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - macos-arm64
+          - macos-x64
+          - linux-arm64
+          - linux-x64
+          - windows-arm64
+          - windows-x64
+
+permissions:
+  contents: read
+
+concurrency:
+  group: optimizer-blind-${{ github.ref }}-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: macos-arm64
+            runner: macos-15
+            zig_archive: zig-aarch64-macos-0.16.0.tar.xz
+            zig_sha256: b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489
+            zig_directory: zig-aarch64-macos-0.16.0
+            performance: true
+          - target: macos-x64
+            runner: macos-15-intel
+            zig_archive: zig-x86_64-macos-0.16.0.tar.xz
+            zig_sha256: 0387557ed1877bc6a2e1802c8391953baddba76081876301c522f52977b52ba7
+            zig_directory: zig-x86_64-macos-0.16.0
+            performance: true
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            zig_archive: zig-aarch64-linux-0.16.0.tar.xz
+            zig_sha256: ea4b09bfb22ec6f6c6ceac57ab63efb6b46e17ab08d21f69f3a48b38e1534f17
+            zig_directory: zig-aarch64-linux-0.16.0
+            performance: false
+          - target: linux-x64
+            runner: ubuntu-24.04
+            zig_archive: zig-x86_64-linux-0.16.0.tar.xz
+            zig_sha256: 70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00
+            zig_directory: zig-x86_64-linux-0.16.0
+            performance: false
+          - target: windows-x64
+            runner: windows-2025
+            zig_archive: zig-x86_64-windows-0.16.0.zip
+            zig_sha256: 68659eb5f1e4eb1437a722f1dd889c5a322c9954607f5edcf337bc3684a75a7e
+            zig_directory: zig-x86_64-windows-0.16.0
+            performance: false
+    name: ${{ matrix.target }}
+    if: inputs.target == 'all' || inputs.target == matrix.target
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 360
+
+    steps:
+      - name: Check out the qualification owner
+        uses: actions/checkout@v6
+        with:
+          path: Silex-Benchmarks
+
+      - name: Install Zig 0.16.0 on Unix
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/${{ matrix.zig_archive }}"
+          curl -fL "https://ziglang.org/download/0.16.0/${{ matrix.zig_archive }}" -o "$archive"
+          if command -v sha256sum >/dev/null 2>&1; then
+            echo "${{ matrix.zig_sha256 }}  $archive" | sha256sum -c -
+          else
+            echo "${{ matrix.zig_sha256 }}  $archive" | shasum -a 256 -c -
+          fi
+          tar -xJf "$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/${{ matrix.zig_directory }}" >> "$GITHUB_PATH"
+
+      - name: Install Zig 0.16.0 on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $archive = Join-Path $env:RUNNER_TEMP "${{ matrix.zig_archive }}"
+          Invoke-WebRequest "https://ziglang.org/download/0.16.0/${{ matrix.zig_archive }}" -OutFile $archive
+          $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne "${{ matrix.zig_sha256 }}") { throw "Zig archive checksum mismatch" }
+          Expand-Archive $archive -DestinationPath $env:RUNNER_TEMP
+          Add-Content $env:GITHUB_PATH (Join-Path $env:RUNNER_TEMP "${{ matrix.zig_directory }}")
+
+      - name: Install Linux display requirements
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo apt-get install -y libvulkan1 mesa-vulkan-drivers vulkan-tools vulkan-validationlayers xauth xvfb
+
+      - name: Materialize the sealed closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline=()
+          if [ "${{ matrix.performance }}" = "true" ]; then baseline=(--baseline); fi
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
+            checkout --workspace . "${baseline[@]}"
+
+      - name: Build the candidate compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig build -Doptimize=ReleaseFast -Dcpu=baseline \
+            --prefix "$RUNNER_TEMP/candidate" \
+            --build-file Silex/Toolchain/build.zig
+
+      - name: Build the Part 07 baseline compiler
+        if: matrix.performance
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig build -Doptimize=ReleaseFast -Dcpu=baseline \
+            --prefix "$RUNNER_TEMP/baseline" \
+            --build-file _baseline/Silex/Toolchain/build.zig
+
+      - name: Set up and link only the sealed workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          suffix=""
+          if [ "${{ runner.os }}" = "Windows" ]; then suffix=".exe"; fi
+          silex="$RUNNER_TEMP/candidate/bin/silex$suffix"
+          "$silex" setup
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
+            link --workspace . --silex "$silex" --target "${{ matrix.target }}"
+
+      - name: Execute the native Debug and Release corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          suffix=""
+          if [ "${{ runner.os }}" = "Windows" ]; then suffix=".exe"; fi
+          command=(python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Campaign.py
+            --workspace .
+            --silex "$RUNNER_TEMP/candidate/bin/silex$suffix"
+            --runner "${{ matrix.runner }}"
+            --output "Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json")
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            xvfb-run -a "${command[@]}"
+          else
+            "${command[@]}"
+          fi
+
+      - name: Build the external performance oracles
+        if: matrix.performance
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S Packages/GFX.Physics/Benchmarks/Oracle2D -B "$RUNNER_TEMP/physics-oracles" \
+            -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang
+          cmake --build "$RUNNER_TEMP/physics-oracles" --config Release --target \
+            gfx_physics_contact_kernel_slots \
+            gfx_physics_contact_kernel_packed \
+            gfx_physics_contact_kernel_reference \
+            gfx_physics_integration_kernel_slots \
+            gfx_physics_integration_kernel_packed \
+            gfx_physics_integration_kernel_reference \
+            gfx_physics_preparation_kernel_slots \
+            gfx_physics_preparation_kernel_packed \
+            gfx_physics_preparation_kernel_reference
+
+      - name: Validate the package-owned Physics and Boids oracles
+        if: matrix.performance
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}"
+          python3 -B Packages/GFX.Physics/Benchmarks/Oracle2D/RunContactKernel.py \
+            --silex "$report/binaries/physics-contact-release" \
+            --clang-slots "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_slots" \
+            --clang-packed "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_packed" \
+            --box2d-check "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_reference" \
+            --check-only
+          for stage in integration preparation; do
+            python3 -B Packages/GFX.Physics/Benchmarks/Oracle2D/RunStageKernels.py \
+              --stage "$stage" \
+              --silex "$report/binaries/physics-$stage-release" \
+              --clang-slots "$RUNNER_TEMP/physics-oracles/gfx_physics_${stage}_kernel_slots" \
+              --clang-packed "$RUNNER_TEMP/physics-oracles/gfx_physics_${stage}_kernel_packed" \
+              --box2d-check "$RUNNER_TEMP/physics-oracles/gfx_physics_${stage}_kernel_reference" \
+              --check-only
+          done
+          Silex-Benchmarks/Sources/Boids2D/RunComparison.sh \
+            --runs 1 --warmups 0 \
+            --silex-compiler "$RUNNER_TEMP/candidate/bin/silex" \
+            --build-dir "$RUNNER_TEMP/boids-witnesses" \
+            --output "$RUNNER_TEMP/boids-semantic.log"
+
+      - name: Run the physical performance campaign
+        if: matrix.performance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Performance.py \
+            --workspace . \
+            --candidate-silex "$RUNNER_TEMP/candidate/bin/silex" \
+            --baseline-silex "$RUNNER_TEMP/baseline/bin/silex" \
+            --physics-oracle-dir "$RUNNER_TEMP/physics-oracles" \
+            --boids-cpp "$RUNNER_TEMP/boids-witnesses/cpp/BoidsCppArchitectural" \
+            --report "Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json"
+
+      - name: Upload the exact native report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: optimizer-blind-${{ matrix.target }}
+          path: Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json
+          if-no-files-found: error
+          retention-days: 30
+
+  windows-arm64-compiler:
+    name: windows-arm64 compiler
+    if: inputs.target == 'all' || inputs.target == 'windows-arm64'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out the exact candidate compiler
+        uses: actions/checkout@v6
+        with:
+          repository: Matanek/Silex
+          ref: 8c21b7b4ae65e172fe156c527f1eb4d12f0e2ed8
+          path: Silex
+      - name: Install Zig 0.16.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/zig.tar.xz"
+          curl -fL https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz -o "$archive"
+          echo "70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00  $archive" | sha256sum -c -
+          tar -xJf "$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/zig-x86_64-linux-0.16.0" >> "$GITHUB_PATH"
+      - name: Cross-build the compiler executable only
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig build -Dtarget=aarch64-windows -Doptimize=ReleaseFast -Dcpu=baseline \
+            --prefix "$RUNNER_TEMP/candidate" \
+            --build-file Silex/Toolchain/build.zig
+      - uses: actions/upload-artifact@v7
+        with:
+          name: optimizer-blind-windows-arm64-compiler
+          path: ${{ runner.temp }}/candidate
+          if-no-files-found: error
+          retention-days: 1
+
+  windows-arm64:
+    name: windows-arm64
+    if: inputs.target == 'all' || inputs.target == 'windows-arm64'
+    needs: windows-arm64-compiler
+    runs-on: windows-11-arm
+    timeout-minutes: 180
+    steps:
+      - name: Check out the qualification owner
+        uses: actions/checkout@v6
+        with:
+          path: Silex-Benchmarks
+      - name: Materialize the sealed closure
+        shell: pwsh
+        run: python -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py checkout --workspace .
+      - uses: actions/download-artifact@v8
+        with:
+          name: optimizer-blind-windows-arm64-compiler
+          path: ${{ runner.temp }}/candidate
+      - name: Set up and link only the sealed workspace
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $silex = "$env:RUNNER_TEMP/candidate/bin/silex.exe"
+          & $silex setup
+          python -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py `
+            link --workspace . --silex $silex --target windows-arm64
+      - name: Execute the native Debug and Release corpus
+        shell: pwsh
+        run: |
+          python -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Campaign.py `
+            --workspace . `
+            --silex "$env:RUNNER_TEMP/candidate/bin/silex.exe" `
+            --runner windows-11-arm `
+            --output Silex-Benchmarks/Results/OptimizerBlindQualification/windows-arm64/report.json
+      - name: Upload the exact native report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: optimizer-blind-windows-arm64
+          path: Silex-Benchmarks/Results/OptimizerBlindQualification/windows-arm64/report.json
+          if-no-files-found: error
+          retention-days: 30
+
+  gate:
+    name: sealed six-target gate
+    if: inputs.target == 'all'
+    needs:
+      - native
+      - windows-arm64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: Silex-Benchmarks
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: optimizer-blind-*
+          path: reports
+      - name: Apply the blocking Part 09 gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t reports < <(find reports -name report.json -type f | sort)
+          test "${#reports[@]}" -eq 6
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Qualification.py \
+            gate "${reports[@]}"

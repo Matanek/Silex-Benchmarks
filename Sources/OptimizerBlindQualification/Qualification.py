@@ -70,6 +70,10 @@ def manifest_sha256(path: Path) -> str:
     return sha256(path)
 
 
+def candidate_sha256(path: Path) -> str:
+    return sha256(path)
+
+
 def require_keys(value: dict[str, Any], keys: set[str], context: str) -> None:
     missing = keys - value.keys()
     if missing:
@@ -87,7 +91,12 @@ def unique(values: list[Any], context: str) -> None:
         fail(f"{context}: duplicate entries")
 
 
-def run_checked(command: list[str], cwd: Path, timeout: float = 30.0) -> subprocess.CompletedProcess[str]:
+def run_checked(
+    command: list[str],
+    cwd: Path,
+    timeout: float = 30.0,
+    env: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess[str]:
     """Run a bounded command and always terminate its complete process group."""
     creationflags = 0
     start_new_session = os.name != "nt"
@@ -101,6 +110,7 @@ def run_checked(command: list[str], cwd: Path, timeout: float = 30.0) -> subproc
         text=True,
         start_new_session=start_new_session,
         creationflags=creationflags,
+        env=env,
     )
     try:
         stdout, stderr = process.communicate(timeout=timeout)
@@ -108,6 +118,10 @@ def run_checked(command: list[str], cwd: Path, timeout: float = 30.0) -> subproc
         terminate_process_tree(process)
         stdout, stderr = process.communicate()
         fail(f"command timed out after {timeout:g}s: {' '.join(command)}\n{stderr}")
+    except BaseException:
+        terminate_process_tree(process)
+        process.communicate()
+        raise
     if process.returncode:
         fail(f"command failed ({process.returncode}): {' '.join(command)}\n{stderr}")
     return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
@@ -269,7 +283,56 @@ def audit_manifest_shape(manifest: dict[str, Any]) -> None:
             fail(f"manifest: full sentinel {sentinel} is not blocking")
 
 
-def audit_workspace(manifest: dict[str, Any], workspace: Path, silex: Path | None) -> None:
+def audit_candidate(candidate: dict[str, Any], candidate_path: Path, manifest: dict[str, Any], manifest_path: Path) -> None:
+    require_keys(
+        candidate,
+        {
+            "schema_version",
+            "manifest_sha256",
+            "initial_candidate_revision",
+            "qualified_candidate_revision",
+            "reason",
+            "regression",
+        },
+        "candidate descriptor",
+    )
+    if candidate["schema_version"] != 1:
+        fail("candidate descriptor: unsupported schema")
+    if candidate["manifest_sha256"] != manifest_sha256(manifest_path):
+        fail("candidate descriptor: sealed manifest hash mismatch")
+    initial = require_hex(candidate["initial_candidate_revision"], 40, "initial candidate revision")
+    corrected = require_hex(candidate["qualified_candidate_revision"], 40, "qualified candidate revision")
+    if initial != manifest["candidate"]["revision"]:
+        fail("candidate descriptor: initial revision differs from the sealed candidate")
+    if corrected == initial:
+        fail("candidate descriptor: corrected revision must differ from the failed sealed candidate")
+    if not isinstance(candidate["reason"], str) or not candidate["reason"].strip():
+        fail("candidate descriptor: correction reason is empty")
+    regression = candidate["regression"]
+    require_keys(
+        regression,
+        {"repository", "path", "sha256", "failing_revision", "corrected_revision"},
+        "candidate regression",
+    )
+    if regression["repository"] != manifest["candidate"]["repository"]:
+        fail("candidate descriptor: regression repository differs from the compiler candidate")
+    if regression["failing_revision"] != initial or regression["corrected_revision"] != corrected:
+        fail("candidate descriptor: regression revisions do not bind the failed and corrected candidates")
+    require_hex(regression["sha256"], 64, "candidate regression source hash")
+    if not isinstance(regression["path"], str) or not regression["path"]:
+        fail("candidate descriptor: regression path is empty")
+    require_hex(candidate_sha256(candidate_path), 64, "candidate descriptor hash")
+
+
+def audit_workspace(
+    manifest: dict[str, Any],
+    manifest_path: Path,
+    candidate: dict[str, Any],
+    candidate_path: Path,
+    workspace: Path,
+    silex: Path | None,
+) -> None:
+    audit_candidate(candidate, candidate_path, manifest, manifest_path)
     workspace = workspace.resolve()
     repositories = {repository["name"]: repository for repository in manifest["repositories"]}
     for repository in repositories.values():
@@ -277,7 +340,18 @@ def audit_workspace(manifest: dict[str, Any], workspace: Path, silex: Path | Non
         if not root.is_relative_to(workspace) or not root.is_dir():
             fail(f"repository {repository['name']}: missing or outside workspace: {root}")
         actual = run_checked(["git", "rev-parse", "HEAD"], root).stdout.strip()
-        if repository["name"] == manifest["owner_repository"]:
+        if repository["name"] == manifest["candidate"]["repository"]:
+            corrected = candidate["qualified_candidate_revision"]
+            if actual != corrected:
+                fail(f"repository {repository['name']}: HEAD {actual} != corrected candidate {corrected}")
+            result = subprocess.run(
+                ["git", "merge-base", "--is-ancestor", repository["revision"], actual],
+                cwd=root,
+                check=False,
+            )
+            if result.returncode:
+                fail(f"repository {repository['name']}: corrected candidate does not descend from sealed {repository['revision']}")
+        elif repository["name"] == manifest["owner_repository"]:
             # The manifest and runner necessarily live in a descendant commit
             # of the pre-existing consumer sources they seal. Source hashes
             # below forbid that descendant from changing any selected input.
@@ -300,6 +374,16 @@ def audit_workspace(manifest: dict[str, Any], workspace: Path, silex: Path | Non
         actual = sha256(source)
         if actual != case["sha256"]:
             fail(f"case {case['id']}: source hash {actual} != sealed {case['sha256']}")
+
+    regression = candidate["regression"]
+    regression_repository = repositories[regression["repository"]]
+    regression_root = (workspace / regression_repository["path"]).resolve()
+    regression_source = (regression_root / regression["path"]).resolve()
+    if not regression_source.is_relative_to(regression_root) or not regression_source.is_file():
+        fail(f"candidate regression: missing or escaping source {regression_source}")
+    actual_regression_hash = sha256(regression_source)
+    if actual_regression_hash != regression["sha256"]:
+        fail(f"candidate regression: source hash {actual_regression_hash} != {regression['sha256']}")
 
     if silex is None:
         return
@@ -400,15 +484,38 @@ def audit_measurement(case_id: str, metric_id: str, measurement: dict[str, Any],
     fail(f"{case_id}/{metric_id}: inconclusive ({relative['lower_bound_ppm']}..{relative['upper_bound_ppm']} ppm)")
 
 
-def audit_reports(manifest: dict[str, Any], manifest_path: Path, report_paths: list[Path]) -> None:
+def audit_reports(
+    manifest: dict[str, Any],
+    manifest_path: Path,
+    candidate: dict[str, Any],
+    candidate_path: Path,
+    report_paths: list[Path],
+) -> None:
+    audit_candidate(candidate, candidate_path, manifest, manifest_path)
     expected_hash = manifest_sha256(manifest_path)
+    expected_candidate_hash = candidate_sha256(candidate_path)
     reports = [read_json(path) for path in report_paths]
     by_target: dict[str, dict[str, Any]] = {}
     for report in reports:
-        require_keys(report, {"schema_version", "manifest_sha256", "candidate_revision", "host", "semantic_tests", "executions", "measurements"}, "report")
+        require_keys(
+            report,
+            {
+                "schema_version",
+                "manifest_sha256",
+                "candidate_descriptor_sha256",
+                "candidate_revision",
+                "host",
+                "semantic_tests",
+                "executions",
+                "measurements",
+            },
+            "report",
+        )
         if report["schema_version"] != 1 or report["manifest_sha256"] != expected_hash:
             fail("report: schema or sealed manifest hash mismatch")
-        if report["candidate_revision"] != manifest["candidate"]["revision"]:
+        if report["candidate_descriptor_sha256"] != expected_candidate_hash:
+            fail("report: corrected candidate descriptor hash mismatch")
+        if report["candidate_revision"] != candidate["qualified_candidate_revision"]:
             fail("report: candidate revision mismatch")
         host = report["host"]
         require_keys(host, {"target", "runner", "os", "architecture", "cpu", "features", "native", "emulated", "cross_compiled"}, "report host")
@@ -510,6 +617,7 @@ def self_test() -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
+    parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
     subparsers = parser.add_subparsers(dest="command", required=True)
     verify = subparsers.add_parser("verify", help="audit the sealed manifest and exact local closure")
     verify.add_argument("--workspace", type=Path, required=True)
@@ -526,11 +634,12 @@ def main() -> int:
             return 0
         manifest = read_json(args.manifest)
         audit_manifest_shape(manifest)
+        candidate = read_json(args.candidate_descriptor)
         if args.command == "verify":
-            audit_workspace(manifest, args.workspace, args.silex)
+            audit_workspace(manifest, args.manifest, candidate, args.candidate_descriptor, args.workspace, args.silex)
             print(f"sealed blind corpus: PASS ({len(manifest['cases'])} cases, {len(manifest['repositories'])} repositories)")
             return 0
-        audit_reports(manifest, args.manifest, args.reports)
+        audit_reports(manifest, args.manifest, candidate, args.candidate_descriptor, args.reports)
         print("blind qualification gate: PASS (six native targets, physical ARM64 and X64 performance)")
         return 0
     except QualificationError as error:

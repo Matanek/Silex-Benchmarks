@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
+  "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
+  "qualified_candidate_revision": "8c21b7b4ae65e172fe156c527f1eb4d12f0e2ed8",
+  "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
+  "regression": {
+    "repository": "Silex",
+    "path": "Toolchain/Benchmarks/Optimizer/Regressions/DynamicFieldClearAppend.sx",
+    "sha256": "500e611c0a09a648088bab072f84691a04fb8c6ed457fa6781ae1f6bfe5a18f6",
+    "failing_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
+    "corrected_revision": "8c21b7b4ae65e172fe156c527f1eb4d12f0e2ed8"
+  }
+}
