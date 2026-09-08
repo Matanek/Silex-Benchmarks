@@ -301,10 +301,10 @@ def main() -> int:
             [baseline_binary.stat().st_size],
             "Part-07-compiler-baseline",
         )
-        for metric_id, record in case_measurements.items():
-            Qualification.audit_measurement(case_id, metric_id, record, manifest["statistical_contract"])
         report["measurements"][case_id] = case_measurements
         Campaign.write_report(args.report, report)
+        for metric_id, record in case_measurements.items():
+            Qualification.audit_measurement(case_id, metric_id, record, manifest["statistical_contract"])
 
     print(f"performance campaign partial report: {args.report}")
     return 0
