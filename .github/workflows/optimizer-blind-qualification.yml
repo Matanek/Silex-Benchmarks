@@ -387,6 +387,7 @@ jobs:
             --silex "$RUNNER_TEMP/candidate/bin/silex" \
             --source Silex-Benchmarks/Sources/RegexStreamingSearch.sx \
             --timeout 90 \
+            --only input-construction \
             --output Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/regex-linux-x64.json
 
       - name: Upload the diagnostic report

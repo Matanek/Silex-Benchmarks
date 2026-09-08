@@ -92,4 +92,6 @@ derives one temporary `main` per unchanged test body in a valid transient module
 directory, which it removes after measurement. Debug and Release compilation
 and execution are timed independently with short process-group bounds; binaries
 and compiler caches remain below `.silex`. This attributes a qualification
-timeout without editing or replacing the sealed workload.
+timeout without editing or replacing the sealed workload. `--only` can restrict
+a run to one diagnostic entry, including `input-construction`, which isolates
+the million-scalar fixture before any Regex search begins.

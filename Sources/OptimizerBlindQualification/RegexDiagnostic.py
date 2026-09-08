@@ -23,6 +23,12 @@ def derived_entries(source: str) -> dict[str, str]:
     prefix, tests = source.split(FIRST_LABEL, 1)
     first, second = tests.split(SECOND_LABEL, 1)
     return {
+        "input-construction": "use Interop.C\n" + prefix + """
+func main() {
+    let text = large_text(1_000_000, 90)
+    assert(C.byte_count(text) == 1_000_001 as uint, "constructed byte count")
+}
+""",
         "streaming-search": prefix + "func main()" + first,
         "finite-repetition": prefix + "func main()" + second,
     }
@@ -58,6 +64,7 @@ def main() -> int:
     parser.add_argument("--source", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--timeout", type=float, default=90.0)
+    parser.add_argument("--only", action="append")
     args = parser.parse_args()
 
     workspace = args.workspace.resolve()
@@ -84,7 +91,16 @@ def main() -> int:
         "entries": {},
     }
 
-    for entry, derived_source in derived_entries(source_bytes.decode()).items():
+    entries = derived_entries(source_bytes.decode())
+    selected = set(args.only or entries)
+    unknown = selected - set(entries)
+    if unknown:
+        raise Qualification.QualificationError(
+            f"unknown diagnostic entries: {', '.join(sorted(unknown))}"
+        )
+    for entry, derived_source in entries.items():
+        if entry not in selected:
+            continue
         module_name = "".join(part.title() for part in entry.split("-"))
         entry_source = source_root / f"{module_name}.sx"
         entry_source.write_text(derived_source)
