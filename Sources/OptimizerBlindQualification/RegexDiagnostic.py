@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import time
 from typing import Any
 
@@ -70,7 +71,9 @@ def main() -> int:
             f"sealed Regex source hash mismatch: {source_sha256}"
         )
 
+    source_root = workspace / "SilexDiagnostics" / "Regex"
     diagnostic_root = workspace / ".silex" / "diagnostics" / "regex"
+    source_root.mkdir(parents=True, exist_ok=True)
     diagnostic_root.mkdir(parents=True, exist_ok=True)
     report: dict[str, Any] = {
         "schema_version": 1,
@@ -82,7 +85,8 @@ def main() -> int:
     }
 
     for entry, derived_source in derived_entries(source_bytes.decode()).items():
-        entry_source = diagnostic_root / f"{entry}.sx"
+        module_name = "".join(part.title() for part in entry.split("-"))
+        entry_source = source_root / f"{module_name}.sx"
         entry_source.write_text(derived_source)
         entry_report: dict[str, Any] = {
             "derived_source_sha256": Qualification.sha256(entry_source),
@@ -113,6 +117,7 @@ def main() -> int:
             mode_report["execute"] = execute_result
             print(f"{entry} {mode} execute: {execute_result['status']}", flush=True)
 
+    shutil.rmtree(source_root.parent)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     release_green = all(

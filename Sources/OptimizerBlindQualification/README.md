@@ -88,7 +88,8 @@ cannot leave a `silex run` executable consuming CPU in the background.
 
 The `regex-diagnostic` target of `optimizer-blind-qualification.yml` is
 explicitly non-qualifying. It first checks the sealed Regex source hash, then
-derives one temporary `main` per unchanged test body below the workspace
-`.silex` directory. Debug and Release compilation and execution are timed
-independently with short process-group bounds so a qualification timeout can be
-attributed without editing or replacing the sealed workload.
+derives one temporary `main` per unchanged test body in a valid transient module
+directory, which it removes after measurement. Debug and Release compilation
+and execution are timed independently with short process-group bounds; binaries
+and compiler caches remain below `.silex`. This attributes a qualification
+timeout without editing or replacing the sealed workload.
