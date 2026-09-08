@@ -374,7 +374,13 @@ def audit_fixture(fixture: dict[str, Any], fixture_path: Path, manifest: dict[st
     diagnosis = fixture["diagnosis"]
     require_keys(
         diagnosis,
-        {"linux_600s_run", "windows_600s_run", "whole_body_run", "construction_only_run"},
+        {
+            "linux_600s_run",
+            "windows_600s_run",
+            "whole_body_run",
+            "construction_only_run",
+            "corrected_construction_run",
+        },
         "fixture diagnosis",
     )
     if any(not isinstance(run, int) or run <= 0 for run in diagnosis.values()):
