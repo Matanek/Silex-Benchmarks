@@ -74,6 +74,10 @@ def candidate_sha256(path: Path) -> str:
     return sha256(path)
 
 
+def fixture_sha256(path: Path) -> str:
+    return sha256(path)
+
+
 def require_keys(value: dict[str, Any], keys: set[str], context: str) -> None:
     missing = keys - value.keys()
     if missing:
@@ -324,15 +328,72 @@ def audit_candidate(candidate: dict[str, Any], candidate_path: Path, manifest: d
     require_hex(candidate_sha256(candidate_path), 64, "candidate descriptor hash")
 
 
+def audit_fixture(fixture: dict[str, Any], fixture_path: Path, manifest: dict[str, Any], manifest_path: Path) -> None:
+    require_keys(
+        fixture,
+        {
+            "schema_version",
+            "manifest_sha256",
+            "case_id",
+            "repository",
+            "path",
+            "original_source_sha256",
+            "corrected_source_sha256",
+            "reason",
+            "preserved_workload",
+            "diagnosis",
+        },
+        "fixture correction",
+    )
+    if fixture["schema_version"] != 1:
+        fail("fixture correction: unsupported schema")
+    if fixture["manifest_sha256"] != manifest_sha256(manifest_path):
+        fail("fixture correction: sealed manifest hash mismatch")
+    cases = {case["id"]: case for case in manifest["cases"]}
+    case = cases.get(fixture["case_id"])
+    if case is None:
+        fail("fixture correction: unknown sealed case")
+    if fixture["repository"] != case["repository"] or fixture["path"] != case["source"]:
+        fail("fixture correction: repository or path differs from the sealed case")
+    original = require_hex(fixture["original_source_sha256"], 64, "fixture original source hash")
+    corrected = require_hex(fixture["corrected_source_sha256"], 64, "fixture corrected source hash")
+    if original != case["sha256"] or corrected == original:
+        fail("fixture correction: source hashes do not bind a distinct correction to the sealed case")
+    if not isinstance(fixture["reason"], str) or not fixture["reason"].strip():
+        fail("fixture correction: reason is empty")
+    expected_workload = {
+        "prefix_scalar": 97,
+        "prefix_count": 1_000_000,
+        "suffix_scalar": 90,
+        "total_scalar_count": 1_000_001,
+        "pattern": "Z$",
+        "expected_match_start": 1_000_000,
+    }
+    if fixture["preserved_workload"] != expected_workload:
+        fail("fixture correction: the sealed Regex workload was not preserved exactly")
+    diagnosis = fixture["diagnosis"]
+    require_keys(
+        diagnosis,
+        {"linux_600s_run", "windows_600s_run", "whole_body_run", "construction_only_run"},
+        "fixture diagnosis",
+    )
+    if any(not isinstance(run, int) or run <= 0 for run in diagnosis.values()):
+        fail("fixture correction: diagnostic run identifiers must be positive integers")
+    require_hex(fixture_sha256(fixture_path), 64, "fixture correction descriptor hash")
+
+
 def audit_workspace(
     manifest: dict[str, Any],
     manifest_path: Path,
     candidate: dict[str, Any],
     candidate_path: Path,
+    fixture: dict[str, Any],
+    fixture_path: Path,
     workspace: Path,
     silex: Path | None,
 ) -> None:
     audit_candidate(candidate, candidate_path, manifest, manifest_path)
+    audit_fixture(fixture, fixture_path, manifest, manifest_path)
     workspace = workspace.resolve()
     repositories = {repository["name"]: repository for repository in manifest["repositories"]}
     for repository in repositories.values():
@@ -372,8 +433,9 @@ def audit_workspace(
         if not source.is_relative_to(repository_root) or not source.is_file():
             fail(f"case {case['id']}: missing or escaping source {source}")
         actual = sha256(source)
-        if actual != case["sha256"]:
-            fail(f"case {case['id']}: source hash {actual} != sealed {case['sha256']}")
+        expected = fixture["corrected_source_sha256"] if case["id"] == fixture["case_id"] else case["sha256"]
+        if actual != expected:
+            fail(f"case {case['id']}: source hash {actual} != accepted {expected}")
 
     regression = candidate["regression"]
     regression_repository = repositories[regression["repository"]]
@@ -489,11 +551,15 @@ def audit_reports(
     manifest_path: Path,
     candidate: dict[str, Any],
     candidate_path: Path,
+    fixture: dict[str, Any],
+    fixture_path: Path,
     report_paths: list[Path],
 ) -> None:
     audit_candidate(candidate, candidate_path, manifest, manifest_path)
+    audit_fixture(fixture, fixture_path, manifest, manifest_path)
     expected_hash = manifest_sha256(manifest_path)
     expected_candidate_hash = candidate_sha256(candidate_path)
+    expected_fixture_hash = fixture_sha256(fixture_path)
     reports = [read_json(path) for path in report_paths]
     by_target: dict[str, dict[str, Any]] = {}
     for report in reports:
@@ -503,6 +569,7 @@ def audit_reports(
                 "schema_version",
                 "manifest_sha256",
                 "candidate_descriptor_sha256",
+                "fixture_correction_sha256",
                 "candidate_revision",
                 "host",
                 "semantic_tests",
@@ -515,6 +582,8 @@ def audit_reports(
             fail("report: schema or sealed manifest hash mismatch")
         if report["candidate_descriptor_sha256"] != expected_candidate_hash:
             fail("report: corrected candidate descriptor hash mismatch")
+        if report["fixture_correction_sha256"] != expected_fixture_hash:
+            fail("report: corrected fixture descriptor hash mismatch")
         if report["candidate_revision"] != candidate["qualified_candidate_revision"]:
             fail("report: candidate revision mismatch")
         host = report["host"]
@@ -618,6 +687,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
+    parser.add_argument("--fixture-correction", type=Path, default=Path(__file__).with_name("FixtureCorrection.json"))
     subparsers = parser.add_subparsers(dest="command", required=True)
     verify = subparsers.add_parser("verify", help="audit the sealed manifest and exact local closure")
     verify.add_argument("--workspace", type=Path, required=True)
@@ -635,11 +705,29 @@ def main() -> int:
         manifest = read_json(args.manifest)
         audit_manifest_shape(manifest)
         candidate = read_json(args.candidate_descriptor)
+        fixture = read_json(args.fixture_correction)
         if args.command == "verify":
-            audit_workspace(manifest, args.manifest, candidate, args.candidate_descriptor, args.workspace, args.silex)
+            audit_workspace(
+                manifest,
+                args.manifest,
+                candidate,
+                args.candidate_descriptor,
+                fixture,
+                args.fixture_correction,
+                args.workspace,
+                args.silex,
+            )
             print(f"sealed blind corpus: PASS ({len(manifest['cases'])} cases, {len(manifest['repositories'])} repositories)")
             return 0
-        audit_reports(manifest, args.manifest, candidate, args.candidate_descriptor, args.reports)
+        audit_reports(
+            manifest,
+            args.manifest,
+            candidate,
+            args.candidate_descriptor,
+            fixture,
+            args.fixture_correction,
+            args.reports,
+        )
         print("blind qualification gate: PASS (six native targets, physical ARM64 and X64 performance)")
         return 0
     except QualificationError as error:

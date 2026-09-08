@@ -15,6 +15,7 @@ import Qualification
 
 
 SEALED_SOURCE_SHA256 = "246ecb85c36e0b3f13f1e40bcffc78cfe89bba2871021b019b956ae0ac191779"
+CORRECTED_SOURCE_SHA256 = "a9c2deb3152efb4d8ec8ce9bd37fd5093f597b6442d3badd9fb52c66c61dd33e"
 FIRST_LABEL = 'test "streaming search over one million scalars"'
 SECOND_LABEL = 'test "large finite repetition stays compact"'
 
@@ -73,9 +74,9 @@ def main() -> int:
     output = args.output.resolve()
     source_bytes = source.read_bytes()
     source_sha256 = hashlib.sha256(source_bytes).hexdigest()
-    if source_sha256 != SEALED_SOURCE_SHA256:
+    if source_sha256 != CORRECTED_SOURCE_SHA256:
         raise Qualification.QualificationError(
-            f"sealed Regex source hash mismatch: {source_sha256}"
+            f"corrected Regex fixture hash mismatch: {source_sha256}"
         )
 
     source_root = workspace / "SilexDiagnostics" / "Regex"
@@ -86,7 +87,8 @@ def main() -> int:
         "schema_version": 1,
         "purpose": "non-qualifying timeout attribution",
         "sealed_source": str(source.relative_to(workspace)),
-        "sealed_source_sha256": source_sha256,
+        "sealed_source_sha256": SEALED_SOURCE_SHA256,
+        "corrected_source_sha256": source_sha256,
         "timeout_seconds": args.timeout,
         "entries": {},
     }

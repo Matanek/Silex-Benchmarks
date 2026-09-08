@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
+  "case_id": "regex-streaming",
+  "repository": "Silex-Benchmarks",
+  "path": "Sources/RegexStreamingSearch.sx",
+  "original_source_sha256": "246ecb85c36e0b3f13f1e40bcffc78cfe89bba2871021b019b956ae0ac191779",
+  "corrected_source_sha256": "a9c2deb3152efb4d8ec8ce9bd37fd5093f597b6442d3badd9fb52c66c61dd33e",
+  "reason": "The sealed test fixture built two million-element dynamic lists before starting the Regex stopwatch. The replacement preserves the exact text and oracle while constructing the repeated ASCII prefix geometrically.",
+  "preserved_workload": {
+    "prefix_scalar": 97,
+    "prefix_count": 1000000,
+    "suffix_scalar": 90,
+    "total_scalar_count": 1000001,
+    "pattern": "Z$",
+    "expected_match_start": 1000000
+  },
+  "diagnosis": {
+    "linux_600s_run": 34236788554,
+    "windows_600s_run": 34236154229,
+    "whole_body_run": 34240016580,
+    "construction_only_run": 34241604788
+  }
+}

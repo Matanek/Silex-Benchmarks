@@ -100,6 +100,8 @@ def link(
     manifest_path: Path,
     candidate: dict,
     candidate_path: Path,
+    fixture: dict,
+    fixture_path: Path,
     workspace: Path,
     silex: Path,
     target: str | None,
@@ -112,13 +114,23 @@ def link(
         if target:
             command.extend(["--target", target])
         Qualification.run_checked(command, workspace, timeout=600)
-    Qualification.audit_workspace(manifest, manifest_path, candidate, candidate_path, workspace, silex)
+    Qualification.audit_workspace(
+        manifest,
+        manifest_path,
+        candidate,
+        candidate_path,
+        fixture,
+        fixture_path,
+        workspace,
+        silex,
+    )
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
+    parser.add_argument("--fixture-correction", type=Path, default=Path(__file__).with_name("FixtureCorrection.json"))
     subparsers = parser.add_subparsers(dest="command", required=True)
     checkout_parser = subparsers.add_parser("checkout")
     checkout_parser.add_argument("--workspace", required=True, type=Path)
@@ -130,17 +142,30 @@ def main() -> int:
     args = parser.parse_args()
     manifest_path = args.manifest.resolve()
     candidate_path = args.candidate_descriptor.resolve()
+    fixture_path = args.fixture_correction.resolve()
     manifest = Qualification.read_json(manifest_path)
     Qualification.audit_manifest_shape(manifest)
     candidate = Qualification.read_json(candidate_path)
     Qualification.audit_candidate(candidate, candidate_path, manifest, manifest_path)
+    fixture = Qualification.read_json(fixture_path)
+    Qualification.audit_fixture(fixture, fixture_path, manifest, manifest_path)
     if args.command == "checkout":
         checkout(manifest, candidate, args.workspace.resolve())
         if args.baseline:
             checkout_baseline(manifest, args.workspace.resolve())
         print("sealed workspace checkout: PASS")
     else:
-        link(manifest, manifest_path, candidate, candidate_path, args.workspace.resolve(), args.silex.resolve(), args.target)
+        link(
+            manifest,
+            manifest_path,
+            candidate,
+            candidate_path,
+            fixture,
+            fixture_path,
+            args.workspace.resolve(),
+            args.silex.resolve(),
+            args.target,
+        )
         print("sealed workspace links: PASS")
     return 0
 

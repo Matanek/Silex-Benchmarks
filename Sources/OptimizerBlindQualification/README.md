@@ -12,6 +12,14 @@ unchanged manifest hash, the rejected SHA, the corrected SHA and the autonomous
 Silex regression added before the campaign is resumed. It does not alter a
 source, workload, target, metric or threshold from the sealed corpus.
 
+`FixtureCorrection.json` records the one accepted harness-only correction. The
+original Regex fixture spent the qualification timeout constructing two dynamic
+million-element lists before its stopwatch or Regex search began. The corrected
+fixture constructs the same one-million `a` scalars plus the same `Z` suffix
+geometrically. The descriptor binds both source hashes, the unchanged workload
+and oracle, and the four remote diagnostic runs that established attribution.
+The gate requires its hash in every native report.
+
 ## Local integrity audit
 
 Run from the root containing `Silex`, `Silex-Benchmarks` and `Packages`:

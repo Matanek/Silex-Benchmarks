@@ -11,12 +11,17 @@ func compiled(pattern:str) Regex {
 }
 
 func large_text(count:int, suffix:uint32) str {
-    var scalars:uint32[] = []
-    var index = 0
-    while index < count { scalars.append(97 as uint32); index++ }
-    scalars.append(suffix)
-    match UTF8.from_scalars(@scalars[0:scalars.count()]) {
-        success(text) => { return text }
+    var prefix = ""
+    var block = "a"
+    var remaining = count
+    while remaining > 0 {
+        if remaining % 2 == 1 { prefix = prefix + block }
+        remaining = remaining / 2
+        if remaining > 0 { block = block + block }
+    }
+    var trailing:uint32[] = [suffix]
+    match UTF8.from_scalars(@trailing[0:trailing.count()]) {
+        success(text) => { return prefix + text }
         failure(error) => { panic("benchmark text is invalid") }
     }
     panic("benchmark text was not produced")

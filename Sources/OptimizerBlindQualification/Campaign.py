@@ -160,6 +160,7 @@ def main() -> int:
     parser.add_argument("--silex", required=True, type=Path)
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
+    parser.add_argument("--fixture-correction", type=Path, default=Path(__file__).with_name("FixtureCorrection.json"))
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--runner", required=True)
     parser.add_argument("--timeout", type=float, default=600.0)
@@ -172,6 +173,7 @@ def main() -> int:
     output = args.output.resolve()
     manifest_path = args.manifest.resolve()
     candidate_path = args.candidate_descriptor.resolve()
+    fixture_path = args.fixture_correction.resolve()
     # Keep every compiler/toolchain cache inside the single Spec workspace.
     # In particular, --nocache still asks Zig for temporary link directories.
     os.environ["ZIG_GLOBAL_CACHE_DIR"] = str(workspace / ".silex" / "zig-global")
@@ -179,11 +181,14 @@ def main() -> int:
     manifest = Qualification.read_json(manifest_path)
     Qualification.audit_manifest_shape(manifest)
     candidate_descriptor = Qualification.read_json(candidate_path)
+    fixture_correction = Qualification.read_json(fixture_path)
     Qualification.audit_workspace(
         manifest,
         manifest_path,
         candidate_descriptor,
         candidate_path,
+        fixture_correction,
+        fixture_path,
         workspace,
         silex,
     )
@@ -194,6 +199,7 @@ def main() -> int:
         "schema_version": 1,
         "manifest_sha256": Qualification.manifest_sha256(manifest_path),
         "candidate_descriptor_sha256": Qualification.candidate_sha256(candidate_path),
+        "fixture_correction_sha256": Qualification.fixture_sha256(fixture_path),
         "candidate_revision": candidate,
         "captured_at": datetime.now(timezone.utc).isoformat(),
         "host": host_identity(workspace, args.runner),
