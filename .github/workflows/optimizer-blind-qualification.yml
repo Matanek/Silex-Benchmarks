@@ -333,7 +333,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: Matanek/Silex
-          ref: 8c21b7b4ae65e172fe156c527f1eb4d12f0e2ed8
+          ref: facb73dbaf75647502fb03301b2d909acdcf6ed5
           path: Silex
       - name: Install Zig 0.16.0
         shell: bash

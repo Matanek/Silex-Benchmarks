@@ -78,17 +78,22 @@ def measure_execution(case_id: str, command: list[str], workspace: Path, timeout
     return elapsed_from_output(case_id, run_output(command, workspace, timeout))
 
 
-def measure_startup(command: list[str], workspace: Path, timeout: float) -> int:
+def build_startup_probe(output: Path, workspace: Path, timeout: float) -> None:
+    source = Path(__file__).with_name("StartupStop.c").resolve()
+    Qualification.run_checked(["clang", "-dynamiclib", str(source), "-o", str(output)], workspace, timeout)
+    if not output.is_file():
+        raise Qualification.QualificationError("clang did not produce the startup probe")
+
+
+def measure_startup(command: list[str], workspace: Path, timeout: float, probe: Path) -> int:
     environment = os.environ.copy()
-    environment["DYLD_PRINT_STATISTICS"] = "1"
+    environment["DYLD_INSERT_LIBRARIES"] = str(probe)
+    started = time.perf_counter_ns()
     result = Qualification.run_checked(command, workspace, timeout, environment)
-    match = re.search(r"total time: ([0-9]+(?:\.[0-9]+)?) milliseconds", result.stderr)
-    if not match:
-        match = re.search(r"total time: ([0-9]+(?:\.[0-9]+)?) seconds", result.stderr)
-        if match:
-            return round(float(match.group(1)) * 1_000_000_000)
-        raise Qualification.QualificationError("DYLD_PRINT_STATISTICS did not report loader startup")
-    return round(float(match.group(1)) * 1_000_000)
+    elapsed = time.perf_counter_ns() - started
+    if result.stdout or result.stderr:
+        raise Qualification.QualificationError("startup probe did not exit before application main")
+    return elapsed
 
 
 def measure_rss(command: list[str], workspace: Path, timeout: float) -> int:
@@ -208,6 +213,9 @@ def main() -> int:
     selected = set(args.only or PERFORMANCE)
     root = args.report.resolve().parent / "performance"
     root.mkdir(parents=True, exist_ok=True)
+    startup_probe = root / "startup-stop.dylib"
+    build_startup_probe(startup_probe, workspace, args.timeout)
+    startup_probe_source = Path(__file__).with_name("StartupStop.c").resolve()
     physics_names = {
         "physics-contact": "gfx_physics_contact_kernel_slots",
         "physics-integration": "gfx_physics_integration_kernel_slots",
@@ -246,11 +254,13 @@ def main() -> int:
         values = paired(
             count,
             warmups,
-            lambda: measure_startup(candidate_command, runtime_cwd, args.timeout),
-            lambda: measure_startup(baseline_command, runtime_cwd, args.timeout),
+            lambda: measure_startup(candidate_command, runtime_cwd, args.timeout, startup_probe),
+            lambda: measure_startup(baseline_command, runtime_cwd, args.timeout, startup_probe),
             f"{case_id}/startup",
         )
         case_measurements["startup"] = measurement(*values, "Part-07-compiler-baseline")
+        case_measurements["startup"]["method"] = "spawn-to-dyld-injected-constructor-exit"
+        case_measurements["startup"]["probe_sha256"] = Qualification.sha256(startup_probe_source)
 
         cold_index = 0
         def cold(compiler: Path, label: str) -> int:

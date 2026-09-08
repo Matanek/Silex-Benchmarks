@@ -301,10 +301,11 @@ def audit_candidate(candidate: dict[str, Any], candidate_path: Path, manifest: d
             "qualified_candidate_revision",
             "reason",
             "regression",
+            "subsequent_corrections",
         },
         "candidate descriptor",
     )
-    if candidate["schema_version"] != 1:
+    if candidate["schema_version"] != 2:
         fail("candidate descriptor: unsupported schema")
     if candidate["manifest_sha256"] != manifest_sha256(manifest_path):
         fail("candidate descriptor: sealed manifest hash mismatch")
@@ -324,11 +325,37 @@ def audit_candidate(candidate: dict[str, Any], candidate_path: Path, manifest: d
     )
     if regression["repository"] != manifest["candidate"]["repository"]:
         fail("candidate descriptor: regression repository differs from the compiler candidate")
-    if regression["failing_revision"] != initial or regression["corrected_revision"] != corrected:
-        fail("candidate descriptor: regression revisions do not bind the failed and corrected candidates")
+    first_corrected = require_hex(regression["corrected_revision"], 40, "first corrected candidate revision")
+    if regression["failing_revision"] != initial or first_corrected == initial:
+        fail("candidate descriptor: first regression does not bind the rejected candidate")
     require_hex(regression["sha256"], 64, "candidate regression source hash")
     if not isinstance(regression["path"], str) or not regression["path"]:
         fail("candidate descriptor: regression path is empty")
+    previous = first_corrected
+    corrections = candidate["subsequent_corrections"]
+    if not isinstance(corrections, list):
+        fail("candidate descriptor: subsequent corrections must be a list")
+    for index, correction in enumerate(corrections, start=2):
+        require_keys(correction, {"reason", "regression"}, f"candidate correction {index}")
+        if not isinstance(correction["reason"], str) or not correction["reason"].strip():
+            fail(f"candidate correction {index}: reason is empty")
+        item = correction["regression"]
+        require_keys(
+            item,
+            {"repository", "path", "sha256", "failing_revision", "corrected_revision"},
+            f"candidate correction {index} regression",
+        )
+        if item["repository"] != manifest["candidate"]["repository"]:
+            fail(f"candidate correction {index}: regression repository differs from the compiler candidate")
+        next_revision = require_hex(item["corrected_revision"], 40, f"candidate correction {index} revision")
+        if item["failing_revision"] != previous or next_revision == previous:
+            fail(f"candidate correction {index}: regression breaks the append-only candidate chain")
+        require_hex(item["sha256"], 64, f"candidate correction {index} regression source hash")
+        if not isinstance(item["path"], str) or not item["path"]:
+            fail(f"candidate correction {index}: regression path is empty")
+        previous = next_revision
+    if previous != corrected:
+        fail("candidate descriptor: correction chain does not end at the qualified candidate")
     require_hex(candidate_sha256(candidate_path), 64, "candidate descriptor hash")
 
 
@@ -532,15 +559,33 @@ def audit_workspace(
         if actual != expected:
             fail(f"case {case['id']}: source hash {actual} != accepted {expected}")
 
-    regression = candidate["regression"]
-    regression_repository = repositories[regression["repository"]]
-    regression_root = (workspace / regression_repository["path"]).resolve()
-    regression_source = (regression_root / regression["path"]).resolve()
-    if not regression_source.is_relative_to(regression_root) or not regression_source.is_file():
-        fail(f"candidate regression: missing or escaping source {regression_source}")
-    actual_regression_hash = sha256(regression_source)
-    if actual_regression_hash != regression["sha256"]:
-        fail(f"candidate regression: source hash {actual_regression_hash} != {regression['sha256']}")
+    regressions = [candidate["regression"]] + [
+        item["regression"] for item in candidate["subsequent_corrections"]
+    ]
+    for index, regression in enumerate(regressions, start=1):
+        regression_repository = repositories[regression["repository"]]
+        regression_root = (workspace / regression_repository["path"]).resolve()
+        ancestry = subprocess.run(
+            [
+                "git",
+                "merge-base",
+                "--is-ancestor",
+                regression["failing_revision"],
+                regression["corrected_revision"],
+            ],
+            cwd=regression_root,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        if ancestry.returncode:
+            fail(f"candidate regression {index}: corrected revision does not descend from failing revision")
+        regression_source = (regression_root / regression["path"]).resolve()
+        if not regression_source.is_relative_to(regression_root) or not regression_source.is_file():
+            fail(f"candidate regression {index}: missing or escaping source {regression_source}")
+        actual_regression_hash = sha256(regression_source)
+        if actual_regression_hash != regression["sha256"]:
+            fail(f"candidate regression {index}: source hash {actual_regression_hash} != {regression['sha256']}")
 
     if silex is None:
         return
@@ -613,6 +658,13 @@ def relative_summary(candidate: list[int], reference: list[int]) -> dict[str, in
 
 def audit_measurement(case_id: str, metric_id: str, measurement: dict[str, Any], contract: dict[str, Any]) -> None:
     require_keys(measurement, {"candidate", "reference", "reference_kind"}, f"{case_id}/{metric_id}")
+    if metric_id == "startup":
+        require_keys(measurement, {"method", "probe_sha256"}, f"{case_id}/{metric_id}")
+        if measurement["method"] != "spawn-to-dyld-injected-constructor-exit":
+            fail(f"{case_id}/{metric_id}: unsupported startup measurement method")
+        expected_probe_hash = sha256(Path(__file__).with_name("StartupStop.c"))
+        if measurement["probe_sha256"] != expected_probe_hash:
+            fail(f"{case_id}/{metric_id}: startup probe source hash mismatch")
     candidate = measurement["candidate"]
     reference = measurement["reference"]
     if metric_id == "binary_size":

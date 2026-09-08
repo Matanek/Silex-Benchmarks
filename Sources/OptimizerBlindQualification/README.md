@@ -6,11 +6,11 @@ predate the qualification campaign. `Manifest.json` fixes their revisions,
 hashes, package closure, workloads, semantic oracles, cost dimensions, target
 matrix and thresholds before the candidate is observed.
 
-`Candidate.json` is the append-only correction descriptor created after the
-sealed FallingBodies2D sentinel rejected the initial candidate. It binds the
-unchanged manifest hash, the rejected SHA, the corrected SHA and the autonomous
-Silex regression added before the campaign is resumed. It does not alter a
-source, workload, target, metric or threshold from the sealed corpus.
+`Candidate.json` is the append-only correction descriptor created after sealed
+sentinels rejected candidate revisions. It binds the unchanged manifest hash,
+the rejected SHA, every corrected SHA in order and each autonomous Silex
+regression added before the campaign is resumed. It does not alter a source,
+workload, target, metric or threshold from the sealed corpus.
 
 `FixtureCorrection.json` records the one accepted harness-only correction. The
 original Regex fixture spent the qualification timeout constructing two dynamic
@@ -42,8 +42,9 @@ python3 Silex-Benchmarks/Sources/OptimizerBlindQualification/Qualification.py \
 
 The audit requires every closure repository at its exact sealed HEAD, except
 that Silex must be at the exact corrected SHA bound by `Candidate.json`. The
-corrected SHA must descend from the rejected sealed candidate and contain the
-hashed reduced regression. The owner repository may be a descendant of its
+corrected SHA must descend from the rejected sealed candidate and contain every
+hashed regression in the append-only correction chain. The owner repository
+may be a descendant of its
 sealed source revision because the manifest and runner necessarily live in a
 later commit; every selected source must still match its sealed hash. The audit
 also rejects any resolved dependency that is not a `workspace-link` below that
@@ -89,6 +90,11 @@ measurements for execution, startup, cold and warm compilation, peak RSS and
 binary size.
 
 Timing and RSS use 21 alternating candidate/reference pairs after two warmups.
+Startup is the wall-clock interval from process spawn until a pinned injected
+dyld constructor exits before application `main`; its source hash is carried by
+every startup measurement. This keeps the loader measurement available on
+current macOS runners where `DYLD_PRINT_STATISTICS` no longer emits a record and
+does not execute the graphical workload during startup sampling.
 The gate recomputes the exact one-sided nonparametric median interval used by
 Silex Part 07 and rejects excessive dispersion, regressions and inconclusive
 results. Execution must be at parity or better; the other costs use the sealed
