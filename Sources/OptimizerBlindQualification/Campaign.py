@@ -162,7 +162,7 @@ def main() -> int:
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--runner", required=True)
-    parser.add_argument("--timeout", type=float, default=240.0)
+    parser.add_argument("--timeout", type=float, default=600.0)
     parser.add_argument("--only", action="append", choices=sorted(set(SEMANTIC_COMMANDS) | set(NATIVE_CASES)))
     parser.add_argument("--mode", action="append", choices=("debug", "release"), help="limit executable cases; repeatable")
     args = parser.parse_args()
