@@ -1,0 +1,64 @@
+name: Diagnose the sealed optimizer Regex timeout
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-x64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out the qualification owner
+        uses: actions/checkout@v6
+        with:
+          path: Silex-Benchmarks
+          fetch-depth: 0
+
+      - name: Install Zig 0.16.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/zig.tar.xz"
+          curl -fL https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz -o "$archive"
+          echo "70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00  $archive" | sha256sum -c -
+          tar -xJf "$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/zig-x86_64-linux-0.16.0" >> "$GITHUB_PATH"
+
+      - name: Materialize the sealed closure
+        shell: bash
+        run: python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py checkout --workspace .
+
+      - name: Build and link the exact candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig build -Doptimize=ReleaseFast -Dcpu=baseline \
+            --prefix "$RUNNER_TEMP/candidate" \
+            --build-file Silex/Toolchain/build.zig
+          silex="$RUNNER_TEMP/candidate/bin/silex"
+          "$silex" setup
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
+            link --workspace . --silex "$silex" --target linux-x64
+
+      - name: Attribute compilation and execution independently
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/RegexDiagnostic.py \
+            --workspace . \
+            --silex "$RUNNER_TEMP/candidate/bin/silex" \
+            --source Silex-Benchmarks/Sources/RegexStreamingSearch.sx \
+            --timeout 90 \
+            --output Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/regex-linux-x64.json
+
+      - name: Upload the diagnostic report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: optimizer-blind-regex-diagnostic-linux-x64
+          path: Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/regex-linux-x64.json
+          if-no-files-found: error
+          retention-days: 30
