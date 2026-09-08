@@ -294,6 +294,7 @@ jobs:
               --check-only
           done
           CMAKE_PREFIX_PATH="$RUNNER_TEMP/sdl3-sdk" \
+            PATH="$HOME/.silex/toolchain/shadercross/3.0.0/${{ matrix.target }}/bin:$PATH" \
             Silex-Benchmarks/Sources/Boids2D/RunComparison.sh \
             --runs 1 --warmups 0 \
             --silex-compiler "$RUNNER_TEMP/candidate/bin/silex" \
