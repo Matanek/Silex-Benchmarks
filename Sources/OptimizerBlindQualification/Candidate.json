@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "facb73dbaf75647502fb03301b2d909acdcf6ed5",
+  "qualified_candidate_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -20,6 +20,16 @@
         "sha256": "2081b0d4b8dd6b2e36ed3832e9d77c0b9caa5236f5193fa84f27596e6a486b38",
         "failing_revision": "8c21b7b4ae65e172fe156c527f1eb4d12f0e2ed8",
         "corrected_revision": "facb73dbaf75647502fb03301b2d909acdcf6ed5"
+      }
+    },
+    {
+      "reason": "The sealed physics contact sentinel rejected the candidate runtime, and the correction campaign exposed an unsafe ARM64 reference-cache iteration before resuming qualification.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/ReferenceCursorReuse.sx",
+        "sha256": "f220fab8a37b0486cfe7c13311952e0504a912a4ce51388e36a9d4dec791a0e8",
+        "failing_revision": "facb73dbaf75647502fb03301b2d909acdcf6ed5",
+        "corrected_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75"
       }
     }
   ]

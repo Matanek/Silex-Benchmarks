@@ -205,12 +205,13 @@ def main() -> int:
         raise Qualification.QualificationError("partial report does not match the corrected candidate revision")
     if report.get("host", {}).get("os") != "macos" or report.get("host", {}).get("target") not in {"macos-arm64", "macos-x64"}:
         raise Qualification.QualificationError("performance evidence requires a native macOS ARM64 or X64 profile")
+    target = report["host"]["target"]
     os.environ["ZIG_GLOBAL_CACHE_DIR"] = str(workspace / ".silex" / "zig-global")
     os.environ["ZIG_LOCAL_CACHE_DIR"] = str(workspace / ".silex" / "zig-local")
 
     count = manifest["statistical_contract"]["paired_samples"]
     warmups = manifest["statistical_contract"]["warmups"]
-    selected = set(args.only or PERFORMANCE)
+    selected = set(args.only or PERFORMANCE) & Qualification.performance_cases_for_target(manifest, boundary_scope, target)
     root = args.report.resolve().parent / "performance"
     root.mkdir(parents=True, exist_ok=True)
     startup_probe = root / "startup-stop.dylib"

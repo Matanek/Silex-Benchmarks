@@ -456,9 +456,9 @@ def audit_boundary_scope(
 
     graphical_cases = {"boids2d-full", "falling-bodies2d-full", "scene3d-world-full"}
     compile_only = scope["compile_only_cases"]
-    expected_compile_only_targets = {"linux-arm64", "linux-x64", "windows-arm64", "windows-x64"}
+    expected_compile_only_targets = {"macos-x64", "linux-arm64", "linux-x64", "windows-arm64", "windows-x64"}
     if set(compile_only) != expected_compile_only_targets:
-        fail("boundary scope: compile-only targets must be exactly the hosted Linux and Windows profiles without GPUs")
+        fail("boundary scope: compile-only targets must be exactly the profiles without a physical GPU")
     for target, cases in compile_only.items():
         if not isinstance(cases, list) or set(cases) != graphical_cases:
             fail(f"boundary scope: {target} must contain exactly the three graphical sentinels")
@@ -472,7 +472,7 @@ def audit_boundary_scope(
         "record_binary_sha256": True,
         "record_binary_size": True,
         "execute_all_other_native_cases": True,
-        "execute_graphical_sentinels_on_gpu_hosts": ["macos-arm64", "macos-x64"],
+        "execute_graphical_sentinels_on_gpu_hosts": ["macos-arm64"],
     }
     if proof != expected_proof:
         fail("boundary scope: required proof was weakened")
@@ -484,6 +484,7 @@ def audit_boundary_scope(
             "windows_x64_gpu_failure",
             "linux_x64_software_gpu_run",
             "linux_x64_graphics_stack",
+            "macos_x64_gpu_runner_available",
             "repository_self_hosted_runner_count",
         },
         "boundary scope evidence",
@@ -496,6 +497,8 @@ def audit_boundary_scope(
         fail("boundary scope: invalid Linux software-GPU run")
     if not isinstance(evidence["linux_x64_graphics_stack"], str) or not evidence["linux_x64_graphics_stack"].strip():
         fail("boundary scope: missing Linux software-GPU stack")
+    if evidence["macos_x64_gpu_runner_available"] is not False:
+        fail("boundary scope: macOS X64 graphical execution requires an unavailable physical GPU runner")
     if evidence["repository_self_hosted_runner_count"] != 0:
         fail("boundary scope: hosted-runner decision no longer matches runner inventory")
     require_hex(boundary_scope_sha256(scope_path), 64, "boundary scope descriptor hash")
@@ -807,7 +810,8 @@ def audit_reports(
             require_hex(execution["output_sha256"], 64, f"{target}/{case_id}/test output hash")
 
         if expected["performance"]:
-            if set(report["measurements"]) != set(manifest["performance_cases"]):
+            expected_performance_cases = performance_cases_for_target(manifest, boundary_scope, target)
+            if set(report["measurements"]) != expected_performance_cases:
                 fail(f"{target}: physical performance workload catalog is incomplete")
             for case_id, measurements in report["measurements"].items():
                 if set(measurements) != set(metric_ids):
@@ -816,6 +820,12 @@ def audit_reports(
                     audit_measurement(case_id, metric_id, measurement, manifest["statistical_contract"])
         elif report["measurements"]:
             fail(f"{target}: non-performance target must not imply physical timing evidence")
+
+
+def performance_cases_for_target(
+    manifest: dict[str, Any], boundary_scope: dict[str, Any], target: str
+) -> set[str]:
+    return set(manifest["performance_cases"]) - set(boundary_scope["compile_only_cases"].get(target, []))
 
 
 def self_test() -> None:
@@ -856,6 +866,18 @@ def self_test() -> None:
         assert "dispersion" in str(error) or "inconclusive" in str(error)
     else:
         raise AssertionError("noisy or inconclusive measurement was accepted")
+    performance_manifest = {
+        "performance_cases": ["cpu", "boids2d-full", "falling-bodies2d-full", "scene3d-world-full"]
+    }
+    boundary_scope = {
+        "compile_only_cases": {
+            "macos-x64": ["boids2d-full", "falling-bodies2d-full", "scene3d-world-full"],
+        }
+    }
+    assert performance_cases_for_target(performance_manifest, boundary_scope, "macos-arm64") == set(
+        performance_manifest["performance_cases"]
+    )
+    assert performance_cases_for_target(performance_manifest, boundary_scope, "macos-x64") == {"cpu"}
 
 
 def main() -> int:
@@ -909,7 +931,7 @@ def main() -> int:
             args.boundary_scope,
             args.reports,
         )
-        print("blind qualification gate: PASS (six native targets, physical ARM64 and X64 performance)")
+        print("blind qualification gate: PASS (six native targets, physical ARM64/X64 CPU performance, ARM64 GPU execution)")
         return 0
     except QualificationError as error:
         print(f"blind qualification: FAIL: {error}", file=sys.stderr)
