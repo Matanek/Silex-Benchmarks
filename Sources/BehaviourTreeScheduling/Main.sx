@@ -1,0 +1,461 @@
+use AI.BehaviourTree
+use STD.Process
+use STD.Time.Stopwatch
+
+static struct Workload {
+    let tree_nodes:int = 11
+    let tree_depth:int = 5
+    let root_width:int = 2
+}
+
+enum Strategy {
+    root
+    resume
+    event
+    state_machine
+}
+
+class Agent {
+    var due:bool
+    var serviced:int
+    var action_calls:int
+
+    init() {
+        self.due = false
+        self.serviced = 0
+        self.action_calls = 0
+    }
+
+    func reset_metrics() {
+        self.serviced = 0
+        self.action_calls = 0
+    }
+}
+
+struct TreePopulation {
+    var agents:Agent[]
+    var executions:BehaviourTree.Instance<Agent>[]
+}
+
+struct Metrics {
+    let action_calls:int
+    let serviced:int
+    let checksum:int
+}
+
+struct Observation {
+    var condition_calls:int
+    var action_calls:int
+    var node_visits:int
+}
+
+struct Configuration {
+    let strategy:Strategy
+    let agents:int
+    let wake_percent:int
+}
+
+func urgent(agent:@Agent) bool {
+    return false
+}
+
+func handle_urgent(agent:&Agent) BehaviourTree.Status {
+    agent.action_calls++
+    return BehaviourTree.Status.success
+}
+
+func can_work(agent:@Agent) bool {
+    return true
+}
+
+func optional_plan(agent:@Agent) bool {
+    return false
+}
+
+func scheduled(agent:@Agent) bool {
+    return true
+}
+
+func wait_for_event(agent:&Agent) BehaviourTree.Status {
+    agent.action_calls++
+    if agent.due { agent.serviced++ }
+    return BehaviourTree.Status.running
+}
+
+func definition() BehaviourTree.Definition<Agent> {
+    var builder = BehaviourTree.Builder<Agent>()
+    builder.begin_selector("root")
+    builder.begin_sequence("urgent branch")
+    builder.condition("urgent", urgent)
+    builder.action("handle urgent", handle_urgent)
+    builder.end()
+    builder.begin_sequence("scheduled work")
+    builder.condition("can work", can_work)
+    builder.begin_selector("plan")
+    builder.condition("optional plan", optional_plan)
+    builder.begin_sequence("event branch")
+    builder.condition("scheduled", scheduled)
+    builder.action("wait for event", wait_for_event)
+    builder.end()
+    builder.end()
+    builder.end()
+    builder.end()
+
+    match builder.build() {
+        success(value) => { return value }
+        failure(_) => { panic("benchmark behaviour tree must be valid") }
+    }
+    panic("benchmark behaviour tree was not produced")
+}
+
+func tree_population(count:int) TreePopulation {
+    var shared = definition()
+    var agents:Agent[] = []
+    var executions:BehaviourTree.Instance<Agent>[] = []
+    var index = 0
+    while index < count {
+        var agent = Agent()
+        var execution = shared.instantiate()
+        assert(execution.evaluate(agent) == BehaviourTree.Status.running)
+        agent.reset_metrics()
+        agents.append(agent)
+        executions.append(execution)
+        index++
+    }
+    return TreePopulation(agents:move agents, executions:move executions)
+}
+
+func machine_population(count:int) Agent[] {
+    var agents:Agent[] = []
+    var index = 0
+    while index < count {
+        agents.append(Agent())
+        index++
+    }
+    return agents
+}
+
+func mark_woken(agents:&Agent[], count:int) {
+    var index = 0
+    while index < agents.count() {
+        agents[index].due = index < count
+        index++
+    }
+}
+
+func reset_metrics(agents:&Agent[]) {
+    for agent in agents { agent.reset_metrics() }
+}
+
+func metrics(agents:@Agent[]) Metrics {
+    var actions = 0
+    var serviced = 0
+    var checksum = 0
+    var index = 0
+    while index < agents.count() {
+        var agent = agents[index]
+        actions += agent.action_calls
+        serviced += agent.serviced
+        checksum += (index + 1) * agent.serviced
+        index++
+    }
+    return Metrics(
+        action_calls:actions,
+        serviced:serviced,
+        checksum:checksum
+    )
+}
+
+func run_tree(
+    agents:&Agent[],
+    executions:&BehaviourTree.Instance<Agent>[],
+    strategy:Strategy,
+    woken:int,
+    frames:int
+) {
+    var frame = 0
+    while frame < frames {
+        var limit = agents.count()
+        if strategy == Strategy.event { limit = woken }
+        var index = 0
+        while index < limit {
+            var agent = &agents[index]
+            var execution = &executions[index]
+            if strategy == Strategy.root { execution.interrupt(agent) }
+            assert(execution.evaluate(agent) == BehaviourTree.Status.running)
+            index++
+        }
+        frame++
+    }
+}
+
+func observe_tree(
+    agents:&Agent[],
+    executions:&BehaviourTree.Instance<Agent>[],
+    strategy:Strategy,
+    woken:int,
+    frames:int
+) Observation {
+    var observation = Observation(condition_calls:0, action_calls:0, node_visits:0)
+    var frame = 0
+    while frame < frames {
+        var limit = agents.count()
+        if strategy == Strategy.event { limit = woken }
+        var index = 0
+        while index < limit {
+            var agent = &agents[index]
+            var execution = &executions[index]
+            if strategy == Strategy.root { execution.interrupt(agent) }
+            let status = execution.evaluate(
+                agent,
+                func(name:@str, transition:BehaviourTree.Transition) {
+                    match transition {
+                        entered => {
+                            observation.node_visits++
+                            if name == "urgent" || name == "can work" ||
+                                name == "optional plan" || name == "scheduled" {
+                                observation.condition_calls++
+                            }
+                            if name == "handle urgent" || name == "wait for event" {
+                                observation.action_calls++
+                            }
+                        }
+                        exited(_) => {}
+                    }
+                }
+            )
+            assert(status == BehaviourTree.Status.running)
+            index++
+        }
+        frame++
+    }
+    return observation
+}
+
+func run_machine(agents:&Agent[], woken:int, frames:int) {
+    var frame = 0
+    while frame < frames {
+        var index = 0
+        while index < woken {
+            var agent = &agents[index]
+            agent.action_calls++
+            if agent.due { agent.serviced++ }
+            index++
+        }
+        frame++
+    }
+}
+
+func expected_checksum(woken:int, frames:int) int {
+    return frames * woken * (woken + 1) / 2
+}
+
+func verify_tree_strategy(strategy:Strategy, woken:int, frames:int) Metrics {
+    var population = tree_population(100)
+    mark_woken(population.agents, woken)
+    reset_metrics(population.agents)
+    run_tree(population.agents, population.executions, strategy, woken, frames)
+    return metrics(population.agents)
+}
+
+func verify() {
+    let frames = 5
+    let woken = 10
+    let expected = expected_checksum(woken, frames)
+    let root = verify_tree_strategy(Strategy.root, woken, frames)
+    let resume = verify_tree_strategy(Strategy.resume, woken, frames)
+    let event = verify_tree_strategy(Strategy.event, woken, frames)
+    var machine = machine_population(100)
+    mark_woken(machine, woken)
+    run_machine(machine, woken, frames)
+    let direct = metrics(machine)
+
+    assert(root.checksum == expected)
+    assert(resume.checksum == expected)
+    assert(event.checksum == expected)
+    assert(direct.checksum == expected)
+    assert(root.serviced == woken * frames)
+    assert(resume.serviced == root.serviced)
+    assert(event.serviced == root.serviced)
+    assert(direct.serviced == root.serviced)
+    assert(root.action_calls == 100 * frames)
+    assert(resume.action_calls == 100 * frames)
+    assert(event.action_calls == woken * frames)
+    assert(direct.action_calls == woken * frames)
+
+    var root_observed = tree_population(100)
+    mark_woken(root_observed.agents, woken)
+    let root_observation = observe_tree(
+        root_observed.agents,
+        root_observed.executions,
+        Strategy.root,
+        woken,
+        frames
+    )
+    assert(root_observation.condition_calls == 100 * frames * 4)
+    assert(root_observation.action_calls == 100 * frames)
+    assert(root_observation.node_visits == 100 * frames * 10)
+
+    var resumed_observed = tree_population(100)
+    mark_woken(resumed_observed.agents, woken)
+    let resumed_observation = observe_tree(
+        resumed_observed.agents,
+        resumed_observed.executions,
+        Strategy.resume,
+        woken,
+        frames
+    )
+    assert(resumed_observation.condition_calls == 0)
+    assert(resumed_observation.action_calls == 100 * frames)
+    assert(resumed_observation.node_visits == 100 * frames)
+
+    var zero = tree_population(100)
+    mark_woken(zero.agents, 0)
+    assert(observe_tree(zero.agents, zero.executions, Strategy.event, 0, frames).node_visits == 0)
+    var one = tree_population(100)
+    mark_woken(one.agents, 1)
+    assert(observe_tree(one.agents, one.executions, Strategy.event, 1, frames).node_visits == frames)
+    var ten = tree_population(100)
+    mark_woken(ten.agents, 10)
+    assert(observe_tree(ten.agents, ten.executions, Strategy.event, 10, frames).node_visits == 10 * frames)
+    var all = tree_population(100)
+    mark_woken(all.agents, 100)
+    assert(observe_tree(all.agents, all.executions, Strategy.event, 100, frames).node_visits == 100 * frames)
+    print("SILEX_BEHAVIOUR_TREE_VERIFY strategies=4 agents=100 wake_levels=4 result=equivalent")
+}
+
+func measured_frames(agents:int) int {
+    if agents == 1_000 { return 1_000 }
+    if agents == 10_000 { return 100 }
+    return 10
+}
+
+func strategy_name(strategy:Strategy) str {
+    return match strategy {
+        root => "root"
+        resume => "resume"
+        event => "event"
+        state_machine => "state_machine"
+    }
+}
+
+func run_tree_benchmark(configuration:@Configuration) {
+    let woken = configuration.agents * configuration.wake_percent / 100
+    let frames = measured_frames(configuration.agents)
+    let warmup = frames / 10
+    var population = tree_population(configuration.agents)
+    mark_woken(population.agents, woken)
+    run_tree(population.agents, population.executions, configuration.strategy, woken, warmup)
+    reset_metrics(population.agents)
+
+    var elapsed = Stopwatch()
+    elapsed.start()
+    run_tree(population.agents, population.executions, configuration.strategy, woken, frames)
+    elapsed.stop()
+    let measured = metrics(population.agents)
+    assert(measured.checksum == expected_checksum(woken, frames))
+
+    reset_metrics(population.agents)
+    let observation = observe_tree(
+        population.agents,
+        population.executions,
+        configuration.strategy,
+        woken,
+        frames
+    )
+    report(configuration, woken, warmup, frames, elapsed, measured, observation)
+}
+
+func run_machine_benchmark(configuration:@Configuration) {
+    let woken = configuration.agents * configuration.wake_percent / 100
+    let frames = measured_frames(configuration.agents)
+    let warmup = frames / 10
+    var agents = machine_population(configuration.agents)
+    mark_woken(agents, woken)
+    run_machine(agents, woken, warmup)
+    reset_metrics(agents)
+
+    var elapsed = Stopwatch()
+    elapsed.start()
+    run_machine(agents, woken, frames)
+    elapsed.stop()
+    let measured = metrics(agents)
+    assert(measured.checksum == expected_checksum(woken, frames))
+    let observation = Observation(
+        condition_calls:0,
+        action_calls:measured.action_calls,
+        node_visits:0
+    )
+    report(configuration, woken, warmup, frames, elapsed, measured, observation)
+}
+
+func report(
+    configuration:@Configuration,
+    woken:int,
+    warmup:int,
+    frames:int,
+    elapsed:@Stopwatch,
+    measured:@Metrics,
+    observation:@Observation
+) {
+    let milliseconds = elapsed.get_elapsed_milliseconds()
+    print(
+        "SILEX_BEHAVIOUR_TREE strategy=$(strategy_name(configuration.strategy)) " +
+        "agents=$(configuration.agents) wake_percent=$(configuration.wake_percent) " +
+        "woken=$(woken) warmup=$(warmup) frames=$(frames) " +
+        "elapsed_ms=$(milliseconds) per_frame_ms=$(milliseconds / frames as float) " +
+        "condition_calls=$(observation.condition_calls) action_calls=$(observation.action_calls) " +
+        "node_visits=$(observation.node_visits) queue_size=$(woken) checksum=$(measured.checksum) " +
+        "tree_nodes=$(Workload.tree_nodes) tree_depth=$(Workload.tree_depth) " +
+        "root_width=$(Workload.root_width)"
+    )
+}
+
+func parse_strategy(text:str) Strategy {
+    if text == "root" { return Strategy.root }
+    if text == "resume" { return Strategy.resume }
+    if text == "event" { return Strategy.event }
+    if text == "state_machine" { return Strategy.state_machine }
+    panic("expected root, resume, event or state_machine")
+}
+
+func parse_agents(text:str) int {
+    if text == "1000" { return 1_000 }
+    if text == "10000" { return 10_000 }
+    if text == "100000" { return 100_000 }
+    panic("expected 1000, 10000 or 100000 agents")
+}
+
+func parse_wake_percent(text:str) int {
+    if text == "0" { return 0 }
+    if text == "1" { return 1 }
+    if text == "10" { return 10 }
+    if text == "100" { return 100 }
+    panic("expected 0, 1, 10 or 100 percent")
+}
+
+func configuration() Configuration? {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() == 2 && arguments[1] == "verify" { return null }
+            if arguments.count() == 4 {
+                return Configuration(
+                    strategy:parse_strategy(arguments[1]),
+                    agents:parse_agents(arguments[2]),
+                    wake_percent:parse_wake_percent(arguments[3])
+                )
+            }
+        }
+    }
+    panic("usage: BehaviourTreeScheduling verify|<strategy> <agents> <wake-percent>")
+}
+
+func main() {
+    if let requested = configuration() {
+        if requested.strategy == Strategy.state_machine { run_machine_benchmark(requested) }
+        else { run_tree_benchmark(requested) }
+    } else {
+        verify()
+    }
+}

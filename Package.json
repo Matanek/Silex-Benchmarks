@@ -1,7 +1,8 @@
 {
   "sources": "Sources",
-  "requires": { "silex": ">=0.40.0" },
+  "requires": { "silex": ">=0.43.0" },
   "dependencies": {
+    "AI": "^0.1.0",
     "GFX": "^0.39.0",
     "GFX.Assets": "^0.2.0",
     "GFX.Canvas": "^0.3.0",
