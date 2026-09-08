@@ -20,6 +20,15 @@ geometrically. The descriptor binds both source hashes, the unchanged workload
 and oracle, and the four remote diagnostic runs that established attribution.
 The gate requires its hash in every native report.
 
+`BoundaryScope.json` records the explicit SDL3 trust boundary selected after a
+GitHub-hosted Windows X64 runner compiled the graphical sentinels but could not
+create a D3D12 GPU pipeline. Windows ARM64/X64 must still compile Boids2D,
+FallingBodies2D and Scene3D in both Debug and Release and record each native
+binary's hash and size. Their GPU execution is not required on those hosted
+profiles. Every other native case still executes on all six targets, and the
+three graphical sentinels still execute outside Windows. The gate binds this
+exact scope descriptor by SHA-256 and rejects any broader compile-only set.
+
 ## Local integrity audit
 
 Run from the root containing `Silex`, `Silex-Benchmarks` and `Packages`:
@@ -67,11 +76,12 @@ macOS ARM64/X64 jobs collect physical performance evidence.
 
 ## Evidence contract
 
-Each native target produces one schema-1 report tied to the SHA-256 of both the
-sealed manifest and the corrected candidate descriptor. Package-owned and
-boundary test cases execute through their test harness, while every executable
-matrix case must execute in Debug and Release on the reported native
-architecture. The macOS ARM64 and macOS X64 profiles also carry all raw paired
+Each native target produces one schema-1 report tied to the SHA-256 of the
+sealed manifest, corrected candidate, fixture correction and boundary scope.
+Package-owned and boundary test cases execute through their test harness, while
+every executable matrix case must execute in Debug and Release on the reported
+native architecture except the three Windows graphical cases explicitly listed
+above. The macOS ARM64 and macOS X64 profiles also carry all raw paired
 measurements for execution, startup, cold and warm compilation, peak RSS and
 binary size.
 

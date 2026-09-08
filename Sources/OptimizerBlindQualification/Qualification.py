@@ -78,6 +78,10 @@ def fixture_sha256(path: Path) -> str:
     return sha256(path)
 
 
+def boundary_scope_sha256(path: Path) -> str:
+    return sha256(path)
+
+
 def require_keys(value: dict[str, Any], keys: set[str], context: str) -> None:
     missing = keys - value.keys()
     if missing:
@@ -388,6 +392,77 @@ def audit_fixture(fixture: dict[str, Any], fixture_path: Path, manifest: dict[st
     require_hex(fixture_sha256(fixture_path), 64, "fixture correction descriptor hash")
 
 
+def audit_boundary_scope(
+    scope: dict[str, Any],
+    scope_path: Path,
+    manifest: dict[str, Any],
+    manifest_path: Path,
+) -> None:
+    require_keys(
+        scope,
+        {
+            "schema_version",
+            "manifest_sha256",
+            "decision",
+            "trusted_boundary",
+            "compile_only_cases",
+            "required_proof",
+            "evidence",
+        },
+        "boundary scope",
+    )
+    if scope["schema_version"] != 1:
+        fail("boundary scope: unsupported schema")
+    if scope["manifest_sha256"] != manifest_sha256(manifest_path):
+        fail("boundary scope: sealed manifest hash mismatch")
+    if not isinstance(scope["decision"], str) or not scope["decision"].strip():
+        fail("boundary scope: decision is empty")
+
+    boundary = scope["trusted_boundary"]
+    require_keys(boundary, {"provider", "gfx_revision", "sdl_revision"}, "trusted boundary")
+    if boundary["provider"] != "SDL3":
+        fail("boundary scope: only the SDL3 GPU boundary is trusted")
+    repositories = {repository["name"]: repository for repository in manifest["repositories"]}
+    if boundary["gfx_revision"] != repositories["GFX"]["revision"]:
+        fail("boundary scope: GFX revision differs from the sealed closure")
+    require_hex(boundary["sdl_revision"], 40, "trusted SDL revision")
+
+    graphical_cases = {"boids2d-full", "falling-bodies2d-full", "scene3d-world-full"}
+    compile_only = scope["compile_only_cases"]
+    if set(compile_only) != {"windows-arm64", "windows-x64"}:
+        fail("boundary scope: compile-only targets must be exactly Windows ARM64 and X64")
+    for target, cases in compile_only.items():
+        if not isinstance(cases, list) or set(cases) != graphical_cases:
+            fail(f"boundary scope: {target} must contain exactly the three graphical sentinels")
+        unique(cases, f"boundary scope {target} cases")
+    if not graphical_cases.issubset(set(manifest["native_matrix_cases"])):
+        fail("boundary scope: graphical sentinels differ from the sealed native matrix")
+
+    proof = scope["required_proof"]
+    expected_proof = {
+        "compile_modes": ["debug", "release"],
+        "record_binary_sha256": True,
+        "record_binary_size": True,
+        "execute_all_other_native_cases": True,
+        "execute_graphical_sentinels_outside_windows": True,
+    }
+    if proof != expected_proof:
+        fail("boundary scope: required proof was weakened")
+    evidence = scope["evidence"]
+    require_keys(
+        evidence,
+        {"windows_x64_gpu_failure_run", "windows_x64_gpu_failure", "repository_self_hosted_runner_count"},
+        "boundary scope evidence",
+    )
+    if not isinstance(evidence["windows_x64_gpu_failure_run"], int) or evidence["windows_x64_gpu_failure_run"] <= 0:
+        fail("boundary scope: invalid Windows GPU failure run")
+    if not isinstance(evidence["windows_x64_gpu_failure"], str) or not evidence["windows_x64_gpu_failure"].strip():
+        fail("boundary scope: missing Windows GPU failure")
+    if evidence["repository_self_hosted_runner_count"] != 0:
+        fail("boundary scope: hosted-runner decision no longer matches runner inventory")
+    require_hex(boundary_scope_sha256(scope_path), 64, "boundary scope descriptor hash")
+
+
 def audit_workspace(
     manifest: dict[str, Any],
     manifest_path: Path,
@@ -395,11 +470,14 @@ def audit_workspace(
     candidate_path: Path,
     fixture: dict[str, Any],
     fixture_path: Path,
+    boundary_scope: dict[str, Any],
+    boundary_scope_path: Path,
     workspace: Path,
     silex: Path | None,
 ) -> None:
     audit_candidate(candidate, candidate_path, manifest, manifest_path)
     audit_fixture(fixture, fixture_path, manifest, manifest_path)
+    audit_boundary_scope(boundary_scope, boundary_scope_path, manifest, manifest_path)
     workspace = workspace.resolve()
     repositories = {repository["name"]: repository for repository in manifest["repositories"]}
     for repository in repositories.values():
@@ -559,13 +637,17 @@ def audit_reports(
     candidate_path: Path,
     fixture: dict[str, Any],
     fixture_path: Path,
+    boundary_scope: dict[str, Any],
+    boundary_scope_path: Path,
     report_paths: list[Path],
 ) -> None:
     audit_candidate(candidate, candidate_path, manifest, manifest_path)
     audit_fixture(fixture, fixture_path, manifest, manifest_path)
+    audit_boundary_scope(boundary_scope, boundary_scope_path, manifest, manifest_path)
     expected_hash = manifest_sha256(manifest_path)
     expected_candidate_hash = candidate_sha256(candidate_path)
     expected_fixture_hash = fixture_sha256(fixture_path)
+    expected_scope_hash = boundary_scope_sha256(boundary_scope_path)
     reports = [read_json(path) for path in report_paths]
     by_target: dict[str, dict[str, Any]] = {}
     for report in reports:
@@ -576,10 +658,12 @@ def audit_reports(
                 "manifest_sha256",
                 "candidate_descriptor_sha256",
                 "fixture_correction_sha256",
+                "boundary_scope_sha256",
                 "candidate_revision",
                 "host",
                 "semantic_tests",
                 "executions",
+                "compile_only",
                 "measurements",
             },
             "report",
@@ -590,6 +674,8 @@ def audit_reports(
             fail("report: corrected candidate descriptor hash mismatch")
         if report["fixture_correction_sha256"] != expected_fixture_hash:
             fail("report: corrected fixture descriptor hash mismatch")
+        if report["boundary_scope_sha256"] != expected_scope_hash:
+            fail("report: boundary scope descriptor hash mismatch")
         if report["candidate_revision"] != candidate["qualified_candidate_revision"]:
             fail("report: candidate revision mismatch")
         host = report["host"]
@@ -616,8 +702,9 @@ def audit_reports(
             fail(f"{target}: exact CPU and features were not recorded")
         if host["native"] is not True or host["emulated"] is not False or host["cross_compiled"] is not False:
             fail(f"{target}: native execution proof is invalid")
+        scoped_cases = set(boundary_scope["compile_only_cases"].get(target, []))
         executions = report["executions"]
-        if set(executions) != matrix_cases:
+        if set(executions) != matrix_cases - scoped_cases:
             fail(f"{target}: native case catalog is incomplete")
         for case_id, modes in executions.items():
             if set(modes) != {"debug", "release"}:
@@ -627,6 +714,25 @@ def audit_reports(
                 if execution["status"] != "passed" or execution["exit_code"] != 0:
                     fail(f"{target}/{case_id}/{mode}: native execution failed")
                 require_hex(execution["output_sha256"], 64, f"{target}/{case_id}/{mode} output hash")
+
+        compile_only = report["compile_only"]
+        if set(compile_only) != scoped_cases:
+            fail(f"{target}: compile-only graphical case catalog differs from the boundary scope")
+        for case_id, modes in compile_only.items():
+            if set(modes) != {"debug", "release"}:
+                fail(f"{target}/{case_id}: Debug and Release compilation are both required")
+            for mode, compilation in modes.items():
+                require_keys(
+                    compilation,
+                    {"status", "exit_code", "output_sha256", "binary_sha256", "binary_size"},
+                    f"{target}/{case_id}/{mode}/compile-only",
+                )
+                if compilation["status"] != "passed" or compilation["exit_code"] != 0:
+                    fail(f"{target}/{case_id}/{mode}: native compilation failed")
+                require_hex(compilation["output_sha256"], 64, f"{target}/{case_id}/{mode} compiler output hash")
+                require_hex(compilation["binary_sha256"], 64, f"{target}/{case_id}/{mode} binary hash")
+                if not isinstance(compilation["binary_size"], int) or compilation["binary_size"] <= 0:
+                    fail(f"{target}/{case_id}/{mode}: native binary size is invalid")
 
         semantic_tests = report["semantic_tests"]
         if set(semantic_tests) != set(manifest["semantic_test_cases"]):
@@ -694,6 +800,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
     parser.add_argument("--fixture-correction", type=Path, default=Path(__file__).with_name("FixtureCorrection.json"))
+    parser.add_argument("--boundary-scope", type=Path, default=Path(__file__).with_name("BoundaryScope.json"))
     subparsers = parser.add_subparsers(dest="command", required=True)
     verify = subparsers.add_parser("verify", help="audit the sealed manifest and exact local closure")
     verify.add_argument("--workspace", type=Path, required=True)
@@ -712,6 +819,7 @@ def main() -> int:
         audit_manifest_shape(manifest)
         candidate = read_json(args.candidate_descriptor)
         fixture = read_json(args.fixture_correction)
+        boundary_scope = read_json(args.boundary_scope)
         if args.command == "verify":
             audit_workspace(
                 manifest,
@@ -720,6 +828,8 @@ def main() -> int:
                 args.candidate_descriptor,
                 fixture,
                 args.fixture_correction,
+                boundary_scope,
+                args.boundary_scope,
                 args.workspace,
                 args.silex,
             )
@@ -732,6 +842,8 @@ def main() -> int:
             args.candidate_descriptor,
             fixture,
             args.fixture_correction,
+            boundary_scope,
+            args.boundary_scope,
             args.reports,
         )
         print("blind qualification gate: PASS (six native targets, physical ARM64 and X64 performance)")

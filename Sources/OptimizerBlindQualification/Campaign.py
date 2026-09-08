@@ -161,6 +161,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
     parser.add_argument("--fixture-correction", type=Path, default=Path(__file__).with_name("FixtureCorrection.json"))
+    parser.add_argument("--boundary-scope", type=Path, default=Path(__file__).with_name("BoundaryScope.json"))
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--runner", required=True)
     parser.add_argument("--timeout", type=float, default=600.0)
@@ -174,6 +175,7 @@ def main() -> int:
     manifest_path = args.manifest.resolve()
     candidate_path = args.candidate_descriptor.resolve()
     fixture_path = args.fixture_correction.resolve()
+    boundary_scope_path = args.boundary_scope.resolve()
     # Keep every compiler/toolchain cache inside the single Spec workspace.
     # In particular, --nocache still asks Zig for temporary link directories.
     os.environ["ZIG_GLOBAL_CACHE_DIR"] = str(workspace / ".silex" / "zig-global")
@@ -182,6 +184,7 @@ def main() -> int:
     Qualification.audit_manifest_shape(manifest)
     candidate_descriptor = Qualification.read_json(candidate_path)
     fixture_correction = Qualification.read_json(fixture_path)
+    boundary_scope = Qualification.read_json(boundary_scope_path)
     Qualification.audit_workspace(
         manifest,
         manifest_path,
@@ -189,6 +192,8 @@ def main() -> int:
         candidate_path,
         fixture_correction,
         fixture_path,
+        boundary_scope,
+        boundary_scope_path,
         workspace,
         silex,
     )
@@ -200,17 +205,19 @@ def main() -> int:
         "manifest_sha256": Qualification.manifest_sha256(manifest_path),
         "candidate_descriptor_sha256": Qualification.candidate_sha256(candidate_path),
         "fixture_correction_sha256": Qualification.fixture_sha256(fixture_path),
+        "boundary_scope_sha256": Qualification.boundary_scope_sha256(boundary_scope_path),
         "candidate_revision": candidate,
         "captured_at": datetime.now(timezone.utc).isoformat(),
         "host": host_identity(workspace, args.runner),
         "semantic_tests": {},
         "executions": {},
+        "compile_only": {},
         "measurements": {},
         "logs": {},
     }
     if output.exists():
         previous = Qualification.read_json(output)
-        for key in ("semantic_tests", "executions", "measurements", "logs"):
+        for key in ("semantic_tests", "executions", "compile_only", "measurements", "logs"):
             report[key].update(previous.get(key, {}))
 
     for case_id in manifest["semantic_test_cases"]:
@@ -230,12 +237,14 @@ def main() -> int:
 
     binaries = output.parent / "binaries"
     binaries.mkdir(parents=True, exist_ok=True)
+    compile_only_cases = set(boundary_scope["compile_only_cases"].get(report["host"]["target"], []))
     for case_id in manifest["native_matrix_cases"]:
         if case_id not in selected:
             continue
         source, arguments = NATIVE_CASES[case_id]
         runtime_cwd = (workspace / Path(source).parent).resolve()
-        report["executions"].setdefault(case_id, {})
+        destination = "compile_only" if case_id in compile_only_cases else "executions"
+        report[destination].setdefault(case_id, {})
         for mode in selected_modes:
             suffix = ".exe" if report["host"]["os"] == "windows" else ""
             executable = binaries / f"{case_id}-{mode}{suffix}"
@@ -245,18 +254,28 @@ def main() -> int:
                 workspace,
                 args.timeout,
             )
-            print(f"execute {case_id} {mode}", flush=True)
-            execute_result = record([str(executable), *arguments], runtime_cwd, args.timeout)
-            verify_signature(case_id, execute_result)
-            report["executions"][case_id][mode] = public_record(execute_result)
+            binary_sha256 = Qualification.sha256(executable)
+            binary_size = executable.stat().st_size
             report["logs"][f"compile/{case_id}/{mode}"] = {
                 "stdout": compile_result["stdout"],
                 "stderr": compile_result["stderr"],
                 "command": compile_result["command"],
                 "cwd": compile_result["cwd"],
-                "binary_sha256": Qualification.sha256(executable),
-                "binary_size": executable.stat().st_size,
+                "binary_sha256": binary_sha256,
+                "binary_size": binary_size,
             }
+            if case_id in compile_only_cases:
+                report["compile_only"][case_id][mode] = {
+                    **public_record(compile_result),
+                    "binary_sha256": binary_sha256,
+                    "binary_size": binary_size,
+                }
+                write_report(output, report)
+                continue
+            print(f"execute {case_id} {mode}", flush=True)
+            execute_result = record([str(executable), *arguments], runtime_cwd, args.timeout)
+            verify_signature(case_id, execute_result)
+            report["executions"][case_id][mode] = public_record(execute_result)
             report["logs"][f"execute/{case_id}/{mode}"] = {
                 "stdout": execute_result["stdout"],
                 "stderr": execute_result["stderr"],

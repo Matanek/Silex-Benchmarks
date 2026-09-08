@@ -102,6 +102,8 @@ def link(
     candidate_path: Path,
     fixture: dict,
     fixture_path: Path,
+    boundary_scope: dict,
+    boundary_scope_path: Path,
     workspace: Path,
     silex: Path,
     target: str | None,
@@ -121,6 +123,8 @@ def link(
         candidate_path,
         fixture,
         fixture_path,
+        boundary_scope,
+        boundary_scope_path,
         workspace,
         silex,
     )
@@ -131,6 +135,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
     parser.add_argument("--fixture-correction", type=Path, default=Path(__file__).with_name("FixtureCorrection.json"))
+    parser.add_argument("--boundary-scope", type=Path, default=Path(__file__).with_name("BoundaryScope.json"))
     subparsers = parser.add_subparsers(dest="command", required=True)
     checkout_parser = subparsers.add_parser("checkout")
     checkout_parser.add_argument("--workspace", required=True, type=Path)
@@ -143,12 +148,15 @@ def main() -> int:
     manifest_path = args.manifest.resolve()
     candidate_path = args.candidate_descriptor.resolve()
     fixture_path = args.fixture_correction.resolve()
+    boundary_scope_path = args.boundary_scope.resolve()
     manifest = Qualification.read_json(manifest_path)
     Qualification.audit_manifest_shape(manifest)
     candidate = Qualification.read_json(candidate_path)
     Qualification.audit_candidate(candidate, candidate_path, manifest, manifest_path)
     fixture = Qualification.read_json(fixture_path)
     Qualification.audit_fixture(fixture, fixture_path, manifest, manifest_path)
+    boundary_scope = Qualification.read_json(boundary_scope_path)
+    Qualification.audit_boundary_scope(boundary_scope, boundary_scope_path, manifest, manifest_path)
     if args.command == "checkout":
         checkout(manifest, candidate, args.workspace.resolve())
         if args.baseline:
@@ -162,6 +170,8 @@ def main() -> int:
             candidate_path,
             fixture,
             fixture_path,
+            boundary_scope,
+            boundary_scope_path,
             args.workspace.resolve(),
             args.silex.resolve(),
             args.target,

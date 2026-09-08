@@ -158,6 +158,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=Path(__file__).with_name("Manifest.json"))
     parser.add_argument("--candidate-descriptor", type=Path, default=Path(__file__).with_name("Candidate.json"))
     parser.add_argument("--fixture-correction", type=Path, default=Path(__file__).with_name("FixtureCorrection.json"))
+    parser.add_argument("--boundary-scope", type=Path, default=Path(__file__).with_name("BoundaryScope.json"))
     parser.add_argument("--timeout", type=float, default=600.0)
     parser.add_argument("--only", action="append", choices=sorted(PERFORMANCE))
     args = parser.parse_args()
@@ -168,10 +169,12 @@ def main() -> int:
     manifest_path = args.manifest.resolve()
     candidate_path = args.candidate_descriptor.resolve()
     fixture_path = args.fixture_correction.resolve()
+    boundary_scope_path = args.boundary_scope.resolve()
     manifest = Qualification.read_json(manifest_path)
     Qualification.audit_manifest_shape(manifest)
     candidate_descriptor = Qualification.read_json(candidate_path)
     fixture_correction = Qualification.read_json(fixture_path)
+    boundary_scope = Qualification.read_json(boundary_scope_path)
     Qualification.audit_workspace(
         manifest,
         manifest_path,
@@ -179,6 +182,8 @@ def main() -> int:
         candidate_path,
         fixture_correction,
         fixture_path,
+        boundary_scope,
+        boundary_scope_path,
         workspace,
         candidate_silex,
     )
@@ -189,6 +194,8 @@ def main() -> int:
         raise Qualification.QualificationError("partial report does not match the corrected candidate descriptor")
     if report.get("fixture_correction_sha256") != Qualification.fixture_sha256(fixture_path):
         raise Qualification.QualificationError("partial report does not match the corrected fixture descriptor")
+    if report.get("boundary_scope_sha256") != Qualification.boundary_scope_sha256(boundary_scope_path):
+        raise Qualification.QualificationError("partial report does not match the boundary scope descriptor")
     if report.get("candidate_revision") != candidate_descriptor["qualified_candidate_revision"]:
         raise Qualification.QualificationError("partial report does not match the corrected candidate revision")
     if report.get("host", {}).get("os") != "macos" or report.get("host", {}).get("target") not in {"macos-arm64", "macos-x64"}:
