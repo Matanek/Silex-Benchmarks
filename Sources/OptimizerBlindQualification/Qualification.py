@@ -429,8 +429,9 @@ def audit_boundary_scope(
 
     graphical_cases = {"boids2d-full", "falling-bodies2d-full", "scene3d-world-full"}
     compile_only = scope["compile_only_cases"]
-    if set(compile_only) != {"windows-arm64", "windows-x64"}:
-        fail("boundary scope: compile-only targets must be exactly Windows ARM64 and X64")
+    expected_compile_only_targets = {"linux-arm64", "linux-x64", "windows-arm64", "windows-x64"}
+    if set(compile_only) != expected_compile_only_targets:
+        fail("boundary scope: compile-only targets must be exactly the hosted Linux and Windows profiles without GPUs")
     for target, cases in compile_only.items():
         if not isinstance(cases, list) or set(cases) != graphical_cases:
             fail(f"boundary scope: {target} must contain exactly the three graphical sentinels")
@@ -444,20 +445,30 @@ def audit_boundary_scope(
         "record_binary_sha256": True,
         "record_binary_size": True,
         "execute_all_other_native_cases": True,
-        "execute_graphical_sentinels_outside_windows": True,
+        "execute_graphical_sentinels_on_gpu_hosts": ["macos-arm64", "macos-x64"],
     }
     if proof != expected_proof:
         fail("boundary scope: required proof was weakened")
     evidence = scope["evidence"]
     require_keys(
         evidence,
-        {"windows_x64_gpu_failure_run", "windows_x64_gpu_failure", "repository_self_hosted_runner_count"},
+        {
+            "windows_x64_gpu_failure_run",
+            "windows_x64_gpu_failure",
+            "linux_x64_software_gpu_run",
+            "linux_x64_graphics_stack",
+            "repository_self_hosted_runner_count",
+        },
         "boundary scope evidence",
     )
     if not isinstance(evidence["windows_x64_gpu_failure_run"], int) or evidence["windows_x64_gpu_failure_run"] <= 0:
         fail("boundary scope: invalid Windows GPU failure run")
     if not isinstance(evidence["windows_x64_gpu_failure"], str) or not evidence["windows_x64_gpu_failure"].strip():
         fail("boundary scope: missing Windows GPU failure")
+    if not isinstance(evidence["linux_x64_software_gpu_run"], int) or evidence["linux_x64_software_gpu_run"] <= 0:
+        fail("boundary scope: invalid Linux software-GPU run")
+    if not isinstance(evidence["linux_x64_graphics_stack"], str) or not evidence["linux_x64_graphics_stack"].strip():
+        fail("boundary scope: missing Linux software-GPU stack")
     if evidence["repository_self_hosted_runner_count"] != 0:
         fail("boundary scope: hosted-runner decision no longer matches runner inventory")
     require_hex(boundary_scope_sha256(scope_path), 64, "boundary scope descriptor hash")

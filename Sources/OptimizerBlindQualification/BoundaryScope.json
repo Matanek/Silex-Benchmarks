@@ -1,13 +1,23 @@
 {
   "schema_version": 1,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
-  "decision": "Trust SDL3 for cross-platform GPU execution where the hosted Windows runner exposes no suitable GPU.",
+  "decision": "Trust SDL3 for cross-platform GPU execution where hosted runners expose no physical GPU.",
   "trusted_boundary": {
     "provider": "SDL3",
     "gfx_revision": "f0c9123df8f2cf2224eaa27f8619991e4acea900",
     "sdl_revision": "8e37db5e797b6167f3a00d697d816a684bd259c7"
   },
   "compile_only_cases": {
+    "linux-arm64": [
+      "boids2d-full",
+      "falling-bodies2d-full",
+      "scene3d-world-full"
+    ],
+    "linux-x64": [
+      "boids2d-full",
+      "falling-bodies2d-full",
+      "scene3d-world-full"
+    ],
     "windows-arm64": [
       "boids2d-full",
       "falling-bodies2d-full",
@@ -27,11 +37,16 @@
     "record_binary_sha256": true,
     "record_binary_size": true,
     "execute_all_other_native_cases": true,
-    "execute_graphical_sentinels_outside_windows": true
+    "execute_graphical_sentinels_on_gpu_hosts": [
+      "macos-arm64",
+      "macos-x64"
+    ]
   },
   "evidence": {
     "windows_x64_gpu_failure_run": 34244036723,
     "windows_x64_gpu_failure": "SDL_GPU D3D12 graphics pipeline creation failed with 0x80070057 on the GitHub-hosted windows-2025 runner.",
+    "linux_x64_software_gpu_run": 34244042565,
+    "linux_x64_graphics_stack": "Xvfb with Mesa Lavapipe software Vulkan on the GitHub-hosted ubuntu-24.04 runner.",
     "repository_self_hosted_runner_count": 0
   }
 }
