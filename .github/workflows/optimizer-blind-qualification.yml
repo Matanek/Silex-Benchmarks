@@ -63,18 +63,18 @@ jobs:
             zig_directory: zig-x86_64-windows-0.16.0
             performance: false
     name: ${{ matrix.target }}
-    if: inputs.target == 'all' || inputs.target == matrix.target
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 360
 
     steps:
       - name: Check out the qualification owner
+        if: inputs.target == 'all' || inputs.target == matrix.target
         uses: actions/checkout@v6
         with:
           path: Silex-Benchmarks
 
       - name: Install Zig 0.16.0 on Unix
-        if: runner.os != 'Windows'
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && runner.os != 'Windows'
         shell: bash
         run: |
           set -euo pipefail
@@ -89,7 +89,7 @@ jobs:
           echo "$RUNNER_TEMP/${{ matrix.zig_directory }}" >> "$GITHUB_PATH"
 
       - name: Install Zig 0.16.0 on Windows
-        if: runner.os == 'Windows'
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && runner.os == 'Windows'
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
@@ -101,7 +101,7 @@ jobs:
           Add-Content $env:GITHUB_PATH (Join-Path $env:RUNNER_TEMP "${{ matrix.zig_directory }}")
 
       - name: Install Linux display requirements
-        if: runner.os == 'Linux'
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && runner.os == 'Linux'
         shell: bash
         run: |
           set -euo pipefail
@@ -109,6 +109,7 @@ jobs:
           sudo apt-get install -y libvulkan1 mesa-vulkan-drivers vulkan-tools vulkan-validationlayers xauth xvfb
 
       - name: Materialize the sealed closure
+        if: inputs.target == 'all' || inputs.target == matrix.target
         shell: bash
         run: |
           set -euo pipefail
@@ -118,6 +119,7 @@ jobs:
             checkout --workspace . "${baseline[@]}"
 
       - name: Build the candidate compiler
+        if: inputs.target == 'all' || inputs.target == matrix.target
         shell: bash
         run: |
           set -euo pipefail
@@ -126,7 +128,7 @@ jobs:
             --build-file Silex/Toolchain/build.zig
 
       - name: Build the Part 07 baseline compiler
-        if: matrix.performance
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
         shell: bash
         run: |
           set -euo pipefail
@@ -135,6 +137,7 @@ jobs:
             --build-file _baseline/Silex/Toolchain/build.zig
 
       - name: Set up and link only the sealed workspace
+        if: inputs.target == 'all' || inputs.target == matrix.target
         shell: bash
         run: |
           set -euo pipefail
@@ -146,6 +149,7 @@ jobs:
             link --workspace . --silex "$silex" --target "${{ matrix.target }}"
 
       - name: Execute the native Debug and Release corpus
+        if: inputs.target == 'all' || inputs.target == matrix.target
         shell: bash
         run: |
           set -euo pipefail
@@ -163,7 +167,7 @@ jobs:
           fi
 
       - name: Build the external performance oracles
-        if: matrix.performance
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
         shell: bash
         run: |
           set -euo pipefail
@@ -181,7 +185,7 @@ jobs:
             gfx_physics_preparation_kernel_reference
 
       - name: Validate the package-owned Physics and Boids oracles
-        if: matrix.performance
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
         shell: bash
         run: |
           set -euo pipefail
@@ -208,7 +212,7 @@ jobs:
             --output "$RUNNER_TEMP/boids-semantic.log"
 
       - name: Run the physical performance campaign
-        if: matrix.performance
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
         shell: bash
         run: |
           set -euo pipefail
@@ -221,7 +225,7 @@ jobs:
             --report "Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json"
 
       - name: Upload the exact native report
-        if: always()
+        if: always() && (inputs.target == 'all' || inputs.target == matrix.target)
         uses: actions/upload-artifact@v7
         with:
           name: optimizer-blind-${{ matrix.target }}
