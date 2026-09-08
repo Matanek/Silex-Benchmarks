@@ -169,6 +169,7 @@ def main() -> int:
 
     workspace = args.workspace.resolve()
     silex = args.silex.resolve()
+    output = args.output.resolve()
     manifest_path = args.manifest.resolve()
     candidate_path = args.candidate_descriptor.resolve()
     # Keep every compiler/toolchain cache inside the single Spec workspace.
@@ -201,8 +202,8 @@ def main() -> int:
         "measurements": {},
         "logs": {},
     }
-    if args.output.exists():
-        previous = Qualification.read_json(args.output)
+    if output.exists():
+        previous = Qualification.read_json(output)
         for key in ("semantic_tests", "executions", "measurements", "logs"):
             report[key].update(previous.get(key, {}))
 
@@ -219,9 +220,9 @@ def main() -> int:
             "command": result["command"],
             "cwd": result["cwd"],
         }
-        write_report(args.output, report)
+        write_report(output, report)
 
-    binaries = args.output.parent / "binaries"
+    binaries = output.parent / "binaries"
     binaries.mkdir(parents=True, exist_ok=True)
     for case_id in manifest["native_matrix_cases"]:
         if case_id not in selected:
@@ -256,9 +257,9 @@ def main() -> int:
                 "command": execute_result["command"],
                 "cwd": execute_result["cwd"],
             }
-            write_report(args.output, report)
+            write_report(output, report)
 
-    print(f"native campaign partial report: {args.output}")
+    print(f"native campaign partial report: {output}")
     return 0
 
 

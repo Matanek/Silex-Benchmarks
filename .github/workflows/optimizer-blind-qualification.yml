@@ -205,6 +205,17 @@ jobs:
           python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
             link --workspace . --silex "$silex" --target "${{ matrix.target }}"
 
+      - name: Prepare the sealed JSON scratch directory
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && runner.os != 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            sudo install -d -m 1777 /private/tmp
+          else
+            python3 -B -c 'from pathlib import Path; Path("/private/tmp").mkdir(parents=True, exist_ok=True)'
+          fi
+
       - name: Execute the native Debug and Release corpus
         if: inputs.target == 'all' || inputs.target == matrix.target
         shell: bash
@@ -352,6 +363,9 @@ jobs:
           & $silex setup
           python -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py `
             link --workspace . --silex $silex --target windows-arm64
+      - name: Prepare the sealed JSON scratch directory
+        shell: pwsh
+        run: python -B -c 'from pathlib import Path; Path("/private/tmp").mkdir(parents=True, exist_ok=True)'
       - name: Execute the native Debug and Release corpus
         shell: pwsh
         run: |
