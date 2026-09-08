@@ -124,7 +124,7 @@ jobs:
             checkout --workspace . "${baseline[@]}"
 
       - name: Check out the pinned SDL3 source for unpublished native archives
-        if: (inputs.target == 'all' || inputs.target == matrix.target) && (matrix.target == 'macos-x64' || matrix.target == 'linux-arm64')
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && (matrix.target == 'macos-x64' || matrix.target == 'linux-arm64' || matrix.performance)
         uses: actions/checkout@v6
         with:
           repository: libsdl-org/SDL
@@ -256,6 +256,22 @@ jobs:
             gfx_physics_preparation_kernel_packed \
             gfx_physics_preparation_kernel_reference
 
+      - name: Build the pinned SDL3 SDK for the Boids oracle
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _SDL -B "$RUNNER_TEMP/sdl3-sdk-build" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/sdl3-sdk" \
+            -DSDL_SHARED=OFF \
+            -DSDL_STATIC=ON \
+            -DSDL_TEST_LIBRARY=OFF \
+            -DSDL_TESTS=OFF \
+            -DSDL_EXAMPLES=OFF
+          cmake --build "$RUNNER_TEMP/sdl3-sdk-build" --config Release
+          cmake --install "$RUNNER_TEMP/sdl3-sdk-build" --config Release
+
       - name: Validate the package-owned Physics and Boids oracles
         if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
         shell: bash
@@ -277,7 +293,8 @@ jobs:
               --box2d-check "$RUNNER_TEMP/physics-oracles/gfx_physics_${stage}_kernel_reference" \
               --check-only
           done
-          Silex-Benchmarks/Sources/Boids2D/RunComparison.sh \
+          CMAKE_PREFIX_PATH="$RUNNER_TEMP/sdl3-sdk" \
+            Silex-Benchmarks/Sources/Boids2D/RunComparison.sh \
             --runs 1 --warmups 0 \
             --silex-compiler "$RUNNER_TEMP/candidate/bin/silex" \
             --build-dir "$RUNNER_TEMP/boids-witnesses" \
