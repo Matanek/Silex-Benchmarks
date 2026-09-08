@@ -344,6 +344,24 @@ def build_summary(
             "show no hidden upload/download inside the chain."
         )
 
+    wide_ranges: list[str] = []
+    for family in ("matmul", "resident_chain_5"):
+        for size in SIZES[family]:
+            values = samples(rows, family=family, backend="cpu", phase="hot", size=size)
+            if min(values) > 0.0 and max(values) / min(values) >= 4.0:
+                wide_ranges.append(f"`{family}/{size}`")
+    if wide_ranges:
+        lines.extend([
+            "",
+            "## Measurement limitations",
+            "",
+            "CPU process timings showed multiple scheduling regimes for "
+            + ", ".join(wide_ranges)
+            + ". All seven samples remain in the report with no outlier rejection. "
+            "Use the median for this run, inspect the full range, and do not generalize "
+            "the resulting speedup ratios.",
+        ])
+
     lines.extend([
         "",
         "## Peak process memory",
