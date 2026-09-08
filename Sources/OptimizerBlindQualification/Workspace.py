@@ -62,13 +62,16 @@ def checkout(manifest: dict, candidate: dict, workspace: Path) -> None:
             workspace,
             timeout=600,
         )
-        Qualification.run_checked(["git", "fetch", "origin", revision, "--depth=1"], destination, timeout=600)
+        Qualification.run_checked(["git", "config", "core.autocrlf", "false"], destination)
+        Qualification.run_checked(["git", "config", "core.longpaths", "true"], destination)
         if name == manifest["candidate"]["repository"]:
             Qualification.run_checked(
-                ["git", "fetch", "origin", repository["revision"], "--depth=1"],
+                ["git", "fetch", "origin", revision, repository["revision"], "--depth=2"],
                 destination,
                 timeout=600,
             )
+        else:
+            Qualification.run_checked(["git", "fetch", "origin", revision, "--depth=1"], destination, timeout=600)
         Qualification.run_checked(["git", "checkout", "--detach", revision], destination, timeout=120)
 
 
@@ -86,6 +89,8 @@ def checkout_baseline(manifest: dict, workspace: Path) -> None:
         workspace,
         timeout=600,
     )
+    Qualification.run_checked(["git", "config", "core.autocrlf", "false"], destination)
+    Qualification.run_checked(["git", "config", "core.longpaths", "true"], destination)
     Qualification.run_checked(["git", "fetch", "origin", revision, "--depth=1"], destination, timeout=600)
     Qualification.run_checked(["git", "checkout", "--detach", revision], destination, timeout=120)
 

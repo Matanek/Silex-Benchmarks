@@ -118,6 +118,62 @@ jobs:
           python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
             checkout --workspace . "${baseline[@]}"
 
+      - name: Check out the pinned SDL3 source for unpublished native archives
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && (matrix.target == 'macos-x64' || matrix.target == 'linux-arm64')
+        uses: actions/checkout@v6
+        with:
+          repository: libsdl-org/SDL
+          ref: 8e37db5e797b6167f3a00d697d816a684bd259c7
+          path: _SDL
+          persist-credentials: false
+
+      - name: Reproduce the unpublished SDL3 native archive
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && (matrix.target == 'macos-x64' || matrix.target == 'linux-arm64')
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ matrix.target }}" = "macos-x64" ]; then
+            sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+            Packages/GFX/Tools/build-sdl3.sh \
+              "$GITHUB_WORKSPACE/_SDL" macos-x64 "$RUNNER_TEMP/sdl3"
+          else
+            docker run --rm --platform linux/arm64 \
+              -e RUNNER_TEMP=/runner-temp \
+              -v "$GITHUB_WORKSPACE:/workspace:ro" \
+              -v "$RUNNER_TEMP:/runner-temp" \
+              ubuntu:22.04@sha256:2edbbc5dc405e9612ba3584ce95480277e3eb374407b5505fe26f17df77c7dbc bash -lc '
+                set -euo pipefail
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get update -y
+                apt-get install -y \
+                  build-essential cmake file git make ninja-build pkg-config \
+                  libasound2-dev libaudio-dev libdbus-1-dev libdecor-0-dev \
+                  libdrm-dev libegl1-mesa-dev libfribidi-dev libgbm-dev \
+                  libgl1-mesa-dev libgles2-mesa-dev libibus-1.0-dev \
+                  libjack-dev libpipewire-0.3-dev libpulse-dev libsndio-dev \
+                  libthai-dev libudev-dev liburing-dev libusb-1.0-0-dev \
+                  libwayland-dev libx11-dev libxext-dev libxcursor-dev \
+                  libxfixes-dev libxi-dev libxkbcommon-dev libxrandr-dev \
+                  libxss-dev libxtst-dev wayland-protocols
+                git config --global --add safe.directory /workspace/_SDL
+                /workspace/Packages/GFX/Tools/build-sdl3.sh \
+                  /workspace/_SDL linux-arm64 /runner-temp/sdl3
+              '
+          fi
+          archive="SDL3-3.4.10-${{ matrix.target }}.a"
+          expected=$(awk -v name="$archive" '$2 == name { print $1 }' \
+            Packages/GFX/Boundary/SDL3.SHA256SUMS.txt)
+          test -n "$expected"
+          if command -v sha256sum >/dev/null 2>&1; then
+            actual=$(sha256sum "$RUNNER_TEMP/sdl3/$archive" | cut -d ' ' -f 1)
+          else
+            actual=$(shasum -a 256 "$RUNNER_TEMP/sdl3/$archive" | cut -d ' ' -f 1)
+          fi
+          test "$actual" = "$expected"
+          mkdir -p "Packages/GFX/Boundary/${{ matrix.target }}"
+          cp "$RUNNER_TEMP/sdl3/$archive" \
+            "Packages/GFX/Boundary/${{ matrix.target }}/libSDL3.a"
+
       - name: Build the candidate compiler
         if: inputs.target == 'all' || inputs.target == matrix.target
         shell: bash
