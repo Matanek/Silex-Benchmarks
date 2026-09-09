@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "c2f606705fe50e7b49cccfe3d7afb4461146fd37",
+  "qualified_candidate_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -77,7 +77,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
-        "sha256": "f4b9be2daab227cbffc0c13f60e751a37752e9e93434ef0439ba1cfd769db835",
+        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
         "failing_revision": "ae05924e2d3d62857554f44e32a920c6d7e8da43",
         "corrected_revision": "2867d86f718ffc34c2c1abb5216c2f402e427ea0"
       }
@@ -210,6 +210,16 @@
         "sha256": "c91e1ab84c07a79213d4b7f76a294098286e1cde5075777e9b16b370b2e55466",
         "failing_revision": "59e306cfb27809dd30a94947503842ece90f75fa",
         "corrected_revision": "c2f606705fe50e7b49cccfe3d7afb4461146fd37"
+      }
+    },
+    {
+      "reason": "The exact ARM64 structure profiles showed that call-free Integration and Preparation kernels kept 203 of 222 and 208 of 242 virtual slots in registers, yet any remaining spill retained a frame through the final virtual identifier; the correction places addressable locals immediately after aggregate ABI values and sizes the physical frame only through the highest participating spill, without changing virtual identities or the internal ABI.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
+        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
+        "failing_revision": "c2f606705fe50e7b49cccfe3d7afb4461146fd37",
+        "corrected_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed"
       }
     }
   ]
