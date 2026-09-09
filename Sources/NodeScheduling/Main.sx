@@ -1,0 +1,239 @@
+use GFX.Application
+use GFX.ECS
+use GFX.Nodes
+use GFX.Scene2D
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+
+enum Strategy {
+    nodes_static
+    nodes_processing
+    nodes_mixed
+    nodes_moving
+    ecs_static
+    ecs_moving
+}
+
+struct Configuration {
+    let strategy:Strategy
+    let entities:int
+    let frames:int
+}
+
+class MovingNode2D:Nodes.Node2D {
+    init(name:str):super(name) {}
+
+    override func on_process(delta:float) {
+        self.position = Math.Vec2(self.position.x + 1.0, self.position.y)
+    }
+}
+
+class ProcessingNode2D:Nodes.Node2D {
+    private var calls:int
+
+    init(name:str):super(name) { self.calls = 0 }
+
+    override func on_process(delta:float) { self.calls++ }
+}
+
+func node_tree(count:int, moving_count:int) Nodes.Node {
+    var root = Nodes.Node("Root")
+    var created = 0
+    var group_index = 0
+    while created < count {
+        var group = Nodes.Node("Group $(group_index)")
+        var child_index = 0
+        while child_index < 100 && created < count {
+            let name = "Node $(created)"
+            if created < moving_count { group.add_child(MovingNode2D(name)) }
+            else { group.add_child(Nodes.Node2D(name)) }
+            child_index++
+            created++
+        }
+        root.add_child(group)
+        group_index++
+    }
+    return root
+}
+
+func processing_node_tree(count:int) Nodes.Node {
+    var root = Nodes.Node("Root")
+    var created = 0
+    var group_index = 0
+    while created < count {
+        var group = Nodes.Node("Group $(group_index)")
+        var child_index = 0
+        while child_index < 100 && created < count {
+            group.add_child(ProcessingNode2D("Node $(created)"))
+            child_index++
+            created++
+        }
+        root.add_child(group)
+        group_index++
+    }
+    return root
+}
+
+func populate_ecs(world:&ECS.World, configuration:@Configuration) {
+    var index = 0
+    while index < configuration.entities {
+        world.spawn(ECS.EntityRecipe()..with(Scene2D.Transform()))
+        index++
+    }
+}
+
+func move_ecs(query:ECS.Query<(ECS.Entity, &Scene2D.Transform)>) {
+    for (entity, transform) in query {
+        transform.position = Math.Vec2(transform.position.x + 1.0, transform.position.y)
+    }
+}
+
+func run_frames(application:&Application, frames:int) {
+    var frame = 0
+    while frame < frames {
+        application.run_schedule(Application.Schedule.update)
+        frame++
+    }
+}
+
+func checksum(world:@ECS.World) float {
+    var result = 0.0
+    for entity in world.entities() {
+        if world.has<Scene2D.Transform>(entity) {
+            result += world.get<Scene2D.Transform>(entity).position.x
+        }
+    }
+    return result
+}
+
+func benchmark_nodes(configuration:@Configuration, moving_count:int) {
+    var root = node_tree(configuration.entities, moving_count)
+    var application = Application()..add_plugin(Nodes.Plugin(root))
+    application.prepare()
+    application.run_schedule(Application.Schedule.startup)
+    run_frames(application, configuration.frames / 10)
+
+    var elapsed = Stopwatch()
+    elapsed.start()
+    run_frames(application, configuration.frames)
+    elapsed.stop()
+
+    var resources = application.resources()
+    var world:@ECS.World = resources.get<ECS.World>()
+    let observed = checksum(world)
+    var expected = 0.0
+    expected = (configuration.frames + configuration.frames / 10) as float *
+        moving_count as float
+    assert(observed == expected)
+    report(configuration, elapsed, observed)
+    application.run_schedule(Application.Schedule.shutdown)
+}
+
+func benchmark_processing_nodes(configuration:@Configuration) {
+    var root = processing_node_tree(configuration.entities)
+    var application = Application()..add_plugin(Nodes.Plugin(root))
+    application.prepare()
+    application.run_schedule(Application.Schedule.startup)
+    run_frames(application, configuration.frames / 10)
+
+    var elapsed = Stopwatch()
+    elapsed.start()
+    run_frames(application, configuration.frames)
+    elapsed.stop()
+
+    report(configuration, elapsed, 0.0)
+    application.run_schedule(Application.Schedule.shutdown)
+}
+
+func benchmark_ecs(configuration:@Configuration, moving:bool) {
+    var application = Application()..add_plugin(ECS.Plugin())
+    application.add_resource(configuration)
+    application.add_system(Application.Schedule.startup, populate_ecs)
+    if moving { application.add_system(Application.Schedule.update, move_ecs) }
+    application.prepare()
+    application.run_schedule(Application.Schedule.startup)
+    run_frames(application, configuration.frames / 10)
+
+    var elapsed = Stopwatch()
+    elapsed.start()
+    run_frames(application, configuration.frames)
+    elapsed.stop()
+
+    var resources = application.resources()
+    var world:@ECS.World = resources.get<ECS.World>()
+    let observed = checksum(world)
+    var expected = 0.0
+    if moving { expected = (configuration.frames + configuration.frames / 10) as float * configuration.entities as float }
+    assert(observed == expected)
+    report(configuration, elapsed, observed)
+}
+
+func report(configuration:@Configuration, elapsed:@Stopwatch, checksum:float) {
+    let milliseconds = elapsed.get_elapsed_milliseconds()
+    print(
+        "SILEX_NODE_SCHEDULING strategy=$(strategy_name(configuration.strategy)) " +
+        "entities=$(configuration.entities) frames=$(configuration.frames) " +
+        "elapsed_ms=$(milliseconds) " +
+        "per_frame_ms=$(milliseconds / configuration.frames as float) " +
+        "checksum=$(checksum)"
+    )
+}
+
+func strategy_name(strategy:Strategy) str {
+    return match strategy {
+        nodes_static => "nodes_static"
+        nodes_processing => "nodes_processing"
+        nodes_mixed => "nodes_mixed"
+        nodes_moving => "nodes_moving"
+        ecs_static => "ecs_static"
+        ecs_moving => "ecs_moving"
+    }
+}
+
+func parse_strategy(value:str) Strategy {
+    if value == "nodes_static" { return Strategy.nodes_static }
+    if value == "nodes_processing" { return Strategy.nodes_processing }
+    if value == "nodes_mixed" { return Strategy.nodes_mixed }
+    if value == "nodes_moving" { return Strategy.nodes_moving }
+    if value == "ecs_static" { return Strategy.ecs_static }
+    if value == "ecs_moving" { return Strategy.ecs_moving }
+    panic("expected nodes_static, nodes_processing, nodes_mixed, nodes_moving, ecs_static or ecs_moving")
+}
+
+func parse_int(value:str) int {
+    if value == "100" { return 100 }
+    if value == "1000" { return 1_000 }
+    if value == "10000" { return 10_000 }
+    if value == "20" { return 20 }
+    if value == "200" { return 200 }
+    panic("expected 100, 1000, 10000, 20 or 200")
+}
+
+func configuration() Configuration {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() == 4 {
+                return Configuration(
+                    strategy:parse_strategy(arguments[1]),
+                    entities:parse_int(arguments[2]),
+                    frames:parse_int(arguments[3])
+                )
+            }
+        }
+    }
+    panic("usage: NodeScheduling <strategy> <entities> <frames>")
+}
+
+func main() {
+    let selected = configuration()
+    match selected.strategy {
+        nodes_static => { benchmark_nodes(selected, 0) }
+        nodes_processing => { benchmark_processing_nodes(selected) }
+        nodes_mixed => { benchmark_nodes(selected, selected.entities / 10) }
+        nodes_moving => { benchmark_nodes(selected, selected.entities) }
+        ecs_static => { benchmark_ecs(selected, false) }
+        ecs_moving => { benchmark_ecs(selected, true) }
+    }
+}

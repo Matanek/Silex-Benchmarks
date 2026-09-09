@@ -57,6 +57,7 @@ source root and declares every dependency required by the catalog.
 | `RegexStreamingSearch.sx` | stream-search through one million Unicode scalars |
 | `NetworkFreshnessTracking.sx` | measure network freshness comparisons and trackers |
 | `BehaviourTreeScheduling/` | compare root reevaluation, per-frame resumption, event scheduling, and a handwritten state machine |
+| `NodeScheduling/` | compare static and moving object Nodes with direct ECS scheduling |
 
 ## Running benchmarks
 
