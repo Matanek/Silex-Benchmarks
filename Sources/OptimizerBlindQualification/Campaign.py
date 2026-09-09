@@ -56,13 +56,14 @@ SIGNATURE_PREFIXES = {
 }
 
 
-# The direct-font Debug witness hashes the complete 596 KiB embedded font with
-# the intentionally portable Silex SHA-256 implementation. It already takes
-# 313-374 seconds on the qualified Windows/Linux X64 hosts, so the older Intel
-# macOS host needs a wider liveness guard. This changes neither the workload nor
-# its oracle; every other command keeps the sealed default timeout.
+# The direct-font witnesses hash the complete 596 KiB embedded font with the
+# intentionally portable Silex SHA-256 implementation. They already take
+# 313-415 seconds on the qualified Windows/Linux X64 hosts, so the older Intel
+# macOS host needs a wider liveness guard in both modes. This changes neither
+# the workload nor its oracle; every other command keeps the sealed default.
 NATIVE_EXECUTION_TIMEOUT_FLOORS = {
     ("font-direct", "debug"): 1_200.0,
+    ("font-direct", "release"): 1_200.0,
 }
 
 
