@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "5c4f9bfa38b4037ce9e1d2724bd21527e57b4d00",
+  "qualified_candidate_revision": "e931fc130db455dba426b0d9c6e4dc7568213fdf",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -147,9 +147,19 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Benchmarks/Optimizer/Regressions/PureMathReferenceInlining.sx",
-        "sha256": "52568dbc83fd6220005d09836bc707b286e8ea698ca748a7c6fcdbe70308f33c",
+        "sha256": "266a82bc8fd565440b5f0c4c186bec73b8a9fee634aeafbd0004b8b7ffb486b1",
         "failing_revision": "3f881a62168fdc09664fba7a307de666fa395f80",
         "corrected_revision": "5c4f9bfa38b4037ce9e1d2724bd21527e57b4d00"
+      }
+    },
+    {
+      "reason": "The exact post-correction structure profile showed that the hot cost model still counted dead SSA identifiers left in the value-type table, rejecting the bounded position helper despite its proven pure math boundary; the correction measures only parameters, captures and instruction results that remain materialized, while the structural size ceiling continues to reject the larger velocity helper.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/PureMathReferenceInlining.sx",
+        "sha256": "266a82bc8fd565440b5f0c4c186bec73b8a9fee634aeafbd0004b8b7ffb486b1",
+        "failing_revision": "5c4f9bfa38b4037ce9e1d2724bd21527e57b4d00",
+        "corrected_revision": "e931fc130db455dba426b0d9c6e4dc7568213fdf"
       }
     }
   ]
