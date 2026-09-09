@@ -1,6 +1,6 @@
 name: Qualify the sealed optimizer corpus
 
-run-name: Qualify optimizer Part 09 (${{ inputs.target }})
+run-name: Qualify optimizer Part 09 (${{ inputs.target }}, ${{ inputs.qualification_case }})
 
 on:
   workflow_dispatch:
@@ -20,6 +20,16 @@ on:
           - windows-x64
           - regex-diagnostic
           - silex-check
+      qualification_case:
+        description: Optional focused macOS performance case
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - physics-integration
+          - physics-preparation
+          - boids2d-full
 
 permissions:
   contents: read
@@ -233,6 +243,9 @@ jobs:
             --silex "$RUNNER_TEMP/candidate/bin/silex$suffix"
             --runner "${{ matrix.runner }}"
             --output "Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json")
+          if [ "${{ inputs.qualification_case }}" != "all" ]; then
+            command+=(--only "${{ inputs.qualification_case }}")
+          fi
           if [ "${{ runner.os }}" = "Linux" ]; then
             xvfb-run -a "${command[@]}"
           else
@@ -258,7 +271,7 @@ jobs:
             gfx_physics_preparation_kernel_reference
 
       - name: Build the pinned SDL3 SDK for the Boids oracle
-        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.target == 'macos-arm64'
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.target == 'macos-arm64' && (inputs.qualification_case == 'all' || inputs.qualification_case == 'boids2d-full')
         shell: bash
         run: |
           set -euo pipefail
@@ -274,18 +287,26 @@ jobs:
           cmake --install "$RUNNER_TEMP/sdl3-sdk-build" --config Release
 
       - name: Validate the package-owned Physics oracles
-        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance && inputs.qualification_case != 'boids2d-full'
         shell: bash
         run: |
           set -euo pipefail
           report="Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}"
-          python3 -B Packages/GFX.Physics/Benchmarks/Oracle2D/RunContactKernel.py \
-            --silex "$report/binaries/physics-contact-release" \
-            --clang-slots "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_slots" \
-            --clang-packed "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_packed" \
-            --box2d-check "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_reference" \
-            --check-only
-          for stage in integration preparation; do
+          stages=(contact integration preparation)
+          if [ "${{ inputs.qualification_case }}" != "all" ]; then
+            stages=("${{ inputs.qualification_case }}")
+            stages=("${stages[0]#physics-}")
+          fi
+          for stage in "${stages[@]}"; do
+            if [ "$stage" = "contact" ]; then
+              python3 -B Packages/GFX.Physics/Benchmarks/Oracle2D/RunContactKernel.py \
+                --silex "$report/binaries/physics-contact-release" \
+                --clang-slots "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_slots" \
+                --clang-packed "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_packed" \
+                --box2d-check "$RUNNER_TEMP/physics-oracles/gfx_physics_contact_kernel_reference" \
+                --check-only
+              continue
+            fi
             python3 -B Packages/GFX.Physics/Benchmarks/Oracle2D/RunStageKernels.py \
               --stage "$stage" \
               --silex "$report/binaries/physics-$stage-release" \
@@ -296,7 +317,7 @@ jobs:
           done
 
       - name: Validate the package-owned Boids oracle
-        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.target == 'macos-arm64'
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.target == 'macos-arm64' && (inputs.qualification_case == 'all' || inputs.qualification_case == 'boids2d-full')
         shell: bash
         run: |
           set -euo pipefail
@@ -313,13 +334,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Performance.py \
+          command=(python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Performance.py
             --workspace . \
             --candidate-silex "$RUNNER_TEMP/candidate/bin/silex" \
             --baseline-silex "$RUNNER_TEMP/baseline/bin/silex" \
             --physics-oracle-dir "$RUNNER_TEMP/physics-oracles" \
             --boids-cpp "$RUNNER_TEMP/boids-witnesses/cpp/BoidsCppArchitectural" \
-            --report "Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json"
+            --report "Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json")
+          if [ "${{ inputs.qualification_case }}" != "all" ]; then
+            command+=(--only "${{ inputs.qualification_case }}")
+          fi
+          "${command[@]}"
 
       - name: Upload the exact native report
         if: always() && (inputs.target == 'all' || inputs.target == matrix.target)
