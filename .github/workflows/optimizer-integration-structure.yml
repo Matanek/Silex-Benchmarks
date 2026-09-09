@@ -2,9 +2,6 @@ name: Diagnose optimizer hot structures
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - spec-silex-llvm-optimization-parity
 
 permissions:
   contents: read
