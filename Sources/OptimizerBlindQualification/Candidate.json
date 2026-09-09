@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed",
+  "qualified_candidate_revision": "45d33199f5141d167443ca7c064b0a44ca1693df",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -77,7 +77,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
-        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
+        "sha256": "f4b9be2daab227cbffc0c13f60e751a37752e9e93434ef0439ba1cfd769db835",
         "failing_revision": "ae05924e2d3d62857554f44e32a920c6d7e8da43",
         "corrected_revision": "2867d86f718ffc34c2c1abb5216c2f402e427ea0"
       }
@@ -217,9 +217,19 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
-        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
+        "sha256": "f4b9be2daab227cbffc0c13f60e751a37752e9e93434ef0439ba1cfd769db835",
         "failing_revision": "c2f606705fe50e7b49cccfe3d7afb4461146fd37",
         "corrected_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed"
+      }
+    },
+    {
+      "reason": "The exact structure profile proved that Preparation still retained all 242 slots and its 1936-byte frame because the final stack participant was hidden_return_slot 241, not an addressable local or a register-resident temporary; the physical campaign remained a stable 1.866320..1.890564x Clang, so the correction is revoked in full before targeting the actual aggregate-return anchor.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
+        "sha256": "f4b9be2daab227cbffc0c13f60e751a37752e9e93434ef0439ba1cfd769db835",
+        "failing_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed",
+        "corrected_revision": "45d33199f5141d167443ca7c064b0a44ca1693df"
       }
     }
   ]
