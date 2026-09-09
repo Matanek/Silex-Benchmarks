@@ -56,6 +56,16 @@ SIGNATURE_PREFIXES = {
 }
 
 
+# The direct-font Debug witness hashes the complete 596 KiB embedded font with
+# the intentionally portable Silex SHA-256 implementation. It already takes
+# 313-374 seconds on the qualified Windows/Linux X64 hosts, so the older Intel
+# macOS host needs a wider liveness guard. This changes neither the workload nor
+# its oracle; every other command keeps the sealed default timeout.
+NATIVE_EXECUTION_TIMEOUT_FLOORS = {
+    ("font-direct", "debug"): 1_200.0,
+}
+
+
 def output_sha256(stdout: str, stderr: str) -> str:
     return hashlib.sha256((stdout + "\0" + stderr).encode()).hexdigest()
 
@@ -152,6 +162,10 @@ def write_report(path: Path, report: dict[str, Any]) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     temporary.replace(path)
+
+
+def native_execution_timeout(case_id: str, mode: str, default: float) -> float:
+    return max(default, NATIVE_EXECUTION_TIMEOUT_FLOORS.get((case_id, mode), 0.0))
 
 
 def main() -> int:
@@ -273,7 +287,8 @@ def main() -> int:
                 write_report(output, report)
                 continue
             print(f"execute {case_id} {mode}", flush=True)
-            execute_result = record([str(executable), *arguments], runtime_cwd, args.timeout)
+            execution_timeout = native_execution_timeout(case_id, mode, args.timeout)
+            execute_result = record([str(executable), *arguments], runtime_cwd, execution_timeout)
             verify_signature(case_id, execute_result)
             report["executions"][case_id][mode] = public_record(execute_result)
             report["logs"][f"execute/{case_id}/{mode}"] = {
@@ -281,6 +296,7 @@ def main() -> int:
                 "stderr": execute_result["stderr"],
                 "command": execute_result["command"],
                 "cwd": execute_result["cwd"],
+                "timeout_seconds": execution_timeout,
             }
             write_report(output, report)
 
