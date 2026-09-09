@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "5010b84b80854ae6a7ee73acbaf94f4244a75d4a",
+  "qualified_candidate_revision": "2806a45170d70fbf0164f72c622689b8f0e50cfa",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -37,7 +37,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/Encoder.zig",
-        "sha256": "7c205802564e5166657f24c075682801a32d64e873eb8fdb412b018dff0a269a",
+        "sha256": "3d4de348a89d8e17d4378fd3af477e28b31fcb042a6f0c306d6c8eb6f69035cd",
         "failing_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75",
         "corrected_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8"
       }
@@ -237,7 +237,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "f558d05768243939ec52088c74be00c2444ec8fdef597e1cc945b5556604e865",
+        "sha256": "a63f20d7dacfa7c14df8b17aaec2e31f6b9069f3e1817575c3b942b9c8e8ee96",
         "failing_revision": "45d33199f5141d167443ca7c064b0a44ca1693df",
         "corrected_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74"
       }
@@ -247,7 +247,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "f558d05768243939ec52088c74be00c2444ec8fdef597e1cc945b5556604e865",
+        "sha256": "a63f20d7dacfa7c14df8b17aaec2e31f6b9069f3e1817575c3b942b9c8e8ee96",
         "failing_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74",
         "corrected_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6"
       }
@@ -257,7 +257,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "f558d05768243939ec52088c74be00c2444ec8fdef597e1cc945b5556604e865",
+        "sha256": "a63f20d7dacfa7c14df8b17aaec2e31f6b9069f3e1817575c3b942b9c8e8ee96",
         "failing_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6",
         "corrected_revision": "08520d54e303834c0e4fa1d2a179d890eb04cd7b"
       }
@@ -267,7 +267,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "f558d05768243939ec52088c74be00c2444ec8fdef597e1cc945b5556604e865",
+        "sha256": "a63f20d7dacfa7c14df8b17aaec2e31f6b9069f3e1817575c3b942b9c8e8ee96",
         "failing_revision": "08520d54e303834c0e4fa1d2a179d890eb04cd7b",
         "corrected_revision": "1abd0ca379369ac65c65698579fd8f133a99206e"
       }
@@ -277,9 +277,19 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/Machine.zig",
-        "sha256": "efeb77617076785abc4ab218578f30785ef5d4abcc83dddb40ffcf860651e48c",
+        "sha256": "56c799b366be190be48d26d1975fcfe802e9275b454024f2de843871efdb8482",
         "failing_revision": "1abd0ca379369ac65c65698579fd8f133a99206e",
         "corrected_revision": "5010b84b80854ae6a7ee73acbaf94f4244a75d4a"
+      }
+    },
+    {
+      "reason": "The second exact cumulative check reproduced slot zero after splitting the optional payload, disproving the representation hypothesis. The correction changes perspective: because the checked aggregate load is already proven dead, its existing Machine span becomes the direct call result and replacement identity, so the encoder needs no auxiliary forwarded slot and the superseded aggregate temporary becomes genuinely unused before register allocation.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
+        "sha256": "a63f20d7dacfa7c14df8b17aaec2e31f6b9069f3e1817575c3b942b9c8e8ee96",
+        "failing_revision": "5010b84b80854ae6a7ee73acbaf94f4244a75d4a",
+        "corrected_revision": "2806a45170d70fbf0164f72c622689b8f0e50cfa"
       }
     }
   ]
