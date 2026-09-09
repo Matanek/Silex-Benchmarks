@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "59e306cfb27809dd30a94947503842ece90f75fa",
+  "qualified_candidate_revision": "c2f606705fe50e7b49cccfe3d7afb4461146fd37",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -187,7 +187,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Optimize/InlineControlFlow.zig",
-        "sha256": "37f897b073366bff9bcfb195213f302711eb46bddfc207137d628d39d0a9e155",
+        "sha256": "6c5c41a160f78d6abc6a274ecdfe8fbee7531680cee7597333151a8023e187ca",
         "failing_revision": "63992d047e146c911d90d6fbade479a0e6d1bef1",
         "corrected_revision": "2b3e5754cfacfad5b15ccb4c10e5089f272088dc"
       }
@@ -200,6 +200,16 @@
         "sha256": "c91e1ab84c07a79213d4b7f76a294098286e1cde5075777e9b16b370b2e55466",
         "failing_revision": "2b3e5754cfacfad5b15ccb4c10e5089f272088dc",
         "corrected_revision": "59e306cfb27809dd30a94947503842ece90f75fa"
+      }
+    },
+    {
+      "reason": "The exact physical integration campaign proved that closing the complete hot leaf set removed both internal calls but expanded the ARM64 caller to 222 slots and a 1776-byte frame, regressing execution to 2.12x Clang and cold compilation to 1.24x; the correction restores the safe pressure budget and keeps the pressure-heavy call set as a preservation counterproof until expanded caller residences are proven profitable.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/HotReferenceLeafClosure.sx",
+        "sha256": "c91e1ab84c07a79213d4b7f76a294098286e1cde5075777e9b16b370b2e55466",
+        "failing_revision": "59e306cfb27809dd30a94947503842ece90f75fa",
+        "corrected_revision": "c2f606705fe50e7b49cccfe3d7afb4461146fd37"
       }
     }
   ]
