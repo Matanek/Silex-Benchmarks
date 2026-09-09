@@ -99,6 +99,18 @@ jobs:
             cp .zig-cache/optimizer-oracle/hot-budget-machine.json "$destination/"
           done
 
+      - name: Disassemble the exact Preparation candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$GITHUB_WORKSPACE/Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/preparation-native"
+          mkdir -p "$output"
+          "$RUNNER_TEMP/candidate/bin/silex" compile \
+            Packages/GFX.Physics/Benchmarks/PreparationKernel2D.sx \
+            --release --nocache -o "$output/preparation"
+          nm -nm "$output/preparation" > "$output/symbols.txt"
+          otool -tvV "$output/preparation" > "$output/disassembly.txt"
+
       - name: Upload the structural profiles
         if: always()
         uses: actions/upload-artifact@v7
