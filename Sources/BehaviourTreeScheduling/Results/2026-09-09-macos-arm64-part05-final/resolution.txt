@@ -1,6 +1,6 @@
 AI 0.1.0 workspace-link /Users/nekmata/Projects/SilexProject/.specs/AI-Behaviour-Tree/Worktree/Packages/AI
 GFX 0.40.0 workspace-link /Users/nekmata/Projects/SilexProject/Packages/GFX
-STD 0.22.0 workspace-link /Users/nekmata/Projects/SilexProject/Packages/STD
+STD 0.22.0 workspace-link /private/tmp/silex-std-0220.tpyQmB/package
 GFX.Assets 0.3.0 workspace-link /Users/nekmata/Projects/SilexProject/Packages/GFX.Assets
 JSON 0.2.2 workspace-link /Users/nekmata/Projects/SilexProject/Packages/JSON
 GFX.Canvas 0.4.0 workspace-link /Users/nekmata/Projects/SilexProject/Packages/GFX.Canvas

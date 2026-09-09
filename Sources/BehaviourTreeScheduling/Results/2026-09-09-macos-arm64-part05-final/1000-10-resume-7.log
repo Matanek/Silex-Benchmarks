@@ -1,1 +1,1 @@
-SILEX_BEHAVIOUR_TREE strategy=resume agents=1000 wake_percent=10 woken=100 warmup=100 frames=1000 elapsed_ms=88.496 per_frame_ms=0.088496 condition_calls=0 action_calls=1000000 node_visits=1000000 queue_size=100 checksum=5050000 tree_nodes=11 tree_depth=5 root_width=2
+SILEX_BEHAVIOUR_TREE strategy=resume agents=1000 wake_percent=10 woken=100 warmup=100 frames=1000 elapsed_ms=95.733 per_frame_ms=0.095733 condition_calls=0 action_calls=1000000 node_visits=1000000 queue_size=100 checksum=5050000 tree_nodes=11 tree_depth=5 root_width=2
