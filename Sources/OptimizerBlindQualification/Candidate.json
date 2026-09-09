@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75",
+  "qualified_candidate_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -30,6 +30,16 @@
         "sha256": "f220fab8a37b0486cfe7c13311952e0504a912a4ce51388e36a9d4dec791a0e8",
         "failing_revision": "facb73dbaf75647502fb03301b2d909acdcf6ed5",
         "corrected_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75"
+      }
+    },
+    {
+      "reason": "The physical macOS ARM64 FallingBodies2D Release sentinel exposed an unsafe post-layout aggregate-copy bypass that redirected call arguments to expired source storage.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/Encoder.zig",
+        "sha256": "ab54a249ca0e8b410f00c88b1a28e7c6d03c6b2c2403142b95cebea8a7f32fe4",
+        "failing_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75",
+        "corrected_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8"
       }
     }
   ]
