@@ -43,12 +43,22 @@
       }
     },
     {
-      "reason": "The sealed physics contact execution witness retained a by-value aggregate copy whose sole use was a direct call; the correction forwards the unchanged source before register allocation and removes the now-dead copy on ARM64 and X64.",
+      "reason": "The sealed physics contact execution witness retained a by-value aggregate copy whose sole use was a direct call; the correction forwards the unchanged source before register allocation and fuses non-power-of-two ARM64 list addresses.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/ListRuntime.zig",
+        "sha256": "db18a0ca5d75549723df8a579ee47876e2f0f2b8749a98779366d865c666c119",
+        "failing_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8",
+        "corrected_revision": "e14923950e56b6c9f737eeffaf7d6f1afc971c67"
+      }
+    },
+    {
+      "reason": "The first forwarding revision left dead-copy removal in both native encoders and changed an earlier regression witness; the correction compacts the shared Machine IR and remaps every branch target before either backend allocates registers.",
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateCallForwarding.zig",
         "sha256": "c9dc14be0696438f789d90b57c0c384e5e591a1fd81b3626f345f5d7ed019daf",
-        "failing_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8",
+        "failing_revision": "e14923950e56b6c9f737eeffaf7d6f1afc971c67",
         "corrected_revision": "153e28496284fd964c78940633dbdeef9d7702a8"
       }
     }
