@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "63992d047e146c911d90d6fbade479a0e6d1bef1",
+  "qualified_candidate_revision": "2b3e5754cfacfad5b15ccb4c10e5089f272088dc",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -180,6 +180,16 @@
         "sha256": "a166787cf8dabff98638f3aae1dddf87ac871e3c5cfbe772927df752f643a549",
         "failing_revision": "5e6f7779778b308db7733a0e9acc5119d5d23a73",
         "corrected_revision": "63992d047e146c911d90d6fbade479a0e6d1bef1"
+      }
+    },
+    {
+      "reason": "The focused physical integration campaign proved that moving a pure sqrt ABI boundary into the branching reference caller expanded its ARM64 frame and regressed execution to 2.06x Clang; the correction propagates native-call barriers through eligible callees and keeps newly supported reference CFGs containing them out of their callers while preserving exact semantic effects.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Optimize/InlineControlFlow.zig",
+        "sha256": "6c5c41a160f78d6abc6a274ecdfe8fbee7531680cee7597333151a8023e187ca",
+        "failing_revision": "63992d047e146c911d90d6fbade479a0e6d1bef1",
+        "corrected_revision": "2b3e5754cfacfad5b15ccb4c10e5089f272088dc"
       }
     }
   ]
