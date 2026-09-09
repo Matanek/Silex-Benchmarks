@@ -2,11 +2,6 @@ name: Diagnose optimizer integration structure
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - spec-silex-llvm-optimization-parity
-    paths:
-      - .github/workflows/optimizer-integration-structure.yml
 
 permissions:
   contents: read
@@ -43,8 +38,7 @@ jobs:
           set -euo pipefail
           python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
             checkout --workspace .
-          expected=e8d0147c26f1e6100974419c4375f5e456d130c9
-          git -C Silex checkout --detach "$expected"
+          expected=$(python3 -B -c 'import json; print(json.load(open("Silex-Benchmarks/Sources/OptimizerBlindQualification/Candidate.json"))["qualified_candidate_revision"])')
           test "$(git -C Silex rev-parse HEAD)" = "$expected"
           zig build -Doptimize=ReleaseFast -Dcpu=baseline \
             --prefix "$RUNNER_TEMP/candidate" \
@@ -62,7 +56,7 @@ jobs:
           output="$GITHUB_WORKSPACE/Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/integration-structure"
           mkdir -p "$output"
           cd Silex/Toolchain
-          functions=(integrate)
+          functions=(integrate_velocity integrate_position integrate)
           for short_name in "${functions[@]}"; do
             function="GFX.Physics.Benchmarks.IntegrationKernel2D.$short_name"
             destination="$output/$short_name"
@@ -82,7 +76,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: optimizer-integration-structure-e8d0147-macos-arm64
+          name: optimizer-integration-structure-macos-arm64
           path: Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/integration-structure
           if-no-files-found: error
           retention-days: 30
