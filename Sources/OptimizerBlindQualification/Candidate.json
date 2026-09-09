@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "45d33199f5141d167443ca7c064b0a44ca1693df",
+  "qualified_candidate_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -37,7 +37,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/Encoder.zig",
-        "sha256": "69d02d19b3b0f36c905a24cc90f7770ffbb4c9d61bf771d28ae18c17a70239b7",
+        "sha256": "ec014d4130309d25865100dc3fdc5800958a12c0a227d9604398b1b15b83603a",
         "failing_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75",
         "corrected_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8"
       }
@@ -230,6 +230,16 @@
         "sha256": "f4b9be2daab227cbffc0c13f60e751a37752e9e93434ef0439ba1cfd769db835",
         "failing_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed",
         "corrected_revision": "45d33199f5141d167443ca7c064b0a44ca1693df"
+      }
+    },
+    {
+      "reason": "The exact Preparation machine profile showed that whole-element assignment loaded 26 discarded fields for its first bounds check, wrote the 26-field direct-call result into a hidden stack temporary, then copied it into the already-checked output view. The correction reuses that original checked access as the aggregate return destination only for an infallible plain-value callee whose address arguments originate in element types distinct from the result, retaining the temporary path whenever aliasing is possible.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
+        "sha256": "49647604de10a90dbfd7f05195c25ac6002793d0f4ea64d11baf24b94be5fdb6",
+        "failing_revision": "45d33199f5141d167443ca7c064b0a44ca1693df",
+        "corrected_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74"
       }
     }
   ]
