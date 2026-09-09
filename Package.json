@@ -7,7 +7,7 @@
     "GFX.Canvas": "^0.4.0",
     "GFX.ECS": "^0.2.3",
     "GFX.Font": "^0.1.0",
-    "GFX.GPU": "^0.3.0",
+    "GFX.GPU": "^0.4.0",
     "GFX.Physics": "^0.6.0",
     "GFX.Rendering": "^0.4.0",
     "GFX.Scene2D": "^0.3.0",
