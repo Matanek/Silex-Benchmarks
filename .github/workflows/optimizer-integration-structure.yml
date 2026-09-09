@@ -80,9 +80,11 @@ jobs:
           output="$GITHUB_WORKSPACE/Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/preparation-structure"
           mkdir -p "$output"
           cd Silex/Toolchain
-          functions=(prepare main)
-          for short_name in "${functions[@]}"; do
-            function="GFX.Physics.Benchmarks.PreparationKernel2D.$short_name"
+          short_names=(prepare main)
+          functions=(GFX.Physics.Benchmarks.PreparationKernel2D.prepare main)
+          for index in "${!functions[@]}"; do
+            short_name="${short_names[$index]}"
+            function="${functions[$index]}"
             destination="$output/$short_name"
             mkdir -p "$destination"
             set +e
