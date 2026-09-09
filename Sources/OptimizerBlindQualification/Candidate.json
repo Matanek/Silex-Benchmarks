@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "561f574f61989ce06ac7bd84ceda78faa7764954",
+  "qualified_candidate_revision": "f68ab19008683fab71df175c3ca15bbed887bec2",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -90,6 +90,16 @@
         "sha256": "720536b38952b2b273e5a169b5659b2304fad9bb25d00b8a0bcacd9d417bd7c0",
         "failing_revision": "2867d86f718ffc34c2c1abb5216c2f402e427ea0",
         "corrected_revision": "561f574f61989ce06ac7bd84ceda78faa7764954"
+      }
+    },
+    {
+      "reason": "The blind physics integration workload exposed that branching callees mutating borrowed aggregates were excluded from control-flow inlining, leaving tens of millions of avoidable calls in hot loops.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/BranchingReferenceInlining.sx",
+        "sha256": "4b3a55aa3543c8fcda1e25787d7a63a3a287670aba77636a9bcaf1d9e75ab75c",
+        "failing_revision": "561f574f61989ce06ac7bd84ceda78faa7764954",
+        "corrected_revision": "f68ab19008683fab71df175c3ca15bbed887bec2"
       }
     }
   ]
