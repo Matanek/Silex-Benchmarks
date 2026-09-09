@@ -329,12 +329,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
-      - name: Check out the exact candidate compiler
+      - name: Check out the qualification owner
         uses: actions/checkout@v6
         with:
-          repository: Matanek/Silex
-          ref: facb73dbaf75647502fb03301b2d909acdcf6ed5
-          path: Silex
+          path: Silex-Benchmarks
+          fetch-depth: 0
       - name: Install Zig 0.16.0
         shell: bash
         run: |
@@ -344,6 +343,9 @@ jobs:
           echo "70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00  $archive" | sha256sum -c -
           tar -xJf "$archive" -C "$RUNNER_TEMP"
           echo "$RUNNER_TEMP/zig-x86_64-linux-0.16.0" >> "$GITHUB_PATH"
+      - name: Materialize the sealed closure
+        shell: bash
+        run: python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py checkout --workspace .
       - name: Cross-build the compiler executable only
         shell: bash
         run: |
