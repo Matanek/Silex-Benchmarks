@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "75d6d05d498ceb82af623aae1b92f6eba1013755",
+  "qualified_candidate_revision": "c57af99d80680c2eab9d405a8e9d1a779f14296a",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -77,7 +77,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
-        "sha256": "00e4304cb9fbe7680258349ee352c201b67f1a1ba9178a2468288c95504a2fce",
+        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
         "failing_revision": "ae05924e2d3d62857554f44e32a920c6d7e8da43",
         "corrected_revision": "2867d86f718ffc34c2c1abb5216c2f402e427ea0"
       }
@@ -217,7 +217,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
-        "sha256": "00e4304cb9fbe7680258349ee352c201b67f1a1ba9178a2468288c95504a2fce",
+        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
         "failing_revision": "c2f606705fe50e7b49cccfe3d7afb4461146fd37",
         "corrected_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed"
       }
@@ -227,7 +227,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
-        "sha256": "00e4304cb9fbe7680258349ee352c201b67f1a1ba9178a2468288c95504a2fce",
+        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
         "failing_revision": "278cb611dc6b524e3cc49944bea7fefaff2b9aed",
         "corrected_revision": "45d33199f5141d167443ca7c064b0a44ca1693df"
       }
@@ -347,9 +347,19 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
-        "sha256": "00e4304cb9fbe7680258349ee352c201b67f1a1ba9178a2468288c95504a2fce",
+        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
         "failing_revision": "7b660f09634f31b1f5653b08464f6926dbce10ca",
         "corrected_revision": "75d6d05d498ceb82af623aae1b92f6eba1013755"
+      }
+    },
+    {
+      "reason": "The exact structure profile proved that excluding the encoder-elided aggregate result span did not reduce Preparation's 1680-byte frame: a real stack-resident field operand at slot 208 remained the highest participant. The experiment is revoked in full without a physical campaign, preserving the tested frame-anchor placement while avoiding an analysis exception with no generated-code effect.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/RegisterAllocation.zig",
+        "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
+        "failing_revision": "75d6d05d498ceb82af623aae1b92f6eba1013755",
+        "corrected_revision": "c57af99d80680c2eab9d405a8e9d1a779f14296a"
       }
     }
   ]
