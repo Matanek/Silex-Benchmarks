@@ -19,6 +19,7 @@ on:
           - windows-arm64
           - windows-x64
           - regex-diagnostic
+          - silex-check
 
 permissions:
   contents: read
@@ -188,15 +189,6 @@ jobs:
             --prefix "$RUNNER_TEMP/candidate" \
             --build-file Silex/Toolchain/build.zig
 
-      - name: Validate the exact cumulative Silex head
-        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.target == 'linux-x64'
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd Silex/Toolchain
-          zig build check
-          zig build test
-
       - name: Build the Part 07 baseline compiler
         if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
         shell: bash
@@ -331,6 +323,45 @@ jobs:
           path: Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json
           if-no-files-found: error
           retention-days: 30
+
+  silex-check:
+    if: inputs.target == 'silex-check'
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out the qualification owner
+        uses: actions/checkout@v6
+        with:
+          path: Silex-Benchmarks
+          fetch-depth: 0
+
+      - name: Install Zig 0.16.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/zig.tar.xz"
+          curl -fL https://ziglang.org/download/0.16.0/zig-aarch64-macos-0.16.0.tar.xz -o "$archive"
+          echo "b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489  $archive" | shasum -a 256 -c -
+          tar -xJf "$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/zig-aarch64-macos-0.16.0" >> "$GITHUB_PATH"
+
+      - name: Materialize the exact sealed candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
+            checkout --workspace .
+          test "$(git -C Silex rev-parse HEAD)" = \
+            "$(python3 -B -c 'import json; print(json.load(open("Silex-Benchmarks/Sources/OptimizerBlindQualification/Candidate.json"))["qualified_candidate_revision"])')"
+
+      - name: Run the cumulative Silex checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd Silex/Toolchain
+          zig build check
+          zig build test
 
   windows-arm64-compiler:
     name: windows-arm64 compiler
