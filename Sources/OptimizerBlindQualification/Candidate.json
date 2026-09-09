@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6",
+  "qualified_candidate_revision": "08520d54e303834c0e4fa1d2a179d890eb04cd7b",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -237,7 +237,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "822355cb214e235d93e0f58d378d4f245d21e869de0ed50eadd5b0d8484fa6f3",
+        "sha256": "42b54898424a4b28ccea899057f8ef161655eb59b2a22b72c0c57c27b112113d",
         "failing_revision": "45d33199f5141d167443ca7c064b0a44ca1693df",
         "corrected_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74"
       }
@@ -247,9 +247,19 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "822355cb214e235d93e0f58d378d4f245d21e869de0ed50eadd5b0d8484fa6f3",
+        "sha256": "42b54898424a4b28ccea899057f8ef161655eb59b2a22b72c0c57c27b112113d",
         "failing_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74",
         "corrected_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6"
+      }
+    },
+    {
+      "reason": "The real Preparation structure profile did not activate the forwarding proof even though the synthetic fixture reached its metadata path. The diagnostic correction makes the optional payload construction explicit, asserts the fixture's pre-optimization slot, and temporarily reports which conservative guard rejects the sealed workload.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
+        "sha256": "42b54898424a4b28ccea899057f8ef161655eb59b2a22b72c0c57c27b112113d",
+        "failing_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6",
+        "corrected_revision": "08520d54e303834c0e4fa1d2a179d890eb04cd7b"
       }
     }
   ]
