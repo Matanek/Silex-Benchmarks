@@ -1,0 +1,19 @@
+2026-09-09 05:01:34.287 tensor-debug[73427:17503495] Metal API Validation Enabled
+        0.64 real         0.04 user         0.03 sys
+            76677120  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                5622  page reclaims
+                   4  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                 553  involuntary context switches
+           448301560  instructions retired
+           219842919  cycles elapsed
+            93193056  peak memory footprint

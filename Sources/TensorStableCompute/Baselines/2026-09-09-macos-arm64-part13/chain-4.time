@@ -1,0 +1,19 @@
+2026-09-09 05:04:04.379 tensor-release[74001:17507768] Metal API Validation Enabled
+       13.90 real        13.77 user         0.08 sys
+            85770240  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               10161  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                1736  involuntary context switches
+        160740497702  instructions retired
+         50840070790  cycles elapsed
+           108217184  peak memory footprint
