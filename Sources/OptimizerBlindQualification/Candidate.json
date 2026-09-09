@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "75c73a15720c08a0e2040eed4dfa07bae67b380e",
+  "qualified_candidate_revision": "c2393fbe6ec27bdf1deb1f1836e8477606bc533c",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -37,7 +37,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/Encoder.zig",
-        "sha256": "3d4de348a89d8e17d4378fd3af477e28b31fcb042a6f0c306d6c8eb6f69035cd",
+        "sha256": "7c807414ce3ab95991b27fd712f01dd2d3ea42d5bfffd5ea98ad65d281db35c0",
         "failing_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75",
         "corrected_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8"
       }
@@ -380,6 +380,16 @@
         "sha256": "c9dc14be0696438f789d90b57c0c384e5e591a1fd81b3626f345f5d7ed019daf",
         "failing_revision": "7590eb5606cfb98a76d5dd3b346c7a46aee86aa6",
         "corrected_revision": "75c73a15720c08a0e2040eed4dfa07bae67b380e"
+      }
+    },
+    {
+      "reason": "The Clang same-layout Preparation reference contains no call to prepare and lowers its conditional assignments without redundant control transfers. Independent inspection of Silex's Machine CFG exposed nine unconditional jumps whose target is exactly the adjacent instruction. ARM64 and X64 now use native fallthrough for this general CFG shape while retaining all non-adjacent and loop jumps.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/X64/Encoder.zig",
+        "sha256": "40577f156dda8a9ae3622c4a98f2c52eb5988ce74032b35b9ee3217879eaaa83",
+        "failing_revision": "75c73a15720c08a0e2040eed4dfa07bae67b380e",
+        "corrected_revision": "c2393fbe6ec27bdf1deb1f1836e8477606bc533c"
       }
     }
   ]
