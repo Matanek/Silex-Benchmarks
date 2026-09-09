@@ -2,6 +2,11 @@ name: Diagnose optimizer integration structure
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - spec-silex-llvm-optimization-parity
+    paths:
+      - .github/workflows/optimizer-integration-structure.yml
 
 permissions:
   contents: read
