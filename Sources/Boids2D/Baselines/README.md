@@ -4,6 +4,51 @@ This directory archives raw output from the three witnesses in
 [`../Boids`](../Boids). The records are performance controls, not correctness
 tests or portable timing claims.
 
+## 2026-09-10 compiler-only A/B at fixed package closure
+
+[`2026-09-10-000541-arm64-boids-main-compiler-fixed-closure.log`](2026-09-10-000541-arm64-boids-main-compiler-fixed-closure.log)
+and
+[`2026-09-10-000909-arm64-boids-spec-compiler-fixed-closure.log`](2026-09-10-000909-arm64-boids-spec-compiler-fixed-closure.log)
+compare Silex compiler commits `d282dcbb` (direct `main`) and `ecec3221`
+(optimization Spec candidate). Both captures use benchmark commit `ed35a02d`
+and the same complete package closure on the same Apple M3 Pro host.
+
+| Compiler | Silex median | C++ architectural median | C++ direct median | Silex / architectural steady mean | Silex / direct steady mean |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| direct `main` `d282dcbb` | 82.447 FPS | 89.972 FPS | 87.768 FPS | 91.874% | 94.268% |
+| Spec `ecec3221` | 85.620 FPS | 88.361 FPS | 86.570 FPS | 96.798% | 98.786% |
+
+The steady means discard the first process and average the six remaining
+same-position ratios. The Spec candidate gains 2.90 FPS, or 3.51%, over direct
+`main` after this first-process exclusion and improves the normalized distance
+to the architectural witness by 4.92 percentage points. The per-round
+Silex/architectural ranges do not overlap (`90.77..92.72%` for direct `main`,
+`95.78..97.80%` for the Spec), so this compiler-only improvement is not inferred
+from the medians alone.
+
+The captures also preserve a progression that their summary medians hide. The
+Spec Silex witness falls from 88.172 FPS on its first process to a stable
+85.095..85.908 FPS plateau over rounds 3 through 7; its rounds 2 through 7
+linear slope is approximately -0.120 FPS per round. The direct-main witness
+falls from 84.524 FPS to a 82.723 FPS rounds-2-through-7 mean, with an
+approximately -0.363 FPS-per-round slope. C++ is more stable and remains ahead
+of Silex by median in both captures.
+
+The Spec result must not be used to erase the user-observed Boids regression.
+Compared with the accepted Part 05 compiler `65471f1`, whose steady paired
+Silex/architectural mean was 98.064%, the Spec candidate reaches 96.798% under
+the later but fixed closure: about 1.27 percentage points remain to recover.
+That difference is a regression lead for the continuation Spec, not a green
+rebaseline.
+
+Finally, the runner metadata says `rotated`, but the current implementation
+runs Silex, C++ architectural, then C++ direct in that fixed order for every
+warm-up and recorded round. These captures remain strong for the compiler-only
+A/B because Silex occupies the same position in both campaigns, but they do
+not prove a sub-percent language-to-C++ parity claim. The continuation campaign
+must implement actual deterministic rotation and a stationarity rule before
+issuing such a verdict.
+
 ## 2026-09-07 Part 05 fixed-workload acceptance
 
 [`2026-09-07-170658-arm64-boids.log`](2026-09-07-170658-arm64-boids.log) is the
