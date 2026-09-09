@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "3f881a62168fdc09664fba7a307de666fa395f80",
+  "qualified_candidate_revision": "5c4f9bfa38b4037ce9e1d2724bd21527e57b4d00",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -140,6 +140,16 @@
         "sha256": "726fd9f40c714a302a171d388dd319943968812b4a4e3b714709d3de6cdb342d",
         "failing_revision": "ab995b6cfd53357f13137fe9292ed13b5a881fda",
         "corrected_revision": "3f881a62168fdc09664fba7a307de666fa395f80"
+      }
+    },
+    {
+      "reason": "The blind integration profile showed that a small branching position helper remained out of line solely because its proven system sqrt boundary was conservatively summarized like an arbitrary native call; the correction carries exact pure-boundary effects in portable IR so the hot cost model admits that helper without forcing the larger velocity helper.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/PureMathReferenceInlining.sx",
+        "sha256": "52568dbc83fd6220005d09836bc707b286e8ea698ca748a7c6fcdbe70308f33c",
+        "failing_revision": "3f881a62168fdc09664fba7a307de666fa395f80",
+        "corrected_revision": "5c4f9bfa38b4037ce9e1d2724bd21527e57b4d00"
       }
     }
   ]
