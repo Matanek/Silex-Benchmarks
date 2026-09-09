@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "2867d86f718ffc34c2c1abb5216c2f402e427ea0",
+  "qualified_candidate_revision": "561f574f61989ce06ac7bd84ceda78faa7764954",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -80,6 +80,16 @@
         "sha256": "c6b1916f4589dde392119e70bf7084a59fbac214bc5009b63abcffd164fe2a79",
         "failing_revision": "ae05924e2d3d62857554f44e32a920c6d7e8da43",
         "corrected_revision": "2867d86f718ffc34c2c1abb5216c2f402e427ea0"
+      }
+    },
+    {
+      "reason": "The exact cumulative test run exposed that the direct ARM64 test runner still injected one pointer per source parameter after the internal ABI began flattening small aggregates; the correction expands those leaves like generated call sites and runs language tests from the isolated workspace root.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/Runner.zig",
+        "sha256": "720536b38952b2b273e5a169b5659b2304fad9bb25d00b8a0bcacd9d417bd7c0",
+        "failing_revision": "2867d86f718ffc34c2c1abb5216c2f402e427ea0",
+        "corrected_revision": "561f574f61989ce06ac7bd84ceda78faa7764954"
       }
     }
   ]

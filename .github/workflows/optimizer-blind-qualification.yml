@@ -355,6 +355,18 @@ jobs:
           test "$(git -C Silex rev-parse HEAD)" = \
             "$(python3 -B -c 'import json; print(json.load(open("Silex-Benchmarks/Sources/OptimizerBlindQualification/Candidate.json"))["qualified_candidate_revision"])')"
 
+      - name: Set up the isolated validation workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          zig build -Doptimize=ReleaseFast -Dcpu=baseline \
+            --prefix "$RUNNER_TEMP/candidate" \
+            --build-file Silex/Toolchain/build.zig
+          "$RUNNER_TEMP/candidate/bin/silex" setup
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
+            link --workspace . --silex "$RUNNER_TEMP/candidate/bin/silex" \
+            --target macos-arm64
+
       - name: Run the cumulative Silex checks
         shell: bash
         run: |
