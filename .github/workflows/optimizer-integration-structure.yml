@@ -2,11 +2,6 @@ name: Diagnose optimizer integration structure
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - spec-silex-llvm-optimization-parity
-    paths:
-      - .github/workflows/optimizer-integration-structure.yml
 
 permissions:
   contents: read
@@ -61,7 +56,7 @@ jobs:
           output="$GITHUB_WORKSPACE/Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/integration-structure"
           mkdir -p "$output"
           cd Silex/Toolchain
-          functions=(integrate_velocity integrate_position integrate main)
+          functions=(integrate_velocity integrate_position integrate)
           for short_name in "${functions[@]}"; do
             function="GFX.Physics.Benchmarks.IntegrationKernel2D.$short_name"
             destination="$output/$short_name"
