@@ -13,6 +13,12 @@ benchmark instrumentation in the package API. It separates:
 - the chain's two input uploads, first execution, hot execution, and final
   scalar download.
 
+`Neural.sx` extends that protocol to complete MLP, CNN and RNN training slices
+over three batch sizes. It measures construction, cold and hot forward and
+backward execution, SGD and Adam updates, scalar loss observation, a fully
+resident training step, and an end-to-end step with explicit ingress and
+egress. CPU and GPU use identical public models, inputs and targets.
+
 Every timed GPU region waits for completion at both boundaries. Command
 statistics are checked after each region, so asynchronous submission time is
 never compared with completed CPU work and a resident row cannot hide an
@@ -33,6 +39,15 @@ Silex/Toolchain/zig-out/bin/silex compile \
 
 The verifier checks CPU/GPU values, five resident compute passes, no
 intermediate download, and one explicit final download.
+
+The neural verifier uses the same rules:
+
+```sh
+Silex/Toolchain/zig-out/bin/silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/Neural.sx \
+  --debug --nocache --output /private/tmp/tensor-neural-debug
+/private/tmp/tensor-neural-debug --verify
+```
 
 ## Run the Release campaign
 
@@ -59,3 +74,17 @@ different configurations.
 Release measurements from macOS ARM64 are evidence for that machine and those
 exact commits only. Integer results characterize construction, extraction and
 bit-exact transfer cost; Tensor 0.1.0 makes no integer GPU compute claim.
+
+Run the neural campaign separately after committing its harness:
+
+```sh
+Silex-Benchmarks/Sources/TensorStableCompute/RunNeuralCampaign.sh \
+  Silex-Benchmarks/Sources/TensorStableCompute/Baselines/2026-09-09-macos-arm64-part12-neural
+```
+
+It starts five independent Release processes for each model family. The raw
+logs retain command counters, `/usr/bin/time -l` retains process RSS, and the
+generated summary reports dispersion and CPU/GPU ratios without generalizing
+beyond the recorded machine, driver and commits. Stable live graph and buffer
+counts are enforced by package-private Tensor tests rather than inferred from
+process RSS.
