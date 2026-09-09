@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8",
+  "qualified_candidate_revision": "153e28496284fd964c78940633dbdeef9d7702a8",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -40,6 +40,16 @@
         "sha256": "ab54a249ca0e8b410f00c88b1a28e7c6d03c6b2c2403142b95cebea8a7f32fe4",
         "failing_revision": "4c94ce549995baf8055b74bb62189ba2acf00c75",
         "corrected_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8"
+      }
+    },
+    {
+      "reason": "The sealed physics contact execution witness retained a by-value aggregate copy whose sole use was a direct call; the correction forwards the unchanged source before register allocation and removes the now-dead copy on ARM64 and X64.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/AggregateCallForwarding.zig",
+        "sha256": "c9dc14be0696438f789d90b57c0c384e5e591a1fd81b3626f345f5d7ed019daf",
+        "failing_revision": "cfdf7e1fdfed5c0412c0484a7038c4ff5132d4e8",
+        "corrected_revision": "153e28496284fd964c78940633dbdeef9d7702a8"
       }
     }
   ]
