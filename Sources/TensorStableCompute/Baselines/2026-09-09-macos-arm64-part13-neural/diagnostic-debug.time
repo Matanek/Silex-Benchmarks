@@ -1,0 +1,19 @@
+2026-09-09 05:05:41.361 tensor-neural-debug[75824:17517548] Metal API Validation Enabled
+        0.56 real         0.04 user         0.05 sys
+            85442560  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                7312  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                1085  involuntary context switches
+           670007523  instructions retired
+           292670105  cycles elapsed
+           100664184  peak memory footprint

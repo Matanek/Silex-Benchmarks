@@ -36,6 +36,7 @@ source root and declares every dependency required by the catalog.
 
 | Benchmark | Purpose |
 | --- | --- |
+| `TensorStableCompute/` | separate Tensor memory/transfers and cold, hot, resident, observed, and end-to-end inference/training for primitive and neural workloads |
 | `CompilationPerformance/` | separate cold compilation, shared-package misses, entry edits, and exact executable hits |
 | `Boids2D/` | compare the public Scene2D/ECS/GPU path with two C++23 reference implementations |
 | `FallingBodies2D/` | jointly load 2D physics, transform transfer, and rendering |

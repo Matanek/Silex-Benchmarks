@@ -1,0 +1,10 @@
+SILEX_TENSOR_VERIFY status=pass operations=5 uploads=1 downloads=1
+SILEX_TENSOR phase=hot family=matmul backend=cpu dtype=float32 size=32 elements=1024 bytes=4096 transfer_mode=none iterations=10 elapsed_ms=85.548 per_iteration_ms=8.5548 uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR phase=cold family=matmul backend=gpu dtype=float32 size=32 elements=1024 bytes=4096 transfer_mode=none iterations=1 elapsed_ms=278.076 per_iteration_ms=278.076 uploads=0 downloads=0 compute_passes=1
+SILEX_TENSOR phase=hot family=matmul backend=gpu dtype=float32 size=32 elements=1024 bytes=4096 transfer_mode=none iterations=10 elapsed_ms=39.755 per_iteration_ms=3.9755 uploads=0 downloads=0 compute_passes=10
+SILEX_TENSOR phase=hot family=matmul backend=cpu dtype=float32 size=128 elements=16384 bytes=65536 transfer_mode=none iterations=3 elapsed_ms=2074.6108 per_iteration_ms=691.5369 uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR phase=cold family=matmul backend=gpu dtype=float32 size=128 elements=16384 bytes=65536 transfer_mode=none iterations=1 elapsed_ms=4.729 per_iteration_ms=4.729 uploads=0 downloads=0 compute_passes=1
+SILEX_TENSOR phase=hot family=matmul backend=gpu dtype=float32 size=128 elements=16384 bytes=65536 transfer_mode=none iterations=3 elapsed_ms=11.779 per_iteration_ms=3.9263334 uploads=0 downloads=0 compute_passes=3
+SILEX_TENSOR phase=hot family=matmul backend=cpu dtype=float32 size=512 elements=262144 bytes=1048576 transfer_mode=none iterations=1 elapsed_ms=47048.63 per_iteration_ms=47048.63 uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR phase=cold family=matmul backend=gpu dtype=float32 size=512 elements=262144 bytes=1048576 transfer_mode=none iterations=1 elapsed_ms=6.763 per_iteration_ms=6.763 uploads=0 downloads=0 compute_passes=1
+SILEX_TENSOR phase=hot family=matmul backend=gpu dtype=float32 size=512 elements=262144 bytes=1048576 transfer_mode=none iterations=1 elapsed_ms=4.39 per_iteration_ms=4.39 uploads=0 downloads=0 compute_passes=1

@@ -1,0 +1,10 @@
+SILEX_TENSOR_VERIFY status=pass operations=5 uploads=1 downloads=1
+SILEX_TENSOR phase=hot family=elementwise backend=cpu dtype=float32 size=1024 elements=1024 bytes=4096 transfer_mode=none iterations=10 elapsed_ms=4.224 per_iteration_ms=0.4224 uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR phase=cold family=elementwise backend=gpu dtype=float32 size=1024 elements=1024 bytes=4096 transfer_mode=none iterations=1 elapsed_ms=8.95 per_iteration_ms=8.95 uploads=0 downloads=0 compute_passes=1
+SILEX_TENSOR phase=hot family=elementwise backend=gpu dtype=float32 size=1024 elements=1024 bytes=4096 transfer_mode=none iterations=10 elapsed_ms=42.099 per_iteration_ms=4.2099 uploads=0 downloads=0 compute_passes=10
+SILEX_TENSOR phase=hot family=elementwise backend=cpu dtype=float32 size=65536 elements=65536 bytes=262144 transfer_mode=none iterations=10 elapsed_ms=335.041 per_iteration_ms=33.504097 uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR phase=cold family=elementwise backend=gpu dtype=float32 size=65536 elements=65536 bytes=262144 transfer_mode=none iterations=1 elapsed_ms=6.137 per_iteration_ms=6.137 uploads=0 downloads=0 compute_passes=1
+SILEX_TENSOR phase=hot family=elementwise backend=gpu dtype=float32 size=65536 elements=65536 bytes=262144 transfer_mode=none iterations=10 elapsed_ms=36.558 per_iteration_ms=3.6557999 uploads=0 downloads=0 compute_passes=10
+SILEX_TENSOR phase=hot family=elementwise backend=cpu dtype=float32 size=1048576 elements=1048576 bytes=4194304 transfer_mode=none iterations=3 elapsed_ms=1582.1869 per_iteration_ms=527.3956 uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR phase=cold family=elementwise backend=gpu dtype=float32 size=1048576 elements=1048576 bytes=4194304 transfer_mode=none iterations=1 elapsed_ms=4.9820004 per_iteration_ms=4.9820004 uploads=0 downloads=0 compute_passes=1
+SILEX_TENSOR phase=hot family=elementwise backend=gpu dtype=float32 size=1048576 elements=1048576 bytes=4194304 transfer_mode=none iterations=3 elapsed_ms=13.194 per_iteration_ms=4.3980002 uploads=0 downloads=0 compute_passes=3

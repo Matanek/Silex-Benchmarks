@@ -1,6 +1,6 @@
 {
   "sources": "Sources",
-  "requires": { "silex": ">=0.44.0" },
+  "requires": { "silex": ">=0.44.1" },
   "dependencies": {
     "AI": "^0.1.0",
     "GFX": "^0.40.0",
@@ -8,7 +8,7 @@
     "GFX.Canvas": "^0.4.0",
     "GFX.ECS": "^0.2.3",
     "GFX.Font": "^0.1.0",
-    "GFX.GPU": "^0.3.0",
+    "GFX.GPU": "^0.4.0",
     "GFX.Physics": "^0.6.0",
     "GFX.Rendering": "^0.4.0",
     "GFX.Scene2D": "^0.3.0",
