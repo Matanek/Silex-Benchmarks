@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "f8af810964533b56f4771bfcf30013e1097d1fea",
+  "qualified_candidate_revision": "89d18ff5b0dc06675814f570652e8ebfb884b031",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -237,7 +237,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "03a718e47b71ad830d9e0768151bf17a5298f03b657b3f0117aa7cca5c092678",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
         "failing_revision": "45d33199f5141d167443ca7c064b0a44ca1693df",
         "corrected_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74"
       }
@@ -247,7 +247,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "03a718e47b71ad830d9e0768151bf17a5298f03b657b3f0117aa7cca5c092678",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
         "failing_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74",
         "corrected_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6"
       }
@@ -257,7 +257,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "03a718e47b71ad830d9e0768151bf17a5298f03b657b3f0117aa7cca5c092678",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
         "failing_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6",
         "corrected_revision": "08520d54e303834c0e4fa1d2a179d890eb04cd7b"
       }
@@ -267,7 +267,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "03a718e47b71ad830d9e0768151bf17a5298f03b657b3f0117aa7cca5c092678",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
         "failing_revision": "08520d54e303834c0e4fa1d2a179d890eb04cd7b",
         "corrected_revision": "1abd0ca379369ac65c65698579fd8f133a99206e"
       }
@@ -287,7 +287,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "03a718e47b71ad830d9e0768151bf17a5298f03b657b3f0117aa7cca5c092678",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
         "failing_revision": "5010b84b80854ae6a7ee73acbaf94f4244a75d4a",
         "corrected_revision": "2806a45170d70fbf0164f72c622689b8f0e50cfa"
       }
@@ -297,7 +297,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "03a718e47b71ad830d9e0768151bf17a5298f03b657b3f0117aa7cca5c092678",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
         "failing_revision": "2806a45170d70fbf0164f72c622689b8f0e50cfa",
         "corrected_revision": "a1ccdbf17b2f2c9b038ac78dc1f222a79f4e12d5"
       }
@@ -307,9 +307,19 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "03a718e47b71ad830d9e0768151bf17a5298f03b657b3f0117aa7cca5c092678",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
         "failing_revision": "a1ccdbf17b2f2c9b038ac78dc1f222a79f4e12d5",
         "corrected_revision": "f8af810964533b56f4771bfcf30013e1097d1fea"
+      }
+    },
+    {
+      "reason": "The fifth exact cumulative check showed that both whole-Span and leaf-wise mutations on a copied CollectionLoad payload left its pre-existing result at span seven, while the newly introduced scalar marker survived. The correction rebuilds the complete typed CollectionLoad payload from its source fields with the call-result span supplied at initialization, avoiding mutation-and-rewrap of an existing union payload.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
+        "sha256": "bb3621874bbaa986e59936c34d8eec99e84a1e1112ab8a1b6609dc7b154d24ee",
+        "failing_revision": "f8af810964533b56f4771bfcf30013e1097d1fea",
+        "corrected_revision": "89d18ff5b0dc06675814f570652e8ebfb884b031"
       }
     }
   ]
