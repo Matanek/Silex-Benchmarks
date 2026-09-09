@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "c57af99d80680c2eab9d405a8e9d1a779f14296a",
+  "qualified_candidate_revision": "7590eb5606cfb98a76d5dd3b346c7a46aee86aa6",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -57,7 +57,7 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateCallForwarding.zig",
-        "sha256": "c9dc14be0696438f789d90b57c0c384e5e591a1fd81b3626f345f5d7ed019daf",
+        "sha256": "91b9fda0e23efb4ad5f2a1e2c0eaabbd821a8f39e15dde8d9f769f7589d1b9fb",
         "failing_revision": "e14923950e56b6c9f737eeffaf7d6f1afc971c67",
         "corrected_revision": "153e28496284fd964c78940633dbdeef9d7702a8"
       }
@@ -360,6 +360,16 @@
         "sha256": "ee1bc785157ce2d5a83169a4acf324ff5c2d8628952e7343cff9a85d5fc71232",
         "failing_revision": "75d6d05d498ceb82af623aae1b92f6eba1013755",
         "corrected_revision": "c57af99d80680c2eab9d405a8e9d1a779f14296a"
+      }
+    },
+    {
+      "reason": "After the neutral return-home experiment was revoked, the exact Preparation profile showed that its final aggregate was assembled from 26 scalar copies even though the immediate-return encoder already consumes the fields directly. One copied field remained stack-resident at slot 208 and anchored the 1680-byte frame. The correction forwards only scalar copies whose sole user is that unbranched immediate aggregate return and whose source is not redefined, so liveness sees the authoritative operands and removes the redundant Machine instructions.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/AggregateCallForwarding.zig",
+        "sha256": "91b9fda0e23efb4ad5f2a1e2c0eaabbd821a8f39e15dde8d9f769f7589d1b9fb",
+        "failing_revision": "c57af99d80680c2eab9d405a8e9d1a779f14296a",
+        "corrected_revision": "7590eb5606cfb98a76d5dd3b346c7a46aee86aa6"
       }
     }
   ]
