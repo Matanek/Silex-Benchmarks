@@ -1,0 +1,607 @@
+use GFX.GPU
+use STD.Process
+use STD.Time.Stopwatch
+use Tensor
+
+func filled<T>(count:int, value:T) T[] {
+    var values:T[] = []
+    var index = 0
+    while index < count {
+        values.append(value)
+        index++
+    }
+    return values
+}
+
+func extracted_count(tensor:Tensor, expected:float) int {
+    let values = tensor.values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:int8) int {
+    let values = tensor.int8_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:uint8) int {
+    let values = tensor.uint8_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:int16) int {
+    let values = tensor.int16_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:uint16) int {
+    let values = tensor.uint16_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:int32) int {
+    let values = tensor.int32_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:uint32) int {
+    let values = tensor.uint32_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:int64) int {
+    let values = tensor.int64_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func extracted_count(tensor:Tensor, expected:uint64) int {
+    let values = tensor.uint64_values()
+    assert(values[0] == expected && values[-1] == expected)
+    return values.count()
+}
+
+func report(
+    phase:str,
+    family:str,
+    backend:str,
+    dtype:str,
+    size:int,
+    elements:int,
+    bytes:int,
+    transfer_mode:str,
+    iterations:int,
+    elapsed:@Stopwatch,
+    uploads:int = 0,
+    downloads:int = 0,
+    compute_passes:int = 0
+) {
+    let milliseconds = elapsed.get_elapsed_milliseconds()
+    print(
+        "SILEX_TENSOR phase=$(phase) family=$(family) backend=$(backend) " +
+        "dtype=$(dtype) size=$(size) elements=$(elements) bytes=$(bytes) " +
+        "transfer_mode=$(transfer_mode) iterations=$(iterations) " +
+        "elapsed_ms=$(milliseconds) per_iteration_ms=$(milliseconds / iterations as float) " +
+        "uploads=$(uploads) downloads=$(downloads) compute_passes=$(compute_passes)"
+    )
+}
+
+func measure_transfers<T>(
+    device:GPU.Device,
+    dtype:str,
+    width:int,
+    count:int,
+    transfer_mode:str,
+    sample:T,
+    iterations:int
+) {
+    let values = filled<T>(count, sample)
+    let cpu = Tensor.vector(values)
+    var resident = cpu.to(device)
+    device.wait_until_idle()
+
+    device.reset_command_stats()
+    var upload = Stopwatch()
+    upload.start()
+    var index = 0
+    while index < iterations {
+        resident = cpu.to(device)
+        device.wait_until_idle()
+        index++
+    }
+    upload.stop()
+    let uploaded = device.command_stats()
+    assert(uploaded.uploads == iterations && uploaded.downloads == 0)
+    report(
+        "upload", "transfer", "gpu", dtype, 0, count, count * width,
+        transfer_mode, iterations, upload,
+        uploads:uploaded.uploads, downloads:uploaded.downloads,
+        compute_passes:uploaded.compute_passes
+    )
+
+    device.reset_command_stats()
+    var download = Stopwatch()
+    download.start()
+    index = 0
+    var copied = cpu
+    while index < iterations {
+        copied = resident.cpu()
+        index++
+    }
+    download.stop()
+    let downloaded = device.command_stats()
+    assert(downloaded.uploads == 0 && downloaded.downloads == iterations)
+    assert(extracted_count(copied, sample) == count)
+    report(
+        "download", "transfer", "gpu", dtype, 0, count, count * width,
+        transfer_mode, iterations, download,
+        uploads:downloaded.uploads, downloads:downloaded.downloads,
+        compute_passes:downloaded.compute_passes
+    )
+}
+
+func measure_dtype<T>(
+    device:GPU.Device,
+    dtype:str,
+    width:int,
+    count:int,
+    sample:T,
+    iterations:int
+) {
+    let values = filled<T>(count, sample)
+    var tensor = Tensor.vector(values)
+    var construction = Stopwatch()
+    construction.start()
+    var index = 0
+    while index < iterations {
+        tensor = Tensor.vector(values)
+        index++
+    }
+    construction.stop()
+    report(
+        "construction", "cpu_memory", "cpu", dtype, 0, count, count * width,
+        "equal_cardinality", iterations, construction
+    )
+
+    var extraction = Stopwatch()
+    extraction.start()
+    index = 0
+    var count_guard = 0
+    while index < iterations {
+        count_guard = extracted_count(tensor, sample)
+        index++
+    }
+    extraction.stop()
+    assert(count_guard == count)
+    report(
+        "extraction", "cpu_memory", "cpu", dtype, 0, count, count * width,
+        "equal_cardinality", iterations, extraction
+    )
+
+    measure_transfers<T>(
+        device, dtype, width, count, "equal_cardinality", sample, iterations
+    )
+}
+
+func measure_dtype_matrix(device:GPU.Device) {
+    let count = 65_536
+    let iterations = 5
+    measure_dtype<float>(device, "float32", 4, count, 1.25, iterations)
+    measure_dtype<int8>(device, "int8", 1, count, 7 as int8, iterations)
+    measure_dtype<uint8>(device, "uint8", 1, count, 7 as uint8, iterations)
+    measure_dtype<int16>(device, "int16", 2, count, 7 as int16, iterations)
+    measure_dtype<uint16>(device, "uint16", 2, count, 7 as uint16, iterations)
+    measure_dtype<int32>(device, "int32", 4, count, 7 as int32, iterations)
+    measure_dtype<uint32>(device, "uint32", 4, count, 7 as uint32, iterations)
+    measure_dtype<int64>(device, "int64", 8, count, 7 as int64, iterations)
+    measure_dtype<uint64>(device, "uint64", 8, count, 7 as uint64, iterations)
+
+    let bytes = 262_144
+    measure_transfers<float>(device, "float32", 4, bytes / 4, "equal_bytes", 1.25, iterations)
+    measure_transfers<int8>(device, "int8", 1, bytes, "equal_bytes", 7 as int8, iterations)
+    measure_transfers<uint8>(device, "uint8", 1, bytes, "equal_bytes", 7 as uint8, iterations)
+    measure_transfers<int16>(device, "int16", 2, bytes / 2, "equal_bytes", 7 as int16, iterations)
+    measure_transfers<uint16>(device, "uint16", 2, bytes / 2, "equal_bytes", 7 as uint16, iterations)
+    measure_transfers<int32>(device, "int32", 4, bytes / 4, "equal_bytes", 7 as int32, iterations)
+    measure_transfers<uint32>(device, "uint32", 4, bytes / 4, "equal_bytes", 7 as uint32, iterations)
+    measure_transfers<int64>(device, "int64", 8, bytes / 8, "equal_bytes", 7 as int64, iterations)
+    measure_transfers<uint64>(device, "uint64", 8, bytes / 8, "equal_bytes", 7 as uint64, iterations)
+}
+
+func operation_iterations(family:str, size:int) int {
+    if family == "matmul" {
+        if size >= 512 { return 1 }
+        if size >= 128 { return 3 }
+        return 10
+    }
+    if size >= 1_048_576 { return 3 }
+    return 10
+}
+
+func measure_cpu_elementwise(count:int) {
+    let iterations = operation_iterations("elementwise", count)
+    let source = Tensor.ones([count])
+    var result = source
+    var elapsed = Stopwatch()
+    elapsed.start()
+    var index = 0
+    while index < iterations {
+        result = source.add(1.0)
+        index++
+    }
+    elapsed.stop()
+    assert(result.values()[0] == 2.0)
+    report(
+        "hot", "elementwise", "cpu", "float32", count, count, count * 4,
+        "none", iterations, elapsed
+    )
+}
+
+func measure_gpu_elementwise(count:int) {
+    let iterations = operation_iterations("elementwise", count)
+    var device = GPU.Device()
+    let source = Tensor.ones([count]).to(device)
+    device.wait_until_idle()
+
+    device.reset_command_stats()
+    var cold = Stopwatch()
+    cold.start()
+    var result = source.add(1.0)
+    device.wait_until_idle()
+    cold.stop()
+    let cold_stats = device.command_stats()
+    assert(cold_stats.compute_passes == 1 && cold_stats.downloads == 0)
+    report(
+        "cold", "elementwise", "gpu", "float32", count, count, count * 4,
+        "none", 1, cold,
+        uploads:cold_stats.uploads, downloads:cold_stats.downloads,
+        compute_passes:cold_stats.compute_passes
+    )
+    assert(result.cpu().values()[0] == 2.0)
+
+    device.reset_command_stats()
+    var hot = Stopwatch()
+    hot.start()
+    var index = 0
+    while index < iterations {
+        result = source.add(1.0)
+        device.wait_until_idle()
+        index++
+    }
+    hot.stop()
+    let hot_stats = device.command_stats()
+    assert(hot_stats.compute_passes == iterations && hot_stats.downloads == 0)
+    report(
+        "hot", "elementwise", "gpu", "float32", count, count, count * 4,
+        "none", iterations, hot,
+        uploads:hot_stats.uploads, downloads:hot_stats.downloads,
+        compute_passes:hot_stats.compute_passes
+    )
+}
+
+func measure_cpu_reduction(count:int) {
+    let iterations = operation_iterations("reduction", count)
+    let source = Tensor.ones([count])
+    var result = Tensor.scalar(0.0)
+    var elapsed = Stopwatch()
+    elapsed.start()
+    var index = 0
+    while index < iterations {
+        result = source.sum()
+        index++
+    }
+    elapsed.stop()
+    assert(result.item() == count as float)
+    report(
+        "hot", "reduction", "cpu", "float32", count, count, count * 4,
+        "none", iterations, elapsed
+    )
+}
+
+func measure_gpu_reduction(count:int) {
+    let iterations = operation_iterations("reduction", count)
+    var device = GPU.Device()
+    let source = Tensor.ones([count]).to(device)
+    device.wait_until_idle()
+
+    device.reset_command_stats()
+    var cold = Stopwatch()
+    cold.start()
+    var result = source.sum()
+    device.wait_until_idle()
+    cold.stop()
+    let cold_stats = device.command_stats()
+    assert(cold_stats.compute_passes == 1 && cold_stats.downloads == 0)
+    report(
+        "cold", "reduction", "gpu", "float32", count, count, count * 4,
+        "none", 1, cold,
+        uploads:cold_stats.uploads, downloads:cold_stats.downloads,
+        compute_passes:cold_stats.compute_passes
+    )
+    assert(result.cpu().item() == count as float)
+
+    device.reset_command_stats()
+    var hot = Stopwatch()
+    hot.start()
+    var index = 0
+    while index < iterations {
+        result = source.sum()
+        device.wait_until_idle()
+        index++
+    }
+    hot.stop()
+    let hot_stats = device.command_stats()
+    assert(hot_stats.compute_passes == iterations && hot_stats.downloads == 0)
+    report(
+        "hot", "reduction", "gpu", "float32", count, count, count * 4,
+        "none", iterations, hot,
+        uploads:hot_stats.uploads, downloads:hot_stats.downloads,
+        compute_passes:hot_stats.compute_passes
+    )
+}
+
+func measure_cpu_matmul(size:int) {
+    let iterations = operation_iterations("matmul", size)
+    let left = Tensor.ones([size, size])
+    let right = Tensor.ones([size, size])
+    var result = Tensor.scalar(0.0)
+    var elapsed = Stopwatch()
+    elapsed.start()
+    var index = 0
+    while index < iterations {
+        result = left.matmul(right)
+        index++
+    }
+    elapsed.stop()
+    assert(result.at([0, 0]) == size as float)
+    report(
+        "hot", "matmul", "cpu", "float32", size, size * size, size * size * 4,
+        "none", iterations, elapsed
+    )
+}
+
+func measure_gpu_matmul(size:int) {
+    let iterations = operation_iterations("matmul", size)
+    var device = GPU.Device()
+    let left = Tensor.ones([size, size]).to(device)
+    let right = Tensor.ones([size, size]).to(device)
+    device.wait_until_idle()
+
+    device.reset_command_stats()
+    var cold = Stopwatch()
+    cold.start()
+    var result = left.matmul(right)
+    device.wait_until_idle()
+    cold.stop()
+    let cold_stats = device.command_stats()
+    assert(cold_stats.compute_passes == 1 && cold_stats.downloads == 0)
+    report(
+        "cold", "matmul", "gpu", "float32", size, size * size, size * size * 4,
+        "none", 1, cold,
+        uploads:cold_stats.uploads, downloads:cold_stats.downloads,
+        compute_passes:cold_stats.compute_passes
+    )
+    assert(result.cpu().at([0, 0]) == size as float)
+
+    device.reset_command_stats()
+    var hot = Stopwatch()
+    hot.start()
+    var index = 0
+    while index < iterations {
+        result = left.matmul(right)
+        device.wait_until_idle()
+        index++
+    }
+    hot.stop()
+    let hot_stats = device.command_stats()
+    assert(hot_stats.compute_passes == iterations && hot_stats.downloads == 0)
+    report(
+        "hot", "matmul", "gpu", "float32", size, size * size, size * size * 4,
+        "none", iterations, hot,
+        uploads:hot_stats.uploads, downloads:hot_stats.downloads,
+        compute_passes:hot_stats.compute_passes
+    )
+}
+
+func resident_chain(left:Tensor, right:Tensor) Tensor {
+    return left.add(1.0).multiply(0.5).matmul(right).sum().add(1.0)
+}
+
+func chain_iterations(size:int) int {
+    if size >= 512 { return 1 }
+    if size >= 128 { return 3 }
+    return 10
+}
+
+func measure_resident_chain(size:int) {
+    let iterations = chain_iterations(size)
+    let cpu_left = Tensor.ones([size, size])
+    let cpu_right = Tensor.ones([size, size])
+    let expected = size as float * size as float * size as float + 1.0
+
+    var cpu_result = Tensor.scalar(0.0)
+    var cpu = Stopwatch()
+    cpu.start()
+    var index = 0
+    while index < iterations {
+        cpu_result = resident_chain(cpu_left, cpu_right)
+        index++
+    }
+    cpu.stop()
+    assert(cpu_result.item() == expected)
+    report(
+        "hot", "resident_chain_5", "cpu", "float32", size,
+        size * size, size * size * 4, "none", iterations, cpu
+    )
+
+    var device = GPU.Device()
+    device.reset_command_stats()
+    var ingress = Stopwatch()
+    ingress.start()
+    let left = cpu_left.to(device)
+    let right = cpu_right.to(device)
+    device.wait_until_idle()
+    ingress.stop()
+    let ingress_stats = device.command_stats()
+    assert(ingress_stats.uploads == 2 && ingress_stats.downloads == 0)
+    report(
+        "upload", "resident_chain_5", "gpu", "float32", size,
+        size * size * 2, size * size * 8, "chain_inputs", 1, ingress,
+        uploads:ingress_stats.uploads, downloads:ingress_stats.downloads,
+        compute_passes:ingress_stats.compute_passes
+    )
+
+    device.reset_command_stats()
+    var first = Stopwatch()
+    first.start()
+    var gpu_result = resident_chain(left, right)
+    device.wait_until_idle()
+    first.stop()
+    let first_stats = device.command_stats()
+    assert(first_stats.compute_passes == 5 && first_stats.downloads == 0)
+    report(
+        "cold", "resident_chain_5", "gpu", "float32", size,
+        size * size, size * size * 4, "none", 1, first,
+        uploads:first_stats.uploads, downloads:first_stats.downloads,
+        compute_passes:first_stats.compute_passes
+    )
+
+    device.reset_command_stats()
+    var hot = Stopwatch()
+    hot.start()
+    index = 0
+    while index < iterations {
+        gpu_result = resident_chain(left, right)
+        device.wait_until_idle()
+        index++
+    }
+    hot.stop()
+    let hot_stats = device.command_stats()
+    assert(hot_stats.compute_passes == iterations * 5 && hot_stats.downloads == 0)
+    report(
+        "hot", "resident_chain_5", "gpu", "float32", size,
+        size * size, size * size * 4, "none", iterations, hot,
+        uploads:hot_stats.uploads, downloads:hot_stats.downloads,
+        compute_passes:hot_stats.compute_passes
+    )
+
+    device.reset_command_stats()
+    var egress = Stopwatch()
+    egress.start()
+    let downloaded = gpu_result.cpu()
+    egress.stop()
+    let egress_stats = device.command_stats()
+    assert(egress_stats.uploads == 0 && egress_stats.downloads == 1)
+    assert(downloaded.item() == expected)
+    report(
+        "download", "resident_chain_5", "gpu", "float32", size,
+        1, 4, "chain_output", 1, egress,
+        uploads:egress_stats.uploads, downloads:egress_stats.downloads,
+        compute_passes:egress_stats.compute_passes
+    )
+}
+
+func verify() {
+    assert(GPU.Device.is_supported())
+    let values:float[] = [1.0, 2.0, 3.0, 4.0]
+    let cpu = Tensor.vector(values)
+    assert(cpu.add(1.0).sum().item() == 14.0)
+    var device = GPU.Device(GPU.DeviceSettings(debug:true))
+    device.reset_command_stats()
+    let resident = cpu.to(device)
+    let result = resident.add(1.0).multiply(2.0).sum().add(1.0).abs()
+    let before = device.command_stats()
+    assert(before.uploads == 1 && before.downloads == 0 && before.compute_passes == 5)
+    assert(result.cpu().item() == 29.0)
+    let after = device.command_stats()
+    assert(after.downloads == 1)
+    print("SILEX_TENSOR_VERIFY status=pass operations=5 uploads=1 downloads=1")
+}
+
+func measure_elementwise_grid() {
+    for count in [1_024, 65_536, 1_048_576] {
+        measure_cpu_elementwise(count)
+        measure_gpu_elementwise(count)
+    }
+}
+
+func measure_reduction_grid() {
+    for count in [1_024, 65_536, 1_048_576] {
+        measure_cpu_reduction(count)
+        measure_gpu_reduction(count)
+    }
+}
+
+func measure_matmul_grid() {
+    for size in [32, 128, 512] {
+        measure_cpu_matmul(size)
+        measure_gpu_matmul(size)
+    }
+}
+
+func measure_chain_grid() {
+    for size in [32, 128, 512] {
+        measure_resident_chain(size)
+    }
+}
+
+func run_measurements() {
+    verify()
+    var transfer_device = GPU.Device()
+    measure_dtype_matrix(transfer_device)
+    measure_elementwise_grid()
+    measure_reduction_grid()
+    measure_matmul_grid()
+    measure_chain_grid()
+}
+
+func main() {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            for argument in arguments {
+                if argument == "--verify" {
+                    verify()
+                    return
+                }
+                if argument == "--measure" {
+                    run_measurements()
+                    return
+                }
+                if argument == "--measure-types" {
+                    verify()
+                    var device = GPU.Device()
+                    measure_dtype_matrix(device)
+                    return
+                }
+                if argument == "--measure-elementwise" {
+                    verify()
+                    measure_elementwise_grid()
+                    return
+                }
+                if argument == "--measure-reduction" {
+                    verify()
+                    measure_reduction_grid()
+                    return
+                }
+                if argument == "--measure-matmul" {
+                    verify()
+                    measure_matmul_grid()
+                    return
+                }
+                if argument == "--measure-chain" {
+                    verify()
+                    measure_chain_grid()
+                    return
+                }
+            }
+        }
+    }
+    panic("expected --verify, --measure or a --measure-* campaign group")
+}

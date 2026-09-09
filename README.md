@@ -36,6 +36,7 @@ source root and declares every dependency required by the catalog.
 
 | Benchmark | Purpose |
 | --- | --- |
+| `TensorStableCompute/` | separate Tensor memory/transfers and cold, hot, resident, observed, and end-to-end inference/training for primitive and neural workloads |
 | `CompilationPerformance/` | separate cold compilation, shared-package misses, entry edits, and exact executable hits |
 | `Boids2D/` | compare the public Scene2D/ECS/GPU path with two C++23 reference implementations |
 | `FallingBodies2D/` | jointly load 2D physics, transform transfer, and rendering |
@@ -55,6 +56,8 @@ source root and declares every dependency required by the catalog.
 | `WebViewBridgeRoundTrips/` | exercise 1,000 round trips through a WebView |
 | `RegexStreamingSearch.sx` | stream-search through one million Unicode scalars |
 | `NetworkFreshnessTracking.sx` | measure network freshness comparisons and trackers |
+| `BehaviourTreeScheduling/` | compare root reevaluation, per-frame resumption, event scheduling, and a handwritten state machine |
+| `NodeScheduling/` | compare static and moving object Nodes with direct ECS scheduling |
 
 ## Running benchmarks
 
@@ -72,6 +75,7 @@ silex compile Silex-Benchmarks/Sources/DynamicCanvasShadows2D.sx --release -o /t
 /tmp/dynamic-canvas-shadows2d --analytic
 Silex-Benchmarks/Sources/FilteredCanvasSurfaces/RunCampaign.sh
 Silex-Benchmarks/Sources/CanvasEffects2D/RunCampaign.sh
+Silex-Benchmarks/Sources/BehaviourTreeScheduling/RunCampaign.sh
 silex compile Silex-Benchmarks/Sources/FallingBodies2D/Main.sx --release -o /tmp/falling-bodies-2d
 /tmp/falling-bodies-2d --smoke --immediate --no-panel
 silex compile Silex-Benchmarks/Sources/WorldRendering3D/Main.sx --release -o /tmp/world-rendering-3d

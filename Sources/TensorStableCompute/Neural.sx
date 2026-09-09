@@ -1,0 +1,356 @@
+use GFX.GPU
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+use Tensor
+use Tensor.Neural
+use Tensor.Optim
+
+func neural_report(
+    phase:str, family:str, backend:str, batch:int, iterations:int,
+    elapsed:@Stopwatch, observation:str,
+    uploads:int = 0, downloads:int = 0, compute_passes:int = 0
+) {
+    let milliseconds = elapsed.get_elapsed_milliseconds()
+    print(
+        "SILEX_TENSOR_NEURAL phase=$(phase) family=$(family) backend=$(backend) " +
+        "batch=$(batch) iterations=$(iterations) elapsed_ms=$(milliseconds) " +
+        "per_iteration_ms=$(milliseconds / iterations as float) " +
+        "observation=$(observation) uploads=$(uploads) downloads=$(downloads) " +
+        "compute_passes=$(compute_passes)"
+    )
+}
+
+func neural_values(count:int, value:float) float[] {
+    var values:float[] = []
+    var index = 0
+    while index < count { values.append(value); index++ }
+    return values
+}
+
+func neural_targets(batch:int) Tensor {
+    var values:int32[] = []
+    var index = 0
+    while index < batch { values.append((index % 8) as int32); index++ }
+    return Tensor.vector(values)
+}
+
+func neural_mlp(seed:int) Neural.Sequential {
+    var layers:Neural.Layer[] = [
+        Neural.Dense("hidden", 32, 64, seed),
+        Neural.Activation.tanh(),
+        Neural.Dense("classifier", 64, 8, seed + 1)
+    ]
+    return Neural.Sequential(layers)
+}
+
+func neural_cnn(seed:int) Neural.Sequential {
+    var layers:Neural.Layer[] = [
+        Neural.Conv2D("features", 1, 4, 3, seed),
+        Neural.Activation.relu(),
+        Neural.MaxPool2D(2, stride:2),
+        Neural.Flatten(),
+        Neural.Dense("classifier", 36, 8, seed + 1)
+    ]
+    return Neural.Sequential(layers)
+}
+
+func neural_rnn(seed:int) Neural.Sequential {
+    var layers:Neural.Layer[] = [
+        Neural.SimpleRNN("memory", 8, 16, seed),
+        Neural.Dense("classifier", 16, 8, seed + 1)
+    ]
+    return Neural.Sequential(layers)
+}
+
+func neural_input(family:str, batch:int) Tensor {
+    if family == "mlp" {
+        var shape:int[] = [batch, 32]
+        return Tensor(neural_values(batch * 32, 0.25), shape)
+    }
+    if family == "cnn" {
+        var shape:int[] = [batch, 1, 8, 8]
+        return Tensor(neural_values(batch * 64, 0.25), shape)
+    }
+    var shape:int[] = [batch, 8, 8]
+    return Tensor(neural_values(batch * 64, 0.25), shape)
+}
+
+func neural_model(family:str, seed:int) Neural.Sequential {
+    if family == "mlp" { return neural_mlp(seed) }
+    if family == "cnn" { return neural_cnn(seed) }
+    return neural_rnn(seed)
+}
+
+func neural_iterations(family:str, batch:int) int {
+    if family == "cnn" && batch >= 16 { return 2 }
+    if family == "rnn" && batch >= 64 { return 2 }
+    return 3
+}
+
+func measure_construction(family:str, batch:int) {
+    let iterations = 5
+    var model = neural_model(family, 100)
+    var elapsed = Stopwatch()
+    elapsed.start()
+    var index = 0
+    while index < iterations { model = neural_model(family, 100 + index); index++ }
+    elapsed.stop()
+    assert(model.parameters().count() >= 4)
+    neural_report("construction", family, "cpu", batch, iterations, elapsed, "none")
+}
+
+func measure_cpu(family:str, batch:int) {
+    let iterations = neural_iterations(family, batch)
+    let input = neural_input(family, batch)
+    let target = neural_targets(batch)
+    var forward_model = neural_model(family, 201)
+    var sgd_model = neural_model(family, 201)
+    var adam_model = neural_model(family, 201)
+
+    var cold_forward = Stopwatch()
+    cold_forward.start()
+    var output = forward_model.forward(input).detach()
+    cold_forward.stop()
+    assert(output.shape()[0] == batch)
+    neural_report("forward_cold", family, "cpu", batch, 1, cold_forward, "none")
+
+    var hot_forward = Stopwatch()
+    hot_forward.start()
+    var index = 0
+    while index < iterations { output = forward_model.forward(input).detach(); index++ }
+    hot_forward.stop()
+    neural_report("forward_hot", family, "cpu", batch, iterations, hot_forward, "none")
+
+    var sgd_parameters = sgd_model.parameters()
+    var sgd = Optim.SGD(sgd_parameters, 0.001, momentum:0.9)
+    sgd.zero_grad()
+    let first_loss = sgd_model.forward(input).cross_entropy(target, 1)
+    var cold_backward = Stopwatch()
+    cold_backward.start()
+    first_loss.backward()
+    cold_backward.stop()
+    neural_report("backward_cold", family, "cpu", batch, 1, cold_backward, "none")
+
+    var hot_backward = Stopwatch()
+    index = 0
+    while index < iterations {
+        sgd.zero_grad()
+        let loss = sgd_model.forward(input).cross_entropy(target, 1)
+        hot_backward.start(); loss.backward(); hot_backward.stop()
+        index++
+    }
+    neural_report("backward_hot", family, "cpu", batch, iterations, hot_backward, "none")
+
+    var sgd_elapsed = Stopwatch()
+    index = 0
+    while index < iterations {
+        sgd.zero_grad()
+        sgd_model.forward(input).cross_entropy(target, 1).backward()
+        sgd_elapsed.start(); sgd.step(); sgd_elapsed.stop()
+        index++
+    }
+    neural_report("step_sgd", family, "cpu", batch, iterations, sgd_elapsed, "none")
+
+    var adam_parameters = adam_model.parameters()
+    var adam = Optim.Adam(adam_parameters, learning_rate:0.001)
+    var adam_elapsed = Stopwatch()
+    index = 0
+    while index < iterations {
+        adam.zero_grad()
+        adam_model.forward(input).cross_entropy(target, 1).backward()
+        adam_elapsed.start(); adam.step(); adam_elapsed.stop()
+        index++
+    }
+    neural_report("step_adam", family, "cpu", batch, iterations, adam_elapsed, "none")
+
+    var observation_loss = adam_model.forward(input).detach().cross_entropy(target, 1)
+    var observation = Stopwatch(); observation.start()
+    let observed = observation_loss.item()
+    observation.stop(); assert(observed >= 0.0)
+    neural_report("loss_read", family, "cpu", batch, 1, observation, "every_step")
+
+    var full = Stopwatch(); full.start()
+    index = 0
+    while index < iterations {
+        adam.zero_grad()
+        adam_model.forward(input).cross_entropy(target, 1).backward()
+        adam.step()
+        index++
+    }
+    full.stop()
+    neural_report("step_resident", family, "cpu", batch, iterations, full, "spaced")
+}
+
+func gpu_report(
+    phase:str, family:str, batch:int, iterations:int,
+    elapsed:@Stopwatch, observation:str, device:GPU.Device
+) {
+    let stats = device.command_stats()
+    neural_report(
+        phase, family, "gpu", batch, iterations, elapsed, observation,
+        uploads:stats.uploads, downloads:stats.downloads,
+        compute_passes:stats.compute_passes
+    )
+}
+
+func measure_gpu(family:str, batch:int) {
+    let iterations = neural_iterations(family, batch)
+    var device = GPU.Device()
+    let input = neural_input(family, batch).to(device)
+    let target = neural_targets(batch).to(device)
+    var forward_model = neural_model(family, 201); forward_model.to(device)
+    var sgd_model = neural_model(family, 201); sgd_model.to(device)
+    var adam_model = neural_model(family, 201); adam_model.to(device)
+    device.wait_until_idle()
+
+    device.reset_command_stats()
+    var cold_forward = Stopwatch(); cold_forward.start()
+    var output = forward_model.forward(input).detach()
+    device.wait_until_idle(); cold_forward.stop()
+    assert(device.command_stats().downloads == 0)
+    gpu_report("forward_cold", family, batch, 1, cold_forward, "none", device)
+
+    device.reset_command_stats()
+    var hot_forward = Stopwatch(); hot_forward.start()
+    var index = 0
+    while index < iterations { output = forward_model.forward(input).detach(); index++ }
+    device.wait_until_idle(); hot_forward.stop()
+    assert(device.command_stats().downloads == 0)
+    gpu_report("forward_hot", family, batch, iterations, hot_forward, "none", device)
+
+    var sgd_parameters = sgd_model.parameters()
+    var sgd = Optim.SGD(sgd_parameters, 0.001, momentum:0.9)
+    sgd.zero_grad()
+    let first_loss = sgd_model.forward(input).cross_entropy(target, 1)
+    device.wait_until_idle(); device.reset_command_stats()
+    var cold_backward = Stopwatch(); cold_backward.start()
+    first_loss.backward()
+    device.wait_until_idle(); cold_backward.stop()
+    assert(device.command_stats().downloads == 0)
+    gpu_report("backward_cold", family, batch, 1, cold_backward, "none", device)
+
+    var backward_elapsed = Stopwatch()
+    var backward_passes = 0
+    index = 0
+    while index < iterations {
+        sgd.zero_grad()
+        let loss = sgd_model.forward(input).cross_entropy(target, 1)
+        device.wait_until_idle(); device.reset_command_stats()
+        backward_elapsed.start(); loss.backward(); device.wait_until_idle(); backward_elapsed.stop()
+        let stats = device.command_stats(); assert(stats.uploads == 0 && stats.downloads == 0)
+        backward_passes += stats.compute_passes
+        index++
+    }
+    neural_report("backward_hot", family, "gpu", batch, iterations, backward_elapsed, "none", compute_passes:backward_passes)
+
+    var sgd_elapsed = Stopwatch()
+    var step_passes = 0
+    index = 0
+    while index < iterations {
+        sgd.zero_grad(); sgd_model.forward(input).cross_entropy(target, 1).backward()
+        device.wait_until_idle(); device.reset_command_stats()
+        sgd_elapsed.start(); sgd.step(); device.wait_until_idle(); sgd_elapsed.stop()
+        let stats = device.command_stats(); assert(stats.uploads == 0 && stats.downloads == 0)
+        step_passes += stats.compute_passes
+        index++
+    }
+    neural_report("step_sgd", family, "gpu", batch, iterations, sgd_elapsed, "none", compute_passes:step_passes)
+
+    var adam_parameters = adam_model.parameters()
+    var adam = Optim.Adam(adam_parameters, learning_rate:0.001)
+    var adam_elapsed = Stopwatch(); step_passes = 0; index = 0
+    while index < iterations {
+        adam.zero_grad(); adam_model.forward(input).cross_entropy(target, 1).backward()
+        device.wait_until_idle(); device.reset_command_stats()
+        adam_elapsed.start(); adam.step(); device.wait_until_idle(); adam_elapsed.stop()
+        let stats = device.command_stats(); assert(stats.uploads == 0 && stats.downloads == 0)
+        step_passes += stats.compute_passes
+        index++
+    }
+    neural_report("step_adam", family, "gpu", batch, iterations, adam_elapsed, "none", compute_passes:step_passes)
+
+    var observation_loss = adam_model.forward(input).detach().cross_entropy(target, 1)
+    device.wait_until_idle(); device.reset_command_stats()
+    var observation = Stopwatch(); observation.start()
+    let observed = observation_loss.cpu().item()
+    observation.stop(); assert(observed >= 0.0)
+    let observed_stats = device.command_stats(); assert(observed_stats.downloads == 1)
+    gpu_report("loss_read", family, batch, 1, observation, "every_step", device)
+
+    device.reset_command_stats()
+    var full = Stopwatch(); full.start(); index = 0
+    while index < iterations {
+        adam.zero_grad(); adam_model.forward(input).cross_entropy(target, 1).backward(); adam.step(); index++
+    }
+    device.wait_until_idle(); full.stop()
+    let full_stats = device.command_stats(); assert(full_stats.uploads == 0 && full_stats.downloads == 0)
+    gpu_report("step_resident", family, batch, iterations, full, "spaced", device)
+}
+
+func measure_end_to_end(family:str, batch:int) {
+    var device = GPU.Device()
+    let cpu_input = neural_input(family, batch)
+    let cpu_target = neural_targets(batch)
+    var model = neural_model(family, 401)
+    var parameters = model.parameters()
+    var optimizer = Optim.SGD(parameters, 0.001)
+    device.reset_command_stats()
+    var elapsed = Stopwatch(); elapsed.start()
+    let input = cpu_input.to(device)
+    let target = cpu_target.to(device)
+    model.to(device)
+    optimizer.zero_grad()
+    let loss = model.forward(input).cross_entropy(target, 1)
+    loss.backward(); optimizer.step(); device.wait_until_idle()
+    let observed = loss.detach().cpu().item()
+    optimizer.zero_grad(); model.cpu()
+    elapsed.stop(); assert(observed >= 0.0)
+    gpu_report("step_end_to_end", family, batch, 1, elapsed, "every_step", device)
+}
+
+func verify_neural() {
+    assert(GPU.Device.is_supported())
+    var shape:int[] = [4, 32]
+    let input = Tensor(neural_values(128, 0.25), shape)
+    let target = neural_targets(4)
+    var cpu = neural_mlp(701)
+    let cpu_loss = cpu.forward(input).detach().cross_entropy(target, 1).item()
+    var device = GPU.Device(GPU.DeviceSettings(debug:true))
+    var gpu = neural_mlp(701); gpu.to(device)
+    let gpu_input = input.to(device); let gpu_target = target.to(device)
+    device.wait_until_idle(); device.reset_command_stats()
+    let loss = gpu.forward(gpu_input).cross_entropy(gpu_target, 1)
+    loss.backward(); device.wait_until_idle()
+    let before = device.command_stats()
+    assert(before.uploads == 0 && before.downloads == 0 && before.compute_passes > 0)
+    let gpu_loss = loss.detach().cpu().item()
+    assert(Math.abs(cpu_loss - gpu_loss) < 0.001)
+    print("SILEX_TENSOR_NEURAL_VERIFY status=pass uploads=0 hidden_downloads=0")
+}
+
+func measure_family(family:str) {
+    var batches:int[] = [4, 16, 64]
+    if family == "cnn" { batches = [1, 4, 16] }
+    for batch in batches {
+        measure_construction(family, batch)
+        measure_cpu(family, batch)
+        measure_gpu(family, batch)
+        measure_end_to_end(family, batch)
+    }
+}
+
+func main() {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            for argument in arguments {
+                if argument == "--verify" { verify_neural(); return }
+                if argument == "--measure-mlp" { verify_neural(); measure_family("mlp"); return }
+                if argument == "--measure-cnn" { verify_neural(); measure_family("cnn"); return }
+                if argument == "--measure-rnn" { verify_neural(); measure_family("rnn"); return }
+            }
+        }
+    }
+    panic("expected --verify or one --measure-* neural family")
+}
