@@ -258,7 +258,7 @@ jobs:
             gfx_physics_preparation_kernel_reference
 
       - name: Build the pinned SDL3 SDK for the Boids oracle
-        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.target == 'macos-arm64'
         shell: bash
         run: |
           set -euo pipefail
@@ -273,7 +273,7 @@ jobs:
           cmake --build "$RUNNER_TEMP/sdl3-sdk-build" --config Release
           cmake --install "$RUNNER_TEMP/sdl3-sdk-build" --config Release
 
-      - name: Validate the package-owned Physics and Boids oracles
+      - name: Validate the package-owned Physics oracles
         if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance
         shell: bash
         run: |
@@ -294,6 +294,12 @@ jobs:
               --box2d-check "$RUNNER_TEMP/physics-oracles/gfx_physics_${stage}_kernel_reference" \
               --check-only
           done
+
+      - name: Validate the package-owned Boids oracle
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.target == 'macos-arm64'
+        shell: bash
+        run: |
+          set -euo pipefail
           CMAKE_PREFIX_PATH="$RUNNER_TEMP/sdl3-sdk" \
             PATH="$HOME/.silex/toolchain/shadercross/3.0.0/${{ matrix.target }}/bin:$PATH" \
             Silex-Benchmarks/Sources/Boids2D/RunComparison.sh \
