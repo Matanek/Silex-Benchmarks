@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "e931fc130db455dba426b0d9c6e4dc7568213fdf",
+  "qualified_candidate_revision": "5e6f7779778b308db7733a0e9acc5119d5d23a73",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -160,6 +160,16 @@
         "sha256": "266a82bc8fd565440b5f0c4c186bec73b8a9fee634aeafbd0004b8b7ffb486b1",
         "failing_revision": "5c4f9bfa38b4037ce9e1d2724bd21527e57b4d00",
         "corrected_revision": "e931fc130db455dba426b0d9c6e4dc7568213fdf"
+      }
+    },
+    {
+      "reason": "The exact cumulative build rejected the compact nested optional-value condition used while marking materialized SSA results; the correction uses an explicit block so the assignment has an unambiguous statement context.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Optimize/CallSummary.zig",
+        "sha256": "e603f8ada5a315f7bfbe563555b95d2d03d2eabf7ac834d5408f0cabcc5898a3",
+        "failing_revision": "e931fc130db455dba426b0d9c6e4dc7568213fdf",
+        "corrected_revision": "5e6f7779778b308db7733a0e9acc5119d5d23a73"
       }
     }
   ]
