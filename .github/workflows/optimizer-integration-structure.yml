@@ -1,7 +1,10 @@
-name: Diagnose optimizer integration structure
+name: Diagnose optimizer hot structures
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - spec-silex-llvm-optimization-parity
 
 permissions:
   contents: read
@@ -72,11 +75,36 @@ jobs:
             cp .zig-cache/optimizer-oracle/hot-budget-machine.json "$destination/"
           done
 
+      - name: Profile the preparation call chain structurally
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_path="../../Packages/GFX.Physics/Benchmarks/PreparationKernel2D.sx"
+          output="$GITHUB_WORKSPACE/Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/preparation-structure"
+          mkdir -p "$output"
+          cd Silex/Toolchain
+          functions=(prepare main)
+          for short_name in "${functions[@]}"; do
+            function="GFX.Physics.Benchmarks.PreparationKernel2D.$short_name"
+            destination="$output/$short_name"
+            mkdir -p "$destination"
+            set +e
+            zig build -Doptimize=ReleaseFast optimizer-oracle -- \
+              hot-budget "$source_path" "$function" > "$destination/output.log" 2>&1
+            status=$?
+            set -e
+            if [ "$status" -ne 0 ]; then
+              grep -q HotFunctionNotRegistered "$destination/output.log"
+            fi
+            cp .zig-cache/optimizer-oracle/hot-budget.sir "$destination/"
+            cp .zig-cache/optimizer-oracle/hot-budget-machine.json "$destination/"
+          done
+
       - name: Upload the structural profiles
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: optimizer-integration-structure-macos-arm64
-          path: Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/integration-structure
+          name: optimizer-hot-structures-macos-arm64
+          path: Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics
           if-no-files-found: error
           retention-days: 30
