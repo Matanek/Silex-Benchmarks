@@ -1,0 +1,15 @@
+date=2026-09-09T13:18:24Z
+os=macOS 26.6.2 25G83
+architecture=arm64
+target=macos-arm64
+cpu=Apple M3 Pro
+silex=silex 0.44.1
+silex_commit=bd97c513b64d7555c46f0d4468e26cc9c988fb3e
+silex_artifact_sha256=c47eff86eeb2b91f08fd5df07728b7ee8b7bdece0ffd58a78a68bf78ebacd9ec
+ai_commit=eb3ebeb49ab2e6a01a0ba0293bd1af84f02e00a4
+benchmark_commit=26815ecbf1d65cb8b3d754f15da3f477b391184e
+mode=release
+processes_per_case=7
+tree_nodes=11
+tree_depth=5
+root_width=2
