@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74",
+  "qualified_candidate_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -237,9 +237,19 @@
       "regression": {
         "repository": "Silex",
         "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
-        "sha256": "49647604de10a90dbfd7f05195c25ac6002793d0f4ea64d11baf24b94be5fdb6",
+        "sha256": "822355cb214e235d93e0f58d378d4f245d21e869de0ed50eadd5b0d8484fa6f3",
         "failing_revision": "45d33199f5141d167443ca7c064b0a44ca1693df",
         "corrected_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74"
+      }
+    },
+    {
+      "reason": "The first cumulative check compiled the forwarding implementation and passed the full language corpus, but its new unit fixture returned slices backed by local arrays and therefore observed a corrupted Machine slot. The correction allocates every nested fixture slice in the test arena without changing generated-code behavior.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Sources/Arm64/AggregateResultStores.zig",
+        "sha256": "822355cb214e235d93e0f58d378d4f245d21e869de0ed50eadd5b0d8484fa6f3",
+        "failing_revision": "61bb05b1bd9dee48a6de254279265ac9292e0d74",
+        "corrected_revision": "4ede2357d7e0eb6f54e2b6eba6853bc9db4e01c6"
       }
     }
   ]
