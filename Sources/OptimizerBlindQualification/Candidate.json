@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "5e6f7779778b308db7733a0e9acc5119d5d23a73",
+  "qualified_candidate_revision": "63992d047e146c911d90d6fbade479a0e6d1bef1",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -170,6 +170,16 @@
         "sha256": "e603f8ada5a315f7bfbe563555b95d2d03d2eabf7ac834d5408f0cabcc5898a3",
         "failing_revision": "e931fc130db455dba426b0d9c6e4dc7568213fdf",
         "corrected_revision": "5e6f7779778b308db7733a0e9acc5119d5d23a73"
+      }
+    },
+    {
+      "reason": "The exact integration structure profile showed that a second bounded traversal kept its redundant collection check because a reused induction local had stores from the preceding loop; the correction proves zero origin from the nearest store on every external entry path while rejecting non-unit stores inside the current loop.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/SequentialBoundedLoops.sx",
+        "sha256": "a166787cf8dabff98638f3aae1dddf87ac871e3c5cfbe772927df752f643a549",
+        "failing_revision": "5e6f7779778b308db7733a0e9acc5119d5d23a73",
+        "corrected_revision": "63992d047e146c911d90d6fbade479a0e6d1bef1"
       }
     }
   ]
