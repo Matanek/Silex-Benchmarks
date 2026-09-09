@@ -1,0 +1,82 @@
+name: Diagnose optimizer integration structure
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: optimizer-integration-structure-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out the qualification owner
+        uses: actions/checkout@v6
+        with:
+          path: Silex-Benchmarks
+          fetch-depth: 0
+
+      - name: Install Zig 0.16.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/zig.tar.xz"
+          curl -fL https://ziglang.org/download/0.16.0/zig-aarch64-macos-0.16.0.tar.xz -o "$archive"
+          echo "b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489  $archive" | shasum -a 256 -c -
+          tar -xJf "$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/zig-aarch64-macos-0.16.0" >> "$GITHUB_PATH"
+
+      - name: Materialize and link the exact candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
+            checkout --workspace .
+          expected=$(python3 -B -c 'import json; print(json.load(open("Silex-Benchmarks/Sources/OptimizerBlindQualification/Candidate.json"))["qualified_candidate_revision"])')
+          test "$(git -C Silex rev-parse HEAD)" = "$expected"
+          zig build -Doptimize=ReleaseFast -Dcpu=baseline \
+            --prefix "$RUNNER_TEMP/candidate" \
+            --build-file Silex/Toolchain/build.zig
+          silex="$RUNNER_TEMP/candidate/bin/silex"
+          "$silex" setup
+          python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
+            link --workspace . --silex "$silex" --target macos-arm64
+
+      - name: Profile the integration call chain structurally
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_path="../../Packages/GFX.Physics/Benchmarks/IntegrationKernel2D.sx"
+          output="$GITHUB_WORKSPACE/Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/integration-structure"
+          mkdir -p "$output"
+          cd Silex/Toolchain
+          functions=(integrate_velocity integrate_position integrate main)
+          for short_name in "${functions[@]}"; do
+            function="GFX.Physics.Benchmarks.IntegrationKernel2D.$short_name"
+            destination="$output/$short_name"
+            mkdir -p "$destination"
+            set +e
+            zig build -Doptimize=ReleaseFast optimizer-oracle -- \
+              hot-budget "$source_path" "$function" > "$destination/output.log" 2>&1
+            status=$?
+            set -e
+            test "$status" -ne 0
+            grep -q HotFunctionNotRegistered "$destination/output.log"
+            cp .zig-cache/optimizer-oracle/hot-budget.sir "$destination/"
+            cp .zig-cache/optimizer-oracle/hot-budget-machine.json "$destination/"
+          done
+
+      - name: Upload the structural profiles
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: optimizer-integration-structure-macos-arm64
+          path: Silex-Benchmarks/Results/OptimizerBlindQualification/diagnostics/integration-structure
+          if-no-files-found: error
+          retention-days: 30
