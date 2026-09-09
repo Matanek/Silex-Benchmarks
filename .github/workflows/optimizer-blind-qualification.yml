@@ -372,8 +372,8 @@ jobs:
         run: |
           set -euo pipefail
           cd Silex/Toolchain
-          zig build check
           zig build test
+          zig build check
 
   windows-arm64-compiler:
     name: windows-arm64 compiler
