@@ -3,7 +3,7 @@ use STD.Math
 use STD.Process
 use STD.Time.Stopwatch
 use Tensor
-use Tensor.NN
+use Tensor.Neural
 use Tensor.Optim
 
 func neural_report(
@@ -35,32 +35,32 @@ func neural_targets(batch:int) Tensor {
     return Tensor.vector(values)
 }
 
-func neural_mlp(seed:int) NN.Sequential {
-    var layers:NN.Layer[] = [
-        NN.Dense("hidden", 32, 64, seed),
-        NN.Activation.tanh(),
-        NN.Dense("classifier", 64, 8, seed + 1)
+func neural_mlp(seed:int) Neural.Sequential {
+    var layers:Neural.Layer[] = [
+        Neural.Dense("hidden", 32, 64, seed),
+        Neural.Activation.tanh(),
+        Neural.Dense("classifier", 64, 8, seed + 1)
     ]
-    return NN.Sequential(layers)
+    return Neural.Sequential(layers)
 }
 
-func neural_cnn(seed:int) NN.Sequential {
-    var layers:NN.Layer[] = [
-        NN.Conv2D("features", 1, 4, 3, seed),
-        NN.Activation.relu(),
-        NN.MaxPool2D(2, stride:2),
-        NN.Flatten(),
-        NN.Dense("classifier", 36, 8, seed + 1)
+func neural_cnn(seed:int) Neural.Sequential {
+    var layers:Neural.Layer[] = [
+        Neural.Conv2D("features", 1, 4, 3, seed),
+        Neural.Activation.relu(),
+        Neural.MaxPool2D(2, stride:2),
+        Neural.Flatten(),
+        Neural.Dense("classifier", 36, 8, seed + 1)
     ]
-    return NN.Sequential(layers)
+    return Neural.Sequential(layers)
 }
 
-func neural_rnn(seed:int) NN.Sequential {
-    var layers:NN.Layer[] = [
-        NN.SimpleRNN("memory", 8, 16, seed),
-        NN.Dense("classifier", 16, 8, seed + 1)
+func neural_rnn(seed:int) Neural.Sequential {
+    var layers:Neural.Layer[] = [
+        Neural.SimpleRNN("memory", 8, 16, seed),
+        Neural.Dense("classifier", 16, 8, seed + 1)
     ]
-    return NN.Sequential(layers)
+    return Neural.Sequential(layers)
 }
 
 func neural_input(family:str, batch:int) Tensor {
@@ -76,7 +76,7 @@ func neural_input(family:str, batch:int) Tensor {
     return Tensor(neural_values(batch * 64, 0.25), shape)
 }
 
-func neural_model(family:str, seed:int) NN.Sequential {
+func neural_model(family:str, seed:int) Neural.Sequential {
     if family == "mlp" { return neural_mlp(seed) }
     if family == "cnn" { return neural_cnn(seed) }
     return neural_rnn(seed)
