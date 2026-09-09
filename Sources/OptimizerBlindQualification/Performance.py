@@ -222,6 +222,8 @@ def main() -> int:
         "physics-integration": "gfx_physics_integration_kernel_slots",
         "physics-preparation": "gfx_physics_preparation_kernel_slots",
     }
+    audit_failures: list[str] = []
+    report["performance_audit_failures"] = audit_failures
 
     for case_id in manifest["performance_cases"]:
         if case_id not in selected:
@@ -303,9 +305,15 @@ def main() -> int:
             "Part-07-compiler-baseline",
         )
         report["measurements"][case_id] = case_measurements
-        Campaign.write_report(args.report, report)
         for metric_id, record in case_measurements.items():
-            Qualification.audit_measurement(case_id, metric_id, record, manifest["statistical_contract"])
+            try:
+                Qualification.audit_measurement(case_id, metric_id, record, manifest["statistical_contract"])
+            except Qualification.QualificationError as error:
+                audit_failures.append(str(error))
+        Campaign.write_report(args.report, report)
+
+    if audit_failures:
+        raise Qualification.QualificationError("; ".join(audit_failures))
 
     print(f"performance campaign partial report: {args.report}")
     return 0
