@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "e8d0147c26f1e6100974419c4375f5e456d130c9",
+  "qualified_candidate_revision": "d4c3eb6fedc173d3211a57500b0f4a8d55a2de61",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -106,10 +106,20 @@
       "reason": "The structural counterproof for branching reference inlining exposed that address-producing reference operations were admitted while their address value type was still rejected; the correction admits address parameters and temporaries consistently.",
       "regression": {
         "repository": "Silex",
-        "path": "Toolchain/Sources/Optimize/InlineControlFlow.zig",
-        "sha256": "4b64261e9a84fc8593a08d1f60e6de97335b691c8f066198e1fff6496b896aca",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/BranchingReferenceInlining.sx",
+        "sha256": "4b3a55aa3543c8fcda1e25787d7a63a3a287670aba77636a9bcaf1d9e75ab75c",
         "failing_revision": "f68ab19008683fab71df175c3ca15bbed887bec2",
         "corrected_revision": "e8d0147c26f1e6100974419c4375f5e456d130c9"
+      }
+    },
+    {
+      "reason": "The focused physical integration campaign showed that forcing newly admitted branching reference callees to inline increased register pressure and worsened execution to 2.16x Clang; the correction retains small profitable helpers but subjects the new reference forms to the existing effect and pressure cost model.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/BranchingReferenceInlining.sx",
+        "sha256": "4b3a55aa3543c8fcda1e25787d7a63a3a287670aba77636a9bcaf1d9e75ab75c",
+        "failing_revision": "e8d0147c26f1e6100974419c4375f5e456d130c9",
+        "corrected_revision": "d4c3eb6fedc173d3211a57500b0f4a8d55a2de61"
       }
     }
   ]
