@@ -33,6 +33,11 @@ of the 3 × 4 × 4 matrix. Results retain raw output, package resolution, build
 log, exact Silex/AI/benchmark commits, target, OS, CPU, parameters,
 `measurements.csv`, and `Summary.md`.
 
+`SILEX_BIN` may select a verified release binary instead of the workspace
+build. In that case, set `SILEX_COMMIT` to the release-tag commit and
+`SILEX_ARTIFACT_SHA256` to the verified archive checksum so the retained
+metadata describes the exact compiler input rather than the direct checkout.
+
 Mean CPU time, sample variance, and range are reported per scheduling frame.
 Sparse event rows are accepted only when their complete measured range is below
 the ranges of both full-population strategies. The state-machine ratio exposes

@@ -9,6 +9,8 @@ behaviour_results=${1:-"$behaviour_script_dir/Results/$(date +%Y-%m-%d-%H%M%S)"}
 behaviour_run_root=$(mktemp -d /private/tmp/silex-behaviour-tree.XXXXXX)
 behaviour_binary="$behaviour_run_root/behaviour-tree-scheduling"
 behaviour_silex=${SILEX_BIN:-"$behaviour_workspace_root/Silex/Toolchain/zig-out/bin/silex"}
+behaviour_silex_commit=${SILEX_COMMIT:-$(git -C "$behaviour_workspace_root/Silex" rev-parse HEAD)}
+behaviour_silex_artifact_sha256=${SILEX_ARTIFACT_SHA256:-workspace-build}
 
 trap 'rm -rf "$behaviour_run_root"' EXIT HUP INT TERM
 
@@ -25,7 +27,8 @@ grep -F "AI 0.1.0 workspace-link $behaviour_candidate_root/Packages/AI" \
     echo "target=macos-arm64"
     echo "cpu=$(sysctl -n machdep.cpu.brand_string 2>/dev/null || sysctl -n hw.model)"
     echo "silex=$($behaviour_silex --version)"
-    echo "silex_commit=$(git -C "$behaviour_workspace_root/Silex" rev-parse HEAD)"
+    echo "silex_commit=$behaviour_silex_commit"
+    echo "silex_artifact_sha256=$behaviour_silex_artifact_sha256"
     echo "ai_commit=$(git -C "$behaviour_candidate_root/Packages/AI" rev-parse HEAD)"
     echo "benchmark_commit=$(git -C "$behaviour_benchmark_repo" rev-parse HEAD)"
     echo "mode=release"
