@@ -182,6 +182,15 @@ def build_summary(
             "",
             f"## {family.upper()}",
             "",
+            "| Batch | CPU model construction ms |",
+            "| ---: | ---: |",
+        ])
+        for batch in BATCHES[family]:
+            lines.append(
+                f"| {batch} | {timing(rows, family, batch, 'construction', 'cpu')} |"
+            )
+        lines.extend([
+            "",
             "| Batch | Phase | CPU ms | GPU ms | CPU/GPU ratio |",
             "| ---: | --- | ---: | ---: | ---: |",
         ])
@@ -205,13 +214,18 @@ def build_summary(
             f"Maximum process RSS: median {statistics.median(rss_mib):.1f} MiB "
             f"[{min(rss_mib):.1f}, {max(rss_mib):.1f}] across the five family processes.",
         ])
-    representative = []
+    faster_forward = []
+    resident_training = []
     for family in FAMILIES:
         for batch in BATCHES[family]:
+            cpu_forward = median_sample(rows, family, batch, "forward_hot", "cpu")
+            gpu_forward = median_sample(rows, family, batch, "forward_hot", "gpu")
+            if cpu_forward / gpu_forward >= 1.05:
+                faster_forward.append(f"{family} batch {batch} ({cpu_forward / gpu_forward:.2f}×)")
             cpu = median_sample(rows, family, batch, "step_resident", "cpu")
             gpu = median_sample(rows, family, batch, "step_resident", "gpu")
             if gpu < cpu:
-                representative.append(f"{family} batch {batch} ({cpu / gpu:.2f}×)")
+                resident_training.append(f"{family} batch {batch} ({cpu / gpu:.2f}×)")
     lines.extend([
         "",
         "## Interpretation boundary",
@@ -220,8 +234,11 @@ def build_summary(
         "GPU performance claim. Package-private lifetime tests separately prove stable",
         "live autograd-edge and GPU-buffer counts across repeated optimizer steps.",
         "",
-        "Resident GPU steps were faster on the measured grid only for: "
-        + (", ".join(representative) if representative else "none of the measured cases")
+        "Hot GPU forward execution was at least 5% faster on the measured grid for: "
+        + (", ".join(faster_forward) if faster_forward else "none of the measured cases")
+        + ".",
+        "Complete resident GPU training steps were faster only for: "
+        + (", ".join(resident_training) if resident_training else "none of the measured cases")
         + ".",
         "Cold execution, scalar observation, and end-to-end transfer costs must remain",
         "separate when interpreting that result.",
