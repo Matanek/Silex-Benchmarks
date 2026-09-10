@@ -1,0 +1,121 @@
+# captured=2026-09-11T00:33:52+0200
+# host_model=Mac15,7
+# cpu=Apple_M3_Pro
+# memory_bytes=19327352832
+# os=macOS_26.6.2_25G83
+# architecture=arm64
+# source_repositories_dirty=false
+# waited_for_competing_workloads=true
+# silex_mode=release_default
+# silex_compiler=_Users_nekmata_Projects_SilexProject_Silex_Toolchain_zig-out_bin_silex
+# cpp_mode=Release
+# silex_version=0.44.1
+# benchmarks_commit=41de64e6ade3a36c9e56d1a023d91c9dc31b9263
+# silex_toolchain_commit=09b7a5ffaa438e808f920a534fefb1ccabce20ac
+# ai_version=0.1.0
+# ai_source=user-link
+# ai_commit=d9ff4cadccec418e0ab6166f748b0f80e8d7e663
+# gfx_version=0.40.0
+# gfx_source=user-link
+# gfx_commit=062cb475252961e58013c2116437670bb48a85d1
+# std_version=0.22.0
+# std_source=user-link
+# std_commit=1f3847430b7a7a814ad0b4e3dd2e4f3711cfd4e9
+# tensor_version=0.2.0
+# tensor_source=user-link
+# tensor_commit=f1d6d603d2c0ef389544630b109144d9c9f518cc
+# gfx_gpu_version=0.4.0
+# gfx_gpu_source=user-link
+# gfx_gpu_commit=fb17a0c5ae08545f8e4aa07f42988c49607e0743
+# gfx_assets_version=0.3.0
+# gfx_assets_source=user-link
+# gfx_assets_commit=907960397db0f0d300e6fc895fa8d5635a0aad01
+# json_version=0.2.2
+# json_source=user-link
+# json_commit=e5eae6c2ca9a7244df3c09e531ca1c818010e32a
+# gfx_canvas_version=0.4.0
+# gfx_canvas_source=user-link
+# gfx_canvas_commit=c64f73da05b82bcdaf9bb493fa7fd984213bd741
+# gfx_font_version=0.1.0
+# gfx_font_source=user-link
+# gfx_font_commit=e520dd899ac5a2598bdb646ee270baa49c1f301c
+# gfx_ecs_version=0.2.3
+# gfx_ecs_source=user-link
+# gfx_ecs_commit=9ddd3347bf630365ee9147ad024618f72af11f4c
+# gfx_nodes_version=0.1.0
+# gfx_nodes_source=workspace-link
+# gfx_nodes_commit=0f2c4c70aca9c6081d29ffdfa6384bae3e67143b
+# gfx_application_version=0.1.0
+# gfx_application_source=user-link
+# gfx_application_commit=a752087d537f59c96d4d724dc1fda1977bf28cd5
+# gfx_scene2d_version=0.3.0
+# gfx_scene2d_source=user-link
+# gfx_scene2d_commit=516607f47bc1ac7ccc6c09577aa99cbc2cc8b9e3
+# gfx_rendering_version=0.4.0
+# gfx_rendering_source=user-link
+# gfx_rendering_commit=542b366ca071a8a0bd9451ea6a500e60b4e290f8
+# gfx_scene3d_version=0.3.0
+# gfx_scene3d_source=user-link
+# gfx_scene3d_commit=97d4f2617c7ea7290629306353293b9f0d85c0de
+# gfx_physics_version=0.6.0
+# gfx_physics_source=user-link
+# gfx_physics_commit=ab63f10d70e7afae2d3bfa5cff51e405c1197536
+# gfx_stats_version=0.3.2
+# gfx_stats_source=user-link
+# gfx_stats_commit=b13785e8630db2b73cd7a43cac2b8bbe4b7281e2
+# gfx_ui_version=0.2.0
+# gfx_ui_source=user-link
+# gfx_ui_commit=80f758aa9f615d6ff86ce6b49891781801325eb2
+# gfx_ui_terminal_version=0.2.0
+# gfx_ui_terminal_source=user-link
+# gfx_ui_terminal_commit=1086d5040237455c9777250233850eaa360f2a66
+# gfx_viewer_version=0.4.0
+# gfx_viewer_source=user-link
+# gfx_viewer_commit=f9bec08fc6b7d896c8ffe72e337a8b37c9027bb7
+# gfx_webview_version=0.5.0
+# gfx_webview_source=user-link
+# gfx_webview_commit=197dd6863f5ca9360600d28ddd3f8ea1dc7551f4
+# sync_version=0.1.2
+# sync_source=user-link
+# sync_commit=e27120158e8a18b72bd36318369110b9ab431592
+# cpp_compiler=Apple_clang_version_21.0.0_clang-2100.1.1.101
+# cmake_version=3.31.2
+# sdl_version=3.4.8
+# entt_revision=85c6bba014049b5de8fad49d25424df2f1f6a8c1
+# protocol=1_discarded_warmups_per_executable_then_7_isolated_rotated_fixed_workload_runs
+# rotation=silex_cpp-architectural_cpp-direct
+# count=4000
+# frames=480
+# simulation_delta=1_over_60_seconds
+# presentation=immediate
+# round=1
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=88.45863 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=88.47617 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80811 state_vy=-3732.79395 state_p2=460473952 state_v2=25559358 present=immediate fps=86.16232 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=2
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=88.02022 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=88.14547 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80811 state_vy=-3732.79395 state_p2=460473952 state_v2=25559358 present=immediate fps=86.10470 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=3
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=87.95699 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=88.34505 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80811 state_vy=-3732.79395 state_p2=460473952 state_v2=25559358 present=immediate fps=86.34947 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=4
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=88.48102 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=88.28648 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80811 state_vy=-3732.79395 state_p2=460473952 state_v2=25559358 present=immediate fps=86.01498 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=5
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=87.99287 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=88.15311 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80811 state_vy=-3732.79395 state_p2=460473952 state_v2=25559358 present=immediate fps=86.03562 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=6
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=87.7866 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=88.50242 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80811 state_vy=-3732.79395 state_p2=460473952 state_v2=25559358 present=immediate fps=86.28948 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=7
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=87.466896 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=88.24072 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80811 state_vy=-3732.79395 state_p2=460473952 state_v2=25559358 present=immediate fps=86.25582 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# summary_silex median_fps=87.992870 mad_percent=0.2344 range=87.466896..88.481020 relative_to_architectural_percent=-0.33
+# summary_cpp_architectural median_fps=88.286480 mad_percent=0.1511 range=88.145470..88.502420 relative_to_architectural_percent=0.00
+# summary_cpp_direct median_fps=86.162320 mad_percent=0.1470 range=86.014980..86.349470 relative_to_architectural_percent=-2.41
