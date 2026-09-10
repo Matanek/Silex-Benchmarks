@@ -71,13 +71,17 @@ CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_ste
 
 ## Comparison protocol
 
-Compile before starting the series, close other graphical workloads, perform
-several warm-up runs, and then rotate between the three executables. Compare at
-least five results per version and use the medians. Compilation, shader
-translation, initialization, and the first rendered frame are not part of the
-FPS measurement.
+Compile before starting the series, close other graphical workloads and perform
+several warm-up runs. The current runner executes Silex, architectural C++ and
+direct C++ in that fixed order for every round; despite its historical
+`rotated` metadata, it does not yet rotate the order. Inspect the complete FPS
+progression, stationarity, range and dispersion in addition to the medians, and
+do not use a sub-percent difference from this fixed-order protocol as acceptance
+evidence. Compilation, shader translation, initialization, and the first
+rendered frame are not part of the FPS measurement.
 
-`RunComparison.sh` automates that complete protocol from any working directory:
+`RunComparison.sh` automates the current fixed-order protocol from any working
+directory:
 
 ```sh
 Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
@@ -106,11 +110,13 @@ acceptance evidence.
 By default it builds all three Release executables, discards one warm-up per
 witness, records seven 480-frame processes per witness in Silex, C++
 architectural, C++ direct order, and writes a timestamped raw log under
-`Baselines/`. Before accepting any timing it validates the boid count, frame
-count, fixed delta, normalized display metadata, and numerical summaries of the
-initial state and state after four simulation steps. The final terminal table
-and log comments report the median, range, median absolute deviation (MAD), and
-relative difference from the architectural C++ witness.
+`Baselines/`. It validates the boid count, frame count, fixed delta, normalized
+display metadata, and numerical summaries of the initial state and state after
+four simulation steps. The final terminal table and log comments report the
+median, range, median absolute deviation (MAD), and relative difference from
+the architectural C++ witness. Rotation and a blocking stationarity verdict are
+owned by `Silex-Optimization-Parity-Completion`; until then these captures are
+diagnostic rather than new acceptance baselines.
 It also rejects clean-baseline status when any repository in the resolved
 Silex package closure is dirty and records every corresponding commit,
 including `GFX.Application` and `GFX.Physics` even though Boids does not import

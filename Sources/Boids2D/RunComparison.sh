@@ -26,7 +26,8 @@ Usage: RunComparison.sh [options]
 
 Build and compare the Silex, C++ architectural, and C++ direct Boids
 witnesses. The default protocol discards one warm-up process per executable,
-then records seven fixed-workload runs in rotating witness order.
+then records seven fixed-workload runs per executable in Silex, architectural
+C++, direct C++ order. Rotation is not implemented yet.
 
 Options:
   --count N          Boid count passed to every executable (default: 4000)
