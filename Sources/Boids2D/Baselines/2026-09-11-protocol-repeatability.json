@@ -1,0 +1,7 @@
+{
+  "verdict": "inconclusive",
+  "failures": [
+    "capture is not stationary",
+    "capture is not stationary"
+  ]
+}

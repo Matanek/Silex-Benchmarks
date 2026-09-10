@@ -1,0 +1,33 @@
+Protocol self-tests on bbfb56f51642c60954a3dac898d9b21eed49de90
+................
+----------------------------------------------------------------------
+Ran 16 tests in 2.399s
+
+OK
+
+Compiler quick admission on 09b7a5ffaa438e808f920a534fefb1ccabce20ac
+optimizer-admission-quick
++- run test w
+parity registry: coverage gap 'known-gap' owned by silex-llvm-opt-02
+parity registry: required LLVM family missing: instcombine-and-simplifycfg
+failed command: ./.zig-cache/o/4697aeecec32b4afde799597e697fdbb/test --cache-dir=./.zig-cache --seed=0xdfe1999b --listen=-
+
+optimizer oracle: semantic verification
+  PASS IntegerArithmetic.sx (7 bytes output)
+  PASS BranchingLoop.sx (7 bytes output)
+  PASS FloatArithmetic.sx (5 bytes output)
+  PASS IntegerControlFlow.sx (6 bytes output)
+  PASS IntegerWidths.sx (3 bytes output)
+  PASS UnsignedBitwise.sx (11 bytes output)
+  PASS AggregateScalarization.sx (6 bytes output)
+  PASS ReferenceAliasing.sx (6 bytes output)
+  PASS ReferenceDeadStores.sx (9 bytes output)
+  PASS ReadonlyViewMemory.sx (3 bytes output)
+  PASS MutableViewMemory.sx (3 bytes output)
+  PASS NestedAggregateWidths.sx (15 bytes output)
+  PASS OwningCollectionCopy.sx (10 bytes output)
+  PASS Regressions/LoopExitFloatLaneXY.sx (20 bytes output)
+  PASS Regressions/FloatLaneXYZ.sx (15 bytes output)
+  PASS Regressions/LoopExitFloatLaneXYZW.sx (40 bytes output)
+verified: 16 corpus programs
+optimizer oracle: optimizer quick admission passed

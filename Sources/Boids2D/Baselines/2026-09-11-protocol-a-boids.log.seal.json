@@ -1,0 +1,265 @@
+{
+  "artifacts": {
+    "configuration": [
+      "CMAKE_BUILD_TYPE:STRING=Release",
+      "CMAKE_CXX_COMPILER:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++",
+      "CMAKE_CXX_FLAGS:STRING=",
+      "CMAKE_CXX_FLAGS_DEBUG:STRING=-g",
+      "CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG",
+      "CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG",
+      "EnTT_DIR:PATH=EnTT_DIR-NOTFOUND",
+      "SDL3_DIR:PATH=/opt/homebrew/lib/cmake/SDL3",
+      "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1",
+      "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL=1",
+      "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1",
+      "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1",
+      "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1"
+    ],
+    "entt_revision": "85c6bba014049b5de8fad49d25424df2f1f6a8c1",
+    "files": {
+      "cpp/BoidsCppArchitectural": "262581a848b662dbdfaa7ce3b429172f33eef78f04e2fdb8c17335d86c18f615",
+      "cpp/BoidsCppDirect": "a81f083ef15fb840ac9b0dfa3ce17b26182b71ed859bc7568ea8e1e388ab64b9",
+      "cpp/Shaders/Drawing.fragment.msl": "370682e648b2e610c019006e6f35bed1b23ddcf78e29915d6b27e32002e0b764",
+      "cpp/Shaders/Drawing.vertex.msl": "f368cd1c36da110a99d077c235145a59980b8e91be85f5f70b804bce5bf83cd4",
+      "gfx-boids-silex": "27a03a0ec950054bfe9852eb3292e0469276e5fc88e3b7be095f47b795203333"
+    },
+    "sdl_libraries": {
+      "libSDL3.0.dylib": "a45efaf70e58c2e9cdcc5005f10397e36fda29fc6882a578329296e1335f29fd",
+      "libSDL3.dylib": "a45efaf70e58c2e9cdcc5005f10397e36fda29fc6882a578329296e1335f29fd",
+      "libSDL3_image.0.4.4.dylib": "cf4461ffcbef0d1d6119a25504c1a57153adc2652ed45dd638b97384c6e1d565",
+      "libSDL3_image.0.dylib": "cf4461ffcbef0d1d6119a25504c1a57153adc2652ed45dd638b97384c6e1d565",
+      "libSDL3_image.dylib": "cf4461ffcbef0d1d6119a25504c1a57153adc2652ed45dd638b97384c6e1d565",
+      "libSDL3_mixer.0.2.0.dylib": "cc2de8950ef7102617a3d31f2139f5f036c5cf100bcc4415dccc08fe067e3930",
+      "libSDL3_mixer.0.dylib": "cc2de8950ef7102617a3d31f2139f5f036c5cf100bcc4415dccc08fe067e3930",
+      "libSDL3_mixer.dylib": "cc2de8950ef7102617a3d31f2139f5f036c5cf100bcc4415dccc08fe067e3930",
+      "libSDL3_test.a": "9ffd71272896c6a861ca87be7f34bb7e3e1be1d7a1ddfa2a012b6c091190121f",
+      "libSDL3_ttf.0.2.2.dylib": "db5f5166e6dcc5a6b8d35a93e2003ef38208782735ce9383fb3dfa85bcdc15e7",
+      "libSDL3_ttf.0.dylib": "db5f5166e6dcc5a6b8d35a93e2003ef38208782735ce9383fb3dfa85bcdc15e7",
+      "libSDL3_ttf.dylib": "db5f5166e6dcc5a6b8d35a93e2003ef38208782735ce9383fb3dfa85bcdc15e7"
+    }
+  },
+  "inputs": {
+    "compiler": "Silex/Toolchain/zig-out/bin/silex",
+    "compiler_commit": "09b7a5ffaa438e808f920a534fefb1ccabce20ac",
+    "compiler_dirty": false,
+    "compiler_sha256": "bfa16e8e0773585c27c0be7e69096c561494807c6eaa9d9377b3dc77b6f99634",
+    "cpp_compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+    "packages": [
+      {
+        "commit": "d9ff4cadccec418e0ab6166f748b0f80e8d7e663",
+        "dirty": false,
+        "name": "AI",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/AI",
+        "version": "0.1.0"
+      },
+      {
+        "commit": "062cb475252961e58013c2116437670bb48a85d1",
+        "dirty": false,
+        "name": "GFX",
+        "native_artifacts": {
+          "SDL3": {
+            "path": "Boundary/macos-arm64/libSDL3.a",
+            "sha256": "9c6a0ce402ed4232d644ac9966da5baad937773bb2765d41a4a068f9970618cd",
+            "url": "https://github.com/Matanek/Silex-Lib-GFX/releases/download/sdl3-3.4.10-silex.1/SDL3-3.4.10-macos-arm64.a"
+          }
+        },
+        "origin": "workspace-link",
+        "path": "Packages/GFX",
+        "version": "0.40.0"
+      },
+      {
+        "commit": "1f3847430b7a7a814ad0b4e3dd2e4f3711cfd4e9",
+        "dirty": false,
+        "name": "STD",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/STD",
+        "version": "0.22.0"
+      },
+      {
+        "commit": "f1d6d603d2c0ef389544630b109144d9c9f518cc",
+        "dirty": false,
+        "name": "Tensor",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/Tensor",
+        "version": "0.2.0"
+      },
+      {
+        "commit": "fb17a0c5ae08545f8e4aa07f42988c49607e0743",
+        "dirty": false,
+        "name": "GFX.GPU",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.GPU",
+        "version": "0.4.0"
+      },
+      {
+        "commit": "907960397db0f0d300e6fc895fa8d5635a0aad01",
+        "dirty": false,
+        "name": "GFX.Assets",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Assets",
+        "version": "0.3.0"
+      },
+      {
+        "commit": "e5eae6c2ca9a7244df3c09e531ca1c818010e32a",
+        "dirty": false,
+        "name": "JSON",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/JSON",
+        "version": "0.2.2"
+      },
+      {
+        "commit": "c64f73da05b82bcdaf9bb493fa7fd984213bd741",
+        "dirty": false,
+        "name": "GFX.Canvas",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Canvas",
+        "version": "0.4.0"
+      },
+      {
+        "commit": "e520dd899ac5a2598bdb646ee270baa49c1f301c",
+        "dirty": false,
+        "name": "GFX.Font",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Font",
+        "version": "0.1.0"
+      },
+      {
+        "commit": "9ddd3347bf630365ee9147ad024618f72af11f4c",
+        "dirty": false,
+        "name": "GFX.ECS",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.ECS",
+        "version": "0.2.3"
+      },
+      {
+        "commit": "0f2c4c70aca9c6081d29ffdfa6384bae3e67143b",
+        "dirty": false,
+        "name": "GFX.Nodes",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Nodes",
+        "version": "0.1.0"
+      },
+      {
+        "commit": "a752087d537f59c96d4d724dc1fda1977bf28cd5",
+        "dirty": false,
+        "name": "GFX.Application",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Application",
+        "version": "0.1.0"
+      },
+      {
+        "commit": "516607f47bc1ac7ccc6c09577aa99cbc2cc8b9e3",
+        "dirty": false,
+        "name": "GFX.Scene2D",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Scene2D",
+        "version": "0.3.0"
+      },
+      {
+        "commit": "542b366ca071a8a0bd9451ea6a500e60b4e290f8",
+        "dirty": false,
+        "name": "GFX.Rendering",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Rendering",
+        "version": "0.4.0"
+      },
+      {
+        "commit": "97d4f2617c7ea7290629306353293b9f0d85c0de",
+        "dirty": false,
+        "name": "GFX.Scene3D",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Scene3D",
+        "version": "0.3.0"
+      },
+      {
+        "commit": "ab63f10d70e7afae2d3bfa5cff51e405c1197536",
+        "dirty": false,
+        "name": "GFX.Physics",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Physics",
+        "version": "0.6.0"
+      },
+      {
+        "commit": "b13785e8630db2b73cd7a43cac2b8bbe4b7281e2",
+        "dirty": false,
+        "name": "GFX.Stats",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Stats",
+        "version": "0.3.2"
+      },
+      {
+        "commit": "80f758aa9f615d6ff86ce6b49891781801325eb2",
+        "dirty": false,
+        "name": "GFX.UI",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.UI",
+        "version": "0.2.0"
+      },
+      {
+        "commit": "1086d5040237455c9777250233850eaa360f2a66",
+        "dirty": false,
+        "name": "GFX.UI.Terminal",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.UI.Terminal",
+        "version": "0.2.0"
+      },
+      {
+        "commit": "f9bec08fc6b7d896c8ffe72e337a8b37c9027bb7",
+        "dirty": false,
+        "name": "GFX.Viewer",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.Viewer",
+        "version": "0.4.0"
+      },
+      {
+        "commit": "197dd6863f5ca9360600d28ddd3f8ea1dc7551f4",
+        "dirty": false,
+        "name": "GFX.WebView",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/GFX.WebView",
+        "version": "0.5.0"
+      },
+      {
+        "commit": "e27120158e8a18b72bd36318369110b9ab431592",
+        "dirty": false,
+        "name": "Sync",
+        "native_artifacts": {},
+        "origin": "workspace-link",
+        "path": "Packages/Sync",
+        "version": "0.1.2"
+      }
+    ],
+    "sdl_version": "3.4.8",
+    "shader_sha256": "ec2038653f0a7ea5d2c431cd7f565d96c2504ebfd6c918d6a746e01d69c11c10",
+    "shadercross_sha256": "4e60f70b66d64fd859de6891c8f222602ec83b66fb8c2860dc0819af59efb02e",
+    "sources": {
+      "Cpp/CMakeLists.txt": "154f27144ac009aed26bb2d80a6b9d7648967032cf11fc5f5a3bea755fb7ef42",
+      "Cpp/NOTICE": "9a6f4febfbb5420acada5e0e779dc02cc23caeb1c8ef730bd6ab4b0b800cc7b7",
+      "Cpp/Sources/Architectural.cpp": "766766c1c53893cada066fbd367f6c6ac937bf046a8a686fbaa93228e8a9ed13",
+      "Cpp/Sources/Direct.cpp": "6afc9712a0c24a17a023a61a14876fff1c9eaad2c0ea34b1f48299d11bff8b53",
+      "Silex.sx": "45d3bb1f2b5fb95c5f358727a9f5ad86daea4533fa23c19d08129b1ce05fde94"
+    }
+  }
+}

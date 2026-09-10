@@ -4,6 +4,14 @@ This directory archives raw output from the three witnesses in
 [`../Boids`](../Boids). The records are performance controls, not correctness
 tests or portable timing claims.
 
+## 2026-09-11 measurement protocol qualification
+
+The [protocol review](2026-09-11-protocol-review.md) records two complete
+captures of identical artifacts with real permutation ordering. Both are
+inconclusive because retained Silex throughput and paired ratios drift beyond
+the proposed 1% limit. Raw logs, identity seals and analyses are preserved;
+these records do not replace the accepted historical control.
+
 ## 2026-09-10 compiler-only A/B at fixed package closure
 
 [`2026-09-10-000541-arm64-boids-main-compiler-fixed-closure.log`](2026-09-10-000541-arm64-boids-main-compiler-fixed-closure.log)
