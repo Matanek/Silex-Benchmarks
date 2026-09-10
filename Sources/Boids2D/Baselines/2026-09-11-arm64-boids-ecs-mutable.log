@@ -1,0 +1,328 @@
+# capture_kind=diagnostic_compiler_ab
+# drawing_shader_sha256=ec2038653f0a7ea5d2c431cd7f565d96c2504ebfd6c918d6a746e01d69c11c10
+# paired_bootstrap=10000_resamples_of_six_pairs; percentiles_at_indices_250_and_9749; seeds_Boids_20260910_ECS_20260911
+# cpp_source_sha256=766766c1c53893cada066fbd367f6c6ac937bf046a8a686fbaa93228e8a9ed13
+# cached_and_nocache_candidate_text_section_identical=true
+# candidate_text_section_sha256=ecd9c8eb17322b975905e8d57afe79277e2233c306b8779776e25e63b34c3430
+# host=Apple_M3_Pro_macos_26.6.2_arm64
+# mode=Silex_Release_Clang_O3
+# verified_target=macos-arm64
+# other_targets_executed=false
+# count=4000
+# frames=480
+# fixed_delta=1_over_60
+# present=immediate
+# protocol=one_discarded_warmup_per_witness_then_six_balanced_permutations
+# compiling_during_timing=false
+# stationarity_gate=not_implemented_diagnostic_only
+# candidate_sources_dirty_at_capture=true
+# candidate_contents_committed_after_validation=true
+# baseline_silex_commit=994f06ca91edc6987f39a171ddfc8c6d345ec41c
+# candidate_silex_commit=09b7a5ffaa438e808f920a534fefb1ccabce20ac
+# ecs_commit=9ddd3347bf630365ee9147ad024618f72af11f4c
+# scene2d_commit=516607f47bc1ac7ccc6c09577aa99cbc2cc8b9e3
+# benchmarks_base_commit=f9cbb49b69aa7bddd1e031a6e9778d88f5ed9b34
+# source_change=generic_mutable_ECS_query_lowering_only; package_change_is_regression_tests_only
+# benchmark_algorithm_sources_and_shader_unchanged=true
+# safety=checked_typed_pool_getter; checked_sparse_load; checked_collection_reference_with_original_parent; existing_query_borrow_rules
+# correctness=zig_build_check_test_exit0; 19_ECS_tests; 54_Scene2D_tests; 3_Physics_application_integration_tests
+# native_mutable_reduced_case=interpreter_Debug_Release_all_output_42_exit0
+# state_oracle=exact_Silex_before_after_initial_and_step4_fields_plus_separate_frame480_probe
+# cpp_state_tolerance=0.05_plus_0.00002_times_max_absolute_value
+# baseline_compiler_sha256=2a9044d1e92ab1bca18809061a848d5ff82a886f0ccbb6ca5b25783eb7f77297
+# candidate_compiler_sha256=cfc17092830ae7cde0bbf21d793dfe366b03cffa8fee5c0f707d9ad606b00005
+# binary_sha256_baseline=bc8e707494abcce55bb6ac2177da8196029abae8ed70c985507fc63d975541d7
+# binary_sha256_candidate=257b879c68f53ddf9430ca08027c7ebcefce9426044f54d5210998ac523e4946
+# binary_sha256_cpp=08665c930c72ec8d058a40dcca05e808bc4c8c96c0fae5ca84d42169d09fe65b
+# source_sha256_Silex-Benchmarks/Sources/Boids2D/Silex.sx=45d3bb1f2b5fb95c5f358727a9f5ad86daea4533fa23c19d08129b1ce05fde94
+# package_commit_AI=d9ff4cadccec418e0ab6166f748b0f80e8d7e663
+# package_commit_GFX=062cb475252961e58013c2116437670bb48a85d1
+# package_commit_GFX.Animation=7c719bb2770de51849f97dd58ff3f477d1ea10a4
+# package_commit_GFX.Application=a752087d537f59c96d4d724dc1fda1977bf28cd5
+# package_commit_GFX.Assets=907960397db0f0d300e6fc895fa8d5635a0aad01
+# package_commit_GFX.Audio=8096161adc4c627092fe69a48f3e454544d949d9
+# package_commit_GFX.Canvas=c64f73da05b82bcdaf9bb493fa7fd984213bd741
+# package_commit_GFX.ECS=9ddd3347bf630365ee9147ad024618f72af11f4c
+# package_commit_GFX.Font=e520dd899ac5a2598bdb646ee270baa49c1f301c
+# package_commit_GFX.GPU=fb17a0c5ae08545f8e4aa07f42988c49607e0743
+# package_commit_GFX.Nodes=0f2c4c70aca9c6081d29ffdfa6384bae3e67143b
+# package_commit_GFX.Physics=ab63f10d70e7afae2d3bfa5cff51e405c1197536
+# package_commit_GFX.Rendering=542b366ca071a8a0bd9451ea6a500e60b4e290f8
+# package_commit_GFX.Scene2D=516607f47bc1ac7ccc6c09577aa99cbc2cc8b9e3
+# package_commit_GFX.Scene3D=97d4f2617c7ea7290629306353293b9f0d85c0de
+# package_commit_GFX.Stats=b13785e8630db2b73cd7a43cac2b8bbe4b7281e2
+# package_commit_GFX.UI=80f758aa9f615d6ff86ce6b49891781801325eb2
+# package_commit_GFX.UI.Terminal=1086d5040237455c9777250233850eaa360f2a66
+# package_commit_GFX.Viewer=f9bec08fc6b7d896c8ffe72e337a8b37c9027bb7
+# package_commit_GFX.WebView=197dd6863f5ca9360600d28ddd3f8ea1dc7551f4
+# package_commit_HTML=cd16f2705d38819f4bfd2a55da171ae6206e4122
+# package_commit_HTTP=a889ec7c7b7d0e9cf0a276cefb5e6f6bb39545be
+# package_commit_Image=753f9f6c584481626905fe2ea3ba8da957ae4ae5
+# package_commit_JSON=e5eae6c2ca9a7244df3c09e531ca1c818010e32a
+# package_commit_Plot=b03db956f1f8a45ddedfeb8e4217e35c3aa9d34c
+# package_commit_STD=1f3847430b7a7a814ad0b4e3dd2e4f3711cfd4e9
+# package_commit_Sync=e27120158e8a18b72bd36318369110b9ab431592
+# package_commit_Tensor=f1d6d603d2c0ef389544630b109144d9c9f518cc
+# package_commit_XML=6ef85c4ac4440ad10857fae483fc94be4d70e4e0
+# package_commit_YAML=d3f3650028e814903b909eab43e6081d26cdec9e
+
+# Boids: all raw observations; warmup is excluded from summaries.
+# round=0 warmup=true witness=baseline order=baseline,candidate,cpp
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=85.27339 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=0 warmup=true witness=candidate order=baseline,candidate,cpp
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=86.19936 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=0 warmup=true witness=cpp order=baseline,candidate,cpp
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=86.66922 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=1 warmup=false witness=baseline order=baseline,candidate,cpp
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=85.23526 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=1 warmup=false witness=candidate order=baseline,candidate,cpp
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=86.08199 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=1 warmup=false witness=cpp order=baseline,candidate,cpp
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=86.55599 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=2 warmup=false witness=candidate order=candidate,cpp,baseline
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=86.05362 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=2 warmup=false witness=cpp order=candidate,cpp,baseline
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=86.82763 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=2 warmup=false witness=baseline order=candidate,cpp,baseline
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=85.023964 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=3 warmup=false witness=cpp order=cpp,baseline,candidate
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=86.84682 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=3 warmup=false witness=baseline order=cpp,baseline,candidate
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=84.9654 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=3 warmup=false witness=candidate order=cpp,baseline,candidate
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=86.14297 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=4 warmup=false witness=cpp order=cpp,candidate,baseline
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=86.55142 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=4 warmup=false witness=candidate order=cpp,candidate,baseline
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=85.95058 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=4 warmup=false witness=baseline order=cpp,candidate,baseline
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=84.544754 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=5 warmup=false witness=baseline order=baseline,cpp,candidate
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=84.78125 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=5 warmup=false witness=cpp order=baseline,cpp,candidate
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=86.80480 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+# round=5 warmup=false witness=candidate order=baseline,cpp,candidate
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=86.27124 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=6 warmup=false witness=candidate order=candidate,baseline,cpp
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=86.01587 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=6 warmup=false witness=baseline order=candidate,baseline,cpp
+SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=33454.676 state_py=7233.883 state_vx=2280.809 state_vy=-3732.7944 state_p2=460473950.0 state_v2=25559348.0 present=immediate fps=84.950836 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
+# round=6 warmup=false witness=cpp order=candidate,baseline,cpp
+CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=35257.1523 initial_py=876.711121 initial_vx=2641.72363 initial_vy=-3634.71851 initial_p2=460425184 initial_v2=26166674 state_px=33454.6758 state_py=7233.88281 state_vx=2280.80762 state_vy=-3732.79395 state_p2=460473952 state_v2=25559354 ecs=entt renderer=sdl_gpu present=immediate fps=86.65961 window=960x640 pixels=1920x1280 scale=2.00000 density=2.00000
+
+# Boids summary: paired median gain is distinct from the ratio of independent medians.
+baseline median_fps=84.958118 mad_percent=0.142843 range=84.544754..85.235260 vs_cpp_percent=-2.045477
+candidate median_fps=86.067805 mad_percent=0.073837 range=85.950580..86.271240 vs_cpp_percent=-0.766036
+cpp median_fps=86.732205 mad_percent=0.121085 range=86.551420..86.846820 vs_cpp_percent=0.000000
+paired_gains_percent=[0.9934034342125697, 1.2110185782445937, 1.385940629950544, 1.6628187243882708, 1.7574522668632575, 1.2537063202062049]
+paired_gain_median_percent=1.3198234750783744
+paired_gain_bootstrap_95=[1.1022110062285817, 1.7101354956257642]
+
+# ECS CPU probe: same source, 4000 entities, 4000 updates, two mutable scalar components.
+# Only update time is measured. These numbers are not Boids FPS or a LLVM comparison.
+{
+  "protocol": "4000 entities, 4000 updates, two mutable scalar components; timed updates only; one warmup then six alternating AB/BA pairs",
+  "source": "use GFX.Application\nuse GFX.Application.Schedule\nuse GFX.ECS\nuse STD.Time.Clock\n\nstruct Position { var x:int; var y:int }\nstruct Velocity { var x:int; var y:int }\n\nfunc integrate(query:ECS.Query<(&Position, &Velocity)>) {\n    for (position, velocity) in query {\n        position.x += velocity.x\n        position.y += velocity.y\n        velocity.x += 1\n    }\n}\n\nfunc run_iterations(application:Application) int {\n    var clock = Clock()\n    clock.tick()\n    for frame in 0...4000 { application.run_schedule(Schedule.update) }\n    let elapsed = clock.tick()\n    var resources = application.resources()\n    let world:@ECS.World = resources.get<ECS.World>()\n    var checksum:int = 0\n    for entity in world.entities() {\n        let position = world.get<Position>(entity)\n        let velocity = world.get<Velocity>(entity)\n        assert(position.x == 8_002_000 && position.y == 8_000)\n        assert(velocity.x == 4_001 && velocity.y == 2)\n        checksum += position.x + position.y\n    }\n    print(\"ECS_MUTABLE elapsed=$(elapsed) checksum=$(checksum)\")\n    return 0\n}\n\nfunc main() {\n    var application = Application()\n        ..add_plugin(ECS.Plugin())\n        ..add_system(Schedule.update, integrate)\n        ..with_runner(run_iterations)\n    application.prepare()\n    if true {\n        var resources = application.resources()\n        var world:&ECS.World = resources.get_mut<ECS.World>()\n        for index in 0...4000 {\n            world.spawn(ECS.EntityRecipe()\n                ..with(Position(x:0, y:0))\n                ..with(Velocity(x:1, y:2)))\n        }\n    }\n    application.run()\n}\n",
+  "binaries": {
+    "baseline": {
+      "path": "/private/tmp/boids-ecs-probe-baseline",
+      "sha256": "594a5ae18fb58bc6d4aceba28b174ee1d872ab7723817212269be2dc176ae2b4"
+    },
+    "candidate": {
+      "path": "/private/tmp/boids-ecs-probe-candidate",
+      "sha256": "4b1fcde4c44a652a206692c3e9d6cedb5d743767c961e0a07a35e77222c7d943"
+    }
+  },
+  "rows": [
+    {
+      "round": 0,
+      "warmup": true,
+      "witness": "baseline",
+      "elapsed": 2.084399,
+      "raw": "ECS_MUTABLE elapsed=2.084399 checksum=32040000000"
+    },
+    {
+      "round": 0,
+      "warmup": true,
+      "witness": "candidate",
+      "elapsed": 1.7270501,
+      "raw": "ECS_MUTABLE elapsed=1.7270501 checksum=32040000000"
+    },
+    {
+      "round": 1,
+      "warmup": false,
+      "witness": "baseline",
+      "elapsed": 2.184174,
+      "raw": "ECS_MUTABLE elapsed=2.184174 checksum=32040000000"
+    },
+    {
+      "round": 1,
+      "warmup": false,
+      "witness": "candidate",
+      "elapsed": 1.7341781,
+      "raw": "ECS_MUTABLE elapsed=1.7341781 checksum=32040000000"
+    },
+    {
+      "round": 2,
+      "warmup": false,
+      "witness": "candidate",
+      "elapsed": 1.74343,
+      "raw": "ECS_MUTABLE elapsed=1.74343 checksum=32040000000"
+    },
+    {
+      "round": 2,
+      "warmup": false,
+      "witness": "baseline",
+      "elapsed": 2.089798,
+      "raw": "ECS_MUTABLE elapsed=2.089798 checksum=32040000000"
+    },
+    {
+      "round": 3,
+      "warmup": false,
+      "witness": "baseline",
+      "elapsed": 2.07944,
+      "raw": "ECS_MUTABLE elapsed=2.07944 checksum=32040000000"
+    },
+    {
+      "round": 3,
+      "warmup": false,
+      "witness": "candidate",
+      "elapsed": 1.7307711,
+      "raw": "ECS_MUTABLE elapsed=1.7307711 checksum=32040000000"
+    },
+    {
+      "round": 4,
+      "warmup": false,
+      "witness": "candidate",
+      "elapsed": 1.734952,
+      "raw": "ECS_MUTABLE elapsed=1.734952 checksum=32040000000"
+    },
+    {
+      "round": 4,
+      "warmup": false,
+      "witness": "baseline",
+      "elapsed": 2.104141,
+      "raw": "ECS_MUTABLE elapsed=2.104141 checksum=32040000000"
+    },
+    {
+      "round": 5,
+      "warmup": false,
+      "witness": "baseline",
+      "elapsed": 2.065005,
+      "raw": "ECS_MUTABLE elapsed=2.065005 checksum=32040000000"
+    },
+    {
+      "round": 5,
+      "warmup": false,
+      "witness": "candidate",
+      "elapsed": 1.749974,
+      "raw": "ECS_MUTABLE elapsed=1.749974 checksum=32040000000"
+    },
+    {
+      "round": 6,
+      "warmup": false,
+      "witness": "candidate",
+      "elapsed": 1.813582,
+      "raw": "ECS_MUTABLE elapsed=1.813582 checksum=32040000000"
+    },
+    {
+      "round": 6,
+      "warmup": false,
+      "witness": "baseline",
+      "elapsed": 2.440133,
+      "raw": "ECS_MUTABLE elapsed=2.440133 checksum=32040000000"
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "median_seconds": 2.0969695
+    },
+    "candidate": {
+      "median_seconds": 1.739191
+    }
+  },
+  "paired_time_reduction_percent": [
+    20.60256646219578,
+    16.574233490509606,
+    16.767442195975846,
+    17.54582986596429,
+    15.255701560044665,
+    25.676920069520794
+  ],
+  "paired_time_reduction_median_percent": 17.15663603097007,
+  "paired_time_reduction_bootstrap_95": [
+    15.914967525277135,
+    23.139743265858286
+  ]
+}
+
+# Separate frame-480 correctness probe; FPS here is not used in performance summaries.
+# Reproduction: copy Boids source and replace the witness_step initialization and clamp
+# with let witness_step = settings.frames; compile both versions with --nocache.
+{
+  "baseline": {
+    "raw": "SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=480 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=-20100.387 state_py=-6616.083 state_vx=13061.005 state_vy=-11672.616 state_p2=466588830.0 state_v2=18721318.0 present=immediate fps=84.34684 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0",
+    "fields": {
+      "count": "4000",
+      "frames": "480",
+      "fixed_delta": "0.016666668",
+      "state_step": "480",
+      "initial_px": "35257.152",
+      "initial_py": "876.7111",
+      "initial_vx": "2641.7236",
+      "initial_vy": "-3634.7185",
+      "initial_p2": "460425180.0",
+      "initial_v2": "26166674.0",
+      "state_px": "-20100.387",
+      "state_py": "-6616.083",
+      "state_vx": "13061.005",
+      "state_vy": "-11672.616",
+      "state_p2": "466588830.0",
+      "state_v2": "18721318.0",
+      "present": "immediate",
+      "fps": "84.34684",
+      "window": "960.0x640.0",
+      "pixels": "1920.0x1280.0",
+      "scale": "2.0",
+      "density": "2.0"
+    },
+    "binary_sha256": "a52bbb6b8bbe15bf98aba08ec6ec9526e59d5b8f1cb678a61aa4368cf424bc29"
+  },
+  "candidate": {
+    "raw": "SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=480 initial_px=35257.152 initial_py=876.7111 initial_vx=2641.7236 initial_vy=-3634.7185 initial_p2=460425180.0 initial_v2=26166674.0 state_px=-20100.387 state_py=-6616.083 state_vx=13061.005 state_vy=-11672.616 state_p2=466588830.0 state_v2=18721318.0 present=immediate fps=85.03146 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0",
+    "fields": {
+      "count": "4000",
+      "frames": "480",
+      "fixed_delta": "0.016666668",
+      "state_step": "480",
+      "initial_px": "35257.152",
+      "initial_py": "876.7111",
+      "initial_vx": "2641.7236",
+      "initial_vy": "-3634.7185",
+      "initial_p2": "460425180.0",
+      "initial_v2": "26166674.0",
+      "state_px": "-20100.387",
+      "state_py": "-6616.083",
+      "state_vx": "13061.005",
+      "state_vy": "-11672.616",
+      "state_p2": "466588830.0",
+      "state_v2": "18721318.0",
+      "present": "immediate",
+      "fps": "85.03146",
+      "window": "960.0x640.0",
+      "pixels": "1920.0x1280.0",
+      "scale": "2.0",
+      "density": "2.0"
+    },
+    "binary_sha256": "74cc58ff6695e7a5ea6fbcf4d04dde4b1527b3ffeb37bac260fef5450c4c29fa"
+  },
+  "source_change": "Only the witness sampling step is changed from min(4, frames) to frames; this probe is not used for performance results.",
+  "source_sha256": "b23f8ede18552834e72ab4188ce12b55c9ad46a6ea7f0fd3a48667867b619b48"
+}
+
+# Scope of native fixture validation:
+# TypedResourceTests invokes the mutable sample directly in Release and compares the interpreter.
+# A separately reduced copy of that mutable sample also prints 42 and exits 0 in native Debug.
+# Executing the old synthetic Scene adapter from the structural fixture as a full native application
+# crashes in __silex_system_adapter_9 on the baseline compiler too. It is excluded from native proof;
+# the real ECS/Scene2D/Physics application tests above pass with the candidate.
