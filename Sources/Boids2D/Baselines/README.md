@@ -169,36 +169,13 @@ regression.
 
 ## Capture protocol
 
-Build all three executables before starting the measurements, close other
-graphical workloads, and pass `4000 480` explicitly. Each process performs one
-untimed rendered frame, then measures exactly 480 rendered frames with one
-simulation step of 1/60 second per frame. Discard one complete warm-up process
-for each executable, then rotate between the three executables for at least
-seven recorded processes each. Reject any run whose count, measured frame
-count, fixed delta, initial-state summary, four-step state summary,
-presentation mode, logical window, pixel dimensions, scale, or density differs
-from the archived configuration. Compare medians and report median absolute
-deviation (MAD) as a percentage of the median.
+New captures use the deterministic permutation and fixed-window stationarity
+rule documented in [`../README.md`](../README.md#comparison-protocol) and
+`../Protocol.json`. Historical captures above retain their original protocol
+and acceptance status. Do not reinterpret their seven fixed-order processes as
+new twelve-round stationary captures.
 
-Logs captured before this fixed-workload protocol used five seconds of
-wall-clock time and each witness's real frame delta. They remain historical
-controls for their original revisions, but their absolute FPS and boid
-trajectories are not acceptance evidence for the fixed-workload protocol.
-
-The benchmark-owned runner applies this protocol and produces a timestamped log:
-
-```text
-Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
-```
-
-For compiler A/B qualification, use `--silex-compiler` with a dedicated
-worktree compiler. The runner keys its default build directory by that compiler
-path and records the containing repository commit, so both captures may use the
-same benchmark source and package closure without silently reusing a binary.
-
-Future records retain the raw sentinel lines and the commits of every
-user-linked repository in the resolved package closure. This includes
-transitive packages such as `GFX.Application` and manifest dependencies such
-as `GFX.Physics`, because either can change the produced executable without a
-direct import in `Silex.sx`. Do not archive serial numbers, hardware UUIDs,
-usernames, or absolute home paths.
+Each new record retains the raw log, `.log.json` analysis and `.log.seal.json`
+artifact identity. Archive inconclusive records with their failure reasons;
+never replace the accepted historical control with a more favorable threshold.
+Do not archive serial numbers, hardware UUIDs, usernames or absolute home paths.

@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "inherited": {
+    "Silex": {
+      "commit": "973153e50b1507534cfee9c4ce01cbd3745deb79",
+      "tree": "3ea8dce95be43cd99870b7dfaf1af0e9549780a4"
+    },
+    "Silex-Benchmarks": {
+      "commit": "027ef0845d9eea19ab99fe8c1797bdb03611c3c3",
+      "tree": "283d1da97691f6791a6120c4a3a6f2488ac453b5"
+    }
+  },
+  "current_direct_baselines": {
+    "Silex": {
+      "commit": "09b7a5ffaa438e808f920a534fefb1ccabce20ac",
+      "tree": "9637c4570979bdcca77693cf7821e4e18ef8313b",
+      "commits_since_inherited": [
+        "09b7a5ffaa438e808f920a534fefb1ccabce20ac Cache mutable ECS query pools outside entity iteration",
+        "994f06ca91edc6987f39a171ddfc8c6d345ec41c fix: preserve ECS resource aggregates on ARM64",
+        "4ebd9e88bf569933635bfc5b5905eb17d0e9b056 fix: preserve early generic specializations"
+      ]
+    },
+    "Silex-Benchmarks": {
+      "commit": "7501cedf3973593ec4be21036902fefe48486ad0",
+      "tree": "2f89f33d61d8b49c5466ad883cb48958a85dbf73",
+      "commits_since_inherited": [
+        "7501cedf3973593ec4be21036902fefe48486ad0 Baselines added for Boids Benchmark",
+        "41de64e6ade3a36c9e56d1a023d91c9dc31b9263 Record balanced Boids and mutable ECS compiler measurements",
+        "f9cbb49b69aa7bddd1e031a6e9778d88f5ed9b34 Record balanced Boids comparison for compact Scene2D instances",
+        "5c58f8fafb2d3c0d8c38cab41c32891066dd95a3 Baseline added for Boids Benchmark",
+        "8990e0e54da2b543200a38bc30a7850487555632 Boids baseline cleanup"
+      ]
+    }
+  },
+  "closure": [
+    {
+      "path": "Packages/AI",
+      "commit": "d9ff4cadccec418e0ab6166f748b0f80e8d7e663",
+      "tree": "8111073d2fe7f9a56371fabaf74900425a229d5d"
+    },
+    {
+      "path": "Packages/GFX",
+      "commit": "062cb475252961e58013c2116437670bb48a85d1",
+      "tree": "96b8038930ee5d00affe6c553dd9f9639106eb42"
+    },
+    {
+      "path": "Packages/GFX.Application",
+      "commit": "a752087d537f59c96d4d724dc1fda1977bf28cd5",
+      "tree": "84ec5d7e6f7c3ea607a647f44c0e6d3a5d1b3946"
+    },
+    {
+      "path": "Packages/GFX.Assets",
+      "commit": "907960397db0f0d300e6fc895fa8d5635a0aad01",
+      "tree": "e54ec619dac124e78c6d76146155a54234ba662c"
+    },
+    {
+      "path": "Packages/GFX.Canvas",
+      "commit": "c64f73da05b82bcdaf9bb493fa7fd984213bd741",
+      "tree": "9145e8b56adbe8c88513b93be0b6e200b671c02f"
+    },
+    {
+      "path": "Packages/GFX.ECS",
+      "commit": "9ddd3347bf630365ee9147ad024618f72af11f4c",
+      "tree": "c8b1f1500755fa30ef99d8787bd0511f6badb643"
+    },
+    {
+      "path": "Packages/GFX.Font",
+      "commit": "e520dd899ac5a2598bdb646ee270baa49c1f301c",
+      "tree": "37f733b51a8977f9b562cd9a391750e817453ed0"
+    },
+    {
+      "path": "Packages/GFX.GPU",
+      "commit": "fb17a0c5ae08545f8e4aa07f42988c49607e0743",
+      "tree": "44e5dfc8096604fb78f97ed681523ae5a94f85da"
+    },
+    {
+      "path": "Packages/GFX.Nodes",
+      "commit": "0f2c4c70aca9c6081d29ffdfa6384bae3e67143b",
+      "tree": "a587f974d1010c00811c6051a828fc0a04069642"
+    },
+    {
+      "path": "Packages/GFX.Physics",
+      "commit": "ab63f10d70e7afae2d3bfa5cff51e405c1197536",
+      "tree": "2328d03adaa654160c94f496427f02f1dc21c374"
+    },
+    {
+      "path": "Packages/GFX.Rendering",
+      "commit": "542b366ca071a8a0bd9451ea6a500e60b4e290f8",
+      "tree": "76c9e9901ec062cb24d3cf5f728cdbca1075983a"
+    },
+    {
+      "path": "Packages/GFX.Scene2D",
+      "commit": "516607f47bc1ac7ccc6c09577aa99cbc2cc8b9e3",
+      "tree": "14b9609b78f3c16c8d45b6d2e9446ee07c2b17da"
+    },
+    {
+      "path": "Packages/GFX.Scene3D",
+      "commit": "97d4f2617c7ea7290629306353293b9f0d85c0de",
+      "tree": "68e308c887ba8b46d68b451994ffc1d0c823ada1"
+    },
+    {
+      "path": "Packages/GFX.Stats",
+      "commit": "b13785e8630db2b73cd7a43cac2b8bbe4b7281e2",
+      "tree": "a9ff92f5985cffce25411fe1ef82011221604bab"
+    },
+    {
+      "path": "Packages/GFX.UI",
+      "commit": "80f758aa9f615d6ff86ce6b49891781801325eb2",
+      "tree": "06e27e0e8bfd74e735546bb565d7ebdca913f85c"
+    },
+    {
+      "path": "Packages/GFX.UI.Terminal",
+      "commit": "1086d5040237455c9777250233850eaa360f2a66",
+      "tree": "e9c982ab212cee55c2f700787728e64502e5c2cf"
+    },
+    {
+      "path": "Packages/GFX.Viewer",
+      "commit": "f9bec08fc6b7d896c8ffe72e337a8b37c9027bb7",
+      "tree": "4df46a51ac6bbb85909e41ccd1847fd7b2bd7055"
+    },
+    {
+      "path": "Packages/GFX.WebView",
+      "commit": "197dd6863f5ca9360600d28ddd3f8ea1dc7551f4",
+      "tree": "a5b5039ca8dfbad419b9b42cb375cd53bd37d02e"
+    },
+    {
+      "path": "Packages/JSON",
+      "commit": "e5eae6c2ca9a7244df3c09e531ca1c818010e32a",
+      "tree": "d3b93e12950be9ac0b09aea485257329fd646738"
+    },
+    {
+      "path": "Packages/STD",
+      "commit": "1f3847430b7a7a814ad0b4e3dd2e4f3711cfd4e9",
+      "tree": "5b6aa8594dde2634e9c916c1ac8b46f015ce61a0"
+    },
+    {
+      "path": "Packages/Sync",
+      "commit": "e27120158e8a18b72bd36318369110b9ab431592",
+      "tree": "a1a8c5c923ea48089c372a457094f023294ccde0"
+    },
+    {
+      "path": "Packages/Tensor",
+      "commit": "f1d6d603d2c0ef389544630b109144d9c9f518cc",
+      "tree": "98e04b99947e5ff301e016a9c1ee8f6f4b24f087"
+    }
+  ],
+  "protocol_sha256": "7306a9e4a825bebab599a7669cff0cfa31c3471eb3a60c227837fc6f635907ed",
+  "previous_capsule_present": false,
+  "scope": "Reprise du protocole uniquement ; les HEADs directs ont avancé, les références héritées et le contrôle historique restent inchangés.",
+  "historical_control": {
+    "path": "Sources/Boids2D/Baselines/2026-09-07-170658-arm64-boids.log",
+    "sha256": "8afa018a64b8e5fd72e71600925b158d4f662c8ce1ae3be8d8a8e57b229392a3",
+    "compiler": "65471f1"
+  },
+  "unchanged_permanent_gate_paths": true
+}

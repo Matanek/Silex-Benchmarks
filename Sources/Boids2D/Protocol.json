@@ -1,0 +1,16 @@
+{
+  "version": "boids-stationarity-v1",
+  "count": 4000,
+  "frames": 480,
+  "warmups": 6,
+  "runs": 12,
+  "max_mad_fraction": 0.01,
+  "max_range_fraction": 0.04,
+  "max_drift_fraction": 0.01,
+  "max_half_shift_fraction": 0.01,
+  "max_repeat_median_fraction": 0.01,
+  "historical_control": "2026-09-07-170658-arm64-boids.log",
+  "historical_compiler": "65471f1",
+  "historical_silex_median_fps": 87.165,
+  "historical_steady_architectural_ratio": 0.98064
+}

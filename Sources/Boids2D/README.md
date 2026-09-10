@@ -71,64 +71,67 @@ CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_ste
 
 ## Comparison protocol
 
-Compile before starting the series, close other graphical workloads and perform
-several warm-up runs. The current runner executes Silex, architectural C++ and
-direct C++ in that fixed order for every round; despite its historical
-`rotated` metadata, it does not yet rotate the order. Inspect the complete FPS
-progression, stationarity, range and dispersion in addition to the medians, and
-do not use a sub-percent difference from this fixed-order protocol as acceptance
-evidence. Compilation, shader translation, initialization, and the first
-rendered frame are not part of the FPS measurement.
-
-`RunComparison.sh` automates the current fixed-order protocol from any working
-directory:
+`RunComparison.sh` builds and hashes all three Release executables once, then
+runs six warm-up rounds and twelve measured rounds at 4,000 boids and 480
+frames. Every six-round cycle executes all six permutations of the witnesses;
+each occupies each position twice. The raw log records actual process order,
+all warm-ups, stdout/stderr, and all fixed-workload/state/display sentinels.
+Failed processes leave a `.partial` log and cannot produce a timing verdict.
 
 ```sh
 Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
-The default temporary build directory is keyed by both the resolved workspace
-root and the selected Silex compiler. Direct checkouts, Spec worktrees, and A/B
-compiler runs therefore never reuse the same witness or CMake cache. Use
-`--build-dir` only when an explicit reusable location is desired.
+The runner changes to its workspace root before compilation. A Spec uses its
+own compiler and workspace package links; a package escaping that closure is
+rejected. `--silex-compiler` selects another exact compiler without changing
+package resolution. `--build-dir` selects an explicit reusable artifact
+location; the default is keyed by workspace and compiler path.
 
-The worktree compiler is selected by default. To compare another compiler
-against the exact same benchmark source and package closure, pass its executable
-explicitly:
+`Provenance.py` seals compiler bytes and commit, clean package commits,
+manifest-selected native artifact checksums, source and shader hashes,
+C++ compiler/configuration, EnTT revision, SDL libraries, generated shaders and
+executable hashes. `--skip-build` verifies this seal before timing, and the
+runner verifies it again afterward. Replacing a compiler, source, native
+library or executable requires rebuilding. The seal is copied beside the raw
+log as `.seal.json`; source changes during a build reject the seal.
+
+The versioned rule in `Protocol.json` is a proposed measurement rule, independent
+of optimizer changes. It never changes the historical Part 05 control. Exactly
+rounds 1–6 are excluded from statistics and retained as raw evidence; exactly
+rounds 7–18 are analyzed. There is no adaptive trimming or search for a favorable
+window. Each witness and both paired Silex/C++ ratio sequences must satisfy:
+
+- MAD / median at most 1%;
+- full range / median at most 4%;
+- absolute least-squares drift across the complete retained window at most 1%;
+- absolute shift between the two half-window medians at most 1%.
+
+A second capture of the same artifacts must satisfy those same gates and
+repeat every median within 1%. These stationarity checks are measurement
+quality gates, not a confidence interval or proof of performance parity.
+A warming retained window, loaded host or outlier makes the result inconclusive;
+thresholds must not be weakened after observing an optimizer candidate.
+
+The runner prints a compact summary and writes complete progressions, paired
+ratios, median, MAD, range, drift, excluded/retained windows and failure reasons
+to `.log.json`. Exit 0 means stationary, 2 means inconclusive/invalid protocol,
+and other nonzero exits mean build, semantic, provenance or process failure.
+The historical 87.165 FPS median and 98.064% steady ratio remain explicitly
+identified as controls with their original protocol; neither is rebaselined by
+this instrument change. Historical fixed-order logs remain archived unchanged.
 
 ```sh
-Silex-Benchmarks/Sources/Boids2D/RunComparison.sh \
-    --silex-compiler /path/to/Silex/Toolchain/zig-out/bin/silex \
-    --wait
+python3 Silex-Benchmarks/Sources/Boids2D/TestProtocol.py
+python3 Silex-Benchmarks/Sources/Boids2D/Protocol.py analyze /path/to/capture-boids.log
+python3 Silex-Benchmarks/Sources/Boids2D/Protocol.py compare /path/to/first-boids.log /path/to/second-boids.log
 ```
 
-The log records the selected compiler path and the Git commit of the repository
-that contains it. A compiler outside a Git worktree remains runnable, but its
-commit is recorded as unavailable and the capture cannot be considered clean
-acceptance evidence.
-
-By default it builds all three Release executables, discards one warm-up per
-witness, records seven 480-frame processes per witness in Silex, C++
-architectural, C++ direct order, and writes a timestamped raw log under
-`Baselines/`. It validates the boid count, frame count, fixed delta, normalized
-display metadata, and numerical summaries of the initial state and state after
-four simulation steps. The final terminal table and log comments report the
-median, range, median absolute deviation (MAD), and relative difference from
-the architectural C++ witness. Rotation and a blocking stationarity verdict are
-owned by `Silex-Optimization-Parity-Completion`; until then these captures are
-diagnostic rather than new acceptance baselines.
-It also rejects clean-baseline status when any repository in the resolved
-Silex package closure is dirty and records every corresponding commit,
-including `GFX.Application` and `GFX.Physics` even though Boids does not import
-them directly.
-
-Run it from an external terminal with `--wait` when Codex has active agents or
-another workload may affect the result. After the build finishes, stop active
-competing work and press Return in the terminal; idle Codex, editor, and other
-application processes need not be closed. Use `--frames`, `--runs`, `--warmups`,
-`--output`, `--silex-compiler`, or `--build-dir` to override the capture without
-editing the script; `--skip-build` reuses executables already present in that
-compiler-specific build directory.
+`--count`, `--frames`, `--runs` and `--warmups` remain available for diagnostic
+smokes; noncanonical captures cannot pass the sealed analysis. `--output` sets
+the raw capture path. Output paths are never overwritten. Use `--wait` in an
+external terminal when competing work needs to stop after compilation; idle
+applications may remain open.
 
 The architectural C++ witness is the closest comparison for Silex/GFX. It
 matches the major ECS, GPU upload, shader, instancing, presentation, and data

@@ -10,8 +10,8 @@ baseline_directory="${script_directory}/Baselines"
 
 count=4000
 frames=480
-runs=7
-warmups=1
+runs=12
+warmups=6
 wait_before_run=false
 skip_build=false
 silex_compiler="${workspace_directory}/Silex/Toolchain/zig-out/bin/silex"
@@ -25,15 +25,14 @@ usage() {
 Usage: RunComparison.sh [options]
 
 Build and compare the Silex, C++ architectural, and C++ direct Boids
-witnesses. The default protocol discards one warm-up process per executable,
-then records seven fixed-workload runs per executable in Silex, architectural
-C++, direct C++ order. Rotation is not implemented yet.
+witnesses. The sealed protocol retains six warm-up and twelve measured rounds,
+using all six order permutations. Non-stationary captures exit with status 2.
 
 Options:
   --count N          Boid count passed to every executable (default: 4000)
   --frames N         Measured fixed-delta frames per executable (default: 480)
-  --runs N           Recorded processes per executable (default: 7)
-  --warmups N        Discarded warm-up processes per executable (default: 1)
+  --runs N           Recorded processes per executable (default: 12)
+  --warmups N        Discarded warm-up processes per executable (default: 6)
   --output PATH      Final log path (default: timestamped Baselines log)
   --silex-compiler PATH
                       Silex compiler used to build the witness (default: worktree compiler)
@@ -49,6 +48,7 @@ fail() {
     exit 1
 }
 
+command -v python3 >/dev/null || fail "python3 is required"
 command -v awk >/dev/null || fail "awk is required"
 command -v cksum >/dev/null || fail "cksum is required"
 
@@ -149,9 +149,13 @@ case "${build_directory}" in
     *) build_directory="${PWD}/${build_directory}" ;;
 esac
 
+cd "${workspace_directory}"
+
 partial_output_path="${output_path}.partial"
 [[ ! -e "${output_path}" ]] || fail "refusing to overwrite ${output_path}"
 [[ ! -e "${partial_output_path}" ]] || fail "refusing to overwrite ${partial_output_path}"
+[[ ! -e "${output_path}.json" ]] || fail "refusing to overwrite ${output_path}.json"
+[[ ! -e "${output_path}.seal.json" ]] || fail "refusing to overwrite ${output_path}.seal.json"
 
 silex_executable="${build_directory}/gfx-boids-silex"
 cpp_build_directory="${build_directory}/cpp"
@@ -160,7 +164,11 @@ cpp_direct_executable="${cpp_build_directory}/BoidsCppDirect"
 
 command -v git >/dev/null || fail "git is required"
 
-if [[ "${skip_build}" == false ]]; then
+if [[ "${skip_build}" == true ]]; then
+    python3 "${script_directory}/Provenance.py" verify "${script_directory}" "${silex_compiler}" "${build_directory}"
+else
+    mkdir -p "${build_directory}"
+    python3 "${script_directory}/Provenance.py" prepare "${script_directory}" "${silex_compiler}" "${build_directory}"
     command -v cmake >/dev/null || fail "cmake is required"
     mkdir -p "${build_directory}"
     printf 'Building Silex witness...\n'
@@ -174,6 +182,7 @@ if [[ "${skip_build}" == false ]]; then
         -B "${cpp_build_directory}" \
         -DCMAKE_BUILD_TYPE=Release
     cmake --build "${cpp_build_directory}" --config Release
+    python3 "${script_directory}/Provenance.py" seal "${script_directory}" "${silex_compiler}" "${build_directory}"
 fi
 
 if [[ ! -x "${cpp_architectural_executable}" && -x "${cpp_build_directory}/Release/BoidsCppArchitectural" ]]; then
@@ -204,7 +213,7 @@ repository_is_dirty() {
     status="$(git -C "${repository}" status --porcelain 2>/dev/null)"
     if [[ "${repository}" == "${package_directory}" ]]; then
         status="$(printf '%s\n' "${status}" | awk \
-            '$0 !~ /^\?\? Sources\/Boids2D\/Baselines\/.*-boids\.log(\.partial)?$/ { print }')"
+            '$0 !~ /^\?\? Sources\/Boids2D\/Baselines\/.*-boids\.log(\.partial|\.json|\.seal\.json)?$/ { print }')"
     fi
     if [[ -n "${status}" ]]; then
         printf 'true'
@@ -290,6 +299,7 @@ do
 done
 
 mkdir -p "$(dirname "${output_path}")"
+cp "${build_directory}/ArtifactSeal.json" "${output_path}.seal.json"
 {
     printf '# captured=%s\n' "$(date '+%Y-%m-%dT%H:%M:%S%z')"
     printf '# host_model=%s\n' "$(sanitize_metadata "${host_model}")"
@@ -300,7 +310,7 @@ mkdir -p "$(dirname "${output_path}")"
     printf '# source_repositories_dirty=%s\n' "${source_repositories_dirty}"
     printf '# waited_for_competing_workloads=%s\n' "${wait_before_run}"
     printf '# silex_mode=release_default\n'
-    printf '# silex_compiler=%s\n' "$(sanitize_metadata "${silex_compiler}")"
+    printf '# silex_compiler=%s\n' "$(sanitize_metadata "${silex_compiler#${workspace_directory}/}")"
     printf '# cpp_mode=Release\n'
     printf '# silex_version=%s\n' "$(sanitize_metadata "${silex_version}")"
     printf '# benchmarks_commit=%s\n' "$(git_commit "${package_directory}")"
@@ -325,8 +335,12 @@ mkdir -p "$(dirname "${output_path}")"
     printf '# cmake_version=%s\n' "${cmake_version}"
     printf '# sdl_version=%s\n' "${sdl_version}"
     printf '# entt_revision=%s\n' "${entt_revision}"
-    printf '# protocol=%s_discarded_warmups_per_executable_then_%s_isolated_rotated_fixed_workload_runs\n' "${warmups}" "${runs}"
-    printf '# rotation=silex_cpp-architectural_cpp-direct\n'
+    printf '# protocol=boids-stationarity-v1\n'
+    printf '# protocol_sha256=%s\n' "$(shasum -a 256 "${script_directory}/Protocol.json" | awk '{print $1}')"
+    printf '# warmups=%s\n' "${warmups}"
+    printf '# runs=%s\n' "${runs}"
+    printf '# rotation=all_six_permutations\n'
+    printf '# artifact_seal_sha256=%s\n' "$(shasum -a 256 "${build_directory}/ArtifactSeal.json" | awk '{print $1}')"
     printf '# count=%s\n' "${count}"
     printf '# frames=%s\n' "${frames}"
     printf '# simulation_delta=1_over_60_seconds\n'
@@ -427,7 +441,6 @@ run_witness() {
     local label="$1"
     local prefix="$2"
     local executable="$3"
-    local record="$4"
     local process_output
     local sentinel
     local sentinel_count
@@ -435,7 +448,10 @@ run_witness() {
     local state
 
     printf '%s\n' "${label}"
-    process_output="$("${executable}" "${count}" "${frames}")"
+    local process_status=0
+    process_output="$("${executable}" "${count}" "${frames}" 2>&1)" || process_status=$?
+    printf '%s\n' "${process_output}" >> "${partial_output_path}"
+    (( process_status == 0 )) || fail "${label} exited ${process_status}; raw output retained in ${partial_output_path}"
     printf '%s\n' "${process_output}"
     sentinel="$(printf '%s\n' "${process_output}" | awk -v prefix="${prefix} " 'index($0, prefix) == 1 { print }')"
     sentinel_count="$(printf '%s\n' "${sentinel}" | awk 'NF > 0 { count++ } END { print count + 0 }')"
@@ -458,92 +474,30 @@ run_witness() {
     elif ! state_vectors_match "${expected_state}" "${state}"; then
         fail "${label} state ${state} differs from ${expected_state_label} state ${expected_state}"
     fi
-
-    if [[ "${record}" == true ]]; then
-        printf '%s\n' "${sentinel}" >> "${partial_output_path}"
-    fi
 }
 
-for (( warmup = 1; warmup <= warmups; warmup++ )); do
-    printf '\nWarm-up %d/%d (discarded)\n' "${warmup}" "${warmups}"
-    run_witness '  Silex/GFX' 'SILEX_GFX_BOIDS' "${silex_executable}" false
-    run_witness '  C++ architectural' 'CPP_ARCHITECTURAL_BOIDS' "${cpp_architectural_executable}" false
-    run_witness '  C++ direct' 'CPP_DIRECT_BOIDS' "${cpp_direct_executable}" false
-done
+while read -r phase round position witness; do
+    printf '# event=%s,%s,%s,%s\n' "${phase}" "${round}" "${position}" "${witness}" >> "${partial_output_path}"
+    printf '\n%s round %s position %s\n' "${phase}" "${round}" "${position}"
+    case "${witness}" in
+        silex) run_witness 'Silex/GFX' SILEX_GFX_BOIDS "${silex_executable}" ;;
+        cpp-architectural) run_witness 'C++ architectural' CPP_ARCHITECTURAL_BOIDS "${cpp_architectural_executable}" ;;
+        cpp-direct) run_witness 'C++ direct' CPP_DIRECT_BOIDS "${cpp_direct_executable}" ;;
+    esac
+done < <(python3 "${script_directory}/Protocol.py" schedule --warmups "${warmups}" --runs "${runs}")
 
-for (( run = 1; run <= runs; run++ )); do
-    printf '\nRecorded round %d/%d\n' "${run}" "${runs}"
-    printf '# round=%d\n' "${run}" >> "${partial_output_path}"
-    run_witness '  Silex/GFX' 'SILEX_GFX_BOIDS' "${silex_executable}" true
-    run_witness '  C++ architectural' 'CPP_ARCHITECTURAL_BOIDS' "${cpp_architectural_executable}" true
-    run_witness '  C++ direct' 'CPP_DIRECT_BOIDS' "${cpp_direct_executable}" true
-done
-
-statistics_for() {
-    local prefix="$1"
-    awk -v prefix="${prefix}" '
-        index($0, prefix " ") == 1 {
-            for (field = 1; field <= NF; field++) {
-                if ($field ~ /^fps=/) {
-                    split($field, pair, "=")
-                    values[++count] = pair[2] + 0
-                }
-            }
-        }
-        END {
-            if (count == 0) exit 1
-            for (left = 1; left <= count; left++) {
-                for (right = left + 1; right <= count; right++) {
-                    if (values[right] < values[left]) {
-                        temporary = values[left]
-                        values[left] = values[right]
-                        values[right] = temporary
-                    }
-                }
-            }
-            if (count % 2 == 1) median = values[(count + 1) / 2]
-            else median = (values[count / 2] + values[count / 2 + 1]) / 2
-            for (item = 1; item <= count; item++) {
-                deviation = values[item] - median
-                if (deviation < 0) deviation = -deviation
-                deviations[item] = deviation
-            }
-            for (left = 1; left <= count; left++) {
-                for (right = left + 1; right <= count; right++) {
-                    if (deviations[right] < deviations[left]) {
-                        temporary = deviations[left]
-                        deviations[left] = deviations[right]
-                        deviations[right] = temporary
-                    }
-                }
-            }
-            if (count % 2 == 1) mad = deviations[(count + 1) / 2]
-            else mad = (deviations[count / 2] + deviations[count / 2 + 1]) / 2
-            printf "%.6f|%.4f|%.6f|%.6f", median, mad / median * 100.0,
-                values[1], values[count]
-        }
-    ' "${partial_output_path}"
-}
-
-IFS='|' read -r silex_median silex_mad silex_minimum silex_maximum <<< "$(statistics_for SILEX_GFX_BOIDS)"
-IFS='|' read -r architectural_median architectural_mad architectural_minimum architectural_maximum <<< "$(statistics_for CPP_ARCHITECTURAL_BOIDS)"
-IFS='|' read -r direct_median direct_mad direct_minimum direct_maximum <<< "$(statistics_for CPP_DIRECT_BOIDS)"
-silex_relative="$(awk -v value="${silex_median}" -v reference="${architectural_median}" 'BEGIN { printf "%.2f", (value / reference - 1.0) * 100.0 }')"
-direct_relative="$(awk -v value="${direct_median}" -v reference="${architectural_median}" 'BEGIN { printf "%.2f", (value / reference - 1.0) * 100.0 }')"
-
-{
-    printf '# summary_silex median_fps=%s mad_percent=%s range=%s..%s relative_to_architectural_percent=%s\n' \
-        "${silex_median}" "${silex_mad}" "${silex_minimum}" "${silex_maximum}" "${silex_relative}"
-    printf '# summary_cpp_architectural median_fps=%s mad_percent=%s range=%s..%s relative_to_architectural_percent=0.00\n' \
-        "${architectural_median}" "${architectural_mad}" "${architectural_minimum}" "${architectural_maximum}"
-    printf '# summary_cpp_direct median_fps=%s mad_percent=%s range=%s..%s relative_to_architectural_percent=%s\n' \
-        "${direct_median}" "${direct_mad}" "${direct_minimum}" "${direct_maximum}" "${direct_relative}"
-} >> "${partial_output_path}"
-
+python3 "${script_directory}/Provenance.py" verify "${script_directory}" "${silex_compiler}" "${build_directory}"
 mv "${partial_output_path}" "${output_path}"
-
-printf '\n%-22s %12s %10s %23s %14s\n' 'Witness' 'Median FPS' 'MAD' 'Range' 'vs C++ arch.'
-printf '%-22s %12s %9s%% %10s..%-10s %13s%%\n' 'Silex/GFX' "${silex_median}" "${silex_mad}" "${silex_minimum}" "${silex_maximum}" "${silex_relative}"
-printf '%-22s %12s %9s%% %10s..%-10s %13s%%\n' 'C++ architectural' "${architectural_median}" "${architectural_mad}" "${architectural_minimum}" "${architectural_maximum}" '0.00'
-printf '%-22s %12s %9s%% %10s..%-10s %13s%%\n' 'C++ direct' "${direct_median}" "${direct_mad}" "${direct_minimum}" "${direct_maximum}" "${direct_relative}"
+result=0
+python3 "${script_directory}/Protocol.py" analyze "${output_path}" > "${output_path}.json" || result=$?
+python3 - "${output_path}.json" <<'PYTHON'
+import json, sys
+report = json.load(open(sys.argv[1]))
+print("Verdict:", report["verdict"])
+for label, result in report.get("series", {}).items():
+    print(f"{label}: median={result['median']:.6f}, MAD={result['mad']:.6f}, range={result['minimum']:.6f}..{result['maximum']:.6f}, drift={result['drift_fraction']:.2%}")
+for failure in report["failures"]:
+    print("  " + failure)
+PYTHON
 printf '\nLog: %s\n' "${output_path}"
+exit "${result}"
