@@ -66,7 +66,7 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def git_source_sha256(repository: Path, revision: str, relative_path: str, context: str) -> str:
+def git_source_bytes(repository: Path, revision: str, relative_path: str, context: str) -> bytes:
     path = PurePosixPath(relative_path)
     if path.is_absolute() or not path.parts or ".." in path.parts:
         fail(f"{context}: invalid repository-relative path {relative_path}")
@@ -80,7 +80,11 @@ def git_source_sha256(repository: Path, revision: str, relative_path: str, conte
     if result.returncode:
         detail = result.stderr.decode(errors="replace").strip()
         fail(f"{context}: cannot read source at corrected revision: {detail}")
-    return hashlib.sha256(result.stdout).hexdigest()
+    return result.stdout
+
+
+def git_source_sha256(repository: Path, revision: str, relative_path: str, context: str) -> str:
+    return hashlib.sha256(git_source_bytes(repository, revision, relative_path, context)).hexdigest()
 
 
 def manifest_sha256(path: Path) -> str:
@@ -578,6 +582,18 @@ def audit_workspace(
         expected = fixture["corrected_source_sha256"] if case["id"] == fixture["case_id"] else case["sha256"]
         if actual != expected:
             fail(f"case {case['id']}: source hash {actual} != accepted {expected}")
+
+    owner = repositories[manifest["owner_repository"]]
+    owner_root = (workspace / owner["path"]).resolve()
+    owner_manifest = owner_root / "Package.json"
+    expected_owner_manifest = git_source_sha256(
+        owner_root,
+        owner["revision"],
+        "Package.json",
+        "owner package metadata",
+    )
+    if not owner_manifest.is_file() or sha256(owner_manifest) != expected_owner_manifest:
+        fail("owner package metadata differs from its sealed revision")
 
     regressions = [candidate["regression"]] + [
         item["regression"] for item in candidate["subsequent_corrections"]

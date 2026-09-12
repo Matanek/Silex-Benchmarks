@@ -34,7 +34,21 @@ REPOSITORIES = {
 }
 
 
-def checkout(manifest: dict, candidate: dict, workspace: Path) -> None:
+def materialize_owner_metadata(manifest: dict, workspace: Path) -> None:
+    owner = next(
+        repository
+        for repository in manifest["repositories"]
+        if repository["name"] == manifest["owner_repository"]
+    )
+    repository = (workspace / owner["path"]).resolve()
+    if not repository.is_relative_to(workspace) or not repository.is_dir():
+        raise Qualification.QualificationError(f"missing qualification owner: {repository}")
+    (repository / "Package.json").write_bytes(
+        Qualification.git_source_bytes(repository, owner["revision"], "Package.json", "owner package metadata")
+    )
+
+
+def checkout(manifest: dict, candidate: dict, workspace: Path, sealed_owner_metadata: bool) -> None:
     workspace.mkdir(parents=True, exist_ok=True)
     for repository in manifest["repositories"]:
         name = repository["name"]
@@ -82,6 +96,8 @@ def checkout(manifest: dict, candidate: dict, workspace: Path) -> None:
         else:
             Qualification.run_checked(["git", "fetch", "origin", revision, "--depth=1"], destination, timeout=600)
         Qualification.run_checked(["git", "checkout", "--detach", revision], destination, timeout=120)
+    if sealed_owner_metadata:
+        materialize_owner_metadata(manifest, workspace)
 
 
 def checkout_baseline(manifest: dict, workspace: Path) -> None:
@@ -149,6 +165,7 @@ def main() -> int:
     checkout_parser = subparsers.add_parser("checkout")
     checkout_parser.add_argument("--workspace", required=True, type=Path)
     checkout_parser.add_argument("--baseline", action="store_true")
+    checkout_parser.add_argument("--sealed-owner-metadata", action="store_true")
     link_parser = subparsers.add_parser("link")
     link_parser.add_argument("--workspace", required=True, type=Path)
     link_parser.add_argument("--silex", required=True, type=Path)
@@ -167,7 +184,7 @@ def main() -> int:
     boundary_scope = Qualification.read_json(boundary_scope_path)
     Qualification.audit_boundary_scope(boundary_scope, boundary_scope_path, manifest, manifest_path)
     if args.command == "checkout":
-        checkout(manifest, candidate, args.workspace.resolve())
+        checkout(manifest, candidate, args.workspace.resolve(), args.sealed_owner_metadata)
         if args.baseline:
             checkout_baseline(manifest, args.workspace.resolve())
         print("sealed workspace checkout: PASS")

@@ -46,12 +46,15 @@ The audit requires every closure repository at its exact sealed HEAD, except
 that Silex must be at the exact corrected SHA bound by `Candidate.json`. The
 corrected SHA must descend from the rejected sealed candidate. Every hashed
 regression is read from its declared corrected revision in the append-only
-chain, so a later correction may legitimately evolve the same source. The owner repository
-may be a descendant of its
+chain, so a later correction may legitimately evolve the same source. The
+owner repository may be a descendant of its
 sealed source revision because the manifest and runner necessarily live in a
 later commit; every selected source must still match its sealed hash. The audit
-also rejects any resolved dependency that is not a `workspace-link` below that
-root. Prepare the workspace only with explicit links such as:
+also requires its `Package.json` from the sealed revision, so dependencies
+added later cannot enter the campaign. The authoritative workflow materializes
+this metadata in its ephemeral checkout before linking packages. The audit
+rejects any resolved dependency that is not a `workspace-link` below that root.
+Prepare the workspace only with explicit links such as:
 
 ```sh
 Silex/Toolchain/zig-out/bin/silex link Packages/STD --workspace .

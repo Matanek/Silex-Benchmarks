@@ -137,7 +137,7 @@ jobs:
           baseline=()
           if [ "${{ matrix.performance }}" = "true" ]; then baseline=(--baseline); fi
           python3 -B Silex-Benchmarks/Sources/OptimizerBlindQualification/Workspace.py \
-            checkout --workspace . "${baseline[@]}"
+            checkout --workspace . --sealed-owner-metadata "${baseline[@]}"
 
       - name: Check out the pinned SDL3 source for unpublished native archives
         if: (inputs.target == 'all' || inputs.target == matrix.target) && (matrix.target == 'macos-x64' || matrix.target == 'linux-arm64' || matrix.performance)
