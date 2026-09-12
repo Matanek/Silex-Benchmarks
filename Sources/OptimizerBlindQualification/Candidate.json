@@ -2,7 +2,7 @@
   "schema_version": 2,
   "manifest_sha256": "4cc00e41e72233d4475ec326c2e1e7e455eb8fc242a64188467bdcb5f01e2115",
   "initial_candidate_revision": "8429e37d2f743106ff79070215ceff6d75eaf8ca",
-  "qualified_candidate_revision": "ecec32216e5e1965386ab5bfbfc8aa900274e250",
+  "qualified_candidate_revision": "55f6b7df8a46baa94e34f89ade451b754b9d585a",
   "reason": "The sealed FallingBodies2D sentinel exposed a Release countdown rewrite that moved a loop-local call result before its definition.",
   "regression": {
     "repository": "Silex",
@@ -400,6 +400,16 @@
         "sha256": "bce7b82094ea6a04f5bf1ba9898203937be069d50e34985bd38fe448b802a3ad",
         "failing_revision": "c2393fbe6ec27bdf1deb1f1836e8477606bc533c",
         "corrected_revision": "ecec32216e5e1965386ab5bfbfc8aa900274e250"
+      }
+    },
+    {
+      "reason": "The canonical Physics integration kernel retained two direct calls inside its hot loops because scalar values from mutually exclusive callee paths were accumulated as simultaneous pressure and proven pure scalar-math boundaries were treated as native barriers. The correction uses a per-block regional pressure proxy, keeps a hard expansion ceiling, admits only explicitly pure boundaries, and removes both calls. A 21-pair physical ARM64 Silex-before/Silex-after campaign measured an execution interval of 0.867004..0.888162 while an identical-file control crossed parity; the complete Preparation kernel remained statistically inconclusive.",
+      "regression": {
+        "repository": "Silex",
+        "path": "Toolchain/Benchmarks/Optimizer/Regressions/HotReferenceLeafClosure.sx",
+        "sha256": "fc04bd36cf77c669d2cd4913bc452cb802b198ecda8acb506ee18b4c05a154b7",
+        "failing_revision": "ecec32216e5e1965386ab5bfbfc8aa900274e250",
+        "corrected_revision": "55f6b7df8a46baa94e34f89ade451b754b9d585a"
       }
     }
   ]
