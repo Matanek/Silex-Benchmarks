@@ -65,7 +65,9 @@ def checkout(manifest: dict, candidate: dict, workspace: Path) -> None:
         Qualification.run_checked(["git", "config", "core.autocrlf", "false"], destination)
         Qualification.run_checked(["git", "config", "core.longpaths", "true"], destination)
         if name == manifest["candidate"]["repository"]:
-            correction_chain_depth = len(candidate["subsequent_corrections"]) + 2
+            # A correction records one accepted proof, not every intervening
+            # audit or revoked experiment. Fetch the complete commit ancestry
+            # between the sealed root and candidate before auditing it.
             Qualification.run_checked(
                 [
                     "git",
@@ -73,7 +75,6 @@ def checkout(manifest: dict, candidate: dict, workspace: Path) -> None:
                     "origin",
                     revision,
                     repository["revision"],
-                    f"--depth={correction_chain_depth}",
                 ],
                 destination,
                 timeout=600,
