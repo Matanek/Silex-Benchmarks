@@ -197,16 +197,14 @@ def collect_silex_ab(
 
     candidate_relative = Qualification.relative_summary(samples["candidate"], samples["baseline"])
     control_relative = Qualification.relative_summary(samples["control"], samples["baseline"])
-    if not (control_relative["lower_bound_ppm"] <= 1_000_000 <= control_relative["upper_bound_ppm"]):
-        raise Qualification.QualificationError(
-            f"{case_id}: Silex A/B same-file control does not cross parity "
-            f"({control_relative['lower_bound_ppm']}..{control_relative['upper_bound_ppm']} ppm)"
-        )
-    verdict = "inconclusive"
-    if candidate_relative["upper_bound_ppm"] < 1_000_000:
-        verdict = "improvement"
-    elif candidate_relative["lower_bound_ppm"] > 1_000_000:
-        verdict = "regression"
+    control_valid = control_relative["lower_bound_ppm"] <= 1_000_000 <= control_relative["upper_bound_ppm"]
+    verdict = "invalid-control"
+    if control_valid:
+        verdict = "inconclusive"
+        if candidate_relative["upper_bound_ppm"] < 1_000_000:
+            verdict = "improvement"
+        elif candidate_relative["lower_bound_ppm"] > 1_000_000:
+            verdict = "regression"
 
     return {
         "schema_version": 1,
@@ -226,6 +224,7 @@ def collect_silex_ab(
         "summaries": {name: Qualification.sample_summary(values) for name, values in samples.items()},
         "candidate_vs_baseline": candidate_relative,
         "same_file_control_vs_baseline": control_relative,
+        "same_file_control_valid": control_valid,
         "verdict": verdict,
     }
 
