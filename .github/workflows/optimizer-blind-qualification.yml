@@ -30,6 +30,11 @@ on:
           - physics-integration
           - physics-preparation
           - boids2d-full
+      silex_ab_baseline_ref:
+        description: Optional immediate Silex baseline for a diagnostic physical A/B
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -208,6 +213,24 @@ jobs:
             --prefix "$RUNNER_TEMP/baseline" \
             --build-file _baseline/Silex/Toolchain/build.zig
 
+      - name: Build the optional immediate Silex A/B baseline
+        if: (inputs.target == 'all' || inputs.target == matrix.target) && matrix.performance && inputs.silex_ab_baseline_ref != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref="${{ inputs.silex_ab_baseline_ref }}"
+          if [[ ! "$ref" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "silex_ab_baseline_ref must be a full lowercase Git revision" >&2
+            exit 1
+          fi
+          git -C Silex fetch --filter=blob:none origin "$ref"
+          candidate=$(git -C Silex rev-parse HEAD)
+          git -C Silex merge-base --is-ancestor "$ref" "$candidate"
+          git -C Silex worktree add --detach "$RUNNER_TEMP/silex-ab-source" "$ref"
+          zig build -Doptimize=ReleaseFast -Dcpu=baseline \
+            --prefix "$RUNNER_TEMP/silex-ab-baseline" \
+            --build-file "$RUNNER_TEMP/silex-ab-source/Toolchain/build.zig"
+
       - name: Set up and link only the sealed workspace
         if: inputs.target == 'all' || inputs.target == matrix.target
         shell: bash
@@ -343,6 +366,12 @@ jobs:
             --report "Silex-Benchmarks/Results/OptimizerBlindQualification/${{ matrix.target }}/report.json")
           if [ "${{ inputs.qualification_case }}" != "all" ]; then
             command+=(--only "${{ inputs.qualification_case }}")
+          fi
+          if [ -n "${{ inputs.silex_ab_baseline_ref }}" ]; then
+            command+=(
+              --silex-ab-baseline "$RUNNER_TEMP/silex-ab-baseline/bin/silex"
+              --silex-ab-baseline-revision "${{ inputs.silex_ab_baseline_ref }}"
+            )
           fi
           "${command[@]}"
 

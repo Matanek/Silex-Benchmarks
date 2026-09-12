@@ -44,8 +44,9 @@ python3 Silex-Benchmarks/Sources/OptimizerBlindQualification/Qualification.py \
 
 The audit requires every closure repository at its exact sealed HEAD, except
 that Silex must be at the exact corrected SHA bound by `Candidate.json`. The
-corrected SHA must descend from the rejected sealed candidate and contain every
-hashed regression in the append-only correction chain. The owner repository
+corrected SHA must descend from the rejected sealed candidate. Every hashed
+regression is read from its declared corrected revision in the append-only
+chain, so a later correction may legitimately evolve the same source. The owner repository
 may be a descendant of its
 sealed source revision because the manifest and runner necessarily live in a
 later commit; every selected source must still match its sealed hash. The audit
@@ -79,6 +80,16 @@ partial report. The manual
 is the authoritative source for the six named native runner profiles. Only its
 macOS ARM64/X64 jobs collect physical CPU performance evidence; graphical
 execution and measurements are required only on macOS ARM64.
+
+For an optimizer slice whose immediate effect must be attributed independently
+of the sealed Part 07 and external references, dispatch a focused Physics case
+with `silex_ab_baseline_ref` set to the full SHA of the preceding Silex product.
+The physical runner builds that compiler from the same history, compares all
+32,768 full state records, then records 21 rotated candidate/baseline/same-file
+control triplets under `silex_ab_diagnostics`. This diagnostic does not replace
+or modify the sealed gate. It rejects a drifting same-file control and reports
+an improvement, regression or inconclusive interval for the exact compiler
+transition.
 
 ## Evidence contract
 

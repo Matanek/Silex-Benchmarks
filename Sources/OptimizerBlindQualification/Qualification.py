@@ -8,7 +8,7 @@ import hashlib
 import json
 import math
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import signal
 import statistics
 import subprocess
@@ -64,6 +64,23 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def git_source_sha256(repository: Path, revision: str, relative_path: str, context: str) -> str:
+    path = PurePosixPath(relative_path)
+    if path.is_absolute() or not path.parts or ".." in path.parts:
+        fail(f"{context}: invalid repository-relative path {relative_path}")
+    result = subprocess.run(
+        ["git", "show", f"{revision}:{path.as_posix()}"],
+        cwd=repository,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode:
+        detail = result.stderr.decode(errors="replace").strip()
+        fail(f"{context}: cannot read source at corrected revision: {detail}")
+    return hashlib.sha256(result.stdout).hexdigest()
 
 
 def manifest_sha256(path: Path) -> str:
@@ -583,10 +600,12 @@ def audit_workspace(
         )
         if ancestry.returncode:
             fail(f"candidate regression {index}: corrected revision does not descend from failing revision")
-        regression_source = (regression_root / regression["path"]).resolve()
-        if not regression_source.is_relative_to(regression_root) or not regression_source.is_file():
-            fail(f"candidate regression {index}: missing or escaping source {regression_source}")
-        actual_regression_hash = sha256(regression_source)
+        actual_regression_hash = git_source_sha256(
+            regression_root,
+            regression["corrected_revision"],
+            regression["path"],
+            f"candidate regression {index}",
+        )
         if actual_regression_hash != regression["sha256"]:
             fail(f"candidate regression {index}: source hash {actual_regression_hash} != {regression['sha256']}")
 

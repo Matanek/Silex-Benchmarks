@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
 from pathlib import Path
 import re
+import shutil
 import sys
 import time
 from typing import Any, Callable
@@ -152,11 +154,89 @@ def measurement(candidate: list[int], reference: list[int], reference_kind: str)
     return {"candidate": candidate, "reference": reference, "reference_kind": reference_kind}
 
 
+def collect_silex_ab(
+    case_id: str,
+    candidate_binary: Path,
+    baseline_compiler: Path,
+    baseline_revision: str,
+    source: str,
+    root: Path,
+    workspace: Path,
+    count: int,
+    warmups: int,
+    timeout: float,
+) -> dict[str, Any]:
+    """Measure one compiler change against its immediate Silex predecessor."""
+    baseline_binary = root / f"{case_id}-silex-ab-baseline"
+    control_binary = root / f"{case_id}-silex-ab-control"
+    compile_once(baseline_compiler, source, baseline_binary, workspace, False, timeout)
+    shutil.copy2(baseline_binary, control_binary)
+
+    candidate_states = run_output([str(candidate_binary), "--check-full"], workspace, timeout)
+    baseline_states = run_output([str(baseline_binary), "--check-full"], workspace, timeout)
+    if candidate_states != baseline_states:
+        raise Qualification.QualificationError(f"{case_id}: Silex A/B full states differ")
+
+    binaries = {
+        "candidate": candidate_binary,
+        "baseline": baseline_binary,
+        "control": control_binary,
+    }
+    samples = {name: [] for name in binaries}
+    names = list(binaries)
+    for index in range(warmups):
+        offset = index % len(names)
+        for name in names[offset:] + names[:offset]:
+            measure_execution(case_id, [str(binaries[name])], workspace, timeout)
+    for index in range(count):
+        offset = index % len(names)
+        order = names[offset:] + names[:offset]
+        for name in order:
+            samples[name].append(measure_execution(case_id, [str(binaries[name])], workspace, timeout))
+        print(f"{case_id}/silex-ab: triplet {index + 1}/{count}", flush=True)
+
+    candidate_relative = Qualification.relative_summary(samples["candidate"], samples["baseline"])
+    control_relative = Qualification.relative_summary(samples["control"], samples["baseline"])
+    if not (control_relative["lower_bound_ppm"] <= 1_000_000 <= control_relative["upper_bound_ppm"]):
+        raise Qualification.QualificationError(
+            f"{case_id}: Silex A/B same-file control does not cross parity "
+            f"({control_relative['lower_bound_ppm']}..{control_relative['upper_bound_ppm']} ppm)"
+        )
+    verdict = "inconclusive"
+    if candidate_relative["upper_bound_ppm"] < 1_000_000:
+        verdict = "improvement"
+    elif candidate_relative["lower_bound_ppm"] > 1_000_000:
+        verdict = "regression"
+
+    return {
+        "schema_version": 1,
+        "baseline_revision": baseline_revision,
+        "method": "rotated candidate/baseline/same-file-control triplets",
+        "warmups": warmups,
+        "full_state_sha256": hashlib.sha256(candidate_states.encode()).hexdigest(),
+        "full_state_records": len(candidate_states.splitlines()),
+        "binaries": {
+            name: {
+                "sha256": Qualification.sha256(binary),
+                "bytes": binary.stat().st_size,
+            }
+            for name, binary in binaries.items()
+        },
+        "samples_ns": samples,
+        "summaries": {name: Qualification.sample_summary(values) for name, values in samples.items()},
+        "candidate_vs_baseline": candidate_relative,
+        "same_file_control_vs_baseline": control_relative,
+        "verdict": verdict,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--candidate-silex", required=True, type=Path)
     parser.add_argument("--baseline-silex", required=True, type=Path)
+    parser.add_argument("--silex-ab-baseline", type=Path)
+    parser.add_argument("--silex-ab-baseline-revision")
     parser.add_argument("--report", required=True, type=Path)
     parser.add_argument("--physics-oracle-dir", required=True, type=Path)
     parser.add_argument("--boids-cpp", required=True, type=Path)
@@ -167,6 +247,11 @@ def main() -> int:
     parser.add_argument("--timeout", type=float, default=600.0)
     parser.add_argument("--only", action="append", choices=sorted(PERFORMANCE))
     args = parser.parse_args()
+
+    if bool(args.silex_ab_baseline) != bool(args.silex_ab_baseline_revision):
+        parser.error("--silex-ab-baseline and --silex-ab-baseline-revision must be provided together")
+    if args.silex_ab_baseline_revision and not re.fullmatch(r"[0-9a-f]{40}", args.silex_ab_baseline_revision):
+        parser.error("--silex-ab-baseline-revision must be a full lowercase Git revision")
 
     workspace = args.workspace.resolve()
     candidate_silex = args.candidate_silex.resolve()
@@ -311,6 +396,21 @@ def main() -> int:
             except Qualification.QualificationError as error:
                 audit_failures.append(str(error))
         Campaign.write_report(args.report, report)
+
+        if args.silex_ab_baseline and case_id.startswith("physics-"):
+            report.setdefault("silex_ab_diagnostics", {})[case_id] = collect_silex_ab(
+                case_id,
+                candidate_binary,
+                args.silex_ab_baseline.resolve(),
+                args.silex_ab_baseline_revision,
+                source,
+                root,
+                workspace,
+                count,
+                6,
+                args.timeout,
+            )
+            Campaign.write_report(args.report, report)
 
     if audit_failures:
         raise Qualification.QualificationError("; ".join(audit_failures))
