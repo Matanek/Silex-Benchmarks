@@ -6,6 +6,13 @@ export LC_ALL=C
 script_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 package_directory="$(cd "${script_directory}/../.." && pwd)"
 workspace_directory="$(cd "${script_directory}/../../.." && pwd)"
+# A Spec-local configuration temporarily selects the four prepared witnesses.
+# Removing it restores the ordinary native/C++ build-and-compare path.
+fourway_configuration="${workspace_directory}/Evaluations/boids-fourway/Configuration.json"
+if [[ -f "${fourway_configuration}" ]]; then
+    exec python3 "${script_directory}/FourWay.py" --config "${fourway_configuration}" "$@"
+fi
+
 baseline_directory="${script_directory}/Baselines"
 
 count=4000

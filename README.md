@@ -129,3 +129,30 @@ remain with their owners. This includes the Box2D oracle and fine-grained
 solver profiles in `GFX.Physics`, as well as the worker-pool regression test
 in `STD`: they verify an implementation, while the scenarios in this
 repository cross a real package boundary.
+
+
+### Temporary four-way comparison in the LLVM Spec
+
+When the workspace contains `Evaluations/boids-fourway/Configuration.json`,
+`Sources/Boids2D/RunComparison.sh --wait` selects the four prepared executables:
+Silex native, Silex LLVM, C++ architectural and C++ direct. It checks their
+sealed hashes and source repositories, then waits for Return before launching
+any measured process. `--prepare-only` checks readiness without running Boids.
+The prepared Silex binaries are reused explicitly; this mode does not rebuild
+with the ordinary default compiler. Removing the local configuration restores
+the existing three-way runner. This configuration is local to the Spec.
+
+The temporary protocol uses four warm-up rounds and twelve measured rounds
+per executable, in a balanced four-row Williams order. It keeps the original
+4000 × 480 workload, semantic tolerance and stationarity thresholds, but is a
+separate diagnostic protocol from `boids-stationarity-v1`. Native and LLVM
+Silex fields are additionally compared exactly. All process output and actual
+exit codes are retained in timestamped logs and JSON reports under the local
+configuration's `Results/` directory. Existing captures are never overwritten.
+
+The pinned LLVM candidate currently exits with code 2 at its final allocation
+guard. Only that expected LLVM result is allowed to continue the comparison;
+other unexpected exits, stderr, state mismatches or changed inputs stop it.
+The final runner also exits with 2 and labels its report diagnostic, even if
+the timing series are stationary. These measurements do not establish final
+LLVM correctness or adoption. No allocation guard in the executable is disabled.
