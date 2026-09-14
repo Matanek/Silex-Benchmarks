@@ -1,0 +1,56 @@
+BOIDS - COMPARAISON FPS
+
+Date       : 2026-09-14T09:22:30+02:00
+Plateforme : macos-arm64
+Charge     : 4000 boids x 480 frames - Release
+Passages   : 6 echauffements + 12 mesures par variante
+
+Variante             FPS moyens      FPS min      FPS max   Ecart-type
+-----------------------------------------------------------------------
+Silex/Natif              89.458       88.762       90.738        0.490
+Silex/LLVM               94.020       93.559       94.794        0.348
+C++/Clang                88.329       88.025       88.928        0.218
+
+Moyennes hors echauffements ; min/max et dispersion entre passages, pas entre frames.
+
+ECARTS ENTRE VARIANTES
+
+Variante           Reference             Ecart FPS Ecart relatif
+-----------------------------------------------------------------------
+Silex/LLVM         Silex/Natif              +4.562       +5.10 %
+Silex/Natif        C++/Clang                +1.129       +1.28 %
+Silex/LLVM         C++/Clang                +5.690       +6.44 %
+
+Ecart relatif = (FPS moyens variante / FPS moyens reference - 1) x 100.
+
+Stabilite : series instables ; ecarts descriptifs a confirmer.
+
+FPS DE CHAQUE PASSAGE
+N = Silex/Natif ; L = Silex/LLVM ; C = C++/Clang.
+
+Phase         Tour Ordre        Silex/Natif     Silex/LLVM      C++/Clang
+----------------------------------------------------------------------------
+Echauffement     1 N>L>C           92.31597       97.38636       92.06291
+Echauffement     2 N>C>L          91.696846       96.71497       91.67076
+Echauffement     3 L>N>C           91.46252       95.78077       90.54402
+Echauffement     4 L>C>N          90.690636       95.35652       90.28243
+Echauffement     5 C>N>L          90.866356       94.66298       88.43928
+Echauffement     6 C>L>N           90.76625       94.53749       89.20919
+Mesure           7 N>L>C           90.73778       94.79443       88.52041
+Mesure           8 N>C>L           89.50821       94.41309        88.9283
+Mesure           9 L>N>C           89.81701       94.25171       88.22777
+Mesure          10 L>C>N           89.48471       94.08248       88.24556
+Mesure          11 C>N>L           89.38056       93.75535       88.33537
+Mesure          12 C>L>N          89.381874       93.84683       88.22122
+Mesure          13 N>L>C           89.82313       94.14213       88.38799
+Mesure          14 N>C>L           89.40941       93.55895         88.111
+Mesure          15 L>N>C           88.76154       93.60978       88.02498
+Mesure          16 L>C>N           88.97928       93.64231        88.3329
+Mesure          17 C>N>L          89.165146      94.049576        88.2872
+Mesure          18 C>L>N           89.04817      94.090546       88.33016
+
+Hôte : macOS-26.6.2-arm64-arm-64bit-Mach-O
+Configuration SHA-256 : 0aca016423a80a83f011b67965c2a492e1fbbcc2fdd8766a4eb8ac7287158953
+- Silex/Natif : 5487b63010c1df7711a78c7cf6bcf5851caf286ae14022778418fec46876784e
+- Silex/LLVM : c7dd4234060c4cf0d2f89c076227812b43d16b3da128fa82849f850e76a312d2
+- C++/Clang : 9ec12684a5a24b9d67d5989092f229a441124949415e11f18448e8ac98cfb263

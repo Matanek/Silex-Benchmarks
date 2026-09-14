@@ -4,7 +4,7 @@ The comparison has three variants:
 
 - Silex/Natif compiles `Silex.sx` with the native Silex backend;
 - Silex/LLVM compiles that same source with the LLVM evaluation backend;
-- C++ architectural uses EnTT and SDL_GPU to match the Silex/GFX Scene2D path,
+- C++/Clang uses EnTT and SDL_GPU to match the Silex/GFX Scene2D path,
   with the same drawing shader, vertex and instance layouts and one instanced draw.
 
 Every variant preserves the quadratic algorithm, one flock snapshot per frame,
@@ -34,9 +34,10 @@ hash to bypass an unexplained mismatch.
 `--prepare-only` verifies readiness without launching any Boids process.
 `--wait` performs that verification, waits for Return, then verifies again before
 launching. There is no automatic switch to another compiler or comparison script.
-The script embeds its checks, statistical policy and report generation. It requires
-Python 3 (standard library only), with no separate Python runtime modules or
-additional commands to launch.
+The POSIX shell script uses `jq` to read the prepared configuration, `awk` for
+numeric checks and statistics, Git, and `shasum` or `sha256sum` for hashes.
+It contains no Python and does not invoke it. Temporary validation data is
+removed on completion or interruption.
 
 ## Measurement and validity
 
@@ -62,27 +63,28 @@ correctness.
 
 ## Report
 
-Each capture writes **one Markdown file** directly to `Baselines/`, named for
+Each capture writes **one plain-text `.log` file** directly to `Baselines/`, named for
 its date, time, operating system and architecture, for example
-`2026-09-14-073950-macos-arm64.md`. Generated names include fractional seconds
-to avoid collisions. `--output PATH` overrides the destination; an existing
-file is never overwritten. There is no accompanying log, JSON or summary file.
+`2026-09-14-073950-macos-arm64.log`. `--output PATH` overrides the destination;
+an existing file is never overwritten. There is no accompanying JSON or summary file.
 
 The report leads with mean, minimum, maximum and population standard deviation
 of the FPS reported by each measured process, followed by differences between
 variants in FPS and percent. These are statistics across repeated runs, not
 per-frame extrema. Warm-ups are excluded from these calculations.
 
-Foldable sections retain the individual FPS, execution order and brief capture
-context in the same file. Display dimensions and application state are checked
+Aligned columns retain the individual FPS and execution order in the same file,
+with brief capture context. Display dimensions and application state are checked
 internally and omitted from the report. An invalid or interrupted run leaves
 one partial report with an error, without a completed comparison table.
 
-[The current baseline](Baselines/2026-09-14-073950-macos-arm64.md) reformats the
-last user capture without rerunning it. Its three retained series are descriptive
-and nonstationary. The original raw capture remains in Git history at `245b9a9`.
+[The initial reference](Baselines/2026-09-14-073950-macos-arm64.log) and
+[the latest user capture](Baselines/2026-09-14-092230-615615-macos-arm64.log)
+preserve the measured FPS and execution order without rerunning either campaign.
+Both remain descriptive and nonstationary. The original raw capture for the
+initial reference remains in Git history at `245b9a9`.
 
-## C++ architectural build
+## C++/Clang build
 
 The C++23 executable requires SDL3 development files and `shadercross` discoverable
 by CMake. CMake uses an installed EnTT 4 package or fetches the pinned EnTT commit
@@ -92,6 +94,7 @@ From the Spec's `Worktree/` root:
 
 ```sh
 cmake -S Silex-Benchmarks/Sources/Boids2D/Cpp \
-    -B Evaluations/boids-comparison/cpp -DCMAKE_BUILD_TYPE=Release
+    -B Evaluations/boids-comparison/cpp -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=clang++
 cmake --build Evaluations/boids-comparison/cpp --config Release
 ```

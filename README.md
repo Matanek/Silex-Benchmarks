@@ -133,8 +133,8 @@ repository cross a real package boundary.
 
 ### Boids native / LLVM / C++ comparison
 
-[Boids2D](Sources/Boids2D/README.md) compares Silex native, Silex LLVM and C++
-architectural through the single executable entry point `RunComparison.sh`.
+[Boids2D](Sources/Boids2D/README.md) compares Silex native, Silex LLVM and
+C++/Clang through the single executable entry point `RunComparison.sh`.
 The prepared executables are verified before running six warm-up rounds and
 twelve measured rounds per variant. `--wait` pauses after verification;
 `--prepare-only` verifies without running the benchmark.
@@ -146,8 +146,8 @@ From the SilexProject workspace root:
 ```
 
 The local configuration lives under the Spec's
-`Worktree/Evaluations/boids-comparison/Configuration.json`. Each capture writes one Markdown report
-to [Baselines](Sources/Boids2D/Baselines/2026-09-14-073950-macos-arm64.md), named
+`Worktree/Evaluations/boids-comparison/Configuration.json`. Each capture writes one plain-text log
+to [Baselines](Sources/Boids2D/Baselines/2026-09-14-092230-615615-macos-arm64.log), named
 for the date, time, operating system and architecture. All three executables
 must finish with code 0; a complete but nonstationary capture returns 2 from
 the runner and remains available for inspection.

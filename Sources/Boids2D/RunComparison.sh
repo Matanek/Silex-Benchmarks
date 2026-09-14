@@ -1,295 +1,275 @@
 #!/bin/sh
-# One executable entry point; Python 3 provides the standard-library checks and statistics.
-boids_program=$(cat <<'BOIDS_PYTHON'
-"""Sealed three-way Boids comparison for a Spec workspace."""
-import argparse
-from datetime import datetime
-import hashlib
-import itertools
-import json
-import math
-from pathlib import Path
-import platform
-import subprocess
-import statistics
-import sys
+# POSIX shell runner. jq reads the seal; awk validates witnesses and computes FPS statistics.
+set -eu
+export LC_ALL=C
 
+usage() {
+    cat <<'HELP'
+Usage: RunComparison.sh [--wait] [--prepare-only] [--config PATH]
+                        [--warmups N] [--runs N] [--output PATH]
 
-POLICY = {'version': 'boids-stationarity-v2', 'count': 4000, 'frames': 480, 'warmups': 6, 'runs': 12, 'max_mad_fraction': 0.01, 'max_range_fraction': 0.04, 'max_drift_fraction': 0.01, 'max_half_shift_fraction': 0.01}
-
-def summarize(values):
-    if len(values) < 6 or any(not math.isfinite(v) or v <= 0 for v in values):
-        raise ValueError("need at least six positive finite samples")
-    median = statistics.median(values)
-    mad = statistics.median(abs(v - median) for v in values)
-    center = (len(values) - 1) / 2
-    slope = sum((i - center) * v for i, v in enumerate(values)) / sum(
-        (i - center) ** 2 for i in range(len(values)))
-    half = len(values) // 2
-    drift = slope * (len(values) - 1) / median
-    shift = (statistics.median(values[half:]) - statistics.median(values[:half])) / median
-    checks = {"mad": mad / median, "range": (max(values) - min(values)) / median,
-              "drift": abs(drift), "half_shift": abs(shift)}
-    failures = [f"{key}={value:.6f} exceeds {POLICY['max_' + key + '_fraction']:.6f}"
-                for key, value in checks.items() if value > POLICY['max_' + key + '_fraction']]
-    return {"values": values, "median": median, "mad": mad,
-            "minimum": min(values), "maximum": max(values),
-            "drift_fraction": drift, "half_shift_fraction": shift,
-            "failures": failures, "stationary": not failures}
-
-
-def semantic_signature(data):
-    if int(data["count"]) != POLICY["count"] or int(data["frames"]) != POLICY["frames"]:
-        raise ValueError("noncanonical workload")
-    if abs(float(data["fixed_delta"]) - 1 / 60) > 1e-7 or int(data["state_step"]) != 4:
-        raise ValueError("noncanonical simulation delta or state step")
-    if data["present"] != "immediate":
-        raise ValueError("noncanonical presentation")
-    window = tuple(map(float, data["window"].split("x")))
-    pixels = tuple(map(float, data["pixels"].split("x")))
-    scale, density = float(data["scale"]), float(data["density"])
-    if window != (960, 640) or len(pixels) != 2 or any(not math.isfinite(v) or v <= 0 for v in (*pixels, scale, density)):
-        raise ValueError("invalid display dimensions")
-    state = [float(data[f"{stage}_{component}"]) for stage in ("initial", "state")
-             for component in ("px", "py", "vx", "vy", "p2", "v2")]
-    if any(not math.isfinite(v) for v in (*state, float(data["fixed_delta"]))):
-        raise ValueError("nonfinite semantic witness")
-    return (*window, *pixels, scale, density), state
-
-
-LABELS = ("Silex/Natif", "Silex/LLVM", "C++ architectural")
-PREFIXES = ("SILEX_GFX_BOIDS", "SILEX_GFX_BOIDS", "CPP_ARCHITECTURAL_BOIDS")
-# All six permutations balance positions and directed transitions.
-ORDERS = tuple(itertools.permutations(range(3)))
-
-
-def digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def verify(config, root):
-    if config["version"] != "boids-threeway-diagnostic-v1":
-        raise ValueError("unsupported three-way configuration")
-    if tuple(item["label"] for item in config["executables"]) != LABELS:
-        raise ValueError("configuration must contain the three distinct witnesses")
-    for relative, expected in config["files"].items():
-        if digest(root / relative) != expected:
-            raise ValueError(f"input changed: {relative}; prepare a new comparison")
-    for relative, expected in config["repositories"].items():
-        repo = root / relative
-        head = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
-        dirty = subprocess.check_output(["git", "-C", str(repo), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
-        if head != expected or dirty:
-            raise ValueError(f"repository changed: {relative}; prepare a new comparison")
-    for item in config["executables"]:
-        if item["path"] not in config["files"]:
-            raise ValueError("unsealed executable")
-        if item["expected_exit"] != 0:
-            raise ValueError("unexpected exit-code policy")
-
-
-def observe(index, result):
-    expected_exit = 0
-    if result.returncode != expected_exit:
-        raise ValueError(f"{LABELS[index]} exited {result.returncode}, expected {expected_exit}")
-    if result.stderr:
-        raise ValueError(f"{LABELS[index]} emitted stderr")
-    lines = [line for line in result.stdout.splitlines() if line.startswith(PREFIXES[index] + " ")]
-    if len(lines) != 1:
-        raise ValueError(f"{LABELS[index]} must emit exactly one state witness")
-    fields = lines[0].split()[1:]
-    data = dict(field.split("=", 1) for field in fields)
-    if len(data) != len(fields):
-        raise ValueError("duplicate state field")
-    signature = semantic_signature(data)
-    fps = float(data["fps"])
-    if not math.isfinite(fps) or fps <= 0:
-        raise ValueError("invalid FPS")
-    return data, signature, fps
-
-
-def match(reference, observed):
-    if reference[0] != observed[0] or any(
-        abs(a - b) > 0.05 + max(abs(a), abs(b)) * 0.00002
-        for a, b in zip(reference[1], observed[1])
-    ):
-        raise ValueError("display or deterministic state differs between witnesses")
-
-
-
-def platform_name():
-    system = {"Darwin": "macos", "Windows": "windows", "Linux": "linux"}.get(platform.system(), platform.system().lower())
-    machine = platform.machine().lower()
-    architecture = {"aarch64": "arm64", "amd64": "x64", "x86_64": "x64"}.get(machine, machine)
-    return f"{system}-{architecture}"
-
-
-def render_report(report):
-    """One human-readable capture; application state stays in validation only."""
-    status = {
-        "incomplete": "En cours — résultats partiels, aucune comparaison validée.",
-        "invalid": "Capture invalide — aucune comparaison validée.",
-        "interrupted": "Capture interrompue — aucune comparaison validée.",
-        "diagnostic-complete": "Capture complète — séries stables.",
-        "diagnostic-nonstationary": "Capture complète — séries instables ; écarts descriptifs à confirmer.",
+  --wait          Attendre Entree apres verification des executables.
+  --prepare-only  Verifier sans lancer le benchmark.
+  --config PATH   Configuration preparee (Evaluations/boids-comparison par defaut).
+  --warmups N     Tours d echauffement : multiple de 6, defaut 6.
+  --runs N        Tours mesures : multiple de 6, minimum 6, defaut 12.
+  --output PATH   Un seul rapport texte .log (Baselines par defaut).
+HELP
+}
+fail() { printf '%s\n' "$*" >&2; exit 1; }
+source_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+root=$(CDPATH= cd -- "$source_dir/../../.." && pwd -P)
+config="$root/Evaluations/boids-comparison/Configuration.json"
+warmups=6
+runs=12
+wait_for_user=no
+prepare_only=no
+output=
+while [ "$#" -gt 0 ]; do
+    case $1 in
+        --help|-h) usage; exit 0 ;;
+        --wait) wait_for_user=yes; shift ;;
+        --prepare-only) prepare_only=yes; shift ;;
+        --config|--warmups|--runs|--output)
+            [ "$#" -ge 2 ] || fail "Valeur manquante pour $1"
+            case $1 in
+                --config) config=$2 ;;
+                --warmups) warmups=$2 ;;
+                --runs) runs=$2 ;;
+                --output) output=$2 ;;
+            esac
+            shift 2 ;;
+        *) fail "Option inconnue : $1" ;;
+    esac
+done
+# Canonical decimal integers keep shell arithmetic portable, including leading zeroes.
+for number in "$warmups" "$runs"; do
+    case $number in ''|*[!0-9]*) fail 'Nombre de tours invalide' ;; esac
+    [ "${#number}" -le 6 ] || fail 'Nombre de tours trop grand'
+done
+warmups=$(printf '%s\n' "$warmups" | awk '{printf "%d", $1}')
+runs=$(printf '%s\n' "$runs" | awk '{printf "%d", $1}')
+[ $((warmups % 6)) -eq 0 ] && [ "$runs" -ge 6 ] && [ $((runs % 6)) -eq 0 ] || fail 'Echauffements et mesures : multiples de 6 ; au moins 6 mesures.'
+for tool in jq awk git mktemp; do command -v "$tool" >/dev/null || fail "Outil requis : $tool"; done
+if command -v sha256sum >/dev/null; then sha_tool=sha256sum
+elif command -v shasum >/dev/null; then sha_tool=shasum
+else fail 'sha256sum ou shasum est requis'; fi
+hash_file() {
+    [ -f "$1" ] || fail "Fichier absent : $1"
+    if [ "$sha_tool" = sha256sum ]; then sha256sum "$1"; else shasum -a 256 "$1"; fi | awk '{print $1}'
+}
+absolute() { case $1 in /*) printf '%s\n' "$1" ;; *) printf '%s/%s\n' "$root" "$1" ;; esac; }
+case $config in /*) ;; *) config="$PWD/$config" ;; esac
+case $output in ''|/*) ;; *) output="$PWD/$output" ;; esac
+scratch=$(mktemp -d "${TMPDIR:-/tmp}/silex-boids.XXXXXX")
+report_owned=no
+finished=no
+cleanup() {
+    result=$?
+    trap - 0 HUP INT TERM
+    if [ "$report_owned" = yes ] && [ "$finished" = no ]; then
+        {
+            cat "$scratch/header"
+            printf '\nCAPTURE INVALIDE OU INTERROMPUE (code %s)\n' "$result"
+            printf 'Aucune comparaison de performances validee.\n\n'
+            [ ! -f "$scratch/failure" ] || cat "$scratch/failure"
+            printf '\nPassages valides avant arret :\n'
+            awk -F '\t' '
+                BEGIN {label[0]="Silex/Natif";label[1]="Silex/LLVM";label[2]="C++/Clang";printf "%-12s %5s %8s %-18s %14s\n","Phase","Tour","Position","Variante","FPS"}
+                {printf "%-12s %5s %8s %-18s %14s\n",$1,$2,$3,label[$4],$5}
+            ' "$scratch/samples"
+        } > "$output"
+        printf '\nRapport partiel : %s\n' "$output" >&2
+    fi
+    rm -rf -- "$scratch"
+    exit "$result"
+}
+trap cleanup 0
+trap 'exit 130' INT
+trap 'exit 129' HUP
+trap 'exit 143' TERM
+cp -- "$config" "$scratch/config.json"
+config_hash=$(hash_file "$scratch/config.json")
+jq -e '
+    .version == "boids-threeway-diagnostic-v1" and
+    ([.executables[].label] == ["Silex/Natif", "Silex/LLVM", "C++/Clang"]) and
+    (.files | type == "object") and (.repositories | type == "object") and
+    all(.executables[]; .expected_exit == 0 and (.path | type == "string")) and
+    all(.files | to_entries[]; (.key | test("[\t\r\n]") | not) and (.value | test("^[0-9a-f]{64}$"))) and
+    all(.repositories | to_entries[]; (.key | test("[\t\r\n]") | not) and (.value | test("^[0-9a-f]{40}$")))
+' "$scratch/config.json" >/dev/null || fail 'Configuration invalide : trois variantes preparees sont requises.'
+jq -r '.files | to_entries[] | [.key, .value] | @tsv' "$scratch/config.json" > "$scratch/files"
+jq -r '.repositories | to_entries[] | [.key, .value] | @tsv' "$scratch/config.json" > "$scratch/repositories"
+tab=$(printf '\t')
+verify() {
+    [ "$(hash_file "$config")" = "$config_hash" ] || fail 'Configuration modifiee : preparer une nouvelle comparaison.'
+    while IFS="$tab" read -r relative expected; do
+        [ "$(hash_file "$(absolute "$relative")")" = "$expected" ] || fail "Entree modifiee : $relative"
+    done < "$scratch/files"
+    while IFS="$tab" read -r relative expected; do
+        repo=$(absolute "$relative")
+        [ "$(git -C "$repo" rev-parse HEAD)" = "$expected" ] || fail "Commit modifie : $relative"
+        [ -z "$(git -C "$repo" status --porcelain --untracked-files=no)" ] || fail "Depot modifie : $relative"
+    done < "$scratch/repositories"
+    for witness in 0 1 2; do
+        binary_relative=$(jq -r --argjson i "$witness" '.executables[$i].path' "$scratch/config.json")
+        jq -e --arg path "$binary_relative" '.files | has($path)' "$scratch/config.json" >/dev/null || fail 'Executable non scelle'
+        [ -x "$(absolute "$binary_relative")" ] || fail "Executable absent : $binary_relative"
+    done
+}
+verify
+printf 'Comparaison : Silex/Natif, Silex/LLVM, C++/Clang. Executables verifies.\n'
+printf '4000 boids x 480 frames ; %s echauffements + %s mesures par variante.\n' "$warmups" "$runs"
+[ "$prepare_only" = no ] || exit 0
+if [ "$wait_for_user" = yes ]; then
+    printf '\nLaisse la machine au calme, puis appuie sur Entree : '
+    IFS= read -r answer || fail 'Comparaison annulee avant lancement.'
+fi
+verify
+case $(uname -s) in Darwin) os=macos ;; Linux) os=linux ;; MINGW*|MSYS*|CYGWIN*) os=windows ;; *) os=$(uname -s | tr '[:upper:]' '[:lower:]') ;; esac
+case $(uname -m) in arm64|aarch64) arch=arm64 ;; x86_64|amd64|AMD64) arch=x64 ;; *) arch=$(uname -m) ;; esac
+platform="$os-$arch"
+[ -n "$output" ] || output="$source_dir/Baselines/$(date '+%Y-%m-%d-%H%M%S')-$platform.log"
+mkdir -p -- "$(dirname -- "$output")"
+# Refuse clobbering even if another runner creates this name at the same time.
+(set -C; : > "$output") 2>/dev/null || fail "Capture deja existante : $output"
+: > "$scratch/samples"
+: > "$scratch/reference"
+{
+    printf 'BOIDS - COMPARAISON FPS\n\n'
+    printf 'Date       : %s\nPlateforme : %s\n' "$(date '+%Y-%m-%d %H:%M:%S %z')" "$platform"
+    printf 'Charge     : 4000 boids x 480 frames - Release\n'
+    printf 'Passages   : %s echauffements + %s mesures par variante\n' "$warmups" "$runs"
+} > "$scratch/header"
+report_owned=yes
+cat > "$scratch/validate.awk" <<'AWK_VALIDATE'
+function bad(message) { print message > "/dev/stderr"; exit 1 }
+function abs(x) { return x < 0 ? -x : x }
+function finite(value) { return value ~ /^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?$/ && tolower(sprintf("%.17g", value+0)) !~ /inf|nan/ }
+FILENAME == reference { ref[$1]=$2; has_reference=1; next }
+$1 == prefix {
+    witnesses++
+    for (i=2; i<=NF; i++) {
+        if (split($i, pair, "=") != 2 || pair[1] in data) duplicate=1
+        data[pair[1]]=pair[2]
     }
-    lines = ["# Boids — comparaison FPS", "", report["date"], "",
-             f"4 000 boids × 480 frames · {report['warmups']} échauffements + {report['runs']} mesures par variante · Release",
-             "", status[report["verdict"]], ""]
-    if report.get("note"):
-        lines += [report["note"], ""]
-    if report["verdict"] in ("diagnostic-complete", "diagnostic-nonstationary"):
-        means = {}
-        lines += ["| Variante | FPS moyens | FPS min | FPS max | Écart-type FPS |",
-                  "| --- | ---: | ---: | ---: | ---: |"]
-        for label in LABELS:
-            values = report["series"][label]["values"]
-            means[label] = statistics.mean(values)
-            lines.append(f"| {label} | {means[label]:.3f} | {min(values):.3f} | {max(values):.3f} | {statistics.pstdev(values):.3f} |")
-        lines += ["", "Moyenne arithmétique des FPS des passages mesurés, hors échauffements.",
-                  "Min, max et écart-type décrivent ces passages, pas les frames individuelles.",
-                  "", "## Écarts entre variantes", "",
-                  "| Variante | Référence | Écart FPS moyens | Écart % |",
-                  "| --- | --- | ---: | ---: |"]
-        for label, reference in ((LABELS[1], LABELS[0]), (LABELS[0], LABELS[2]), (LABELS[1], LABELS[2])):
-            delta = means[label] - means[reference]
-            lines.append(f"| {label} | {reference} | {delta:+.3f} | {100 * delta / means[reference]:+.2f} % |")
-        lines += ["", "Écart % = (moyenne de la variante / moyenne de la référence − 1) × 100.", ""]
-    if report.get("failure"):
-        lines += ["## Erreur", "", *('    ' + line for line in report['failure'].splitlines()), ""]
-    lines += ["<details>", "<summary>FPS de chaque passage</summary>", "",
-              "| Phase | Tour | Ordre | Silex/Natif | Silex/LLVM | C++ architectural |",
-              "| --- | ---: | --- | ---: | ---: | ---: |"]
-    rounds = sorted({event['round'] for event in report['events']})
-    short = dict(zip(LABELS, ("Natif", "LLVM", "C++")))
-    for number in rounds:
-        events = [e for e in report['events'] if e['round'] == number]
-        phase = "Échauffement" if events[0]['phase'] == 'warmup' else "Mesure"
-        order = " → ".join(short[e['label']] for e in events)
-        cells = []
-        for label in LABELS:
-            event = next((e for e in events if e['label'] == label), {})
-            cells.append(str(event['fps']) if 'fps' in event else '—')
-        lines.append(f"| {phase} | {number} | {order} | " + " | ".join(cells) + " |")
-    lines += ["", "</details>", "", "<details>", "<summary>Contexte de la capture</summary>", "",
-              f"Hôte : {report['host']}", "", f"Configuration SHA-256 : `{report['config_sha256']}`", ""]
-    config = report['configuration']
-    for item in config['executables']:
-        if item['label'] in LABELS and item['path'] in config.get('files', {}):
-            lines.append(f"- {item['label']} : `{config['files'][item['path']]}`")
-    lines += ["", "</details>", ""]
-    return "\n".join(lines)
-
-
-def save_report(handle, report):
-    handle.seek(0)
-    handle.write(render_report(report))
-    handle.truncate()
-    handle.flush()
-
-
-def main():
-    parser = argparse.ArgumentParser(prog=Path(__file__).name, description=__doc__)
-    parser.add_argument("--config", type=Path, help="prepared configuration (default: workspace Evaluations/boids-comparison/Configuration.json)")
-    parser.add_argument("--wait", action="store_true", help="wait for Return before any benchmark process")
-    parser.add_argument("--prepare-only", action="store_true", help="verify the prepared binaries without running them")
-    parser.add_argument("--warmups", type=int, default=POLICY["warmups"], help="warm-up rounds per executable (multiple of six)")
-    parser.add_argument("--runs", type=int, default=POLICY["runs"], help="measured rounds per executable (multiple of six, at least six)")
-    parser.add_argument("--output", type=Path, help="single Markdown report path")
-    args = parser.parse_args()
-    if args.warmups < 0 or args.warmups % 6 or args.runs < 6 or args.runs % 6:
-        parser.error("warmups must be a nonnegative multiple of six; runs must be a multiple of six >= 6")
-    source = Path(__file__).resolve().parent
-    root = source.parents[2]
-    args.config = args.config or root / "Evaluations/boids-comparison/Configuration.json"
-    config = json.loads(args.config.read_text())
-    config_hash = digest(args.config)
-    verify(config, root)
-    print("Comparaison Boids : 3 exécutables préparés et vérifiés.", flush=True)
-    for item in config["executables"]:
-        print(f"  {item['label']}: {item['path']}", flush=True)
-    print(f"4000 boids × 480 frames ; {args.warmups} échauffements + {args.runs} mesures par variante.", flush=True)
-    print("Les trois variantes doivent terminer avec le code 0 ; comparaison diagnostique.", flush=True)
-    if args.prepare_only:
-        return 0
-    if args.wait:
-        input("\nPréparation terminée. Laisse l’ordinateur au calme, puis appuie sur Entrée : ")
-    # Do not let a rebuild or source change during the user's pause go unnoticed.
-    if digest(args.config) != config_hash:
-        raise ValueError("configuration changed during the pause")
-    verify(config, root)
-    output = args.output or source / "Baselines" / (datetime.now().strftime("%Y-%m-%d-%H%M%S-%f") + f"-{platform_name()}.md")
-    output = output.resolve()
-    if output.exists():
-        raise ValueError("refusing to overwrite an existing capture")
-    output.parent.mkdir(parents=True, exist_ok=True)
-    report = dict(protocol="boids-threeway-diagnostic-v1", configuration=config,
-                  config_sha256=config_hash, host=platform.platform(), date=datetime.now().astimezone().isoformat(timespec="seconds"),
-                  warmups=args.warmups, runs=args.runs, order=ORDERS,
-                  verdict="incomplete", events=[], series={})
-    reference = None
-    native_states = {}
-    llvm_states = {}
-    with output.open("x", encoding="utf-8") as handle:
-        try:
-            save_report(handle, report)
-            for round_index in range(args.warmups + args.runs):
-                phase = "warmup" if round_index < args.warmups else "sample"
-                for position, index in enumerate(ORDERS[round_index % len(ORDERS)], 1):
-                    item = config["executables"][index]
-                    label = item["label"]
-                    print(f"\n{phase} {round_index + 1}, position {position} — {label}", flush=True)
-                    event = dict(phase=phase, round=round_index + 1, position=position, label=label)
-                    argv = [str(root / item["path"]), "4000", "480"]
-                    result = subprocess.run(argv, cwd=root, capture_output=True, text=True)
-                    report["events"].append(event)
-                    try:
-                        data, signature, fps = observe(index, result)
-                    except (ValueError, KeyError) as error:
-                        detail = result.stderr.strip()
-                        raise ValueError(str(error) + ("\n" + detail if detail else "")) from error
-                    if reference is None:
-                        reference = signature
-                    match(reference, signature)
-                    state = {key: value for key, value in data.items() if key != "fps"}
-                    if index == 0:
-                        native_states[round_index] = state
-                    elif index == 1:
-                        llvm_states[round_index] = state
-                    if round_index in native_states and round_index in llvm_states:
-                        if native_states[round_index] != llvm_states[round_index]:
-                            raise ValueError("Silex native/LLVM deterministic fields differ")
-                    event["fps"] = fps
-                    print(f"{fps:.3f} FPS", flush=True)
-                    save_report(handle, report)
-            if digest(args.config) != config_hash:
-                raise ValueError("configuration changed during the capture")
-            verify(config, root)
-            for label in LABELS:
-                values = [e["fps"] for e in report["events"] if e["label"] == label and e["phase"] == "sample"]
-                report["series"][label] = summarize(values)
-            report["stationary"] = all(series["stationary"] for series in report["series"].values())
-            report["verdict"] = "diagnostic-complete" if report["stationary"] else "diagnostic-nonstationary"
-            # Console and saved report present the same FPS summary and differences.
-            print("\n" + render_report(report).split("<details>", 1)[0], flush=True)
-            return 0 if report["stationary"] else 2
-        except (ValueError, KeyError, OSError, subprocess.CalledProcessError, KeyboardInterrupt) as error:
-            report["verdict"] = "interrupted" if isinstance(error, KeyboardInterrupt) else "invalid"
-            report["failure"] = str(error)
-            raise
-        finally:
-            save_report(handle, report)
-            print(f"\nRapport : {output}", flush=True)
-
-
-if __name__ == "__main__":
-    __file__ = sys.argv.pop(1)
-    try:
-        raise SystemExit(main())
-    except (ValueError, KeyError, OSError, EOFError, subprocess.CalledProcessError) as error:
-        sys.exit(f"comparison: {error}")
-    except KeyboardInterrupt:
-        sys.exit(130)
-BOIDS_PYTHON
-)
-exec python3 -c "$boids_program" "$0" "$@"
+}
+END {
+    if (witnesses != 1 || duplicate) bad("Temoin absent, duplique ou mal forme")
+    if (!finite(data["count"]) || data["count"]+0 != 4000 || !finite(data["frames"]) || data["frames"]+0 != 480) bad("Charge invalide")
+    if (!finite(data["fixed_delta"]) || abs(data["fixed_delta"]-1/60)>0.0000001 || data["state_step"] != 4) bad("Pas de simulation invalide")
+    if (data["present"] != "immediate") bad("Presentation invalide")
+    if (split(data["window"], dim, "x") != 2 || !finite(dim[1]) || !finite(dim[2]) || dim[1]+0 != 960 || dim[2]+0 != 640) bad("Dimensions invalides")
+    if (split(data["pixels"], pixels, "x") != 2 || !finite(pixels[1]) || !finite(pixels[2]) || pixels[1]+0<=0 || pixels[2]+0<=0) bad("Dimensions physiques invalides")
+    if (!finite(data["scale"]) || !finite(data["density"]) || data["scale"]+0<=0 || data["density"]+0<=0) bad("Echelle invalide")
+    if (!finite(data["fps"]) || data["fps"]+0<=0) bad("FPS invalides")
+    n=split("initial_px initial_py initial_vx initial_vy initial_p2 initial_v2 state_px state_py state_vx state_vy state_p2 state_v2", keys, " ")
+    for (i=1; i<=n; i++) {
+        key=keys[i]
+        if (!finite(data[key])) bad("Etat non fini ou incomplet : " key)
+        if (has_reference) {
+            a=data[key]+0; b=ref[key]+0; largest=abs(a)>abs(b)?abs(a):abs(b)
+            if (abs(a-b)>0.05+largest*0.00002) bad("Etat divergent : " key)
+        }
+    }
+    if (has_reference) {
+        split(ref["pixels"], rp, "x")
+        if (pixels[1]+0 != rp[1]+0 || pixels[2]+0 != rp[2]+0 || data["scale"]+0 != ref["scale"]+0 || data["density"]+0 != ref["density"]+0) bad("Affichage divergent")
+        if (index_id != 2) {
+            for (key in ref) if (key != "fps" && ("x" data[key]) != ("x" ref[key])) bad("Etat Silex divergent : " key)
+            for (key in data) if (key != "fps" && !(key in ref)) bad("Champ Silex inattendu : " key)
+        }
+    } else {
+        for (key in data) print key, data[key] > reference
+        close(reference)
+    }
+    print data["fps"]
+}
+AWK_VALIDATE
+cat > "$scratch/report.awk" <<'AWK_REPORT'
+function abs(x) { return x<0?-x:x }
+function median(values, count,    sorted,i,j,v) {
+    for (i=1;i<=count;i++) sorted[i]=values[i]
+    for (i=2;i<=count;i++) { v=sorted[i];j=i-1;while(j>0 && sorted[j]>v){sorted[j+1]=sorted[j];j--}sorted[j+1]=v }
+    return count%2?sorted[(count+1)/2]:(sorted[count/2]+sorted[count/2+1])/2
+}
+function summary(id,    i,count,total,variance,lo,hi,med,mad,slope,denom,center,drift,shift,values,dev,left,right) {
+    count=n[id];lo=sample[id,1];hi=lo
+    for(i=1;i<=count;i++){values[i]=sample[id,i];total+=values[i];if(values[i]<lo)lo=values[i];if(values[i]>hi)hi=values[i]}
+    mean[id]=total/count;med=median(values,count);center=(count-1)/2
+    for(i=1;i<=count;i++){variance+=(values[i]-mean[id])^2;dev[i]=abs(values[i]-med);slope+=(i-1-center)*values[i];denom+=(i-1-center)^2;if(i<=count/2)left[i]=values[i];else right[i-count/2]=values[i]}
+    mad=median(dev,count);drift=slope/denom*(count-1)/med;shift=(median(right,count/2)-median(left,count/2))/med
+    if(mad/med>0.01 || (hi-lo)/med>0.04 || abs(drift)>0.01 || abs(shift)>0.01) unstable=1
+    printf "%-18s %12.3f %12.3f %12.3f %12.3f\n",label[id],mean[id],lo,hi,sqrt(variance/count)
+}
+function gap(a,b) { printf "%-18s %-18s %+12.3f %+11.2f %%\n",label[a],label[b],mean[a]-mean[b],100*(mean[a]/mean[b]-1) }
+BEGIN { FS="\t";label[0]="Silex/Natif";label[1]="Silex/LLVM";label[2]="C++/Clang";short[0]="N";short[1]="L";short[2]="C" }
+{
+    phase[$2]=$1;value[$2,$4]=$5;order[$2]=order[$2] (order[$2]!=""?">":"") short[$4]
+    if($2>last)last=$2
+    if($1=="Mesure")sample[$4,++n[$4]]=$5+0
+}
+END {
+    for(i=0;i<3;i++)if(n[i]<6 || n[i]!=runs){print "Capture incomplete" > "/dev/stderr";exit 1}
+    printf "\n%-18s %12s %12s %12s %12s\n","Variante","FPS moyens","FPS min","FPS max","Ecart-type"
+    print "-----------------------------------------------------------------------"
+    for(id=0;id<3;id++)summary(id)
+    print "\nMoyennes hors echauffements ; min/max et dispersion entre passages, pas entre frames."
+    print "\nECARTS ENTRE VARIANTES"
+    printf "\n%-18s %-18s %12s %13s\n","Variante","Reference","Ecart FPS","Ecart relatif"
+    print "-----------------------------------------------------------------------"
+    gap(1,0);gap(0,2);gap(1,2)
+    print "\nEcart relatif = (FPS moyens variante / FPS moyens reference - 1) x 100."
+    print unstable?"\nStabilite : series instables ; ecarts descriptifs a confirmer.":"\nStabilite : series stables."
+    print "\nFPS DE CHAQUE PASSAGE"
+    print "N = Silex/Natif ; L = Silex/LLVM ; C = C++/Clang."
+    printf "\n%-12s %5s %-9s %14s %14s %14s\n","Phase","Tour","Ordre","Silex/Natif","Silex/LLVM","C++/Clang"
+    print "----------------------------------------------------------------------------"
+    for(i=1;i<=last;i++)printf "%-12s %5d %-9s %14s %14s %14s\n",phase[i],i,order[i],value[i,0],value[i,1],value[i,2]
+    exit unstable?2:0
+}
+AWK_REPORT
+round=1
+while [ "$round" -le $((warmups + runs)) ]; do
+    phase=Mesure
+    [ "$round" -gt "$warmups" ] || phase=Echauffement
+    case $(((round-1)%6)) in
+        0) order='0 1 2' ;; 1) order='0 2 1' ;; 2) order='1 0 2' ;;
+        3) order='1 2 0' ;; 4) order='2 0 1' ;; 5) order='2 1 0' ;;
+    esac
+    position=0
+    for index_id in $order; do
+        position=$((position+1))
+        case $index_id in
+            0) label=Silex/Natif; prefix=SILEX_GFX_BOIDS ;;
+            1) label=Silex/LLVM; prefix=SILEX_GFX_BOIDS ;;
+            2) label=C++/Clang; prefix=CPP_ARCHITECTURAL_BOIDS ;;
+        esac
+        executable=$(absolute "$(jq -r --argjson i "$index_id" '.executables[$i].path' "$scratch/config.json")")
+        printf '%-12s %2s/%s  %-12s ' "$phase" "$round" "$((warmups+runs))" "$label"
+        code=0
+        (cd -- "$root" && exec "$executable" 4000 480) > "$scratch/stdout" 2> "$scratch/stderr" || code=$?
+        if [ "$code" -ne 0 ] || [ -s "$scratch/stderr" ]; then
+            { printf '%s : code %s\n' "$label" "$code"; cat "$scratch/stderr"; } > "$scratch/failure"
+            fail "Echec de $label : code $code ou stderr non vide."
+        fi
+        if ! fps=$(awk -v prefix="$prefix" -v index_id="$index_id" -v reference="$scratch/reference" -f "$scratch/validate.awk" "$scratch/reference" "$scratch/stdout" 2> "$scratch/failure"); then
+            cat "$scratch/failure" >&2
+            fail "Temoin invalide : $label"
+        fi
+        printf '%s\t%s\t%s\t%s\t%s\n' "$phase" "$round" "$position" "$index_id" "$fps" >> "$scratch/samples"
+        printf '%s FPS\n' "$fps"
+    done
+    round=$((round+1))
+done
+verify
+cat "$scratch/header" > "$scratch/report"
+verdict=0
+awk -v runs="$runs" -f "$scratch/report.awk" "$scratch/samples" >> "$scratch/report" || verdict=$?
+[ "$verdict" -eq 0 ] || [ "$verdict" -eq 2 ] || fail 'Impossible de calculer le rapport.'
+printf '\nConfiguration SHA-256 : %s\n' "$config_hash" >> "$scratch/report"
+cat "$scratch/report" > "$output"
+finished=yes
+cat "$output"
+printf '\nRapport : %s\n' "$output"
+exit "$verdict"
