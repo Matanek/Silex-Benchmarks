@@ -95,16 +95,3 @@ cmake -S Silex-Benchmarks/Sources/Boids2D/Cpp \
     -B Evaluations/boids-comparison/cpp -DCMAKE_BUILD_TYPE=Release
 cmake --build Evaluations/boids-comparison/cpp --config Release
 ```
-
-## Runner checks
-
-From the benchmark repository root:
-
-```sh
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s Sources/Boids2D -p 'Test*.py'
-```
-
-These checks exercise scheduling, input verification, invalid execution,
-stationarity, direct shell execution, wait/prepare behavior, platform naming,
-output location and statistics without
-running a GPU benchmark.
