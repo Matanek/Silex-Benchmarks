@@ -24,7 +24,7 @@ def digest(path):
 
 
 def verify(config, root):
-    if config["version"] != "boids-fourway-diagnostic-v1":
+    if config["version"] != "boids-fourway-diagnostic-v2":
         raise ValueError("unsupported four-way configuration")
     if tuple(item["label"] for item in config["executables"]) != LABELS:
         raise ValueError("configuration must contain the four distinct witnesses")
@@ -40,12 +40,12 @@ def verify(config, root):
     for index, item in enumerate(config["executables"]):
         if item["path"] not in config["files"]:
             raise ValueError("unsealed executable")
-        if item["expected_exit"] != (2 if index == 1 else 0):
+        if item["expected_exit"] != 0:
             raise ValueError("unexpected exit-code policy")
 
 
 def observe(index, result):
-    expected_exit = 2 if index == 1 else 0
+    expected_exit = 0
     if result.returncode != expected_exit:
         raise ValueError(f"{LABELS[index]} exited {result.returncode}, expected {expected_exit}")
     if result.stderr:
@@ -92,7 +92,7 @@ def main():
     for item in config["executables"]:
         print(f"  {item['label']}: {item['path']}", flush=True)
     print(f"4000 boids × 480 frames ; {args.warmups} échauffements + {args.runs} mesures par variante.", flush=True)
-    print("LLVM : réserve de finalisation connue (code 2), résultats diagnostiques uniquement.", flush=True)
+    print("Les quatre variantes doivent terminer avec le code 0 ; comparaison diagnostique.", flush=True)
     if args.prepare_only:
         return 0
     if args.wait:
@@ -107,7 +107,7 @@ def main():
     if output.exists() or report_path.exists():
         raise ValueError("refusing to overwrite an existing capture")
     output.parent.mkdir(parents=True, exist_ok=True)
-    report = dict(protocol="boids-fourway-diagnostic-v1", configuration=config,
+    report = dict(protocol="boids-fourway-diagnostic-v2", configuration=config,
                   config_sha256=config_hash, host=platform.platform(),
                   warmups=args.warmups, runs=args.runs, order=ORDERS,
                   verdict="incomplete", events=[], series={})
@@ -116,7 +116,7 @@ def main():
     llvm_states = {}
     try:
         with output.open("x") as log:
-            log.write("# boids-fourway-diagnostic-v1\n")
+            log.write("# boids-fourway-diagnostic-v2\n")
             for round_index in range(args.warmups + args.runs):
                 phase = "warmup" if round_index < args.warmups else "sample"
                 # Restart at row zero after warm-up; both windows are balanced.
@@ -151,13 +151,13 @@ def main():
             values = [event["fps"] for event in report["events"] if event["label"] == label and event["phase"] == "sample"]
             report["series"][label] = Protocol.summarize(values)
         report["stationary"] = all(series["stationary"] for series in report["series"].values())
-        report["verdict"] = "diagnostic-finalization-pending"
-        print("\nComparaison terminée — réserve de finalisation LLVM, aucun verdict final.", flush=True)
+        report["verdict"] = "diagnostic-complete" if report["stationary"] else "diagnostic-nonstationary"
+        print("\nComparaison terminée — consulter la stabilité des séries avant toute conclusion.", flush=True)
         for label, series in report["series"].items():
             print(f"{label}: médiane={series['median']:.3f} FPS, MAD={series['mad']:.3f}, dérive={series['drift_fraction']:.2%}")
             for failure in series["failures"]:
                 print("  Instabilité : " + failure)
-        return 2
+        return 0 if report["stationary"] else 2
     except (ValueError, KeyError, OSError, KeyboardInterrupt) as error:
         report["verdict"] = "invalid" if not isinstance(error, KeyboardInterrupt) else "interrupted"
         report["failure"] = str(error)

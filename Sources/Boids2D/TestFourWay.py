@@ -21,7 +21,7 @@ SENTINEL = (
 
 
 def result(index, code=None, tail=SENTINEL):
-    return subprocess.CompletedProcess([], (2 if index == 1 else 0) if code is None else code,
+    return subprocess.CompletedProcess([], 0 if code is None else code,
                                        FourWay.PREFIXES[index] + ' ' + tail, '')
 
 
@@ -36,7 +36,7 @@ class FourWayTests(unittest.TestCase):
 
     def test_expected_llvm_guard_does_not_admit_other_failures(self):
         FourWay.observe(1, result(1))
-        for index, code in [(0, 2), (1, 1), (1, -11), (2, 2), (3, 2)]:
+        for index, code in [(0, 2), (1, 2), (1, 1), (1, -11), (2, 2), (3, 2)]:
             with self.assertRaises(ValueError):
                 FourWay.observe(index, result(index, code))
 
@@ -54,8 +54,8 @@ class FourWayTests(unittest.TestCase):
             root = Path(tmp)
             binary = root / 'binary'
             binary.write_text('sealed')
-            config = {'version': 'boids-fourway-diagnostic-v1', 'files': {'binary': FourWay.digest(binary)},
-                      'repositories': {}, 'executables': [dict(label=label, path='binary', expected_exit=2 if i == 1 else 0) for i, label in enumerate(FourWay.LABELS)]}
+            config = {'version': 'boids-fourway-diagnostic-v2', 'files': {'binary': FourWay.digest(binary)},
+                      'repositories': {}, 'executables': [dict(label=label, path='binary', expected_exit=0) for i, label in enumerate(FourWay.LABELS)]}
             FourWay.verify(config, root)
             binary.write_text('changed')
             with self.assertRaises(ValueError):
@@ -75,14 +75,30 @@ class FourWayTests(unittest.TestCase):
             def execute(args, **kwargs):
                 return result(int(Path(args[0]).name))
             with patch('sys.argv', argv), patch.object(FourWay, 'verify'), patch.object(FourWay.platform, 'platform', return_value='test-host'), patch('builtins.input', return_value=''), patch.object(FourWay.subprocess, 'run', side_effect=execute) as run, contextlib.redirect_stdout(io.StringIO()):
-                self.assertEqual(FourWay.main(), 2)
+                self.assertEqual(FourWay.main(), 0)
                 self.assertEqual(run.call_count, 64)
             report = json.loads(Path(str(output) + '.json').read_text())
-            self.assertEqual(report['verdict'], 'diagnostic-finalization-pending')
+            self.assertEqual(report['verdict'], 'diagnostic-complete')
             self.assertEqual(set(report['series']), set(FourWay.LABELS))
             for series in report['series'].values():
                 self.assertEqual(len(series['values']), 12)
-            self.assertEqual([e['returncode'] for e in report['events'] if e['label'] == 'Silex/LLVM'], [2] * 16)
+            self.assertEqual([e['returncode'] for e in report['events'] if e['label'] == 'Silex/LLVM'], [0] * 16)
+
+
+    def test_nonstationary_capture_keeps_evidence_and_returns_two(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            config_path = Path(tmp) / 'Configuration.json'
+            config_path.write_text(json.dumps({'executables': [dict(label=label, path=str(i)) for i, label in enumerate(FourWay.LABELS)]}))
+            output = Path(tmp) / 'capture.log'
+            argv = ['FourWay.py', '--config', str(config_path), '--output', str(output)]
+            def execute(args, **kwargs):
+                return result(int(Path(args[0]).name))
+            summary = dict(stationary=False, median=90.0, mad=0.0, drift_fraction=0.02, failures=['drift'])
+            with patch('sys.argv', argv), patch.object(FourWay, 'verify'), patch.object(FourWay.subprocess, 'run', side_effect=execute), patch.object(FourWay.Protocol, 'summarize', return_value=summary), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(FourWay.main(), 2)
+            report = json.loads(Path(str(output) + '.json').read_text())
+            self.assertEqual(report['verdict'], 'diagnostic-nonstationary')
+            self.assertEqual(len(report['events']), 64)
 
 
 if __name__ == '__main__':

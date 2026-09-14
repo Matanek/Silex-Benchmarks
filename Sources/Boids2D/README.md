@@ -138,3 +138,19 @@ matches the major ECS, GPU upload, shader, instancing, presentation, and data
 layout costs without pretending to duplicate GFX's scheduler or FrameGraph.
 The direct witness remains a useful lower-layer ceiling, not a layer-for-layer
 comparison.
+
+## Prepared four-way Spec comparison
+
+When the Spec workspace contains `Evaluations/boids-fourway/Configuration.json`,
+`RunComparison.sh` uses its four sealed executables: native Silex, LLVM Silex,
+architectural C++, and direct C++. Configuration version
+`boids-fourway-diagnostic-v2` requires successful termination (code 0) from all
+four variants. An LLVM finalization failure is no longer an accepted sample.
+
+`--prepare-only` verifies the prepared files and repository revisions without
+opening a window. `--wait` repeats that verification after Return. Four warm-up
+rounds and twelve measured rounds balance positions and directed transitions.
+The report retains the four series separately. Exit code 0 means the capture
+is complete and its series pass the stationarity checks; code 2 identifies
+nonstationary series. Neither result alone establishes a general performance
+advantage or replaces the canonical comparison protocol.
