@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import unittest
-import Protocol as p
+from TestComparison import Comparison as p
 
 
 class ProtocolTests(unittest.TestCase):

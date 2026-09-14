@@ -15,13 +15,13 @@ fixed simulation delta of 1/60 second.
 
 ## Run the prepared comparison
 
-Python 3 is the only comparison entry point. From the SilexProject workspace root:
+Run the executable script directly from the SilexProject workspace root:
 
 ```sh
-python3 .specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.py --wait
+.specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
-`RunComparison.py` resolves paths from its own location, so it also works from
+`RunComparison.sh` resolves paths from its own location, so it also works from
 another current directory. It reads the prepared configuration at
 `Evaluations/boids-comparison/Configuration.json` under the Spec's `Worktree/`.
 Use `--config PATH` to select another prepared configuration. The three Release
@@ -34,8 +34,9 @@ hash to bypass an unexplained mismatch.
 `--prepare-only` verifies readiness without launching any Boids process.
 `--wait` performs that verification, waits for Return, then verifies again before
 launching. There is no automatic switch to another compiler or comparison script.
-`Protocol.py` is an internal statistics and semantic-validation module;
-`Protocol.json` records its workload and stationarity thresholds.
+The script embeds its checks, statistical policy and report generation. It requires
+Python 3 (standard library only), with no separate Python runtime modules or
+additional commands to launch.
 
 ## Measurement and validity
 
@@ -59,15 +60,27 @@ nonstationary capture, and an error for invalid or interrupted execution.
 Stationarity alone does not establish an LLVM adoption decision or cross-platform
 correctness.
 
-Timestamped raw logs and JSON reports are written directly to `Baselines/`.
-`--output PATH` overrides the log destination; the JSON report is written beside
-it. Existing captures are never overwritten. Reports preserve every warm-up,
-measurement, process exit code, stdout/stderr, actual order and prepared
-configuration, including evidence from an interrupted or invalid capture.
+## Report
 
-[The current baseline](Baselines/README.md) is the last user capture. Its raw
-files preserve the original measurement conditions; its three retained series
-are descriptive and nonstationary.
+Each capture writes **one Markdown file** directly to `Baselines/`, named for
+its date, time, operating system and architecture, for example
+`2026-09-14-073950-macos-arm64.md`. Generated names include fractional seconds
+to avoid collisions. `--output PATH` overrides the destination; an existing
+file is never overwritten. There is no accompanying log, JSON or summary file.
+
+The report leads with mean, minimum, maximum and population standard deviation
+of the FPS reported by each measured process, followed by differences between
+variants in FPS and percent. These are statistics across repeated runs, not
+per-frame extrema. Warm-ups are excluded from these calculations.
+
+Foldable sections retain the individual FPS, execution order and brief capture
+context in the same file. Display dimensions and application state are checked
+internally and omitted from the report. An invalid or interrupted run leaves
+one partial report with an error, without a completed comparison table.
+
+[The current baseline](Baselines/2026-09-14-073950-macos-arm64.md) reformats the
+last user capture without rerunning it. Its three retained series are descriptive
+and nonstationary. The original raw capture remains in Git history at `245b9a9`.
 
 ## C++ architectural build
 
@@ -92,5 +105,6 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s Sources/Boids2D -p 'Te
 ```
 
 These checks exercise scheduling, input verification, invalid execution,
-stationarity, wait/prepare behavior, output location and baseline integrity without
+stationarity, direct shell execution, wait/prepare behavior, platform naming,
+output location and statistics without
 running a GPU benchmark.

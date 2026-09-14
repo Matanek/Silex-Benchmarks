@@ -134,7 +134,7 @@ repository cross a real package boundary.
 ### Boids native / LLVM / C++ comparison
 
 [Boids2D](Sources/Boids2D/README.md) compares Silex native, Silex LLVM and C++
-architectural through the single Python entry point `RunComparison.py`.
+architectural through the single executable entry point `RunComparison.sh`.
 The prepared executables are verified before running six warm-up rounds and
 twelve measured rounds per variant. `--wait` pauses after verification;
 `--prepare-only` verifies without running the benchmark.
@@ -142,11 +142,12 @@ twelve measured rounds per variant. `--wait` pauses after verification;
 From the SilexProject workspace root:
 
 ```sh
-python3 .specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.py --wait
+.specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
 The local configuration lives under the Spec's
-`Worktree/Evaluations/boids-comparison/Configuration.json`. Logs and reports go
-directly to [Baselines](Sources/Boids2D/Baselines/README.md). All three executables
+`Worktree/Evaluations/boids-comparison/Configuration.json`. Each capture writes one Markdown report
+to [Baselines](Sources/Boids2D/Baselines/2026-09-14-073950-macos-arm64.md), named
+for the date, time, operating system and architecture. All three executables
 must finish with code 0; a complete but nonstationary capture returns 2 from
 the runner and remains available for inspection.
