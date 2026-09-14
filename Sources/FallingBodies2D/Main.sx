@@ -291,6 +291,9 @@ class PhysicsAsync {
     }
 
     func is_idle() bool { return self.fences.count() == 0 }
+    func complete_pending() {
+        for fence in self.fences { fence.complete() }
+    }
     func current_revision() int { return self.revision }
     func completed_physics_ms() float { return self.collected_ms }
     func completed_transfer_ms() float { return self.collected_transfer_ms }
@@ -438,6 +441,7 @@ struct Simulation {
     var measurement_started:bool
     let smoke_frames:int
     let smoke_minimum_seconds:float
+    let fixed_work:bool
     let stress_count:int
     let render_only:bool
     let synchronize_visuals:bool
@@ -473,9 +477,11 @@ struct Simulation {
         if smoke_frames > 20 { self.warmup_remaining = 60 }
         else if smoke_frames > 0 { self.warmup_remaining = 5 }
         self.smoke_frames = smoke_frames
+        self.fixed_work = option_requested("--fixed-work")
         var smoke_minimum_seconds = 0.0
         if option_requested("--smoke-30") { smoke_minimum_seconds = 30.0 }
         else if smoke_frames > 120 { smoke_minimum_seconds = 10.0 }
+        if self.fixed_work { smoke_minimum_seconds = 0.0 }
         self.smoke_minimum_seconds = smoke_minimum_seconds
         self.stress_count = stress_count
         self.render_only = render_only
@@ -494,6 +500,11 @@ struct Simulation {
         if option_requested("--batch-2") { physics_batch = 2 }
         if option_requested("--batch-1") { physics_batch = 1 }
         self.physics_batch = physics_batch
+        if self.fixed_work &&
+            (smoke_frames == 0 || stress_count == 0 || physics_batch != 1)
+        {
+            panic("--fixed-work requires --smoke, --stress and --batch-1")
+        }
     }
 
     func physics_world() Physics.World2D { return self.physics }
@@ -1054,6 +1065,13 @@ func update_simulation(
     spawn_slots:&SpawnSlots,
     visual:@BodyVisualTemplate
 ) {
+    // Qualification submits exactly one real worker job per frame. Waiting
+    // here fixes the amount of work without changing the interactive policy.
+    if simulation.fixed_work && !simulation.render_only {
+        var physics = simulation.physics_world()
+        async.submit(physics, 1)
+        async.complete_pending()
+    }
     let substeps = async.collect_completed()
     let physics_frame_ms = async.completed_physics_ms()
     let transfer_frame_ms = async.completed_transfer_ms()
@@ -1091,7 +1109,7 @@ func update_simulation(
             cadence.smoke_spawn_ms += spawn_ms
         }
     }
-    if !simulation.render_only {
+    if !simulation.render_only && !simulation.fixed_work {
         simulation.accumulator = Math.min(
             simulation.accumulator + time.delta,
             Constants.fixed_delta * Constants.maximum_physics_substeps as float
@@ -1153,7 +1171,7 @@ func update_simulation(
         cadence.spawn_ms = 0.0
     }
 
-    if !simulation.render_only && async.is_idle() &&
+    if !simulation.render_only && !simulation.fixed_work && async.is_idle() &&
         simulation.accumulator >= Constants.fixed_delta &&
         (simulation.measurement_started || simulation.warmup_remaining > 0) &&
         (simulation.smoke_frames == 0 ||
@@ -1173,6 +1191,9 @@ func update_simulation(
 
     if simulation.warmup_remaining > 0 {
         simulation.warmup_remaining--
+        if simulation.fixed_work && simulation.warmup_remaining == 0 {
+            simulation.measurement_started = true
+        }
         return
     }
     if !simulation.measurement_started {
@@ -1254,6 +1275,18 @@ func update_simulation(
         else if simulation.bodies.count() % 2 != 0 { circle_count++ }
         let box_count = simulation.bodies.count() - circle_count
         print("FallingBody smoke: $(simulation.bodies.count()) dynamic bodies ($(circle_count) circles, $(box_count) boxes)")
+        if simulation.fixed_work {
+            print("  fixed-work frames: $(simulation.rendered_frames)")
+            print("  fixed-work measured steps: $(simulation.smoke_physics_steps)")
+            print("  fixed-work total steps: $(async.current_revision())")
+            var index = 0
+            for simulated in simulation.bodies {
+                let position = simulated.body.position()
+                let velocity = simulated.body.velocity()
+                print("  state[$(index)]: position=($(position.x), $(position.y)), rotation=$(simulated.body.rotation()), velocity=($(velocity.x), $(velocity.y)), angular=$(simulated.body.angular_velocity()), awake=$(simulated.body.is_awake())")
+                index++
+            }
+        }
         print_cadence_summary(simulation, cadence)
         print("  physics steps/frame: $(simulation.smoke_physics_steps as float / simulation.rendered_frames as float)")
         print("  average physics/frame: $(simulation.smoke_physics_ms / simulation.rendered_frames as float) ms")
@@ -1296,8 +1329,16 @@ func synchronize_physics_visuals(
     let revision = async.current_revision()
     if revision == simulation.snapshot_revision { return }
     if var snapshots = async.published_buffer() {
+        if simulation.fixed_work {
+            assert(snapshots.transforms.count() == simulation.bodies.count())
+        }
         for (visual, transform) in body_visuals {
             if visual.index >= snapshots.transforms.count() { continue }
+            if simulation.fixed_work {
+                let body = simulation.bodies[visual.index].body
+                assert(snapshots.transforms.position(visual.index) == body.position())
+                assert(snapshots.transforms.rotation(visual.index) == body.rotation())
+            }
             transform.position = snapshots.transforms.position(
                 visual.index
             ).multiply(Constants.pixels_per_meter)

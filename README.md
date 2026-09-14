@@ -39,7 +39,7 @@ source root and declares every dependency required by the catalog.
 | `TensorStableCompute/` | separate Tensor memory/transfers and cold, hot, resident, observed, and end-to-end inference/training for primitive and neural workloads |
 | `CompilationPerformance/` | separate cold compilation, shared-package misses, entry edits, and exact executable hits |
 | `Boids2D/` | compare the public Scene2D/ECS/GPU path with two C++23 reference implementations |
-| `FallingBodies2D/` | jointly load 2D physics, transform transfer, and rendering |
+| [FallingBodies2D/](Sources/FallingBodies2D/README.md) | jointly load 2D physics, transform transfer, and rendering; explicit equal-work qualification |
 | `WorldRendering3D/` | measure an instanced 3D world across several GPU and presentation profiles |
 | `PhysicsWorldScale2D.sx` | measure sparse motion and body piles at several scales |
 | `RetainedCanvasGeometry.sx` | compile dense retained Canvas geometry |
@@ -104,6 +104,10 @@ asynchronous scheduler, buffers, and options. Only diagnostics reserved for
 `GFX.Physics` were removed so the benchmark remains a genuine public
 consumer. Any future change to these workloads requires a new baseline and an
 explicit justification.
+
+FallingBodies2D now also provides an opt-in `--fixed-work` protocol for comparing
+identical step and frame counts. It preserves the ordinary interactive mode and
+uses a separate baseline; see its [qualification guide](Sources/FallingBodies2D/README.md).
 
 `VirtualizedTextViewport.sx` preloads a logical document of 5,000 unique lines
 and renders only the viewport intersection through a custom GFX.UI content
