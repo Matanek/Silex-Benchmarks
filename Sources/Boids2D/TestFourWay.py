@@ -94,7 +94,7 @@ class FourWayTests(unittest.TestCase):
             def execute(args, **kwargs):
                 return result(int(Path(args[0]).name))
             summary = dict(stationary=False, median=90.0, mad=0.0, drift_fraction=0.02, failures=['drift'])
-            with patch('sys.argv', argv), patch.object(FourWay, 'verify'), patch.object(FourWay.subprocess, 'run', side_effect=execute), patch.object(FourWay.Protocol, 'summarize', return_value=summary), contextlib.redirect_stdout(io.StringIO()):
+            with patch('sys.argv', argv), patch.object(FourWay, 'verify'), patch.object(FourWay.platform, 'platform', return_value='test-host'), patch.object(FourWay.subprocess, 'run', side_effect=execute), patch.object(FourWay.Protocol, 'summarize', return_value=summary), contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(FourWay.main(), 2)
             report = json.loads(Path(str(output) + '.json').read_text())
             self.assertEqual(report['verdict'], 'diagnostic-nonstationary')
