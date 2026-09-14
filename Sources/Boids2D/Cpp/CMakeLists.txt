@@ -71,10 +71,6 @@ add_custom_target(
     DEPENDS "${VERTEX_SHADER}" "${FRAGMENT_SHADER}"
 )
 
-add_executable(BoidsCppDirect Sources/Direct.cpp)
-target_compile_features(BoidsCppDirect PRIVATE cxx_std_23)
-target_link_libraries(BoidsCppDirect PRIVATE SDL3::SDL3)
-
 add_executable(BoidsCppArchitectural Sources/Architectural.cpp)
 add_dependencies(BoidsCppArchitectural BoidsCppShaders)
 target_compile_features(BoidsCppArchitectural PRIVATE cxx_std_23)

@@ -1,156 +1,96 @@
-# Boids C++/Silex
+# Boids native / LLVM / C++ comparison
 
-This directory contains three witnesses used to separate native code quality
-from the architectural cost of GFX's public Scene2D path:
+The comparison has three variants:
 
-- Silex uses injected systems, ECS, Rendering, Scene2D, SDL_GPU, the retained
-  drawing shader, and one instanced draw;
-- C++ architectural uses EnTT, SDL_GPU, the same retained drawing shader, the
-  same vertex and instance layouts, and one instanced draw;
-- C++ direct keeps the minimal `std::vector` and SDL_Renderer implementation as
-  a lower-layer throughput witness.
+- Silex/Natif compiles `Silex.sx` with the native Silex backend;
+- Silex/LLVM compiles that same source with the LLVM evaluation backend;
+- C++ architectural uses EnTT and SDL_GPU to match the Silex/GFX Scene2D path,
+  with the same drawing shader, vertex and instance layouts and one instanced draw.
 
-All three programs preserve the same quadratic algorithm, one flock snapshot per
-frame, the same simulation constants, a 960 × 640 logical window requesting a
-high-density framebuffer, and immediate presentation without VSync. Every
-measured process performs one untimed warm-up frame followed by the same fixed
-number of frames at a fixed simulation delta of 1/60 second. Pass `4000 480`
-explicitly to every executable for a valid default comparison. Always compare
-the reported workload, semantic witness, logical and pixel dimensions; a run
-whose frame count, fixed delta, state, presentation mode, or dimensions differ
-is invalid.
+Every variant preserves the quadratic algorithm, one flock snapshot per frame,
+the same simulation constants, a 960 × 640 logical window with a high-density
+framebuffer, and immediate presentation without VSync. Each process performs
+one untimed warm-up frame followed by 480 measured frames with 4,000 boids at a
+fixed simulation delta of 1/60 second.
 
-## Silex/GFX
+## Run the prepared comparison
 
-From the SilexProject workspace root:
+Python 3 is the only comparison entry point. From the SilexProject workspace root:
 
 ```sh
-Silex/Toolchain/zig-out/bin/silex compile \
-    Silex-Benchmarks/Sources/Boids2D/Silex.sx \
-    -o /private/tmp/gfx-boids-silex
-/private/tmp/gfx-boids-silex 4000 480
+python3 .specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.py --wait
 ```
 
-The output has this form:
+`RunComparison.py` resolves paths from its own location, so it also works from
+another current directory. It reads the prepared configuration at
+`Evaluations/boids-comparison/Configuration.json` under the Spec's `Worktree/`.
+Use `--config PATH` to select another prepared configuration. The three Release
+executables and their build provenance must already exist; the runner verifies
+their hashes, source repository commits and tracked working-tree state.
+After rebuilding or changing inputs, prepare a new configuration from the verified
+artifacts and their build provenance before running again. Never just update a
+hash to bypass an unexplained mismatch.
 
-```text
-SILEX_GFX_BOIDS count=4000 frames=480 fixed_delta=0.016666668 state_step=4 initial_px=... state_px=... present=immediate fps=80.0 window=960.0x640.0 pixels=1920.0x1280.0 scale=2.0 density=2.0
-```
+`--prepare-only` verifies readiness without launching any Boids process.
+`--wait` performs that verification, waits for Return, then verifies again before
+launching. There is no automatic switch to another compiler or comparison script.
+`Protocol.py` is an internal statistics and semantic-validation module;
+`Protocol.json` records its workload and stationarity thresholds.
 
-## C++23 witnesses
+## Measurement and validity
 
-The C++ witnesses require an SDL3 development installation and the
-`shadercross` command discoverable by CMake. The build uses an installed EnTT 4
-package when available or fetches the pinned `v4.0.0` release otherwise. These
-are benchmark-only build dependencies and do not enter the Silex package or
-its public API. The architectural witness compiles the live
-`Packages/GFX.Scene2D/Shaders/Drawing.hlsl` source from the sibling workspace
-checkout so the C++ and Silex paths cannot silently measure different shaders.
+The default run has six warm-up rounds and twelve measured rounds per executable.
+Every six-round cycle runs all six permutations of the variants: each occupies
+each position twice, and each ordered pair appears twice within rounds. Both
+windows are independently balanced. `--warmups` accepts nonnegative multiples
+of six; `--runs` accepts multiples of six, starting at six.
+
+All three executables must exit with code 0, emit no stderr, and report exactly
+one valid state witness. The runner checks the workload, fixed delta, initial
+and final state, presentation mode and display dimensions. Native and LLVM
+Silex state fields must match exactly, excluding FPS; C++ uses the existing
+floating-point tolerance. A failure invalidates the capture.
+
+Each measured series retains every sample. A series is stationary only if its
+median absolute deviation is at most 1% of its median, its range at most 4%,
+its fitted drift at most 1%, and its shift between half-series medians at most 1%.
+The runner returns 0 for a complete stationary capture, 2 for a complete but
+nonstationary capture, and an error for invalid or interrupted execution.
+Stationarity alone does not establish an LLVM adoption decision or cross-platform
+correctness.
+
+Timestamped raw logs and JSON reports are written directly to `Baselines/`.
+`--output PATH` overrides the log destination; the JSON report is written beside
+it. Existing captures are never overwritten. Reports preserve every warm-up,
+measurement, process exit code, stdout/stderr, actual order and prepared
+configuration, including evidence from an interrupted or invalid capture.
+
+[The current baseline](Baselines/README.md) is the last user capture. Its raw
+files preserve the original measurement conditions; its three retained series
+are descriptive and nonstationary.
+
+## C++ architectural build
+
+The C++23 executable requires SDL3 development files and `shadercross` discoverable
+by CMake. CMake uses an installed EnTT 4 package or fetches the pinned EnTT commit
+`85c6bba014049b5de8fad49d25424df2f1f6a8c1`. It compiles the sibling
+`Packages/GFX.Scene2D/Shaders/Drawing.hlsl` source shared with Silex.
+From the Spec's `Worktree/` root:
 
 ```sh
-cmake \
-    -S Silex-Benchmarks/Sources/Boids2D/Cpp \
-    -B /private/tmp/gfx-boids-cpp \
-    -DCMAKE_BUILD_TYPE=Release
-cmake --build /private/tmp/gfx-boids-cpp --config Release
-/private/tmp/gfx-boids-cpp/BoidsCppDirect 4000 480
-/private/tmp/gfx-boids-cpp/BoidsCppArchitectural 4000 480
+cmake -S Silex-Benchmarks/Sources/Boids2D/Cpp \
+    -B Evaluations/boids-comparison/cpp -DCMAKE_BUILD_TYPE=Release
+cmake --build Evaluations/boids-comparison/cpp --config Release
 ```
 
-The direct output has this form:
+## Runner checks
 
-```text
-CPP_DIRECT_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=... state_px=... present=immediate fps=86.0 window=960x640 pixels=1920x1280 scale=2.0 density=2.0
-```
-
-The architectural output has this form:
-
-```text
-CPP_ARCHITECTURAL_BOIDS count=4000 frames=480 fixed_delta=0.0166666675 state_step=4 initial_px=... state_px=... ecs=entt renderer=sdl_gpu present=immediate fps=86.0 window=960x640 pixels=1920x1280 scale=2.0 density=2.0
-```
-
-## Comparison protocol
-
-`RunComparison.sh` builds and hashes all three Release executables once, then
-runs six warm-up rounds and twelve measured rounds at 4,000 boids and 480
-frames. Every six-round cycle executes all six permutations of the witnesses;
-each occupies each position twice. The raw log records actual process order,
-all warm-ups, stdout/stderr, and all fixed-workload/state/display sentinels.
-Failed processes leave a `.partial` log and cannot produce a timing verdict.
+From the benchmark repository root:
 
 ```sh
-Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s Sources/Boids2D -p 'Test*.py'
 ```
 
-The runner changes to its workspace root before compilation. A Spec uses its
-own compiler and workspace package links; a package escaping that closure is
-rejected. `--silex-compiler` selects another exact compiler without changing
-package resolution. `--build-dir` selects an explicit reusable artifact
-location; the default is keyed by workspace and compiler path.
-
-`Provenance.py` seals compiler bytes and commit, clean package commits,
-manifest-selected native artifact checksums, source and shader hashes,
-C++ compiler/configuration, EnTT revision, SDL libraries, generated shaders and
-executable hashes. `--skip-build` verifies this seal before timing, and the
-runner verifies it again afterward. Replacing a compiler, source, native
-library or executable requires rebuilding. The seal is copied beside the raw
-log as `.seal.json`; source changes during a build reject the seal.
-
-The versioned rule in `Protocol.json` is a proposed measurement rule, independent
-of optimizer changes. It never changes the historical Part 05 control. Exactly
-rounds 1–6 are excluded from statistics and retained as raw evidence; exactly
-rounds 7–18 are analyzed. There is no adaptive trimming or search for a favorable
-window. Each witness and both paired Silex/C++ ratio sequences must satisfy:
-
-- MAD / median at most 1%;
-- full range / median at most 4%;
-- absolute least-squares drift across the complete retained window at most 1%;
-- absolute shift between the two half-window medians at most 1%.
-
-A second capture of the same artifacts must satisfy those same gates and
-repeat every median within 1%. These stationarity checks are measurement
-quality gates, not a confidence interval or proof of performance parity.
-A warming retained window, loaded host or outlier makes the result inconclusive;
-thresholds must not be weakened after observing an optimizer candidate.
-
-The runner prints a compact summary and writes complete progressions, paired
-ratios, median, MAD, range, drift, excluded/retained windows and failure reasons
-to `.log.json`. Exit 0 means stationary, 2 means inconclusive/invalid protocol,
-and other nonzero exits mean build, semantic, provenance or process failure.
-The historical 87.165 FPS median and 98.064% steady ratio remain explicitly
-identified as controls with their original protocol; neither is rebaselined by
-this instrument change. Historical fixed-order logs remain archived unchanged.
-
-```sh
-python3 Silex-Benchmarks/Sources/Boids2D/TestProtocol.py
-python3 Silex-Benchmarks/Sources/Boids2D/Protocol.py analyze /path/to/capture-boids.log
-python3 Silex-Benchmarks/Sources/Boids2D/Protocol.py compare /path/to/first-boids.log /path/to/second-boids.log
-```
-
-`--count`, `--frames`, `--runs` and `--warmups` remain available for diagnostic
-smokes; noncanonical captures cannot pass the sealed analysis. `--output` sets
-the raw capture path. Output paths are never overwritten. Use `--wait` in an
-external terminal when competing work needs to stop after compilation; idle
-applications may remain open.
-
-The architectural C++ witness is the closest comparison for Silex/GFX. It
-matches the major ECS, GPU upload, shader, instancing, presentation, and data
-layout costs without pretending to duplicate GFX's scheduler or FrameGraph.
-The direct witness remains a useful lower-layer ceiling, not a layer-for-layer
-comparison.
-
-## Prepared four-way Spec comparison
-
-When the Spec workspace contains `Evaluations/boids-fourway/Configuration.json`,
-`RunComparison.sh` uses its four sealed executables: native Silex, LLVM Silex,
-architectural C++, and direct C++. Configuration version
-`boids-fourway-diagnostic-v2` requires successful termination (code 0) from all
-four variants. An LLVM finalization failure is no longer an accepted sample.
-
-`--prepare-only` verifies the prepared files and repository revisions without
-opening a window. `--wait` repeats that verification after Return. Four warm-up
-rounds and twelve measured rounds balance positions and directed transitions.
-The report retains the four series separately. Exit code 0 means the capture
-is complete and its series pass the stationarity checks; code 2 identifies
-nonstationary series. Neither result alone establishes a general performance
-advantage or replaces the canonical comparison protocol.
+These checks exercise scheduling, input verification, invalid execution,
+stationarity, wait/prepare behavior, output location and baseline integrity without
+running a GPU benchmark.

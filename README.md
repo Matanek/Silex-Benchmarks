@@ -131,28 +131,22 @@ in `STD`: they verify an implementation, while the scenarios in this
 repository cross a real package boundary.
 
 
-### Temporary four-way comparison in the LLVM Spec
+### Boids native / LLVM / C++ comparison
 
-When the workspace contains `Evaluations/boids-fourway/Configuration.json`,
-`Sources/Boids2D/RunComparison.sh --wait` selects the four prepared executables:
-Silex native, Silex LLVM, C++ architectural and C++ direct. It checks their
-sealed hashes and source repositories, then waits for Return before launching
-any measured process. `--prepare-only` checks readiness without running Boids.
-The prepared Silex binaries are reused explicitly; this mode does not rebuild
-with the ordinary default compiler. Removing the local configuration restores
-the existing three-way runner. This configuration is local to the Spec.
+[Boids2D](Sources/Boids2D/README.md) compares Silex native, Silex LLVM and C++
+architectural through the single Python entry point `RunComparison.py`.
+The prepared executables are verified before running six warm-up rounds and
+twelve measured rounds per variant. `--wait` pauses after verification;
+`--prepare-only` verifies without running the benchmark.
 
-The temporary protocol uses four warm-up rounds and twelve measured rounds
-per executable, in a balanced four-row Williams order. It keeps the original
-4000 × 480 workload, semantic tolerance and stationarity thresholds, but is a
-separate diagnostic protocol from `boids-stationarity-v1`. Native and LLVM
-Silex fields are additionally compared exactly. All process output and actual
-exit codes are retained in timestamped logs and JSON reports under the local
-configuration's `Results/` directory. Existing captures are never overwritten.
+From the SilexProject workspace root:
 
-The pinned LLVM candidate currently exits with code 2 at its final allocation
-guard. Only that expected LLVM result is allowed to continue the comparison;
-other unexpected exits, stderr, state mismatches or changed inputs stop it.
-The final runner also exits with 2 and labels its report diagnostic, even if
-the timing series are stationary. These measurements do not establish final
-LLVM correctness or adoption. No allocation guard in the executable is disabled.
+```sh
+python3 .specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.py --wait
+```
+
+The local configuration lives under the Spec's
+`Worktree/Evaluations/boids-comparison/Configuration.json`. Logs and reports go
+directly to [Baselines](Sources/Boids2D/Baselines/README.md). All three executables
+must finish with code 0; a complete but nonstationary capture returns 2 from
+the runner and remains available for inspection.

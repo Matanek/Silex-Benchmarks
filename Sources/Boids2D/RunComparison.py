@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Temporary, sealed four-way Boids comparison for a Spec workspace."""
+"""Sealed three-way Boids comparison for a Spec workspace."""
 import argparse
 from datetime import datetime
 import hashlib
+import itertools
 import json
 import math
 from pathlib import Path
@@ -12,11 +13,10 @@ import sys
 
 import Protocol
 
-LABELS = ("Silex/Natif", "Silex/LLVM", "C++ architectural", "C++ direct")
-PREFIXES = ("SILEX_GFX_BOIDS", "SILEX_GFX_BOIDS", "CPP_ARCHITECTURAL_BOIDS", "CPP_DIRECT_BOIDS")
-# Williams design: every position and every directed within-round transition
-# occurs equally often in each block of four rounds.
-ORDERS = ((0, 1, 3, 2), (1, 2, 0, 3), (2, 3, 1, 0), (3, 0, 2, 1))
+LABELS = ("Silex/Natif", "Silex/LLVM", "C++ architectural")
+PREFIXES = ("SILEX_GFX_BOIDS", "SILEX_GFX_BOIDS", "CPP_ARCHITECTURAL_BOIDS")
+# All six permutations balance positions and directed transitions.
+ORDERS = tuple(itertools.permutations(range(3)))
 
 
 def digest(path):
@@ -24,10 +24,10 @@ def digest(path):
 
 
 def verify(config, root):
-    if config["version"] != "boids-fourway-diagnostic-v2":
-        raise ValueError("unsupported four-way configuration")
+    if config["version"] != "boids-threeway-diagnostic-v1":
+        raise ValueError("unsupported three-way configuration")
     if tuple(item["label"] for item in config["executables"]) != LABELS:
-        raise ValueError("configuration must contain the four distinct witnesses")
+        raise ValueError("configuration must contain the three distinct witnesses")
     for relative, expected in config["files"].items():
         if digest(root / relative) != expected:
             raise ValueError(f"input changed: {relative}; prepare a new comparison")
@@ -37,7 +37,7 @@ def verify(config, root):
         dirty = subprocess.check_output(["git", "-C", str(repo), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
         if head != expected or dirty:
             raise ValueError(f"repository changed: {relative}; prepare a new comparison")
-    for index, item in enumerate(config["executables"]):
+    for item in config["executables"]:
         if item["path"] not in config["files"]:
             raise ValueError("unsealed executable")
         if item["expected_exit"] != 0:
@@ -74,25 +74,26 @@ def match(reference, observed):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", required=True, type=Path)
+    parser.add_argument("--config", type=Path, help="prepared configuration (default: workspace Evaluations/boids-comparison/Configuration.json)")
     parser.add_argument("--wait", action="store_true", help="wait for Return before any benchmark process")
     parser.add_argument("--prepare-only", action="store_true", help="verify the prepared binaries without running them")
-    parser.add_argument("--warmups", type=int, default=4, help="warm-up rounds per executable (multiple of four)")
-    parser.add_argument("--runs", type=int, default=12, help="measured rounds per executable (multiple of four, at least eight)")
+    parser.add_argument("--warmups", type=int, default=Protocol.POLICY["warmups"], help="warm-up rounds per executable (multiple of six)")
+    parser.add_argument("--runs", type=int, default=Protocol.POLICY["runs"], help="measured rounds per executable (multiple of six, at least six)")
     parser.add_argument("--output", type=Path, help="raw log path; JSON report is written beside it")
     args = parser.parse_args()
-    if args.warmups < 0 or args.warmups % 4 or args.runs < 8 or args.runs % 4:
-        parser.error("warmups must be a nonnegative multiple of four; runs must be a multiple of four >= 8")
+    if args.warmups < 0 or args.warmups % 6 or args.runs < 6 or args.runs % 6:
+        parser.error("warmups must be a nonnegative multiple of six; runs must be a multiple of six >= 6")
     source = Path(__file__).resolve().parent
     root = source.parents[2]
+    args.config = args.config or root / "Evaluations/boids-comparison/Configuration.json"
     config = json.loads(args.config.read_text())
     config_hash = digest(args.config)
     verify(config, root)
-    print("Comparaison temporaire : 4 exécutables préparés et vérifiés.", flush=True)
+    print("Comparaison Boids : 3 exécutables préparés et vérifiés.", flush=True)
     for item in config["executables"]:
         print(f"  {item['label']}: {item['path']}", flush=True)
     print(f"4000 boids × 480 frames ; {args.warmups} échauffements + {args.runs} mesures par variante.", flush=True)
-    print("Les quatre variantes doivent terminer avec le code 0 ; comparaison diagnostique.", flush=True)
+    print("Les trois variantes doivent terminer avec le code 0 ; comparaison diagnostique.", flush=True)
     if args.prepare_only:
         return 0
     if args.wait:
@@ -101,14 +102,14 @@ def main():
     if digest(args.config) != config_hash:
         raise ValueError("configuration changed during the pause")
     verify(config, root)
-    output = args.output or args.config.parent / "Results" / (datetime.now().strftime("%Y-%m-%d-%H%M%S-%f") + "-boids-fourway.log")
+    output = args.output or source / "Baselines" / (datetime.now().strftime("%Y-%m-%d-%H%M%S-%f") + "-boids.log")
     output = output.resolve()
     report_path = Path(str(output) + ".json")
     if output.exists() or report_path.exists():
         raise ValueError("refusing to overwrite an existing capture")
     output.parent.mkdir(parents=True, exist_ok=True)
-    report = dict(protocol="boids-fourway-diagnostic-v2", configuration=config,
-                  config_sha256=config_hash, host=platform.platform(),
+    report = dict(protocol="boids-threeway-diagnostic-v1", configuration=config,
+                  config_sha256=config_hash, host=platform.platform(), policy=Protocol.POLICY,
                   warmups=args.warmups, runs=args.runs, order=ORDERS,
                   verdict="incomplete", events=[], series={})
     reference = None
@@ -116,11 +117,11 @@ def main():
     llvm_states = {}
     try:
         with output.open("x") as log:
-            log.write("# boids-fourway-diagnostic-v2\n")
+            log.write("# boids-threeway-diagnostic-v1\n")
             for round_index in range(args.warmups + args.runs):
                 phase = "warmup" if round_index < args.warmups else "sample"
                 # Restart at row zero after warm-up; both windows are balanced.
-                for position, index in enumerate(ORDERS[round_index % 4], 1):
+                for position, index in enumerate(ORDERS[round_index % len(ORDERS)], 1):
                     item = config["executables"][index]
                     label = item["label"]
                     print(f"\n{phase} {round_index + 1}, position {position} — {label}", flush=True)
