@@ -3,7 +3,7 @@
 The comparison has three variants:
 
 - Silex/Natif compiles `Silex.sx` with the native Silex backend;
-- Silex/LLVM compiles that same source with the LLVM evaluation backend;
+- Silex/LLVM compiles that same source with the LLVM backend;
 - C++/Clang uses EnTT and SDL_GPU to match the Silex/GFX Scene2D path,
   with the same drawing shader, vertex and instance layouts and one instanced draw.
 
@@ -13,31 +13,42 @@ framebuffer, and immediate presentation without VSync. Each process performs
 one untimed warm-up frame followed by 480 measured frames with 4,000 boids at a
 fixed simulation delta of 1/60 second.
 
-## Run the prepared comparison
+## Build and run the comparison
 
 Run the executable script directly from the SilexProject workspace root:
 
 ```sh
-.specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
+Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
-`RunComparison.sh` resolves paths from its own location, so it also works from
-another current directory. It reads the prepared configuration at
-`Evaluations/boids-comparison/Configuration.json` under the Spec's `Worktree/`.
-Use `--config PATH` to select another prepared configuration. The three Release
-executables and their build provenance must already exist; the runner verifies
-their hashes, source repository commits and tracked working-tree state.
-After rebuilding or changing inputs, prepare a new configuration from the verified
-artifacts and their build provenance before running again. Never just update a
-hash to bypass an unexplained mismatch.
+`RunComparison.sh` resolves the workspace from its own location, so it also
+works from another current directory. It builds both Silex Release executables
+with the workspace compiler and the C++ Release executable with CMake/Clang.
+All preparation and configuration live in the script; no evaluation directory,
+Spec artifact, or external configuration file is required.
 
-`--prepare-only` verifies readiness without launching any Boids process.
-`--wait` performs that verification, waits for Return, then verifies again before
-launching. There is no automatic switch to another compiler or comparison script.
-The POSIX shell script uses `jq` to read the prepared configuration, `awk` for
-numeric checks and statistics, Git, and `shasum` or `sha256sum` for hashes.
-It contains no Python and does not invoke it. Temporary validation data is
-removed on completion or interruption.
+The compiler defaults to `Silex/Toolchain/zig-out/bin/silex`; build it with
+`./silex-dev build`, or select another executable with `SILEX_BIN`. `CXX` may
+select Clang++. If the default Xcode compiler cannot run, the script tries the
+installed macOS Command Line Tools and reports that choice. Explicit `CXX` or
+`DEVELOPER_DIR` selections are honored. The C++ Release flags are explicitly
+`-O3 -DNDEBUG`, with no additional cached global C++ flags; an incomplete CMake
+configuration cannot silently leave this variant unoptimized.
+
+The three binaries and one incremental CMake build occupy
+`SilexProject/.silex/benchmarks/boids-comparison`. Subsequent launches update this
+same directory, and Silex compilation uses the shared workspace cache. The
+script records hashes of the current inputs, tools, binaries, shaders, repository
+commits, and local tracked edits. Changes during preparation, the waiting period,
+or measurement invalidate the comparison. Local edits present before preparation
+are allowed and remain unchanged.
+
+`--prepare-only` builds and verifies readiness without launching any Boids
+process. `--wait` prepares the executables, waits for Return, then verifies again
+before launching. All measurements start after compilation finishes. The POSIX
+shell script uses CMake, Clang++, `shadercross`, Git, `awk`, `cmp`, and
+`shasum` or `sha256sum`; it requires neither Python nor `jq`. Temporary validation
+data is removed on completion or interruption.
 
 ## Measurement and validity
 
@@ -90,11 +101,11 @@ The C++23 executable requires SDL3 development files and `shadercross` discovera
 by CMake. CMake uses an installed EnTT 4 package or fetches the pinned EnTT commit
 `85c6bba014049b5de8fad49d25424df2f1f6a8c1`. It compiles the sibling
 `Packages/GFX.Scene2D/Shaders/Drawing.hlsl` source shared with Silex.
-From the Spec's `Worktree/` root:
+For a manual C++ build from the SilexProject workspace root:
 
 ```sh
 cmake -S Silex-Benchmarks/Sources/Boids2D/Cpp \
-    -B Evaluations/boids-comparison/cpp -DCMAKE_BUILD_TYPE=Release \
+    -B .silex/benchmarks/boids-comparison/cpp -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_COMPILER=clang++
-cmake --build Evaluations/boids-comparison/cpp --config Release
+cmake --build .silex/benchmarks/boids-comparison/cpp --config Release
 ```

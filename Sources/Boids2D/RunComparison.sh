@@ -1,16 +1,15 @@
 #!/bin/sh
-# POSIX shell runner. jq reads the seal; awk validates witnesses and computes FPS statistics.
+# POSIX shell runner: prepare current Release binaries, then validate and compare witnesses.
 set -eu
 export LC_ALL=C
 
 usage() {
     cat <<'HELP'
-Usage: RunComparison.sh [--wait] [--prepare-only] [--config PATH]
+Usage: RunComparison.sh [--wait] [--prepare-only]
                         [--warmups N] [--runs N] [--output PATH]
 
   --wait          Attendre Entree apres verification des executables.
-  --prepare-only  Verifier sans lancer le benchmark.
-  --config PATH   Configuration preparee (Evaluations/boids-comparison par defaut).
+  --prepare-only  Compiler et verifier sans lancer le benchmark.
   --warmups N     Tours d echauffement : multiple de 6, defaut 6.
   --runs N        Tours mesures : multiple de 6, minimum 6, defaut 12.
   --output PATH   Un seul rapport texte .log (Baselines par defaut).
@@ -19,7 +18,9 @@ HELP
 fail() { printf '%s\n' "$*" >&2; exit 1; }
 source_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
 root=$(CDPATH= cd -- "$source_dir/../../.." && pwd -P)
-config="$root/Evaluations/boids-comparison/Configuration.json"
+build_dir="$root/.silex/benchmarks/boids-comparison"
+silex=${SILEX_BIN:-"$root/Silex/Toolchain/zig-out/bin/silex"}
+cxx=${CXX:-clang++}
 warmups=6
 runs=12
 wait_for_user=no
@@ -30,10 +31,9 @@ while [ "$#" -gt 0 ]; do
         --help|-h) usage; exit 0 ;;
         --wait) wait_for_user=yes; shift ;;
         --prepare-only) prepare_only=yes; shift ;;
-        --config|--warmups|--runs|--output)
+        --warmups|--runs|--output)
             [ "$#" -ge 2 ] || fail "Valeur manquante pour $1"
             case $1 in
-                --config) config=$2 ;;
                 --warmups) warmups=$2 ;;
                 --runs) runs=$2 ;;
                 --output) output=$2 ;;
@@ -50,16 +50,23 @@ done
 warmups=$(printf '%s\n' "$warmups" | awk '{printf "%d", $1}')
 runs=$(printf '%s\n' "$runs" | awk '{printf "%d", $1}')
 [ $((warmups % 6)) -eq 0 ] && [ "$runs" -ge 6 ] && [ $((runs % 6)) -eq 0 ] || fail 'Echauffements et mesures : multiples de 6 ; au moins 6 mesures.'
-for tool in jq awk git mktemp; do command -v "$tool" >/dev/null || fail "Outil requis : $tool"; done
+for tool in awk git mktemp cmake shadercross cmp; do command -v "$tool" >/dev/null || fail "Outil requis : $tool"; done
 if command -v sha256sum >/dev/null; then sha_tool=sha256sum
 elif command -v shasum >/dev/null; then sha_tool=shasum
 else fail 'sha256sum ou shasum est requis'; fi
 hash_file() {
     [ -f "$1" ] || fail "Fichier absent : $1"
-    if [ "$sha_tool" = sha256sum ]; then sha256sum "$1"; else shasum -a 256 "$1"; fi | awk '{print $1}'
+    if [ "$sha_tool" = sha256sum ]; then
+        hash_output=$(sha256sum "$1") || fail "Lecture impossible : $1"
+    else
+        hash_output=$(shasum -a 256 "$1") || fail "Lecture impossible : $1"
+    fi
+    printf '%s\n' "$hash_output" | awk '{print $1}'
 }
-absolute() { case $1 in /*) printf '%s\n' "$1" ;; *) printf '%s/%s\n' "$root" "$1" ;; esac; }
-case $config in /*) ;; *) config="$PWD/$config" ;; esac
+silex=$(command -v "$silex") || fail 'Compilateur Silex absent : lancer ./silex-dev build ou definir SILEX_BIN.'
+cxx=$(command -v "$cxx") || fail 'Clang++ est requis pour la variante C++.'
+case $silex in /*) ;; *) silex="$PWD/$silex" ;; esac
+case $cxx in /*) ;; *) cxx="$PWD/$cxx" ;; esac
 case $output in ''|/*) ;; *) output="$PWD/$output" ;; esac
 scratch=$(mktemp -d "${TMPDIR:-/tmp}/silex-boids.XXXXXX")
 report_owned=no
@@ -88,34 +95,89 @@ trap cleanup 0
 trap 'exit 130' INT
 trap 'exit 129' HUP
 trap 'exit 143' TERM
-cp -- "$config" "$scratch/config.json"
-config_hash=$(hash_file "$scratch/config.json")
-jq -e '
-    .version == "boids-threeway-diagnostic-v1" and
-    ([.executables[].label] == ["Silex/Natif", "Silex/LLVM", "C++/Clang"]) and
-    (.files | type == "object") and (.repositories | type == "object") and
-    all(.executables[]; .expected_exit == 0 and (.path | type == "string")) and
-    all(.files | to_entries[]; (.key | test("[\t\r\n]") | not) and (.value | test("^[0-9a-f]{64}$"))) and
-    all(.repositories | to_entries[]; (.key | test("[\t\r\n]") | not) and (.value | test("^[0-9a-f]{40}$")))
-' "$scratch/config.json" >/dev/null || fail 'Configuration invalide : trois variantes preparees sont requises.'
-jq -r '.files | to_entries[] | [.key, .value] | @tsv' "$scratch/config.json" > "$scratch/files"
-jq -r '.repositories | to_entries[] | [.key, .value] | @tsv' "$scratch/config.json" > "$scratch/repositories"
+if ! "$cxx" --version > "$scratch/cxx-version" 2>&1; then
+    if [ "$(uname -s)" = Darwin ] && [ -z "${CXX:-}" ] && [ -z "${DEVELOPER_DIR:-}" ] &&
+        [ -x /Library/Developer/CommandLineTools/usr/bin/clang++ ]; then
+        export DEVELOPER_DIR=/Library/Developer/CommandLineTools
+        cxx="$DEVELOPER_DIR/usr/bin/clang++"
+        printf 'Clang Xcode indisponible ; utilisation des Command Line Tools.\n'
+        "$cxx" --version > "$scratch/cxx-version" 2>&1 || { cat "$scratch/cxx-version" >&2; fail 'Clang indisponible'; }
+    else
+        cat "$scratch/cxx-version" >&2
+        fail 'Clang indisponible'
+    fi
+fi
+awk 'tolower($0) ~ /clang/ {found=1} END {exit !found}' "$scratch/cxx-version" || fail 'La variante C++ requiert Clang.'
+# Keep one current CMake build and three executables, not a directory per run.
+# All Silex source compilation happens at the shared workspace root.
+mkdir -p "$build_dir"
+executable_for() {
+    case $1 in
+        0) printf '%s/native\n' "$build_dir" ;;
+        1) printf '%s/llvm\n' "$build_dir" ;;
+        2) printf '%s/cpp/BoidsCppArchitectural\n' "$build_dir" ;;
+    esac
+}
+snapshot_sources() {
+    for input in "$silex" "$cxx" "$(command -v shadercross)" \
+        "$source_dir/RunComparison.sh" "$source_dir/Silex.sx" \
+        "$source_dir/Cpp/CMakeLists.txt" "$source_dir/Cpp/Sources/Architectural.cpp" \
+        "$root/Packages/GFX.Scene2D/Shaders/Drawing.hlsl"; do
+        digest=$(hash_file "$input")
+        printf '%s\t%s\n' "$input" "$digest"
+    done
+    for repository in "$root/Silex" "$root/Silex-Benchmarks" "$root"/Packages/*; do
+        [ -e "$repository/.git" ] || continue
+        revision=$(git -C "$repository" rev-parse HEAD)
+        printf '%s\t%s\n' "$repository" "$revision"
+        # Preserve exact tracked local edits instead of requiring unrelated commits.
+        git -C "$repository" diff --binary HEAD -- > "$scratch/diff"
+        digest=$(hash_file "$scratch/diff")
+        printf 'working-tree\t%s\n' "$digest"
+        git -C "$repository" ls-files --others --exclude-standard -- '*.sx' '*.json' '*.hlsl' > "$scratch/untracked"
+        while IFS= read -r input; do
+            digest=$(hash_file "$repository/$input")
+            printf '%s/%s\t%s\n' "$repository" "$input" "$digest"
+        done < "$scratch/untracked"
+    done
+}
+snapshot_sources > "$scratch/sources"
+printf 'Preparation Silex/Natif (Release)...\n'
+(cd -- "$root" && "$silex" compile "$source_dir/Silex.sx" --backend native --release -o "$(executable_for 0)")
+printf 'Preparation Silex/LLVM (Release)...\n'
+(cd -- "$root" && "$silex" compile "$source_dir/Silex.sx" --backend llvm --release -o "$(executable_for 1)")
+printf 'Preparation C++/Clang (Release)...\n'
+set -- -S "$source_dir/Cpp" -B "$build_dir/cpp" \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER="$cxx" \
+    -DCMAKE_CXX_FLAGS= '-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG'
+if [ "$(uname -s)" = Darwin ]; then
+    sdk=$(xcrun --sdk macosx --show-sdk-path)
+    set -- "$@" "-DCMAKE_OSX_SYSROOT=$sdk"
+fi
+cmake "$@"
+cmake --build "$build_dir/cpp" --config Release --parallel 4
+snapshot_sources > "$scratch/current"
+cmp -s "$scratch/sources" "$scratch/current" || fail 'Sources ou outils modifies pendant la preparation : relancer la comparaison.'
+: > "$scratch/files"
+for witness in 0 1 2; do
+    binary=$(executable_for "$witness")
+    [ -x "$binary" ] || fail "Executable absent : $binary"
+    digest=$(hash_file "$binary")
+    printf '%s\t%s\n' "$binary" "$digest" >> "$scratch/files"
+done
+for input in "$build_dir/cpp/CMakeCache.txt" "$build_dir/cpp/Shaders/"*; do
+    digest=$(hash_file "$input")
+    printf '%s\t%s\n' "$input" "$digest" >> "$scratch/files"
+done
+cat "$scratch/sources" "$scratch/files" > "$scratch/seal"
+config_hash=$(hash_file "$scratch/seal")
 tab=$(printf '\t')
 verify() {
-    [ "$(hash_file "$config")" = "$config_hash" ] || fail 'Configuration modifiee : preparer une nouvelle comparaison.'
-    while IFS="$tab" read -r relative expected; do
-        [ "$(hash_file "$(absolute "$relative")")" = "$expected" ] || fail "Entree modifiee : $relative"
+    snapshot_sources > "$scratch/current"
+    cmp -s "$scratch/sources" "$scratch/current" || fail 'Sources ou outils modifies : relancer la comparaison.'
+    while IFS="$tab" read -r input expected; do
+        [ "$(hash_file "$input")" = "$expected" ] || fail "Entree modifiee : $input"
     done < "$scratch/files"
-    while IFS="$tab" read -r relative expected; do
-        repo=$(absolute "$relative")
-        [ "$(git -C "$repo" rev-parse HEAD)" = "$expected" ] || fail "Commit modifie : $relative"
-        [ -z "$(git -C "$repo" status --porcelain --untracked-files=no)" ] || fail "Depot modifie : $relative"
-    done < "$scratch/repositories"
-    for witness in 0 1 2; do
-        binary_relative=$(jq -r --argjson i "$witness" '.executables[$i].path' "$scratch/config.json")
-        jq -e --arg path "$binary_relative" '.files | has($path)' "$scratch/config.json" >/dev/null || fail 'Executable non scelle'
-        [ -x "$(absolute "$binary_relative")" ] || fail "Executable absent : $binary_relative"
-    done
 }
 verify
 printf 'Comparaison : Silex/Natif, Silex/LLVM, C++/Clang. Executables verifies.\n'
@@ -245,7 +307,7 @@ while [ "$round" -le $((warmups + runs)) ]; do
             1) label=Silex/LLVM; prefix=SILEX_GFX_BOIDS ;;
             2) label=C++/Clang; prefix=CPP_ARCHITECTURAL_BOIDS ;;
         esac
-        executable=$(absolute "$(jq -r --argjson i "$index_id" '.executables[$i].path' "$scratch/config.json")")
+        executable=$(executable_for "$index_id")
         printf '%-12s %2s/%s  %-12s ' "$phase" "$round" "$((warmups+runs))" "$label"
         code=0
         (cd -- "$root" && exec "$executable" 4000 480) > "$scratch/stdout" 2> "$scratch/stderr" || code=$?
@@ -267,7 +329,7 @@ cat "$scratch/header" > "$scratch/report"
 verdict=0
 awk -v runs="$runs" -f "$scratch/report.awk" "$scratch/samples" >> "$scratch/report" || verdict=$?
 [ "$verdict" -eq 0 ] || [ "$verdict" -eq 2 ] || fail 'Impossible de calculer le rapport.'
-printf '\nConfiguration SHA-256 : %s\n' "$config_hash" >> "$scratch/report"
+printf '\nEntrees SHA-256 : %s\n' "$config_hash" >> "$scratch/report"
 cat "$scratch/report" > "$output"
 finished=yes
 cat "$output"

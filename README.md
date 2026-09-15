@@ -38,7 +38,7 @@ source root and declares every dependency required by the catalog.
 | --- | --- |
 | `TensorStableCompute/` | separate Tensor memory/transfers and cold, hot, resident, observed, and end-to-end inference/training for primitive and neural workloads |
 | `CompilationPerformance/` | separate cold compilation, shared-package misses, entry edits, and exact executable hits |
-| `Boids2D/` | compare the public Scene2D/ECS/GPU path with two C++23 reference implementations |
+| `Boids2D/` | compare native and LLVM Silex with a C++23 implementation of the Scene2D/ECS/GPU path |
 | [FallingBodies2D/](Sources/FallingBodies2D/README.md) | jointly load 2D physics, transform transfer, and rendering; explicit equal-work qualification |
 | `WorldRendering3D/` | measure an instanced 3D world across several GPU and presentation profiles |
 | `PhysicsWorldScale2D.sx` | measure sparse motion and body piles at several scales |
@@ -139,18 +139,20 @@ repository cross a real package boundary.
 
 [Boids2D](Sources/Boids2D/README.md) compares Silex native, Silex LLVM and
 C++/Clang through the single executable entry point `RunComparison.sh`.
-The prepared executables are verified before running six warm-up rounds and
+The script builds and verifies the Release executables before six warm-up rounds and
 twelve measured rounds per variant. `--wait` pauses after verification;
-`--prepare-only` verifies without running the benchmark.
+`--prepare-only` builds and verifies without running the benchmark.
 
 From the SilexProject workspace root:
 
 ```sh
-.specs/Silex-LLVM-Backend-Evaluation/Worktree/Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
+Silex-Benchmarks/Sources/Boids2D/RunComparison.sh --wait
 ```
 
-The local configuration lives under the Spec's
-`Worktree/Evaluations/boids-comparison/Configuration.json`. Each capture writes one plain-text log
+Build preparation is contained in the script. Its three executables and one
+incremental CMake build live under `.silex/benchmarks/boids-comparison` at the
+workspace root. No external configuration or Spec artifacts are required.
+Each capture writes one plain-text log
 to [Baselines](Sources/Boids2D/Baselines/2026-09-14-092230-615615-macos-arm64.log), named
 for the date, time, operating system and architecture. All three executables
 must finish with code 0; a complete but nonstationary capture returns 2 from
