@@ -1,0 +1,52 @@
+BOIDS - COMPARAISON FPS
+
+Date       : 2026-09-15 14:39:13 +0200
+Plateforme : macos-arm64
+Charge     : 4000 boids x 480 frames - Release
+Passages   : 6 echauffements + 12 mesures par variante
+
+Variante             FPS moyens      FPS min      FPS max   Ecart-type
+-----------------------------------------------------------------------
+Silex/Natif              91.009       90.348       91.574        0.388
+Silex/LLVM               94.631       94.151       95.114        0.306
+C++/Clang                88.526       88.003       89.282        0.378
+
+Moyennes hors echauffements ; min/max et dispersion entre passages, pas entre frames.
+
+ECARTS ENTRE VARIANTES
+
+Variante           Reference             Ecart FPS Ecart relatif
+-----------------------------------------------------------------------
+Silex/LLVM         Silex/Natif              +3.622       +3.98 %
+Silex/Natif        C++/Clang                +2.483       +2.80 %
+Silex/LLVM         C++/Clang                +6.105       +6.90 %
+
+Ecart relatif = (FPS moyens variante / FPS moyens reference - 1) x 100.
+
+Stabilite : series instables ; ecarts descriptifs a confirmer.
+
+FPS DE CHAQUE PASSAGE
+N = Silex/Natif ; L = Silex/LLVM ; C = C++/Clang.
+
+Phase         Tour Ordre        Silex/Natif     Silex/LLVM      C++/Clang
+----------------------------------------------------------------------------
+Echauffement     1 N>L>C           92.69421       97.51649       88.75159
+Echauffement     2 N>C>L           92.84682      96.271614       92.28804
+Echauffement     3 L>N>C           92.46505       96.28682       91.23911
+Echauffement     4 L>C>N            92.2913       95.40568       89.22539
+Echauffement     5 C>N>L            91.6976       95.04879       89.71843
+Echauffement     6 C>L>N           91.53418        95.1415       89.58733
+Mesure           7 N>L>C            91.5418          94.96       89.28227
+Mesure           8 N>C>L           91.57435       95.11437       88.41047
+Mesure           9 L>N>C           91.42483      94.977356       89.01956
+Mesure          10 L>C>N           90.72464       94.75614       89.07332
+Mesure          11 C>N>L            90.9946      94.416794       88.39821
+Mesure          12 C>L>N           91.02396       94.58893       88.36778
+Mesure          13 N>L>C          90.823006       94.40617       88.25945
+Mesure          14 N>C>L           91.18137      94.804855       88.33618
+Mesure          15 L>N>C          91.295815       94.82245       88.45346
+Mesure          16 L>C>N           90.53284      94.213585       88.00333
+Mesure          17 C>N>L           90.64016       94.35945       88.57639
+Mesure          18 C>L>N           90.34787       94.15084       88.12892
+
+Entrees SHA-256 : acf0131653ba21c6be5511c840d7b21405ed0b2c8d2658cb78f61acf2d7e4792
