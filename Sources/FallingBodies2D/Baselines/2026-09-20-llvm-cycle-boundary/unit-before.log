@@ -1,0 +1,36 @@
+1/3 BeforeCycleRuntime.test.rooted scene is a constant-work boundary of an unreachable cycle...expected 0, found 2
+FAIL (TestExpectedEqual)
+/opt/homebrew/Cellar/zig/0.16.0_1/lib/zig/std/testing.zig:118:17: 0x100dfda33 in expectEqualInner__anon_36374 (test)
+                return error.TestExpectedEqual;
+                ^
+/opt/homebrew/Cellar/zig/0.16.0_1/lib/zig/std/testing.zig:83:5: 0x100e00aa3 in expectEqual (test)
+    return expectEqualInner(T, expected, actual);
+    ^
+/private/tmp/falling-regression-20260920/BeforeCycleRuntime.zig:175:5: 0x100e00b1b in test.rooted scene is a constant-work boundary of an unreachable cycle (test)
+    try std.testing.expectEqual(@as(usize, 0), scene.visits);
+    ^
+2/3 BeforeCycleRuntime.test.a back edge from the rooted boundary preserves the candidate until root removal...expected 0, found 2
+FAIL (TestExpectedEqual)
+/opt/homebrew/Cellar/zig/0.16.0_1/lib/zig/std/testing.zig:118:17: 0x100dfda33 in expectEqualInner__anon_36374 (test)
+                return error.TestExpectedEqual;
+                ^
+/opt/homebrew/Cellar/zig/0.16.0_1/lib/zig/std/testing.zig:83:5: 0x100e00347 in expectEqual (test)
+    return expectEqualInner(T, expected, actual);
+    ^
+/private/tmp/falling-regression-20260920/BeforeCycleRuntime.zig:189:5: 0x100e003bf in test.a back edge from the rooted boundary preserves the candidate until root removal (test)
+    try std.testing.expectEqual(@as(usize, 0), scene.visits);
+    ^
+3/3 BeforeCycleRuntime.test.an external edge preserves an unrooted descendant beside a rooted boundary...expected 0, found 2
+FAIL (TestExpectedEqual)
+/opt/homebrew/Cellar/zig/0.16.0_1/lib/zig/std/testing.zig:118:17: 0x100dfda33 in expectEqualInner__anon_36374 (test)
+                return error.TestExpectedEqual;
+                ^
+/opt/homebrew/Cellar/zig/0.16.0_1/lib/zig/std/testing.zig:83:5: 0x100dfde47 in expectEqual (test)
+    return expectEqualInner(T, expected, actual);
+    ^
+/private/tmp/falling-regression-20260920/BeforeCycleRuntime.zig:209:5: 0x100dfdecb in test.an external edge preserves an unrooted descendant beside a rooted boundary (test)
+    try std.testing.expectEqual(@as(usize, 0), scene.visits);
+    ^
+0 passed; 0 skipped; 3 failed.
+error: the following test command failed with exit code 1:
+.zig-cache/o/acd3cf0f10f2655a35dcc6d3a1233ec0/test --seed=0x9418ea34

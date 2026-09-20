@@ -1,0 +1,722 @@
+[
+  {
+    "scenario": "fixed120",
+    "iteration": 0,
+    "warmup": true,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 347.2272,
+      "worker/step": 0.10036664,
+      "average transform transfer/batch": 0.0017916673,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 0,
+    "warmup": true,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 497.75797,
+      "worker/step": 0.12309163,
+      "average transform transfer/batch": 0.0020833341,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 1,
+    "warmup": true,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 504.16574,
+      "worker/step": 0.11082498,
+      "average transform transfer/batch": 0.0019750013,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 1,
+    "warmup": true,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 489.912,
+      "worker/step": 0.10366664,
+      "average transform transfer/batch": 0.002041668,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 2,
+    "warmup": true,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 540.37494,
+      "worker/step": 0.110991664,
+      "average transform transfer/batch": 0.0020250014,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 2,
+    "warmup": true,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 501.4207,
+      "worker/step": 0.11771666,
+      "average transform transfer/batch": 0.002016667,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 3,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 353.96246,
+      "worker/step": 0.16325833,
+      "average transform transfer/batch": 0.0025749996,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 3,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 439.75067,
+      "worker/step": 0.12378333,
+      "average transform transfer/batch": 0.002133335,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 4,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 490.35242,
+      "worker/step": 0.10255833,
+      "average transform transfer/batch": 0.0018083343,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 4,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 495.22513,
+      "worker/step": 0.10985,
+      "average transform transfer/batch": 0.0018166673,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 5,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 640.29364,
+      "worker/step": 0.14280833,
+      "average transform transfer/batch": 0.0025750017,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 5,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 459.22836,
+      "worker/step": 0.1053,
+      "average transform transfer/batch": 0.0016583338,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 6,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 442.94998,
+      "worker/step": 0.10479167,
+      "average transform transfer/batch": 0.0017416672,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 6,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 500.69043,
+      "worker/step": 0.1258583,
+      "average transform transfer/batch": 0.0020500002,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 7,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 485.87524,
+      "worker/step": 0.1466417,
+      "average transform transfer/batch": 0.0022249995,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 7,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 497.36594,
+      "worker/step": 0.10718336,
+      "average transform transfer/batch": 0.001833334,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 8,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 489.13126,
+      "worker/step": 0.103958346,
+      "average transform transfer/batch": 0.0016750001,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 8,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 438.72952,
+      "worker/step": 0.132325,
+      "average transform transfer/batch": 0.0021499998,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 9,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 520.5418,
+      "worker/step": 0.11851665,
+      "average transform transfer/batch": 0.0018583332,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "fixed120",
+    "iteration": 9,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 485.4252,
+      "worker/step": 0.10664166,
+      "average transform transfer/batch": 0.0018250007,
+      "fixed-work measured steps": 120.0,
+      "fixed-work total steps": 180.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 121.0
+    },
+    "state_sha256": "4f70cfb1d7677d5b9355ddcc5e7a5e8b28fb56d4f207058fd8d3179e59342199"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 0,
+    "warmup": true,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 274.32715,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 0,
+    "warmup": true,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 517.20355,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 1,
+    "warmup": true,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 475.6431,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 1,
+    "warmup": true,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 265.1952,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 2,
+    "warmup": true,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 264.46344,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 2,
+    "warmup": true,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 537.7356,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 3,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 472.48172,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 3,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 267.35474,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 4,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 259.91296,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 4,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 513.9472,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 5,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 496.7667,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 5,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 259.72958,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 6,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 267.87567,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 6,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 534.7021,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 7,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 492.42902,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 7,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 261.88583,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 8,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 267.23618,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 8,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 551.8867,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 9,
+    "warmup": false,
+    "label": "candidate",
+    "metrics": {
+      "average render FPS": 479.6028,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  },
+  {
+    "scenario": "render3000",
+    "iteration": 9,
+    "warmup": false,
+    "label": "before",
+    "metrics": {
+      "average render FPS": 261.70358,
+      "worker/step": 0.0,
+      "average transform transfer/batch": 0.0,
+      "fixed-work measured steps": 0.0,
+      "fixed-work total steps": 0.0,
+      "fixed-work frames": 120.0,
+      "draw calls": 3.0,
+      "pipeline binds": 3.0,
+      "rendered instances": 3001.0
+    },
+    "state_sha256": "bee69726ea4fbbab48351aaa414f59a06b8604d7078e55191ef99b2e8e0a05ad"
+  }
+]

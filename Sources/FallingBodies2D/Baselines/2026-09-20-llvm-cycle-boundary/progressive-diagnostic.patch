@@ -1,0 +1,19 @@
+--- Main.sx
++++ Settled.sx
+@@ -479,7 +479,7 @@
+         self.smoke_frames = smoke_frames
+         self.fixed_work = option_requested("--fixed-work")
+         var smoke_minimum_seconds = 0.0
+-        if option_requested("--smoke-30") { smoke_minimum_seconds = 30.0 }
++        if option_requested("--smoke-30") { smoke_minimum_seconds = 90.0 }
+         else if smoke_frames > 120 { smoke_minimum_seconds = 10.0 }
+         if self.fixed_work { smoke_minimum_seconds = 0.0 }
+         self.smoke_minimum_seconds = smoke_minimum_seconds
+@@ -1146,6 +1146,7 @@
+         let spawn_step_ms = cadence.spawn_ms / step_count
+         let capacity_hz = cadence.physics_steps as float * 1_000.0 /
+             Math.max(cadence.worker_ms, 0.000001)
++        print("CADENCE bodies=$(simulation.bodies.count()) awake=$(simulation.physics.awake_body_count()) fps=$(cadence.render_frames as float / cadence.elapsed) worker_ms=$(worker_step_ms) physics_hz=$(physics_hz)")
+         var repeated_frames = cadence.render_frames - cadence.visual_updates
+         if repeated_frames < 0 { repeated_frames = 0 }
+         refresh_physics_stats(

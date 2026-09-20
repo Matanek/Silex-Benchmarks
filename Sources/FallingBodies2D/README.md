@@ -33,3 +33,7 @@ throughput does not measure interactive overlap; presentation can still limit
 FPS, and a sleeping scene is not an active-solver benchmark. State printing is
 outside the reported measurement interval. Do not compare these results with
 older real-time baselines as if they performed the same work.
+
+The [20 September 2026 LLVM cycle traversal record](Baselines/2026-09-20-llvm-cycle-boundary/README.md)
+contains a diagnosed interactive regression, its compiler correction, paired
+controls, correctness evidence and presentation limits.

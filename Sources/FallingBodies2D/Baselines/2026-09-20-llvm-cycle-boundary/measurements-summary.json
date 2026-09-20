@@ -1,0 +1,28 @@
+{
+  "fixed120": {
+    "before": {
+      "median_fps": 485.4252,
+      "min_fps": 439.75067,
+      "max_fps": 497.36594
+    },
+    "candidate": {
+      "median_fps": 495.22513,
+      "min_fps": 353.96246,
+      "max_fps": 640.29364
+    },
+    "ratio_fps": 1.0201883420967843
+  },
+  "render3000": {
+    "before": {
+      "median_fps": 261.88583,
+      "min_fps": 259.72958,
+      "max_fps": 267.87567
+    },
+    "candidate": {
+      "median_fps": 496.7667,
+      "min_fps": 472.48172,
+      "max_fps": 551.8867
+    },
+    "ratio_fps": 1.8968826988462875
+  }
+}

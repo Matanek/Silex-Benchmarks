@@ -1,0 +1,64 @@
+FallingBody smoke: 3000 dynamic bodies (1500 circles, 1500 boxes)
+  average render FPS: 153.29091
+  visual Hz: 0.0
+  repeated render frames: 100.0 %
+  physics Hz: 0.0
+  physics capacity: 0.0 Hz
+  cycle/step: 10000.593 ms
+  worker/step: 0.0 ms
+  resubmit gap/step: 10000.593 ms
+  queue + poll/step: 0.0 ms
+  spawn/step: 0.0 ms
+  physics steps/frame: 0.0
+  average physics/frame: 0.0 ms
+  average transform transfer/batch: 0.0 ms
+  maximum substeps: 0
+  awake: 3000
+  active pairs: 0
+  physics step: 0.0 ms
+  motion: 0.0 ms
+  broad phase: 0.0 ms
+  solve: 0.0 ms
+  sleep: 0.0 ms
+  maximum speed: 0.0 m/s
+  maximum angular speed: 0.0 rad/s
+  base maximum speed: 0.0 m/s
+  base maximum angular speed: 0.0 rad/s
+  floor layer maximum speed: 0.0 m/s
+  floor layer maximum velocity: (0.0, 0.0) m/s
+  minimum y: -2.95 m
+  oldest 100 maximum speed: 0.0 m/s
+  maximum circle overlap: 0.00009685755 mm (0.000009685755 px)
+  worst circle overlap pair: 0 at (-4.35, -2.95), awake=true; 88 at (-4.35, -2.8500001), awake=true
+  overlapping circle pairs above 0.5 mm: 0
+  base awake below -2 m: 880 / 880
+  awake by zone: left=722, center=1564, right=714
+  right maximum speed: 0.0 m/s
+  awake[0] circle: position=(-4.35, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[1] box: position=(-4.25, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[2] circle: position=(-4.15, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[3] box: position=(-4.05, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[4] circle: position=(-3.95, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[5] box: position=(-3.8500001, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[6] circle: position=(-3.75, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[7] box: position=(-3.65, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[8] circle: position=(-3.55, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[9] box: position=(-3.45, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[10] circle: position=(-3.3500001, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[11] box: position=(-3.25, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[12] circle: position=(-3.15, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[13] box: position=(-3.05, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[14] circle: position=(-2.95, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[15] box: position=(-2.8500001, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[16] circle: position=(-2.75, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[17] box: position=(-2.65, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[18] circle: position=(-2.55, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[19] box: position=(-2.45, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[20] circle: position=(-2.3500001, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[21] box: position=(-2.25, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[22] circle: position=(-2.15, -2.95), velocity=(0.0, 0.0), angular=0.0
+  awake[23] box: position=(-2.05, -2.95), velocity=(0.0, 0.0), angular=0.0
+  draw calls: 3
+  pipeline binds: 3
+  rendered instances: 3001
+{"command": ["/private/tmp/falling-regression-20260920/candidate", "--stress-3000", "--smoke-long", "--immediate", "--render-only", "--no-panel"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 76621, "reason": "completed", "returncode": 0, "elapsed_seconds": 11.023, "sampled_peak_rss_kib": 106544, "sampled_peak_physical_footprint_kib": 297857, "sampled_peak_processes": 1, "limits": {"seconds": 75.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}

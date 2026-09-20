@@ -1,0 +1,78 @@
+[
+  {
+    "name": "unit",
+    "returncode": 0
+  },
+  {
+    "name": "CycleExternalDescendant-debug",
+    "returncode": 0
+  },
+  {
+    "name": "CycleExternalDescendant-release",
+    "returncode": 0
+  },
+  {
+    "name": "CycleValueEdges-debug",
+    "returncode": 0
+  },
+  {
+    "name": "CycleValueEdges-release",
+    "returncode": 0
+  },
+  {
+    "name": "CycleWideGraph-debug",
+    "returncode": 0
+  },
+  {
+    "name": "CycleWideGraph-release",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedCycle-debug",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedCycle-release",
+    "returncode": 0
+  },
+  {
+    "name": "CallbackOwnership-debug",
+    "returncode": 0
+  },
+  {
+    "name": "CallbackOwnership-release",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedBoundCallback-debug",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedBoundCallback-release",
+    "returncode": 0
+  },
+  {
+    "name": "MethodReceiverLifetime-debug",
+    "returncode": 0
+  },
+  {
+    "name": "MethodReceiverLifetime-release",
+    "returncode": 0
+  },
+  {
+    "name": "WorldLifetime",
+    "returncode": 0
+  },
+  {
+    "name": "ApplicationIntegration",
+    "returncode": 0
+  },
+  {
+    "name": "check",
+    "returncode": 0
+  },
+  {
+    "name": "test",
+    "returncode": 0
+  }
+]

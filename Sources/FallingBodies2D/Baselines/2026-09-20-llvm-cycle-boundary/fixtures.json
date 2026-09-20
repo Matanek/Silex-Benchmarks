@@ -1,0 +1,86 @@
+[
+  {
+    "name": "CycleExternalDescendant",
+    "mode": "debug",
+    "stdout": "cycle external descendant passed\n",
+    "returncode": 0
+  },
+  {
+    "name": "CycleExternalDescendant",
+    "mode": "release",
+    "stdout": "cycle external descendant passed\n",
+    "returncode": 0
+  },
+  {
+    "name": "CycleValueEdges",
+    "mode": "debug",
+    "stdout": "cycle value edges passed\n",
+    "returncode": 0
+  },
+  {
+    "name": "CycleValueEdges",
+    "mode": "release",
+    "stdout": "cycle value edges passed\n",
+    "returncode": 0
+  },
+  {
+    "name": "CycleWideGraph",
+    "mode": "debug",
+    "stdout": "cycle wide graph passed\n",
+    "returncode": 0
+  },
+  {
+    "name": "CycleWideGraph",
+    "mode": "release",
+    "stdout": "cycle wide graph passed\n",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedCycle",
+    "mode": "debug",
+    "stdout": "inherited-cycles-ok\n",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedCycle",
+    "mode": "release",
+    "stdout": "inherited-cycles-ok\n",
+    "returncode": 0
+  },
+  {
+    "name": "CallbackOwnership",
+    "mode": "debug",
+    "stdout": "callback-ownership-ok\n",
+    "returncode": 0
+  },
+  {
+    "name": "CallbackOwnership",
+    "mode": "release",
+    "stdout": "callback-ownership-ok\n",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedBoundCallback",
+    "mode": "debug",
+    "stdout": "inherited-bound-callback-ok\n",
+    "returncode": 0
+  },
+  {
+    "name": "InheritedBoundCallback",
+    "mode": "release",
+    "stdout": "inherited-bound-callback-ok\n",
+    "returncode": 0
+  },
+  {
+    "name": "MethodReceiverLifetime",
+    "mode": "debug",
+    "stdout": "method receiver lifetime passed\n",
+    "returncode": 0
+  },
+  {
+    "name": "MethodReceiverLifetime",
+    "mode": "release",
+    "stdout": "method receiver lifetime passed\n",
+    "returncode": 0
+  }
+]

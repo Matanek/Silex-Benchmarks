@@ -1,0 +1,154 @@
+CADENCE bodies=53 awake=53 fps=121.30929 worker_ms=0.13031147 physics_hz=60.654644
+CADENCE bodies=103 awake=102 fps=119.984764 worker_ms=0.24175002 physics_hz=59.992382
+CADENCE bodies=153 awake=144 fps=119.99953 worker_ms=0.3985499 physics_hz=59.999763
+CADENCE bodies=203 awake=186 fps=119.96677 worker_ms=0.6735166 physics_hz=59.983383
+CADENCE bodies=253 awake=211 fps=120.04324 worker_ms=0.65093327 physics_hz=59.525574
+CADENCE bodies=303 awake=254 fps=119.962234 worker_ms=0.94885004 physics_hz=59.981117
+CADENCE bodies=353 awake=248 fps=119.975426 worker_ms=1.0863334 physics_hz=59.987713
+CADENCE bodies=403 awake=267 fps=120.09734 worker_ms=1.204164 physics_hz=60.54494
+CADENCE bodies=453 awake=261 fps=119.94841 worker_ms=1.2754407 physics_hz=58.974636
+CADENCE bodies=504 awake=274 fps=119.923004 worker_ms=1.426082 physics_hz=60.45705
+CADENCE bodies=554 awake=247 fps=119.999016 worker_ms=1.3475164 physics_hz=59.999508
+CADENCE bodies=604 awake=252 fps=120.05351 worker_ms=1.4424261 physics_hz=60.522842
+CADENCE bodies=655 awake=278 fps=119.92582 worker_ms=1.5484499 physics_hz=59.46735
+CADENCE bodies=705 awake=284 fps=120.0952 worker_ms=1.7699509 physics_hz=60.54386
+CADENCE bodies=755 awake=280 fps=119.94135 worker_ms=1.9234498 physics_hz=59.970676
+CADENCE bodies=806 awake=253 fps=119.951035 worker_ms=1.8163667 physics_hz=59.47985
+CADENCE bodies=856 awake=265 fps=120.07612 worker_ms=1.8635409 physics_hz=60.53424
+CADENCE bodies=906 awake=244 fps=119.94888 worker_ms=1.8313664 physics_hz=59.97444
+CADENCE bodies=956 awake=225 fps=119.999985 worker_ms=1.8991166 physics_hz=59.999992
+CADENCE bodies=1006 awake=248 fps=119.97508 worker_ms=1.9134496 physics_hz=59.98754
+CADENCE bodies=1056 awake=230 fps=120.07373 worker_ms=1.9965332 physics_hz=59.540695
+CADENCE bodies=1106 awake=248 fps=119.93502 worker_ms=2.1022837 physics_hz=59.96751
+CADENCE bodies=1157 awake=258 fps=119.962814 worker_ms=2.2031806 physics_hz=60.47712
+CADENCE bodies=1207 awake=248 fps=120.05074 worker_ms=2.1918995 physics_hz=59.529293
+CADENCE bodies=1257 awake=237 fps=119.98342 worker_ms=2.2908335 physics_hz=59.99171
+CADENCE bodies=1307 awake=239 fps=119.974785 worker_ms=2.3404 physics_hz=59.987392
+CADENCE bodies=1357 awake=248 fps=119.99364 worker_ms=2.303034 physics_hz=59.99682
+CADENCE bodies=1408 awake=268 fps=120.00924 worker_ms=2.652672 physics_hz=60.500526
+CADENCE bodies=1458 awake=270 fps=120.022194 worker_ms=2.3503168 physics_hz=59.515137
+CADENCE bodies=1508 awake=233 fps=151.55066 worker_ms=2.6192002 physics_hz=59.822628
+CADENCE bodies=1558 awake=237 fps=249.9136 worker_ms=2.9471998 physics_hz=59.979263
+CADENCE bodies=1608 awake=261 fps=118.925316 worker_ms=2.8439333 physics_hz=59.962345
+CADENCE bodies=1658 awake=256 fps=117.468124 worker_ms=3.0920815 physics_hz=60.725048
+CADENCE bodies=1708 awake=265 fps=118.99274 worker_ms=3.0956671 physics_hz=59.996338
+CADENCE bodies=1759 awake=286 fps=118.16847 worker_ms=3.2356503 physics_hz=59.58074
+CADENCE bodies=1809 awake=270 fps=118.94327 worker_ms=3.233283 physics_hz=59.971397
+CADENCE bodies=1859 awake=261 fps=120.49597 worker_ms=3.2605333 physics_hz=59.75007
+CADENCE bodies=1909 awake=273 fps=117.99328 worker_ms=3.322067 physics_hz=59.996582
+CADENCE bodies=1959 awake=253 fps=117.975 worker_ms=3.4330163 physics_hz=59.987286
+CADENCE bodies=2009 awake=261 fps=118.998085 worker_ms=3.37235 physics_hz=59.999035
+CADENCE bodies=2060 awake=252 fps=119.47929 worker_ms=3.482393 physics_hz=60.23336
+CADENCE bodies=2110 awake=248 fps=119.952614 worker_ms=3.4898834 physics_hz=59.976307
+CADENCE bodies=2160 awake=236 fps=118.573105 worker_ms=3.6822329 physics_hz=59.78476
+CADENCE bodies=2211 awake=254 fps=117.42807 worker_ms=3.7379012 physics_hz=59.6926
+CADENCE bodies=2261 awake=262 fps=117.99426 worker_ms=3.7902336 physics_hz=59.99708
+CADENCE bodies=2311 awake=260 fps=120.282974 worker_ms=3.764459 physics_hz=60.638523
+CADENCE bodies=2361 awake=234 fps=119.99451 worker_ms=3.7854664 physics_hz=59.997253
+CADENCE bodies=2412 awake=237 fps=119.324265 worker_ms=3.7805667 physics_hz=59.662132
+CADENCE bodies=2462 awake=245 fps=119.687614 worker_ms=3.8369012 physics_hz=60.338383
+CADENCE bodies=2512 awake=242 fps=119.88768 worker_ms=3.74295 physics_hz=59.94384
+CADENCE bodies=2562 awake=246 fps=120.45865 worker_ms=3.8406336 physics_hz=59.731564
+CADENCE bodies=2612 awake=232 fps=119.965546 worker_ms=4.0114665 physics_hz=59.982773
+CADENCE bodies=2663 awake=227 fps=119.61602 worker_ms=3.8149347 physics_hz=60.302288
+CADENCE bodies=2713 awake=233 fps=119.980804 worker_ms=3.9764671 physics_hz=59.990402
+CADENCE bodies=2763 awake=236 fps=119.8788 worker_ms=4.170367 physics_hz=59.44403
+CADENCE bodies=2814 awake=239 fps=120.074104 worker_ms=4.1367536 physics_hz=60.533226
+CADENCE bodies=2864 awake=236 fps=120.465996 worker_ms=4.2236495 physics_hz=59.735207
+CADENCE bodies=2914 awake=233 fps=119.99209 worker_ms=4.1854 physics_hz=59.996044
+CADENCE bodies=2965 awake=232 fps=119.74365 worker_ms=4.223721 physics_hz=60.366634
+CADENCE bodies=3000 awake=199 fps=120.24557 worker_ms=4.263517 physics_hz=59.6259
+CADENCE bodies=3000 awake=94 fps=119.55953 worker_ms=4.170361 physics_hz=60.273815
+CADENCE bodies=3000 awake=37 fps=119.976974 worker_ms=3.8226829 physics_hz=59.988487
+CADENCE bodies=3000 awake=37 fps=120.45423 worker_ms=3.7235827 physics_hz=59.72937
+CADENCE bodies=3000 awake=37 fps=119.54073 worker_ms=3.6848037 physics_hz=60.264336
+CADENCE bodies=3000 awake=37 fps=120.010376 worker_ms=3.8271003 physics_hz=59.509277
+CADENCE bodies=3000 awake=37 fps=119.97385 worker_ms=3.7228372 physics_hz=60.48268
+CADENCE bodies=3000 awake=37 fps=120.48204 worker_ms=3.80495 physics_hz=59.74316
+CADENCE bodies=3000 awake=37 fps=150.82101 worker_ms=4.1053777 physics_hz=60.52685
+CADENCE bodies=3000 awake=37 fps=119.9458 worker_ms=3.8238165 physics_hz=59.477257
+CADENCE bodies=3000 awake=37 fps=120.00683 worker_ms=3.7071476 physics_hz=60.49931
+CADENCE bodies=3000 awake=37 fps=120.02492 worker_ms=3.6757505 physics_hz=59.516487
+CADENCE bodies=3000 awake=37 fps=119.93713 worker_ms=3.7515671 physics_hz=59.968567
+CADENCE bodies=3000 awake=37 fps=120.00087 worker_ms=3.7068367 physics_hz=60.496304
+CADENCE bodies=3000 awake=37 fps=120.10185 worker_ms=3.6679165 physics_hz=59.554638
+CADENCE bodies=3000 awake=37 fps=119.93998 worker_ms=3.738377 physics_hz=60.46561
+CADENCE bodies=3000 awake=37 fps=120.023346 worker_ms=3.9893496 physics_hz=59.51571
+CADENCE bodies=3000 awake=37 fps=119.99856 worker_ms=3.7502 physics_hz=59.99928
+CADENCE bodies=3000 awake=37 fps=119.92037 worker_ms=3.9150834 physics_hz=59.960186
+CADENCE bodies=3000 awake=37 fps=119.9897 worker_ms=4.1938004 physics_hz=59.99485
+CADENCE bodies=3000 awake=37 fps=234.98991 worker_ms=5.248599 physics_hz=59.997425
+CADENCE bodies=3000 awake=37 fps=125.5405 worker_ms=4.1026 physics_hz=59.78119
+CADENCE bodies=3000 awake=37 fps=119.99856 worker_ms=3.9459665 physics_hz=59.99928
+CADENCE bodies=3000 awake=37 fps=120.1956 worker_ms=4.0026236 physics_hz=60.0978
+CADENCE bodies=3000 awake=37 fps=120.228004 worker_ms=3.9487047 physics_hz=60.610813
+CADENCE bodies=3000 awake=37 fps=119.99843 worker_ms=3.9470496 physics_hz=59.999214
+CADENCE bodies=3000 awake=37 fps=119.797104 worker_ms=3.8952494 physics_hz=59.403522
+CADENCE bodies=3000 awake=37 fps=119.87988 worker_ms=3.9617991 physics_hz=59.93994
+CADENCE bodies=3000 awake=37 fps=120.32749 worker_ms=3.9018855 physics_hz=60.660965
+CADENCE bodies=3000 awake=37 fps=119.99617 worker_ms=3.8801003 physics_hz=59.998085
+CADENCE bodies=3000 awake=37 fps=119.60656 worker_ms=3.8962996 physics_hz=59.309036
+FallingBody smoke: 3000 dynamic bodies (1500 circles, 1500 boxes)
+  average render FPS: 123.263054
+  visual Hz: 59.98202
+  repeated render frames: 51.3382 %
+  physics Hz: 59.98202
+  physics capacity: 324.4427 Hz
+  cycle/step: 16.671661 ms
+  worker/step: 3.0822084 ms
+  resubmit gap/step: 6.999255 ms
+  queue + poll/step: 6.568306 ms
+  spawn/step: 0.10460169 ms
+  physics steps/frame: 0.486618
+  average physics/frame: 1.4998581 ms
+  average transform transfer/batch: 0.02189142 ms
+  maximum substeps: 1
+  awake: 37
+  active pairs: 216
+  physics step: 4.0109997 ms
+  motion: 0.086 ms
+  broad phase: 3.274 ms
+  solve: 0.221 ms
+  sleep: 0.42999998 ms
+  maximum speed: 0.043039337 m/s
+  maximum angular speed: 0.8657156 rad/s
+  base maximum speed: 0.034498267 m/s
+  base maximum angular speed: 0.6922862 rad/s
+  floor layer maximum speed: 0.0 m/s
+  floor layer maximum velocity: (0.0, 0.0) m/s
+  minimum y: -2.9507709 m
+  oldest 100 maximum speed: 0.0 m/s
+  maximum circle overlap: 23.692139 mm (2.3692138 px)
+  worst circle overlap pair: 854 at (-3.9147804, -2.0516536), awake=false; 858 at (-3.9834359, -2.0183473), awake=false
+  overlapping circle pairs above 0.5 mm: 429
+  base awake below -2 m: 12 / 869
+  awake by zone: left=11, center=18, right=8
+  right maximum speed: 0.034498267 m/s
+  awake[460] circle: position=(4.23804, -2.5558841), velocity=(-0.0026280093, 0.009559257), angular=0.19912788
+  awake[473] box: position=(4.3198986, -2.573424), velocity=(0.01944963, -0.013891896), angular=-0.007074234
+  awake[553] box: position=(1.8882565, -2.3857126), velocity=(0.000028208888, -0.00016672013), angular=-0.0022816397
+  awake[555] box: position=(1.9201552, -2.2982266), velocity=(0.0013099809, 0.0013592581), angular=0.03802806
+  awake[644] circle: position=(-2.160729, -2.2401934), velocity=(-0.0021693194, -0.004149908), angular=0.092067875
+  awake[744] circle: position=(-4.3814855, -2.0305476), velocity=(0.00017906068, -0.011197315), angular=0.10877469
+  awake[764] circle: position=(3.0680132, -2.1672108), velocity=(0.019282158, -0.028606445), angular=-0.6922862
+  awake[793] box: position=(3.086626, -2.0901215), velocity=(0.00011328336, -0.000032405143), angular=0.0022570365
+  awake[806] circle: position=(0.8515954, -2.0361087), velocity=(0.0000017060811, 0.0000018288265), angular=0.00005029794
+  awake[833] box: position=(0.76238024, -2.0534472), velocity=(0.000007701583, -0.000022444134), angular=0.0002429391
+  awake[857] box: position=(-2.2372258, -2.2266793), velocity=(-0.002281395, -0.005808604), angular=-0.04828949
+  awake[873] box: position=(-2.8063955, -1.9331545), velocity=(-0.00011104723, -0.00035250455), angular=-0.0009861039
+  awake[919] box: position=(-4.453627, -2.0255067), velocity=(-0.0007714925, -0.010377914), angular=-0.1322974
+  awake[1000] circle: position=(0.6076228, -1.8900797), velocity=(-0.003988936, -0.0037171987), angular=-0.07230845
+  awake[1001] box: position=(-2.7578511, -1.8630306), velocity=(-0.00017872757, 0.009920251), angular=0.030943714
+  awake[1065] box: position=(0.6787138, -1.8548453), velocity=(0.0058417134, -0.0061406526), angular=0.16796277
+  awake[1109] box: position=(4.0909076, -1.7001666), velocity=(0.00004827857, 0.000052953517), angular=-0.00022011483
+  awake[1116] circle: position=(0.64562523, -1.7678835), velocity=(0.0006532846, -0.0034749887), angular=-0.09345723
+  awake[1129] box: position=(-4.492684, -1.676221), velocity=(-0.00006770453, -0.00055190816), angular=0.0018243716
+  awake[1144] circle: position=(4.0141015, -1.6584643), velocity=(-0.010328702, 0.01244062), angular=-0.32426724
+  awake[1151] box: position=(0.7035057, -1.7075162), velocity=(-0.0003626373, 0.0011781809), angular=0.0087673385
+  awake[1261] box: position=(-3.5132897, -1.5053492), velocity=(0.004452746, -0.0021962752), angular=-0.046580527
+  awake[1308] circle: position=(-4.5539923, -1.639547), velocity=(-0.00002391956, -0.00034990427), angular=-0.007646609
+  awake[1310] circle: position=(-3.8865118, -1.4898443), velocity=(-0.042750552, -0.004977415), angular=-0.8657156
+  draw calls: 11
+  pipeline binds: 11
+  rendered instances: 3410
+{"command": ["/private/tmp/falling-regression-20260920/settled-candidate", "--smoke-30", "--immediate"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 80956, "reason": "completed", "returncode": 0, "elapsed_seconds": 91.408, "sampled_peak_rss_kib": 145552, "sampled_peak_physical_footprint_kib": 355633, "sampled_peak_processes": 1, "limits": {"seconds": 150.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}

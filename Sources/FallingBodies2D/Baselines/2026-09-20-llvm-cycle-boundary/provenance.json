@@ -1,0 +1,72 @@
+{
+  "Silex": {
+    "head": "daf2d75d74dec14f1e7a7f2f79bbcdc8de843e62",
+    "status": " M Docs/Llvm-evaluation.md\n M Toolchain/Tools/LlvmEvaluation/CycleRuntime.zig\n M Toolchain/build.zig\n"
+  },
+  "Silex-Benchmarks": {
+    "head": "4fdb4fe0fe9ca15ab13193a7ab5b7e196d19dd7a",
+    "status": ""
+  },
+  "Packages/GFX.Physics": {
+    "head": "ac270259e84620c91b335dbda7af805f7b30ba71",
+    "status": ""
+  },
+  "Packages/GFX": {
+    "head": "c8e0f1c5a842fd81dafaa1a67cc859cbe3648fa8",
+    "status": ""
+  },
+  "Packages/GFX.Application": {
+    "head": "1bc1e73472dc8b6a42c79a885c80829b59382bd6",
+    "status": ""
+  },
+  "Packages/GFX.ECS": {
+    "head": "ca1caa1713d87ae7a9802d6d5a631a175f9d0700",
+    "status": ""
+  },
+  "Packages/GFX.Scene2D": {
+    "head": "516607f47bc1ac7ccc6c09577aa99cbc2cc8b9e3",
+    "status": ""
+  },
+  "Packages/GFX.Rendering": {
+    "head": "542b366ca071a8a0bd9451ea6a500e60b4e290f8",
+    "status": ""
+  },
+  "Packages/GFX.GPU": {
+    "head": "fb17a0c5ae08545f8e4aa07f42988c49607e0743",
+    "status": ""
+  },
+  "Packages/GFX.Canvas": {
+    "head": "c64f73da05b82bcdaf9bb493fa7fd984213bd741",
+    "status": ""
+  },
+  "Packages/GFX.Stats": {
+    "head": "b5858f6a2b9edaac50f83a7bcf20026903ecd2be",
+    "status": ""
+  },
+  "Packages/GFX.Assets": {
+    "head": "907960397db0f0d300e6fc895fa8d5635a0aad01",
+    "status": ""
+  },
+  "Packages/STD": {
+    "head": "1f3847430b7a7a814ad0b4e3dd2e4f3711cfd4e9",
+    "status": ""
+  },
+  "artifacts": {
+    "/Users/nekmata/Projects/SilexProject/Silex/Toolchain/zig-out/bin/silex": "c983b8f39c2d61bc79dac47a47244a46e5411f3e12544067a72406da7ed700b5",
+    "/private/tmp/falling-regression-20260920/toolchain/bin/silex": "63680bc48d25c58e524ee8f9c67426743cca6478657ecfb6df21015f2c822035",
+    "/private/tmp/falling-regression-20260920/reported": "f871be964e4a2f1ba1a94b34f29c79b5ff0f0e77e9153a7ea0fafb3209d6890d",
+    "/Users/nekmata/Projects/SilexProject/Silex-Benchmarks/Sources/FallingBodies2D/Main.sx": "6d61796ab85c564c3861f8e102aadb8f22463e9b68826ccdaa6ed312f7675a6c"
+  },
+  "correction_commit": "81899a6bcfacd271e9b8ed844dc5c26170c2b6af",
+  "platform": "macOS 26.6.2 (25G83), ARM64, 18 GiB RAM; Silex LLVM Release, compiler bootstrap ReleaseSmall",
+  "installed_compiler_sha256": "63680bc48d25c58e524ee8f9c67426743cca6478657ecfb6df21015f2c822035",
+  "binary_sha256": {
+    "before": "a1404748967357b5fb8bbd3cd2ce4c061e445f5e27cb9a56a579ed19ffb57c13",
+    "candidate": "ab0810be7f68639352c6d77daaa9a58e27ee1a931b9f88375df6c6c3acdc35ff",
+    "settled-before": "9510e5b66539abde903fda0926f7b8eb1afd8d2349524a0377d020d4791b758d",
+    "settled-candidate": "85cb725d9d5b591f0dc028e9f54b570093c76be5dd17ff0dcf9c560a5c0186ef",
+    "installed": "7ef8350eccc78384dc6f22b16196918d81b9e2faaafcf47c1725713da5b95c1c"
+  },
+  "probe_sha256": "37553db39627f80bbe41c9882fdf475e7b077b6382ec1d9a592891ee308778c7",
+  "notes": "Original checkout snapshot retained above: dirty production change subsequently committed as correction_commit; candidate and installed compiler hashes match. Output binary hashes are recorded separately."
+}

@@ -1,0 +1,163 @@
+FallingBody smoke: 120 dynamic bodies (60 circles, 60 boxes)
+  fixed-work frames: 120
+  fixed-work measured steps: 120
+  fixed-work total steps: 180
+  state[0]: position=(-1.95, -2.9501896), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[1]: position=(-1.85, -2.9501896), rotation=0.0000000011462464, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[2]: position=(-1.75, -2.9501896), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[3]: position=(-1.65, -2.9501896), rotation=-0.00000010469244, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[4]: position=(-1.5500001, -2.9501956), rotation=-0.0000005768512, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[5]: position=(-1.45, -2.9501896), rotation=0.0000000011462464, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[6]: position=(-1.35, -2.9501896), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[7]: position=(-1.25, -2.9501956), rotation=-0.0000000005582396, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[8]: position=(-1.15, -2.9501896), rotation=0.00000044450442, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[9]: position=(-1.0500001, -2.9501896), rotation=0.000000040601844, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[10]: position=(-0.95, -2.9501956), rotation=0.0000002191785, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[11]: position=(-0.85, -2.9501896), rotation=0.000000024036378, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[12]: position=(-0.75, -2.9501896), rotation=0.000001057236, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[13]: position=(-0.65000004, -2.9501956), rotation=0.0000003719438, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[14]: position=(-0.55, -2.9501896), rotation=0.000000026710916, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[15]: position=(-0.45000002, -2.9501896), rotation=0.0000000065247967, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[16]: position=(-0.35, -2.9501896), rotation=0.00000013284563, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[17]: position=(-0.25, -2.9501896), rotation=-0.0000000006956368, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[18]: position=(-0.15, -2.9501956), rotation=-0.000000011744561, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[19]: position=(-0.05, -2.9501896), rotation=0.00000000016012132, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[20]: position=(0.05, -2.9501896), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[21]: position=(0.15, -2.9501956), rotation=0.000000041847535, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[22]: position=(0.25, -2.9501896), rotation=-0.00000075863295, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[23]: position=(0.35, -2.9501896), rotation=-0.00000011270626, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[24]: position=(0.45000002, -2.9501956), rotation=0.000000026217968, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[25]: position=(0.55, -2.9501896), rotation=0.0000000036396275, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[26]: position=(0.65000004, -2.9501896), rotation=0.0000010733869, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[27]: position=(0.75, -2.9501956), rotation=0.0000004004677, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[28]: position=(0.85, -2.9501896), rotation=0.00000018002626, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[29]: position=(0.95, -2.9501896), rotation=0.000000044719734, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[30]: position=(1.0500001, -2.9501896), rotation=0.00000037249683, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[31]: position=(1.15, -2.9501896), rotation=0.000000106357916, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[32]: position=(1.25, -2.9501956), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[33]: position=(1.35, -2.9501896), rotation=0.0000000011462464, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[34]: position=(1.45, -2.9501896), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[35]: position=(1.5500001, -2.9501956), rotation=-0.00000038989384, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[36]: position=(1.65, -2.9501896), rotation=-0.0000030642998, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[37]: position=(1.75, -2.9501896), rotation=0.0000000011462464, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[38]: position=(1.85, -2.9501896), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[39]: position=(1.95, -2.9501896), rotation=0.0000000011462464, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[40]: position=(-1.95, -2.8512762), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[41]: position=(-1.85, -2.8512764), rotation=0.00000001075536, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[42]: position=(-1.75, -2.8512762), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[43]: position=(-1.65, -2.8512764), rotation=-0.00000014762749, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[44]: position=(-1.5500001, -2.8512518), rotation=-0.0000025422798, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[45]: position=(-1.45, -2.8512764), rotation=0.00000001075536, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[46]: position=(-1.35, -2.8512762), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[47]: position=(-1.25, -2.8512518), rotation=0.000000008123621, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[48]: position=(-1.15, -2.8512762), rotation=0.0000019460022, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[49]: position=(-1.0500001, -2.8512764), rotation=0.00000008470588, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[50]: position=(-0.95, -2.8512518), rotation=0.00000093762685, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[51]: position=(-0.85, -2.8512764), rotation=0.0000000415404, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[52]: position=(-0.75, -2.8512762), rotation=0.0000008121832, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[53]: position=(-0.65000004, -2.8512518), rotation=0.000000064431106, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[54]: position=(-0.55, -2.8512762), rotation=0.00000014230379, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[55]: position=(-0.45000002, -2.8512764), rotation=0.000000022498924, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[56]: position=(-0.35, -2.8512762), rotation=0.00000015424514, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[57]: position=(-0.25, -2.8512764), rotation=0.0000000016540148, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[58]: position=(-0.15, -2.8512518), rotation=-0.00000020740198, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[59]: position=(-0.05, -2.8512764), rotation=-0.000000002861828, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[60]: position=(0.05, -2.8512762), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[61]: position=(0.15, -2.8512518), rotation=0.000000095564886, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[62]: position=(0.25, -2.8512762), rotation=0.00000064017956, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[63]: position=(0.35, -2.8512764), rotation=-0.00000013647656, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[64]: position=(0.45000002, -2.8512518), rotation=0.00000014388715, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[65]: position=(0.55, -2.8512764), rotation=0.000000015199664, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[66]: position=(0.65000004, -2.8512762), rotation=0.00000095070504, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[67]: position=(0.75, -2.8512518), rotation=0.00000010284458, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[68]: position=(0.85, -2.8512762), rotation=0.0000006952953, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[69]: position=(0.95, -2.8512764), rotation=0.00000006979945, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[70]: position=(1.0500001, -2.8512762), rotation=0.000002645923, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[71]: position=(1.15, -2.8512764), rotation=0.00000015505142, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[72]: position=(1.25, -2.8512518), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[73]: position=(1.35, -2.8512764), rotation=0.00000001075536, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[74]: position=(1.45, -2.8512762), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[75]: position=(1.5500001, -2.8512518), rotation=-0.00000014882194, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[76]: position=(1.65, -2.8512762), rotation=0.0000003846167, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[77]: position=(1.75, -2.8512764), rotation=0.00000001075536, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[78]: position=(1.85, -2.8512762), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[79]: position=(1.95, -2.8512764), rotation=0.00000001075536, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[80]: position=(-1.95, -2.75177), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[81]: position=(-1.85, -2.7517703), rotation=0.000000013121034, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[82]: position=(-1.75, -2.75177), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[83]: position=(-1.65, -2.7517703), rotation=0.0000011583587, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[84]: position=(-1.5500001, -2.751775), rotation=0.000006050677, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[85]: position=(-1.45, -2.7517703), rotation=0.000000013121034, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[86]: position=(-1.35, -2.75177), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[87]: position=(-1.25, -2.7517753), rotation=0.000000012011348, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[88]: position=(-1.15, -2.75177), rotation=-0.000004246885, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[89]: position=(-1.0500001, -2.7517703), rotation=-0.0000005031383, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[90]: position=(-0.95, -2.751775), rotation=-0.000002178803, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[91]: position=(-0.85, -2.7517703), rotation=-0.0000002891887, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[92]: position=(-0.75, -2.75177), rotation=-0.0000018478997, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[93]: position=(-0.65000004, -2.7517753), rotation=0.0000002033129, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[94]: position=(-0.55, -2.75177), rotation=-0.0000003281067, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[95]: position=(-0.45000002, -2.7517703), rotation=-0.000000018471889, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[96]: position=(-0.35, -2.75177), rotation=-0.0000002021222, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[97]: position=(-0.25, -2.7517703), rotation=0.00000010350923, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[98]: position=(-0.15, -2.751775), rotation=0.0000005559465, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[99]: position=(-0.05, -2.7517703), rotation=-0.000000003754524, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[100]: position=(0.05, -2.75177), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[101]: position=(0.15, -2.7517753), rotation=0.00000012861452, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[102]: position=(0.25, -2.75177), rotation=-0.00000034795744, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[103]: position=(0.35, -2.7517703), rotation=-0.00000020676931, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[104]: position=(0.45000002, -2.751775), rotation=-0.00000028691298, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[105]: position=(0.55, -2.7517703), rotation=-0.000000017501069, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[106]: position=(0.65000004, -2.75177), rotation=-0.0000019773606, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[107]: position=(0.75, -2.7517753), rotation=0.00000023605624, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[108]: position=(0.85, -2.75177), rotation=-0.0000022570664, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[109]: position=(0.95, -2.7517703), rotation=-0.00000032234595, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[110]: position=(1.0500001, -2.75177), rotation=-0.0000057823127, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[111]: position=(1.15, -2.7517703), rotation=-0.0000008943705, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[112]: position=(1.25, -2.751775), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[113]: position=(1.35, -2.7517703), rotation=0.000000013121034, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[114]: position=(1.45, -2.75177), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[115]: position=(1.5500001, -2.7517753), rotation=0.0000005918838, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[116]: position=(1.65, -2.75177), rotation=0.000002543939, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[117]: position=(1.75, -2.7517703), rotation=0.000000013121034, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[118]: position=(1.85, -2.75177), rotation=0.0, velocity=(0.0, 0.0), angular=0.0, awake=false
+  state[119]: position=(1.95, -2.7517703), rotation=0.000000013121034, velocity=(0.0, 0.0), angular=0.0, awake=false
+  average render FPS: 120.39259
+  visual Hz: 120.39259
+  repeated render frames: 0.0 %
+  physics Hz: 120.39259
+  physics capacity: 13969.743 Hz
+  cycle/step: 8.306158 ms
+  worker/step: 0.07158328 ms
+  resubmit gap/step: 8.194766 ms
+  queue + poll/step: 0.038591728 ms
+  spawn/step: 0.0 ms
+  physics steps/frame: 1.0
+  average physics/frame: 0.07158328 ms
+  average transform transfer/batch: 0.0012166674 ms
+  maximum substeps: 1
+  awake: 0
+  active pairs: 0
+  physics step: 0.063 ms
+  motion: 0.002 ms
+  broad phase: 0.049000002 ms
+  solve: 0.002 ms
+  sleep: 0.01 ms
+  maximum speed: 0.0 m/s
+  maximum angular speed: 0.0 rad/s
+  base maximum speed: 0.0 m/s
+  base maximum angular speed: 0.0 rad/s
+  floor layer maximum speed: 0.0 m/s
+  floor layer maximum velocity: (0.0, 0.0) m/s
+  minimum y: -2.9501956 m
+  oldest 100 maximum speed: 0.0 m/s
+  maximum circle overlap: 1.0865703 mm (0.10865703 px)
+  worst circle overlap pair: 0 at (-1.95, -2.9501896), awake=false; 40 at (-1.95, -2.8512762), awake=false
+  overlapping circle pairs above 0.5 mm: 25
+  base awake below -2 m: 0 / 120
+  awake by zone: left=0, center=0, right=0
+  right maximum speed: 0.0 m/s
+  draw calls: 3
+  pipeline binds: 3
+  rendered instances: 121
+{"command": ["/private/tmp/falling-regression-20260920/installed", "--stress", "--smoke", "--batch-1", "--immediate", "--no-panel", "--fixed-work"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 82166, "reason": "completed", "returncode": 0, "elapsed_seconds": 2.159, "sampled_peak_rss_kib": 98592, "sampled_peak_physical_footprint_kib": 288145, "sampled_peak_processes": 1, "limits": {"seconds": 90.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}

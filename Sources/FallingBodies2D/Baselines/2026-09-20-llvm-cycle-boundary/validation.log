@@ -1,0 +1,660 @@
+=== unit.log ===
+1/4 CycleRuntime.test.rooted scene is a constant-work boundary of an unreachable cycle...OK
+2/4 CycleRuntime.test.a back edge from the rooted boundary preserves the candidate until root removal...OK
+3/4 CycleRuntime.test.an external edge preserves an unrooted descendant beside a rooted boundary...OK
+4/4 CycleRuntime.test.root boundary pruning agrees with independent reachability on small graphs...OK
+All 4 tests passed.
+{"command": ["zig", "test", "Tools/LlvmEvaluation/CycleRuntime.zig", "-lc"], "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain", "pid": 60638, "reason": "completed", "returncode": 0, "elapsed_seconds": 1.673, "sampled_peak_rss_kib": 262544, "sampled_peak_physical_footprint_kib": 194385, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CycleExternalDescendant-debug.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleExternalDescendant.sx", "--backend", "llvm", "--debug", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CycleExternalDescendant-debug"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60660, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.815, "sampled_peak_rss_kib": 22912, "sampled_peak_physical_footprint_kib": 12978, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CycleExternalDescendant-release.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleExternalDescendant.sx", "--backend", "llvm", "--release", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CycleExternalDescendant-release"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60720, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.698, "sampled_peak_rss_kib": 37168, "sampled_peak_physical_footprint_kib": 11762, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CycleValueEdges-debug.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleValueEdges.sx", "--backend", "llvm", "--debug", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CycleValueEdges-debug"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60779, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.349, "sampled_peak_rss_kib": 10816, "sampled_peak_physical_footprint_kib": 13394, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CycleValueEdges-release.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleValueEdges.sx", "--backend", "llvm", "--release", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CycleValueEdges-release"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60811, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.463, "sampled_peak_rss_kib": 20400, "sampled_peak_physical_footprint_kib": 15842, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CycleWideGraph-debug.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleWideGraph.sx", "--backend", "llvm", "--debug", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CycleWideGraph-debug"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60844, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.351, "sampled_peak_rss_kib": 27968, "sampled_peak_physical_footprint_kib": 8130, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CycleWideGraph-release.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleWideGraph.sx", "--backend", "llvm", "--release", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CycleWideGraph-release"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60882, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.46, "sampled_peak_rss_kib": 31488, "sampled_peak_physical_footprint_kib": 11378, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== InheritedCycle-debug.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedCycle.sx", "--backend", "llvm", "--debug", "--nocache", "-o", "/private/tmp/falling-regression-20260920/InheritedCycle-debug"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60919, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.346, "sampled_peak_rss_kib": 7488, "sampled_peak_physical_footprint_kib": 3473, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== InheritedCycle-release.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedCycle.sx", "--backend", "llvm", "--release", "--nocache", "-o", "/private/tmp/falling-regression-20260920/InheritedCycle-release"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60955, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.468, "sampled_peak_rss_kib": 41008, "sampled_peak_physical_footprint_kib": 4705, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CallbackOwnership-debug.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CallbackOwnership.sx", "--backend", "llvm", "--debug", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CallbackOwnership-debug"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 60992, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.467, "sampled_peak_rss_kib": 22704, "sampled_peak_physical_footprint_kib": 16930, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== CallbackOwnership-release.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CallbackOwnership.sx", "--backend", "llvm", "--release", "--nocache", "-o", "/private/tmp/falling-regression-20260920/CallbackOwnership-release"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 61037, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.464, "sampled_peak_rss_kib": 9088, "sampled_peak_physical_footprint_kib": 9666, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== InheritedBoundCallback-debug.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedBoundCallback.sx", "--backend", "llvm", "--debug", "--nocache", "-o", "/private/tmp/falling-regression-20260920/InheritedBoundCallback-debug"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 61082, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.35, "sampled_peak_rss_kib": 10928, "sampled_peak_physical_footprint_kib": 12098, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== InheritedBoundCallback-release.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedBoundCallback.sx", "--backend", "llvm", "--release", "--nocache", "-o", "/private/tmp/falling-regression-20260920/InheritedBoundCallback-release"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 61116, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.348, "sampled_peak_rss_kib": 35696, "sampled_peak_physical_footprint_kib": 4097, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== MethodReceiverLifetime-debug.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/MethodReceiverLifetime.sx", "--backend", "llvm", "--debug", "--nocache", "-o", "/private/tmp/falling-regression-20260920/MethodReceiverLifetime-debug"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 61150, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.462, "sampled_peak_rss_kib": 8896, "sampled_peak_physical_footprint_kib": 4929, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== MethodReceiverLifetime-release.log ===
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "compile", "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/MethodReceiverLifetime.sx", "--backend", "llvm", "--release", "--nocache", "-o", "/private/tmp/falling-regression-20260920/MethodReceiverLifetime-release"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 61204, "reason": "completed", "returncode": 0, "elapsed_seconds": 0.697, "sampled_peak_rss_kib": 36672, "sampled_peak_physical_footprint_kib": 17602, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== WorldLifetime.log ===
+ok - invalidate every handle family when the last world reference leaves scope
+ok - keep the simulation alive through an explicit world alias
+ok - retain a world inside a scene and finalize an unreachable callback cycle
+ok - retain autonomous snapshots after world finalization
+ok - keep the active method receiver alive when a callback releases the external owner
+ok - finalizing one world preserves another world and its handles
+6 passed; 0 failed
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "test", "Packages/GFX.Physics/Tests/Consumer/Tests/WorldLifetime.sx", "--backend", "llvm"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 61259, "reason": "completed", "returncode": 0, "elapsed_seconds": 29.718, "sampled_peak_rss_kib": 1611392, "sampled_peak_physical_footprint_kib": 1589859, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== ApplicationIntegration.log ===
+ok - pause application physics without advancing bodies or accumulating catch-up
+ok - inactive ECS bodies keep handles and authored enabled state even during pause
+ok - own fixed catch-up binding events and deferred ECS lifecycle
+ok - apply ECS authority to fixed and kinematic bodies and physics authority to dynamics
+ok - preserve the logical sequence across synchronous and worker modes
+ok - completion callbacks see synchronized poses after every catch-up step and stop during pause
+ok - body identity includes the world and generation and remains comparable after destruction
+ok - finalize the application world resource without retaining orphan body handles
+8 passed; 0 failed
+{"command": ["/private/tmp/falling-regression-20260920/toolchain/bin/silex", "test", "Packages/GFX.Physics/Tests/Consumer/Tests/ApplicationIntegration.sx", "--backend", "llvm"], "cwd": "/Users/nekmata/Projects/SilexProject", "pid": 63767, "reason": "completed", "returncode": 0, "elapsed_seconds": 26.13, "sampled_peak_rss_kib": 1719984, "sampled_peak_physical_footprint_kib": 1705507, "sampled_peak_processes": 2, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== check.log ===
+1/75 Main.test_0...OK
+2/75 Main.test.metamorphic helper decomposition preserves the executable quality class...OK
+3/75 Metamorphic.test.metamorphic sources and axes remain deterministic...OK
+4/75 Differential.test.release optimization preserves a numeric control-flow program...OK
+5/75 Differential.test.release optimization preserves defined integer failures...OK
+6/75 IrStats.test.IR counts aggregate all functions and blocks...OK
+7/75 IrStats.test.IR safety guards exclude comparisons and floating arithmetic...OK
+8/75 IrStats.test.IR profiles reference traffic separately from other memory...OK
+9/75 IrStats.test.IR counts checked collection mutations and references as safety guards...OK
+10/75 IrStats.test.matched safety deltas ignore checks duplicated into a caller...OK
+11/75 IrStats.test.reachable profiles charge an inlined body only to its final caller...OK
+12/75 CoverageAudit.test.bounded assurance owns every family, pass, IR family and LLVM technique...OK
+13/75 CoverageAudit.test.assurance rejects removed coverage, techniques, negative cases and fabricated closure...OK
+14/75 Advisor.test.advisor guidance uses stable English labels...OK
+15/75 Advisor.test.advisor reports conservative reference-memory residues...OK
+16/75 Advisor.test.advisor does not attribute missing inlining to local or aggregate optimization...OK
+17/75 Advisor.test.advisor reports only excess value aggregate residues...OK
+18/75 Advisor.test.advisor ranks optimized SSA and safety residues...OK
+19/75 Advisor.test.advisor attributes rotated loop blocks to induction analysis...OK
+20/75 Advisor.test.advisor compares optimized residues instead of incompatible raw deltas...OK
+21/75 Advisor.test.advisor ignores strength reduction in an unreachable LLVM helper...OK
+22/75 Advisor.test.advisor reports strength reduction when a reachable multiply remains...OK
+23/75 Advisor.test.advisor does not report an LLVM vector gap already realized by the native backend...OK
+24/75 Benchmark.test.summary uses robust median and deviation statistics...OK
+25/75 Benchmark.test.paired ratios expose an exact one-sided median bound...OK
+26/75 Benchmark.test.stationarity retains pair order and measures half-window shifts...OK
+27/75 Benchmark.test.stationarity rejects reordered observations...OK
+28/75 Generator.test.generated sources are deterministic and seed-sensitive...OK
+29/75 Generator.test.successive seeds cover every integer width and signedness...OK
+30/75 IntegerFailures.test.all integer widths preserve the precise arithmetic error through Release...OK
+31/75 Llvm.test.LLVM emitter preserves checked integer operations...OK
+32/75 Llvm.test.LLVM emitter supports scalar floating-point loops and comparisons...OK
+33/75 Llvm.test.LLVM emitter ignores unsupported helpers outside the main call graph...OK
+34/75 Llvm.test.LLVM emitter admits only proven scalar math boundaries...OK
+35/75 Llvm.test.LLVM emitter supports integer to floating-point conversions...OK
+36/75 Llvm.test.LLVM emitter supports plain value aggregates...OK
+37/75 Llvm.test.LLVM emitter supports mutable references to plain aggregates...OK
+38/75 Llvm.test.LLVM emitter supports read-only collection views and negative indices...OK
+39/75 Llvm.test.LLVM emitter supports mutable scalar collection views...OK
+40/75 Llvm.test.LLVM emitter preserves owning scalar collection copies...OK
+41/75 Llvm.test.LLVM aggregate view probes preserve independent observations in both IR modes...OK
+42/75 Llvm.test.LLVM emitter supports optional aggregate values and cold panic paths...OK
+43/75 Llvm.test.LLVM collection references reject owning storage rather than erase copy-on-write...OK
+44/75 Llvm.test.LLVM plain collection elements reject resource-bearing and nested owning shapes...OK
+45/75 LlvmStats.test.profile recognizes memory promotion in optimized LLVM IR...OK
+46/75 LlvmStats.test.maximum float vector width distinguishes scalar XY and XYZW IR...OK
+47/75 LlvmStats.test.profile separates user value aggregates from overflow pairs...OK
+48/75 LlvmStats.test.matched comparison ignores blocks duplicated into callers by inlining...OK
+49/75 LlvmStats.test.comparison profiles exclude the generated ABI main wrapper...OK
+50/75 LlvmStats.test.named profiles recognize LLVM range attributes before a function name...OK
+51/75 NativeGenerator.test.native scenarios are deterministic and combine regression families...OK
+52/75 NumericConversions.test.numeric conversion boundaries preserve exact values or their ordered diagnostic...OK
+53/75 Registry.test.the checked-in optimization registry covers every current IR operation and pass...OK
+54/75 Registry.test.standalone qualification retains compiler proofs without requiring sibling repositories...OK
+55/75 Registry.test.closure reconciliation applies only to its exact repository and historical revision...OK
+56/75 Registry.test.current sealed qualification sources still reject changed bytes...OK
+57/75 Registry.test.coverage audit rejects a stable entry without its cost proof...OK
+58/75 Registry.test.parity coverage audit rejects an attributed gap...parity registry: coverage gap 'known-gap' owned by silex-llvm-opt-02
+OK
+59/75 Registry.test.parity transposition audit rejects a missing canonical LLVM family...parity registry: required LLVM family missing: instcombine-and-simplifycfg
+OK
+60/75 Registry.test.proof audit rejects a result whose hash is stale...OK
+61/75 Registry.test.proof references reject unresolved identifiers...OK
+62/75 Registry.test.closed entries reject diagnostic proof references...OK
+63/75 Registry.test.a current hot measurement must satisfy its versioned structural budget...OK
+64/75 Registry.test.pairwise and risk plans are deterministic and cover every binary pair...OK
+65/75 Reducer.test.line removal preserves the surrounding generated program...OK
+66/75 QualificationHistory.test.reconciliation binds divergent history and historical source independently of current bytes...OK
+67/75 Parity.test.qualified timing accepts only a Silex upper bound at or below LLVM...OK
+68/75 Parity.test.qualified timing rejects a ratio whose ranges are entirely slower...OK
+69/75 Parity.test.qualified timing rejects excessive dispersion...OK
+70/75 Parity.test.qualified timing rejects an inconclusive overlap...OK
+71/75 Parity.test.qualified timing rejects a diagnostic five-sample comparison...OK
+72/75 Parity.test.qualified timing rejects a reordered campaign...OK
+73/75 Parity.test.qualified timing rejects half-window drift...OK
+74/75 LlvmValues.test.virtual register homes preserve short circuit effects and loop edge copies...OK
+75/75 LlvmCoverage.test.LLVM coverage explicitly separates value modeling from lifetime cost...OK
+75 passed; 0 skipped; 0 failed; 0 leaked.
+ok - ControlFlow/AnonymousScopes.sx :: anonymous scopes execute once and release bound receiver borrows
+ok - ControlFlow/AnonymousScopes.sx :: successive anonymous scopes can reuse local names
+ok - ControlFlow/BranchesAndLoops.sx :: repeated else if and mixed elif alternatives select each branch
+ok - ControlFlow/BranchesAndLoops.sx :: conditional branches select one path
+ok - ControlFlow/BranchesAndLoops.sx :: while break and continue control the nearest loop
+ok - ControlFlow/BranchesAndLoops.sx :: range and indexed collection iteration are complete
+ok - ControlFlow/CustomIterators.sx :: custom structure iterator runs to completion
+ok - ControlFlow/CustomIterators.sx :: custom class iterator shares its visible progress
+ok - ControlFlow/CustomIterators.sx :: custom iterator source is evaluated once and honors control flow
+ok - ControlFlow/CustomIterators.sx :: custom iterator accepts explicit cursor transfer and copied values
+ok - ControlFlow/LiteralMatch.sx :: literal match evaluates its subject once and selects integer values
+ok - ControlFlow/LiteralMatch.sx :: literal match selects strings and proves exhaustive booleans
+ok - ControlFlow/LiteralMatch.sx :: imperative literal match uses isolated branches without fallthrough
+ok - ControlFlow/MatchExpressive.sx :: ignored payloads and ordered guards classify complete matches
+ok - ControlFlow/MatchValues.sx :: ordered conditions select the first true branch
+ok - ControlFlow/MatchValues.sx :: yield resolves recursive value matches at their nearest level
+ok - ControlFlow/MatchValues.sx :: statement matches accept concise call branches
+ok - ControlFlow/MatchValues.sx :: return exits a mutating method while yield resolves its nearest match
+ok - ControlFlow/Slices.sx :: copied slice is independent and fully iterable
+ok - ControlFlow/Slices.sx :: slice bounds normalize before control flow
+ok - ControlFlow/Slices.sx :: shared slice view reads its source and crosses a parameter
+ok - ControlFlow/Slices.sx :: mutable slice view writes through a complete iteration
+ok - ControlFlow/StringIteration.sx :: string iteration yields Unicode scalars
+ok - ControlFlow/StringIteration.sx :: string iteration covers two three four and combining scalars
+ok - ControlFlow/StringIteration.sx :: empty string skips its body
+ok - ControlFlow/StringIteration.sx :: string source is evaluated once and obeys loop control
+ok - Functions/Callbacks/BoundMethods.sx :: instance method extraction preserves parameters and result
+ok - Functions/Callbacks/BoundMethods.sx :: bound mutating method writes through to its receiver
+ok - Functions/Callbacks/BoundMethods.sx :: temporary receiver is evaluated once when extracting a read method
+ok - Functions/Callbacks/BoundMethods.sx :: expected callback type selects overloads and callable defaults
+ok - Functions/Callbacks/Captures.sx :: anonymous callback captures immutable context
+ok - Functions/Callbacks/Captures.sx :: anonymous callback mutates surrounding context
+ok - Functions/Callbacks/Captures.sx :: copies of a closure share captured variables
+ok - Functions/Callbacks/Captures.sx :: capturing callback stored in a local structure
+ok - Functions/Callbacks/Levels.sx :: callback crosses several synchronous call levels
+ok - Functions/Callbacks/Levels.sx :: method forwards a capturing callback through helpers
+ok - Functions/Callbacks/Levels.sx :: callbacks form a complete transformation pipeline
+ok - Functions/Callbacks/Levels.sx :: nested anonymous callbacks capture both lexical levels
+ok - Functions/Callbacks/ModesAndGenerics.sx :: callback signatures preserve value read and mutable modes
+ok - Functions/Callbacks/ModesAndGenerics.sx :: generic callbacks infer input and output types
+ok - Functions/Callbacks/ModesAndGenerics.sx :: void callback accepts several parameters and captures context
+ok - Functions/Callbacks/OwnedMethods.sx :: returned class methods retain their receiver until the last callback is released
+ok - Functions/Callbacks/OwnedMethods.sx :: stored methods retain the original object after its variable is reassigned
+ok - Functions/Callbacks/OwnedMethods.sx :: a class callback cycle is collected
+ok - Functions/Callbacks/OwnedMethods.sx :: bound class methods preserve virtual dispatch and inherited receivers
+ok - Functions/Callbacks/OwnedMethods.sx :: deep copies of bound methods copy their receiver graph
+ok - Functions/Callbacks/OwnedMethods.sx :: inherited generic methods infer a bound callback signature
+ok - Functions/Callbacks/OwnedMethods.sx :: default callback storage initializes every word before replacement
+ok - Functions/Callbacks/OwnedMethods.sx :: callbacks loaded from lists preserve their receiver environment
+ok - Functions/Callbacks/OwnedMethods.sx :: listener inference resolves a generic property inherited from a later base class
+ok - Functions/Callbacks/Positions.sx :: callback variables parameters and returns
+ok - Functions/Callbacks/Positions.sx :: callbacks stored in structure and class fields
+ok - Functions/Callbacks/Positions.sx :: callback copies remain callable values
+ok - Functions/Callbacks/Positions.sx :: callback locals shadow outer bindings without creating captures
+ok - Functions/Calls.sx :: function overload named and default arguments
+ok - Functions/Calls.sx :: generic function inference and explicit specialization
+ok - Functions/GenericMethodResults.sx :: infer inherited results and unwrap exactly one optional layer in generic calls
+ok - Functions/GenericMethodResults.sx :: infer nested free function results inside concrete class methods
+ok - Native/AggregateResultPreservesLocals.sx :: preserve fixed collection addresses after a large aggregate result
+balanced class readers preserve values and lifetimes
+ok - Native/BalancedClassReaders.sx :: balanced class readers
+ok - Native/DistributionSmoke.sx :: standalone compiler evaluates the distribution fixture
+ok - Native/FusedFloatArithmetic.sx :: negated products preserve their values through adjacent arithmetic
+ok - Native/FusedFloatArithmetic.sx :: adjacent arithmetic uses hoisted loop constants
+ok - Native/FusedFloatArithmetic.sx :: adjacent floating operations retain intermediate rounding
+ok - Native/LeafMemoryKernel.sx :: leaf memory arithmetic preserves view writes and reference siblings
+ok - Native/LeafMemoryKernel.sx :: resident view and reference loads preserve float64 and negative indices
+ok - Native/MultipleReferenceCursors.sx :: parallel mutable views preserve their descriptors across aggregate writes
+ok - Native/NativePortability.sx :: dynamic protocol dispatch returns updated structures and shared classes
+ok - Native/NativePortability.sx :: execute direct indirect and dynamic calls beyond native registers
+ok - Native/NativePortability.sx :: preserve paired float32 arithmetic on native
+ok - Native/NativePortability.sx :: mutate a class-owned native list without changing its snapshot
+ok - Native/NativePortability.sx :: replace class elements in a class-owned native list
+ok - Native/NativePortability.sx :: preserve embedded byte contents on native
+ok - Native/NativePortability.sx :: format native floats through the standalone runtime
+ok - Native/NativePortability.sx :: convert native float precision in both directions
+ok - Native/NativePortability.sx :: replace and preserve an aliased native list
+ok - Native/NativePortability.sx :: swap and reverse a native list
+ok - Native/NativePortability.sx :: grow a native list at every position
+ok - Native/NativePortability.sx :: remove native list elements from every position
+ok - Native/NativePortability.sx :: slice view mutate and clear native lists
+ok - Native/NativePortability.sx :: mutable aggregate view detaches shared native list
+copy state drop
+copy state drop
+ok - Native/NativePortability.sx :: deep-copy repeated native class roots without collections
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize a direct native class cycle
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize a native class cycle through lists
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize a native class cycle through protocols
+ok - Native/NativePortability.sx :: execute the complete native collection mutation slice
+copy state drop
+copy state drop
+ok - Native/NativePortability.sx :: execute native ownership and deep-copy runtime
+ok - Native/NativePortability.sx :: preserve resource aggregates across native list growth
+ok - Native/NativePortability.sx :: serialize native mutations with mutex
+native cycle drop
+native cycle drop
+native cycle drop
+native cycle drop
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize native cycles across direct collection and protocol edges
+ok - Native/NativePortability.sx :: native bound callbacks own and release their receiver graph
+ok - Native/NativePortability.sx :: mutable owning borrows preserve field ownership across callbacks and returns
+ok - Native/NativePortability.sx :: deep copy clones inherited class fields after construction cleanup
+ok - Native/NativePortability.sx :: identity comparisons release temporary class and optional results
+ok - Native/NativePortability.sx :: upcasts preserve ownership of temporary derived instances
+nested stores preserve untouched fields and snapshots
+ok - Native/NestedAggregateStores.sx :: nested aggregate stores preserve fields and snapshots
+ok - Native/ScalarMathMinMax.sx :: scalar float32 minimum and maximum preserve exact edge semantics
+ok - Native/ScalarMathMinMax.sx :: scalar float64 minimum and maximum preserve exact edge semantics
+ok - Ownership/ClassFieldListReplacementPreservesOwnership.sx :: replacing elements preserves ownership of a class field list
+ok - Ownership/ClassFieldListReplacementPreservesOwnership.sx :: indexed assignment releases only the replaced class element
+ok - Ownership/ClassOwnedCollections.sx :: a returned class keeps its owned dynamic collection alive
+ok - Ownership/ClassOwnedCollections.sx :: an enum payload keeps its owned dynamic collection alive
+ok - Ownership/CollectionTemporaryInsertion.sx :: collection insertion transfers resource-bearing temporaries
+ok - Ownership/CollectionTemporaryInsertion.sx :: class field insertion converts transferred roots to owned edges
+ok - Ownership/CollectionTemporaryInsertion.sx :: ignored replacements release removed resource values
+ok - Ownership/CompositeResourceCopies.sx :: a returned structure keeps its owned resources alive
+ok - Ownership/CompositeResourceCopies.sx :: iterating enum values retains their resource payloads
+ok - Ownership/ConstructorResourceTransfer.sx :: constructor parameters transfer into resource-bearing structure fields
+ok - Ownership/ConstructorResourceTransfer.sx :: constructor initialization retains only assigned class fields
+ok - Ownership/CopyMoveAndReferences.sx :: ordinary structure copies and explicit moves
+ok - Ownership/CopyMoveAndReferences.sx :: read and mutable references operate on ordinary places
+ok - Ownership/CopyMoveAndReferences.sx :: copy detaches reached class identity
+ok - Ownership/ListFieldReplacementStress.sx :: repeatedly replace owned list fields
+ok - Ownership/MemoryReclamationStress.sx :: reclaim cyclic and deeply copied memory under sustained load
+ok - Ownership/NestedClassCollections.sx :: nested list ownership survives static construction
+ok - Ownership/NestedClassCollections.sx :: continue keeps resources declared outside a mutating method loop alive
+nested collection mutations passed
+ok - Ownership/NestedCollectionMutations.sx :: mutate nested stored collections through class and struct fields
+ok - Ownership/NestedStructMutationPreservesClassIdentity.sx :: mutating a nested structure preserves its owning class identity
+ok - Reflection/Values.sx :: reflect enums structures and functions
+ok - Syntax/Comments.sx :: line and nested block comments are ignored
+ok - Syntax/Comments.sx :: comment markers remain string content
+ok - Syntax/ContextualMove.sx :: move remains a transfer operator and becomes a contextual method name
+ok - Types/Bool/Operators.sx :: bool logical operators and equality
+ok - Types/Bool/Operators.sx :: bool logical operators short circuit
+ok - Types/Bool/Positions.sx :: bool field parameter and return positions
+ok - Types/Bool/Positions.sx :: bool collection and callback positions
+ok - Types/Bool/Variables.sx :: bool local variables and intrinsic value
+ok - Types/Bool/Variables.sx :: bool assignments preserve independent values
+ok - Types/Classes/Identity.sx :: class value parameters preserve shared identity
+ok - Types/Classes/Identity.sx :: mutable class references can replace caller storage
+ok - Types/Classes/Identity.sx :: a mutating final override updates the whole virtual contract
+ok - Types/Enums/Values.sx :: associated enum construction comparison and matching
+ok - Types/Enums/Values.sx :: raw and generic enum positions
+ok - Types/Floats/Conversions.sx :: floating precision widening
+ok - Types/Floats/Conversions.sx :: checked explicit numeric conversions
+ok - Types/Floats/Operators.sx :: floating arithmetic and comparisons
+ok - Types/Floats/Operators.sx :: floating compound assignments
+ok - Types/Floats/Positions.sx :: float field parameter and return positions
+ok - Types/Floats/Positions.sx :: float collection and callback positions
+ok - Types/Floats/Positions.sx :: float32 aggregate lists preserve append replacement and removal
+ok - Types/Floats/Positions.sx :: float32 aggregate slices preserve compact values and independence
+ok - Types/Floats/Variables.sx :: floating point local variables and intrinsic values
+ok - Types/Floats/Variables.sx :: floating point exponent literals
+ok - Types/Floats/Variables.sx :: floating assignments preserve independent values
+ok - Types/Integers/Conversions.sx :: integer widening within one signedness family
+ok - Types/Integers/Conversions.sx :: checked explicit integer conversions
+ok - Types/Integers/Operators.sx :: signed integer arithmetic and comparisons
+ok - Types/Integers/Operators.sx :: integer compound assignments increment and decrement
+ok - Types/Integers/Operators.sx :: unsigned integer bitwise operators
+ok - Types/Integers/Positions.sx :: integer field parameter and return positions
+ok - Types/Integers/Positions.sx :: integer collection and callback positions
+ok - Types/Integers/Variables.sx :: signed integer local variables
+ok - Types/Integers/Variables.sx :: unsigned integer local variables
+ok - Types/Integers/Variables.sx :: integer literal forms and separators
+ok - Types/Optionals/Expressive.sx :: safe assignment forced extraction and fallback compose
+ok - Types/Optionals/Expressive.sx :: nested optionals preserve three distinct states
+ok - Types/Optionals/Values.sx :: optional intrinsic promotion comparison and binding
+ok - Types/Optionals/Values.sx :: optional refinement and safe mutation
+ok - Types/Optionals/Values.sx :: optionals compose with collections
+ok - Types/Optionals/Values.sx :: collection literals use the payload type of an optional context
+ok - Types/Str/Callbacks.sx :: str named callbacks
+ok - Types/Str/Callbacks.sx :: str anonymous callbacks and captures
+ok - Types/Str/Callbacks.sx :: str callbacks stored in fields
+ok - Types/Str/Collections.sx :: str fixed arrays and lists
+ok - Types/Str/Collections.sx :: str collections preserve copied values
+ok - Types/Str/Collections.sx :: str list iteration is complete
+ok - Types/Str/Composition.sx :: str optional positions
+ok - Types/Str/Composition.sx :: str enum payload positions
+ok - Types/Str/Composition.sx :: str generic and tuple positions
+ok - Types/Str/Fields.sx :: str structure fields
+ok - Types/Str/Fields.sx :: str nested structure fields
+ok - Types/Str/Fields.sx :: str class fields
+ok - Types/Str/Operators.sx :: str concatenation operand positions
+ok - Types/Str/Operators.sx :: str compound concatenation
+ok - Types/Str/Operators.sx :: str equality and interpolation
+ok - Types/Str/Operators.sx :: str unicode scalar count
+ok - Types/Str/Parameters.sx :: str value and read parameters
+ok - Types/Str/Parameters.sx :: str mutable parameters replace the caller value
+ok - Types/Str/Parameters.sx :: str named and default arguments
+ok - Types/Str/Returns.sx :: str return positions
+ok - Types/Str/Variables.sx :: str local variables
+ok - Types/Str/Variables.sx :: str assignments preserve independent values
+ok - Types/Str/Variables.sx :: block strings remove structural indentation and interpolate values
+ok - Types/Structures/Initialization.sx :: field initializer expressions run for each instance
+ok - Types/Structures/Initialization.sx :: constructors initialize non-intrinsic structure fields
+ok - Types/Structures/Initialization.sx :: constructors initialize non-intrinsic class fields
+ok - Types/Structures/Initialization.sx :: constructors may loop while later fields remain pending
+ok - Types/Structures/Methods.sx :: structure instance and static methods
+ok - Types/Structures/Methods.sx :: generic structure positions
+ok - Types/Structures/Methods.sx :: compound field assignment preserves sibling method mutation
+ok - Types/Structures/Methods.sx :: match is a contextual method name
+ok - Types/Structures/Operators.sx :: operator functions cover vector arithmetic and scalar orientation
+ok - Types/Structures/Operators.sx :: compound assignments derive from binary operator functions
+ok - Types/Structures/Positions.sx :: copyable structure in every ordinary value position
+ok - Types/Structures/Positions.sx :: structure fields copy independently
+ok - Types/Structures/Properties.sx :: computed property reads through its getter
+ok - Types/Structures/Properties.sx :: static let property initializes its own backing storage once
+ok - Types/Structures/Properties.sx :: exact property assignment invokes its setter
+ok - Types/Structures/Properties.sx :: property initializer and implicit setter share one backing value
+ok - Types/Structures/Properties.sx :: stored fields and accessors satisfy protocol property requirements
+ok - Types/Structures/Properties.sx :: nested mutation follows class identity without invoking a setter
+ok - Types/Structures/ZeroSized.sx :: zero-sized structures can be stored in lists
+ok - Types/Structures/ZeroSized.sx :: zero-sized structures cross protocol erasure
+ok - Types/Structures/ZeroSized.sx :: zero-sized structures inhabit generic optionals
+ok - Types/Tuples/Values.sx :: named tuple fields return and destructuring
+ok - Types/Tuples/Values.sx :: positional tuple parameters returns and collections
+206 passed; 0 failed in 69 files
+math-call-residence: pass
+math-call-residence: pass
+optimizer oracle: semantic verification
+  PASS Regressions/DenseBlockLiveOut.sx (3 bytes output)
+  PASS Regressions/DominatedReferenceReads.sx (140 bytes output)
+  PASS Regressions/LateScalarClosure.sx (5 bytes output)
+  PASS Regressions/ValueModules/Main.sx (40 bytes output)
+  PASS Regressions/AggregatePreparation.sx (795 bytes output)
+  PASS Regressions/ScalarExpressionReuse.sx (40 bytes output)
+  PASS Regressions/KnownViewElements.sx (35 bytes output)
+  PASS DampedIntegration.sx (45 bytes output)
+  PASS PreparationMasses.sx (105 bytes output)
+  PASS AggregateViewAliasing.sx (45 bytes output)
+  PASS IntegerArithmetic.sx (7 bytes output)
+  PASS BranchingLoop.sx (7 bytes output)
+  PASS FloatArithmetic.sx (5 bytes output)
+  PASS IntegerControlFlow.sx (6 bytes output)
+  PASS IntegerWidths.sx (3 bytes output)
+  PASS UnsignedBitwise.sx (11 bytes output)
+  PASS AggregateScalarization.sx (6 bytes output)
+  PASS ReferenceAliasing.sx (6 bytes output)
+  PASS ReferenceDeadStores.sx (9 bytes output)
+  PASS ReadonlyViewMemory.sx (3 bytes output)
+  PASS MutableViewMemory.sx (3 bytes output)
+  PASS NestedAggregateWidths.sx (15 bytes output)
+  PASS OwningCollectionCopy.sx (10 bytes output)
+  PASS Regressions/LoopExitFloatLaneXY.sx (20 bytes output)
+  PASS Regressions/FloatLaneXYZ.sx (15 bytes output)
+  PASS Regressions/LoopExitFloatLaneXYZW.sx (40 bytes output)
+  PASS Regressions/PureMathReferenceInlining.sx (20 bytes output)
+  PASS Regressions/HotReferenceLeafClosure.sx (50 bytes output)
+verified: 28 corpus programs
+optimizer oracle: optimizer quick admission passed
+check
++- run test w
+<source>:6:11: runtime error: collection index -3 is out of bounds for count <source>:4:26: runtime error: collection index 2 is out of bounds for count invalid view index 2 count 2
+invalid view index -3 count 2
+invalid view index 2 count 2
+invalid view index -3 count 2
+invalid view index 2 count
+failed command: cd /Users/nekmata/Projects/SilexProject/Silex/Toolchain && ./.zig-cache/o/fca2c13a9395c1cde04e706314a3d7c1/test --cache-dir=./.zig-cache --seed=0x6ba625be --listen=-
+
+{"command": ["zig", "build", "-j1", "check", "-Doptimize=ReleaseSmall"], "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain", "pid": 65266, "reason": "completed", "returncode": 0, "elapsed_seconds": 195.531, "sampled_peak_rss_kib": 2077520, "sampled_peak_physical_footprint_kib": 1707670, "sampled_peak_processes": 5, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}
+
+=== test.log ===
+math-call-residence: pass
+math-call-residence: pass
+ok - ControlFlow/AnonymousScopes.sx :: anonymous scopes execute once and release bound receiver borrows
+ok - ControlFlow/AnonymousScopes.sx :: successive anonymous scopes can reuse local names
+ok - ControlFlow/BranchesAndLoops.sx :: repeated else if and mixed elif alternatives select each branch
+ok - ControlFlow/BranchesAndLoops.sx :: conditional branches select one path
+ok - ControlFlow/BranchesAndLoops.sx :: while break and continue control the nearest loop
+ok - ControlFlow/BranchesAndLoops.sx :: range and indexed collection iteration are complete
+ok - ControlFlow/CustomIterators.sx :: custom structure iterator runs to completion
+ok - ControlFlow/CustomIterators.sx :: custom class iterator shares its visible progress
+ok - ControlFlow/CustomIterators.sx :: custom iterator source is evaluated once and honors control flow
+ok - ControlFlow/CustomIterators.sx :: custom iterator accepts explicit cursor transfer and copied values
+ok - ControlFlow/LiteralMatch.sx :: literal match evaluates its subject once and selects integer values
+ok - ControlFlow/LiteralMatch.sx :: literal match selects strings and proves exhaustive booleans
+ok - ControlFlow/LiteralMatch.sx :: imperative literal match uses isolated branches without fallthrough
+ok - ControlFlow/MatchExpressive.sx :: ignored payloads and ordered guards classify complete matches
+ok - ControlFlow/MatchValues.sx :: ordered conditions select the first true branch
+ok - ControlFlow/MatchValues.sx :: yield resolves recursive value matches at their nearest level
+ok - ControlFlow/MatchValues.sx :: statement matches accept concise call branches
+ok - ControlFlow/MatchValues.sx :: return exits a mutating method while yield resolves its nearest match
+ok - ControlFlow/Slices.sx :: copied slice is independent and fully iterable
+ok - ControlFlow/Slices.sx :: slice bounds normalize before control flow
+ok - ControlFlow/Slices.sx :: shared slice view reads its source and crosses a parameter
+ok - ControlFlow/Slices.sx :: mutable slice view writes through a complete iteration
+ok - ControlFlow/StringIteration.sx :: string iteration yields Unicode scalars
+ok - ControlFlow/StringIteration.sx :: string iteration covers two three four and combining scalars
+ok - ControlFlow/StringIteration.sx :: empty string skips its body
+ok - ControlFlow/StringIteration.sx :: string source is evaluated once and obeys loop control
+ok - Functions/Callbacks/BoundMethods.sx :: instance method extraction preserves parameters and result
+ok - Functions/Callbacks/BoundMethods.sx :: bound mutating method writes through to its receiver
+ok - Functions/Callbacks/BoundMethods.sx :: temporary receiver is evaluated once when extracting a read method
+ok - Functions/Callbacks/BoundMethods.sx :: expected callback type selects overloads and callable defaults
+ok - Functions/Callbacks/Captures.sx :: anonymous callback captures immutable context
+ok - Functions/Callbacks/Captures.sx :: anonymous callback mutates surrounding context
+ok - Functions/Callbacks/Captures.sx :: copies of a closure share captured variables
+ok - Functions/Callbacks/Captures.sx :: capturing callback stored in a local structure
+ok - Functions/Callbacks/Levels.sx :: callback crosses several synchronous call levels
+ok - Functions/Callbacks/Levels.sx :: method forwards a capturing callback through helpers
+ok - Functions/Callbacks/Levels.sx :: callbacks form a complete transformation pipeline
+ok - Functions/Callbacks/Levels.sx :: nested anonymous callbacks capture both lexical levels
+ok - Functions/Callbacks/ModesAndGenerics.sx :: callback signatures preserve value read and mutable modes
+ok - Functions/Callbacks/ModesAndGenerics.sx :: generic callbacks infer input and output types
+ok - Functions/Callbacks/ModesAndGenerics.sx :: void callback accepts several parameters and captures context
+ok - Functions/Callbacks/OwnedMethods.sx :: returned class methods retain their receiver until the last callback is released
+ok - Functions/Callbacks/OwnedMethods.sx :: stored methods retain the original object after its variable is reassigned
+ok - Functions/Callbacks/OwnedMethods.sx :: a class callback cycle is collected
+ok - Functions/Callbacks/OwnedMethods.sx :: bound class methods preserve virtual dispatch and inherited receivers
+ok - Functions/Callbacks/OwnedMethods.sx :: deep copies of bound methods copy their receiver graph
+ok - Functions/Callbacks/OwnedMethods.sx :: inherited generic methods infer a bound callback signature
+ok - Functions/Callbacks/OwnedMethods.sx :: default callback storage initializes every word before replacement
+ok - Functions/Callbacks/OwnedMethods.sx :: callbacks loaded from lists preserve their receiver environment
+ok - Functions/Callbacks/OwnedMethods.sx :: listener inference resolves a generic property inherited from a later base class
+ok - Functions/Callbacks/Positions.sx :: callback variables parameters and returns
+ok - Functions/Callbacks/Positions.sx :: callbacks stored in structure and class fields
+ok - Functions/Callbacks/Positions.sx :: callback copies remain callable values
+ok - Functions/Callbacks/Positions.sx :: callback locals shadow outer bindings without creating captures
+ok - Functions/Calls.sx :: function overload named and default arguments
+ok - Functions/Calls.sx :: generic function inference and explicit specialization
+ok - Functions/GenericMethodResults.sx :: infer inherited results and unwrap exactly one optional layer in generic calls
+ok - Functions/GenericMethodResults.sx :: infer nested free function results inside concrete class methods
+ok - Native/AggregateResultPreservesLocals.sx :: preserve fixed collection addresses after a large aggregate result
+balanced class readers preserve values and lifetimes
+ok - Native/BalancedClassReaders.sx :: balanced class readers
+ok - Native/DistributionSmoke.sx :: standalone compiler evaluates the distribution fixture
+ok - Native/FusedFloatArithmetic.sx :: negated products preserve their values through adjacent arithmetic
+ok - Native/FusedFloatArithmetic.sx :: adjacent arithmetic uses hoisted loop constants
+ok - Native/FusedFloatArithmetic.sx :: adjacent floating operations retain intermediate rounding
+ok - Native/LeafMemoryKernel.sx :: leaf memory arithmetic preserves view writes and reference siblings
+ok - Native/LeafMemoryKernel.sx :: resident view and reference loads preserve float64 and negative indices
+ok - Native/MultipleReferenceCursors.sx :: parallel mutable views preserve their descriptors across aggregate writes
+ok - Native/NativePortability.sx :: dynamic protocol dispatch returns updated structures and shared classes
+ok - Native/NativePortability.sx :: execute direct indirect and dynamic calls beyond native registers
+ok - Native/NativePortability.sx :: preserve paired float32 arithmetic on native
+ok - Native/NativePortability.sx :: mutate a class-owned native list without changing its snapshot
+ok - Native/NativePortability.sx :: replace class elements in a class-owned native list
+ok - Native/NativePortability.sx :: preserve embedded byte contents on native
+ok - Native/NativePortability.sx :: format native floats through the standalone runtime
+ok - Native/NativePortability.sx :: convert native float precision in both directions
+ok - Native/NativePortability.sx :: replace and preserve an aliased native list
+ok - Native/NativePortability.sx :: swap and reverse a native list
+ok - Native/NativePortability.sx :: grow a native list at every position
+ok - Native/NativePortability.sx :: remove native list elements from every position
+ok - Native/NativePortability.sx :: slice view mutate and clear native lists
+ok - Native/NativePortability.sx :: mutable aggregate view detaches shared native list
+copy state drop
+copy state drop
+ok - Native/NativePortability.sx :: deep-copy repeated native class roots without collections
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize a direct native class cycle
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize a native class cycle through lists
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize a native class cycle through protocols
+ok - Native/NativePortability.sx :: execute the complete native collection mutation slice
+copy state drop
+copy state drop
+ok - Native/NativePortability.sx :: execute native ownership and deep-copy runtime
+ok - Native/NativePortability.sx :: preserve resource aggregates across native list growth
+ok - Native/NativePortability.sx :: serialize native mutations with mutex
+native cycle drop
+native cycle drop
+native cycle drop
+native cycle drop
+native cycle drop
+native cycle drop
+ok - Native/NativePortability.sx :: finalize native cycles across direct collection and protocol edges
+ok - Native/NativePortability.sx :: native bound callbacks own and release their receiver graph
+ok - Native/NativePortability.sx :: mutable owning borrows preserve field ownership across callbacks and returns
+ok - Native/NativePortability.sx :: deep copy clones inherited class fields after construction cleanup
+ok - Native/NativePortability.sx :: identity comparisons release temporary class and optional results
+ok - Native/NativePortability.sx :: upcasts preserve ownership of temporary derived instances
+nested stores preserve untouched fields and snapshots
+ok - Native/NestedAggregateStores.sx :: nested aggregate stores preserve fields and snapshots
+ok - Native/ScalarMathMinMax.sx :: scalar float32 minimum and maximum preserve exact edge semantics
+ok - Native/ScalarMathMinMax.sx :: scalar float64 minimum and maximum preserve exact edge semantics
+ok - Ownership/ClassFieldListReplacementPreservesOwnership.sx :: replacing elements preserves ownership of a class field list
+ok - Ownership/ClassFieldListReplacementPreservesOwnership.sx :: indexed assignment releases only the replaced class element
+ok - Ownership/ClassOwnedCollections.sx :: a returned class keeps its owned dynamic collection alive
+ok - Ownership/ClassOwnedCollections.sx :: an enum payload keeps its owned dynamic collection alive
+ok - Ownership/CollectionTemporaryInsertion.sx :: collection insertion transfers resource-bearing temporaries
+ok - Ownership/CollectionTemporaryInsertion.sx :: class field insertion converts transferred roots to owned edges
+ok - Ownership/CollectionTemporaryInsertion.sx :: ignored replacements release removed resource values
+ok - Ownership/CompositeResourceCopies.sx :: a returned structure keeps its owned resources alive
+ok - Ownership/CompositeResourceCopies.sx :: iterating enum values retains their resource payloads
+ok - Ownership/ConstructorResourceTransfer.sx :: constructor parameters transfer into resource-bearing structure fields
+ok - Ownership/ConstructorResourceTransfer.sx :: constructor initialization retains only assigned class fields
+ok - Ownership/CopyMoveAndReferences.sx :: ordinary structure copies and explicit moves
+ok - Ownership/CopyMoveAndReferences.sx :: read and mutable references operate on ordinary places
+ok - Ownership/CopyMoveAndReferences.sx :: copy detaches reached class identity
+ok - Ownership/ListFieldReplacementStress.sx :: repeatedly replace owned list fields
+ok - Ownership/MemoryReclamationStress.sx :: reclaim cyclic and deeply copied memory under sustained load
+ok - Ownership/NestedClassCollections.sx :: nested list ownership survives static construction
+ok - Ownership/NestedClassCollections.sx :: continue keeps resources declared outside a mutating method loop alive
+nested collection mutations passed
+ok - Ownership/NestedCollectionMutations.sx :: mutate nested stored collections through class and struct fields
+ok - Ownership/NestedStructMutationPreservesClassIdentity.sx :: mutating a nested structure preserves its owning class identity
+ok - Reflection/Values.sx :: reflect enums structures and functions
+ok - Syntax/Comments.sx :: line and nested block comments are ignored
+ok - Syntax/Comments.sx :: comment markers remain string content
+ok - Syntax/ContextualMove.sx :: move remains a transfer operator and becomes a contextual method name
+ok - Types/Bool/Operators.sx :: bool logical operators and equality
+ok - Types/Bool/Operators.sx :: bool logical operators short circuit
+ok - Types/Bool/Positions.sx :: bool field parameter and return positions
+ok - Types/Bool/Positions.sx :: bool collection and callback positions
+ok - Types/Bool/Variables.sx :: bool local variables and intrinsic value
+ok - Types/Bool/Variables.sx :: bool assignments preserve independent values
+ok - Types/Classes/Identity.sx :: class value parameters preserve shared identity
+ok - Types/Classes/Identity.sx :: mutable class references can replace caller storage
+ok - Types/Classes/Identity.sx :: a mutating final override updates the whole virtual contract
+ok - Types/Enums/Values.sx :: associated enum construction comparison and matching
+ok - Types/Enums/Values.sx :: raw and generic enum positions
+ok - Types/Floats/Conversions.sx :: floating precision widening
+ok - Types/Floats/Conversions.sx :: checked explicit numeric conversions
+ok - Types/Floats/Operators.sx :: floating arithmetic and comparisons
+ok - Types/Floats/Operators.sx :: floating compound assignments
+ok - Types/Floats/Positions.sx :: float field parameter and return positions
+ok - Types/Floats/Positions.sx :: float collection and callback positions
+ok - Types/Floats/Positions.sx :: float32 aggregate lists preserve append replacement and removal
+ok - Types/Floats/Positions.sx :: float32 aggregate slices preserve compact values and independence
+ok - Types/Floats/Variables.sx :: floating point local variables and intrinsic values
+ok - Types/Floats/Variables.sx :: floating point exponent literals
+ok - Types/Floats/Variables.sx :: floating assignments preserve independent values
+ok - Types/Integers/Conversions.sx :: integer widening within one signedness family
+ok - Types/Integers/Conversions.sx :: checked explicit integer conversions
+ok - Types/Integers/Operators.sx :: signed integer arithmetic and comparisons
+ok - Types/Integers/Operators.sx :: integer compound assignments increment and decrement
+ok - Types/Integers/Operators.sx :: unsigned integer bitwise operators
+ok - Types/Integers/Positions.sx :: integer field parameter and return positions
+ok - Types/Integers/Positions.sx :: integer collection and callback positions
+ok - Types/Integers/Variables.sx :: signed integer local variables
+ok - Types/Integers/Variables.sx :: unsigned integer local variables
+ok - Types/Integers/Variables.sx :: integer literal forms and separators
+ok - Types/Optionals/Expressive.sx :: safe assignment forced extraction and fallback compose
+ok - Types/Optionals/Expressive.sx :: nested optionals preserve three distinct states
+ok - Types/Optionals/Values.sx :: optional intrinsic promotion comparison and binding
+ok - Types/Optionals/Values.sx :: optional refinement and safe mutation
+ok - Types/Optionals/Values.sx :: optionals compose with collections
+ok - Types/Optionals/Values.sx :: collection literals use the payload type of an optional context
+ok - Types/Str/Callbacks.sx :: str named callbacks
+ok - Types/Str/Callbacks.sx :: str anonymous callbacks and captures
+ok - Types/Str/Callbacks.sx :: str callbacks stored in fields
+ok - Types/Str/Collections.sx :: str fixed arrays and lists
+ok - Types/Str/Collections.sx :: str collections preserve copied values
+ok - Types/Str/Collections.sx :: str list iteration is complete
+ok - Types/Str/Composition.sx :: str optional positions
+ok - Types/Str/Composition.sx :: str enum payload positions
+ok - Types/Str/Composition.sx :: str generic and tuple positions
+ok - Types/Str/Fields.sx :: str structure fields
+ok - Types/Str/Fields.sx :: str nested structure fields
+ok - Types/Str/Fields.sx :: str class fields
+ok - Types/Str/Operators.sx :: str concatenation operand positions
+ok - Types/Str/Operators.sx :: str compound concatenation
+ok - Types/Str/Operators.sx :: str equality and interpolation
+ok - Types/Str/Operators.sx :: str unicode scalar count
+ok - Types/Str/Parameters.sx :: str value and read parameters
+ok - Types/Str/Parameters.sx :: str mutable parameters replace the caller value
+ok - Types/Str/Parameters.sx :: str named and default arguments
+ok - Types/Str/Returns.sx :: str return positions
+ok - Types/Str/Variables.sx :: str local variables
+ok - Types/Str/Variables.sx :: str assignments preserve independent values
+ok - Types/Str/Variables.sx :: block strings remove structural indentation and interpolate values
+ok - Types/Structures/Initialization.sx :: field initializer expressions run for each instance
+ok - Types/Structures/Initialization.sx :: constructors initialize non-intrinsic structure fields
+ok - Types/Structures/Initialization.sx :: constructors initialize non-intrinsic class fields
+ok - Types/Structures/Initialization.sx :: constructors may loop while later fields remain pending
+ok - Types/Structures/Methods.sx :: structure instance and static methods
+ok - Types/Structures/Methods.sx :: generic structure positions
+ok - Types/Structures/Methods.sx :: compound field assignment preserves sibling method mutation
+ok - Types/Structures/Methods.sx :: match is a contextual method name
+ok - Types/Structures/Operators.sx :: operator functions cover vector arithmetic and scalar orientation
+ok - Types/Structures/Operators.sx :: compound assignments derive from binary operator functions
+ok - Types/Structures/Positions.sx :: copyable structure in every ordinary value position
+ok - Types/Structures/Positions.sx :: structure fields copy independently
+ok - Types/Structures/Properties.sx :: computed property reads through its getter
+ok - Types/Structures/Properties.sx :: static let property initializes its own backing storage once
+ok - Types/Structures/Properties.sx :: exact property assignment invokes its setter
+ok - Types/Structures/Properties.sx :: property initializer and implicit setter share one backing value
+ok - Types/Structures/Properties.sx :: stored fields and accessors satisfy protocol property requirements
+ok - Types/Structures/Properties.sx :: nested mutation follows class identity without invoking a setter
+ok - Types/Structures/ZeroSized.sx :: zero-sized structures can be stored in lists
+ok - Types/Structures/ZeroSized.sx :: zero-sized structures cross protocol erasure
+ok - Types/Structures/ZeroSized.sx :: zero-sized structures inhabit generic optionals
+ok - Types/Tuples/Values.sx :: named tuple fields return and destructuring
+ok - Types/Tuples/Values.sx :: positional tuple parameters returns and collections
+206 passed; 0 failed in 69 files
+test
++- run test w
+<source>:6:11: runtime error: collection index -3 is out of bounds for count <source>:4:26: runtime error: collection index 2 is out of bounds for count invalid view index 2 count 2
+invalid view index -3 count 2
+invalid view index 2 count 2
+invalid view index -3 count 2
+invalid view index 2 count
+failed command: cd /Users/nekmata/Projects/SilexProject/Silex/Toolchain && ./.zig-cache/o/fca2c13a9395c1cde04e706314a3d7c1/test --cache-dir=./.zig-cache --seed=0xf546dcf3 --listen=-
+
+{"command": ["zig", "build", "-j1", "test", "-Doptimize=ReleaseSmall"], "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain", "pid": 67949, "reason": "completed", "returncode": 0, "elapsed_seconds": 47.705, "sampled_peak_rss_kib": 158400, "sampled_peak_physical_footprint_kib": 107204, "sampled_peak_processes": 4, "limits": {"seconds": 900.0, "mib": 4096, "processes": 8, "polling_seconds": 0.1}}

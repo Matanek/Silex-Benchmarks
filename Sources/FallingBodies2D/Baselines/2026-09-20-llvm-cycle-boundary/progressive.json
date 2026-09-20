@@ -1,0 +1,1092 @@
+{
+  "before": {
+    "complete_90s_run": false,
+    "cadence_samples_at_3000": 4,
+    "median_fps_at_3000": 58.006122,
+    "min_fps_at_3000": 56.196438,
+    "max_fps_at_3000": 59.821484,
+    "cadence": [
+      {
+        "bodies": 53.0,
+        "awake": 53.0,
+        "fps": 122.85796,
+        "worker_ms": 0.06608198,
+        "physics_hz": 60.92956
+      },
+      {
+        "bodies": 103.0,
+        "awake": 102.0,
+        "fps": 119.99243,
+        "worker_ms": 0.16011669,
+        "physics_hz": 59.996216
+      },
+      {
+        "bodies": 153.0,
+        "awake": 140.0,
+        "fps": 119.98947,
+        "worker_ms": 0.24434997,
+        "physics_hz": 59.994736
+      },
+      {
+        "bodies": 203.0,
+        "awake": 186.0,
+        "fps": 119.99678,
+        "worker_ms": 0.32740003,
+        "physics_hz": 59.99839
+      },
+      {
+        "bodies": 253.0,
+        "awake": 197.0,
+        "fps": 119.963776,
+        "worker_ms": 0.4784333,
+        "physics_hz": 59.981888
+      },
+      {
+        "bodies": 303.0,
+        "awake": 241.0,
+        "fps": 119.988,
+        "worker_ms": 0.58585,
+        "physics_hz": 59.994
+      },
+      {
+        "bodies": 353.0,
+        "awake": 259.0,
+        "fps": 120.06196,
+        "worker_ms": 0.71295077,
+        "physics_hz": 60.527103
+      },
+      {
+        "bodies": 403.0,
+        "awake": 278.0,
+        "fps": 119.969406,
+        "worker_ms": 0.82543343,
+        "physics_hz": 59.984703
+      },
+      {
+        "bodies": 453.0,
+        "awake": 283.0,
+        "fps": 119.97549,
+        "worker_ms": 0.88958335,
+        "physics_hz": 59.987743
+      },
+      {
+        "bodies": 504.0,
+        "awake": 271.0,
+        "fps": 119.95247,
+        "worker_ms": 0.93259996,
+        "physics_hz": 59.48056
+      },
+      {
+        "bodies": 554.0,
+        "awake": 239.0,
+        "fps": 119.98548,
+        "worker_ms": 0.9561333,
+        "physics_hz": 59.99274
+      },
+      {
+        "bodies": 604.0,
+        "awake": 240.0,
+        "fps": 119.98657,
+        "worker_ms": 0.97779995,
+        "physics_hz": 59.993286
+      },
+      {
+        "bodies": 654.0,
+        "awake": 259.0,
+        "fps": 119.94098,
+        "worker_ms": 1.1229999,
+        "physics_hz": 59.97049
+      },
+      {
+        "bodies": 704.0,
+        "awake": 272.0,
+        "fps": 120.06159,
+        "worker_ms": 1.2335571,
+        "physics_hz": 60.526917
+      },
+      {
+        "bodies": 754.0,
+        "awake": 279.0,
+        "fps": 119.96642,
+        "worker_ms": 1.2662334,
+        "physics_hz": 59.98321
+      },
+      {
+        "bodies": 804.0,
+        "awake": 247.0,
+        "fps": 119.96898,
+        "worker_ms": 1.2762501,
+        "physics_hz": 59.48875
+      },
+      {
+        "bodies": 854.0,
+        "awake": 271.0,
+        "fps": 119.96448,
+        "worker_ms": 1.3639334,
+        "physics_hz": 59.98224
+      },
+      {
+        "bodies": 905.0,
+        "awake": 252.0,
+        "fps": 119.91729,
+        "worker_ms": 1.4068667,
+        "physics_hz": 59.958645
+      },
+      {
+        "bodies": 955.0,
+        "awake": 247.0,
+        "fps": 120.09881,
+        "worker_ms": 1.4492624,
+        "physics_hz": 60.54568
+      },
+      {
+        "bodies": 1005.0,
+        "awake": 276.0,
+        "fps": 119.98262,
+        "worker_ms": 1.5485666,
+        "physics_hz": 59.99131
+      },
+      {
+        "bodies": 1055.0,
+        "awake": 249.0,
+        "fps": 119.95983,
+        "worker_ms": 1.6390998,
+        "physics_hz": 59.979916
+      },
+      {
+        "bodies": 1105.0,
+        "awake": 240.0,
+        "fps": 119.93645,
+        "worker_ms": 1.6622001,
+        "physics_hz": 59.968224
+      },
+      {
+        "bodies": 1155.0,
+        "awake": 269.0,
+        "fps": 120.010445,
+        "worker_ms": 1.6843498,
+        "physics_hz": 59.50931
+      },
+      {
+        "bodies": 1205.0,
+        "awake": 270.0,
+        "fps": 119.97912,
+        "worker_ms": 1.9035667,
+        "physics_hz": 59.98956
+      },
+      {
+        "bodies": 1255.0,
+        "awake": 258.0,
+        "fps": 119.99109,
+        "worker_ms": 1.8985333,
+        "physics_hz": 59.995544
+      },
+      {
+        "bodies": 1305.0,
+        "awake": 265.0,
+        "fps": 119.97037,
+        "worker_ms": 1.9374837,
+        "physics_hz": 59.985184
+      },
+      {
+        "bodies": 1355.0,
+        "awake": 278.0,
+        "fps": 119.96772,
+        "worker_ms": 2.0279498,
+        "physics_hz": 59.98386
+      },
+      {
+        "bodies": 1406.0,
+        "awake": 297.0,
+        "fps": 120.0098,
+        "worker_ms": 2.1189015,
+        "physics_hz": 60.500813
+      },
+      {
+        "bodies": 1456.0,
+        "awake": 275.0,
+        "fps": 119.91919,
+        "worker_ms": 2.3566005,
+        "physics_hz": 59.959595
+      },
+      {
+        "bodies": 1506.0,
+        "awake": 258.0,
+        "fps": 120.01099,
+        "worker_ms": 2.4089003,
+        "physics_hz": 59.50958
+      },
+      {
+        "bodies": 1556.0,
+        "awake": 253.0,
+        "fps": 119.98298,
+        "worker_ms": 2.3208,
+        "physics_hz": 59.99149
+      },
+      {
+        "bodies": 1606.0,
+        "awake": 272.0,
+        "fps": 119.95633,
+        "worker_ms": 2.4117663,
+        "physics_hz": 59.978165
+      },
+      {
+        "bodies": 1657.0,
+        "awake": 284.0,
+        "fps": 118.92255,
+        "worker_ms": 2.475935,
+        "physics_hz": 60.452293
+      },
+      {
+        "bodies": 1707.0,
+        "awake": 289.0,
+        "fps": 114.6484,
+        "worker_ms": 2.5205998,
+        "physics_hz": 59.816555
+      },
+      {
+        "bodies": 1757.0,
+        "awake": 277.0,
+        "fps": 111.49803,
+        "worker_ms": 2.640333,
+        "physics_hz": 59.731087
+      },
+      {
+        "bodies": 1807.0,
+        "awake": 282.0,
+        "fps": 108.96034,
+        "worker_ms": 2.6475997,
+        "physics_hz": 59.978172
+      },
+      {
+        "bodies": 1857.0,
+        "awake": 258.0,
+        "fps": 105.98562,
+        "worker_ms": 2.6534915,
+        "physics_hz": 60.421707
+      },
+      {
+        "bodies": 1908.0,
+        "awake": 286.0,
+        "fps": 103.39237,
+        "worker_ms": 2.7864997,
+        "physics_hz": 59.649445
+      },
+      {
+        "bodies": 1958.0,
+        "awake": 265.0,
+        "fps": 100.46662,
+        "worker_ms": 2.9107335,
+        "physics_hz": 59.683144
+      },
+      {
+        "bodies": 2008.0,
+        "awake": 265.0,
+        "fps": 98.18789,
+        "worker_ms": 2.9696233,
+        "physics_hz": 60.49961
+      },
+      {
+        "bodies": 2059.0,
+        "awake": 271.0,
+        "fps": 95.705124,
+        "worker_ms": 3.1112669,
+        "physics_hz": 59.815704
+      },
+      {
+        "bodies": 2109.0,
+        "awake": 271.0,
+        "fps": 91.91232,
+        "worker_ms": 3.3446503,
+        "physics_hz": 59.94282
+      },
+      {
+        "bodies": 2159.0,
+        "awake": 253.0,
+        "fps": 90.9557,
+        "worker_ms": 3.1466997,
+        "physics_hz": 59.970795
+      },
+      {
+        "bodies": 2209.0,
+        "awake": 247.0,
+        "fps": 89.66226,
+        "worker_ms": 3.1592834,
+        "physics_hz": 59.77484
+      },
+      {
+        "bodies": 2259.0,
+        "awake": 269.0,
+        "fps": 86.94914,
+        "worker_ms": 3.4637702,
+        "physics_hz": 60.271564
+      },
+      {
+        "bodies": 2309.0,
+        "awake": 274.0,
+        "fps": 84.88795,
+        "worker_ms": 3.4656494,
+        "physics_hz": 59.920902
+      },
+      {
+        "bodies": 2360.0,
+        "awake": 260.0,
+        "fps": 83.269714,
+        "worker_ms": 3.3538492,
+        "physics_hz": 59.478367
+      },
+      {
+        "bodies": 2410.0,
+        "awake": 262.0,
+        "fps": 81.18144,
+        "worker_ms": 3.3971808,
+        "physics_hz": 60.39107
+      },
+      {
+        "bodies": 2460.0,
+        "awake": 295.0,
+        "fps": 77.986824,
+        "worker_ms": 3.6625168,
+        "physics_hz": 59.98987
+      },
+      {
+        "bodies": 2511.0,
+        "awake": 258.0,
+        "fps": 77.01938,
+        "worker_ms": 3.7925086,
+        "physics_hz": 60.233105
+      },
+      {
+        "bodies": 2561.0,
+        "awake": 244.0,
+        "fps": 75.35652,
+        "worker_ms": 3.7856174,
+        "physics_hz": 59.491993
+      },
+      {
+        "bodies": 2612.0,
+        "awake": 248.0,
+        "fps": 73.888275,
+        "worker_ms": 3.7762506,
+        "physics_hz": 59.909412
+      },
+      {
+        "bodies": 2662.0,
+        "awake": 259.0,
+        "fps": 72.359184,
+        "worker_ms": 3.9096406,
+        "physics_hz": 60.464523
+      },
+      {
+        "bodies": 2712.0,
+        "awake": 245.0,
+        "fps": 70.79244,
+        "worker_ms": 3.9617162,
+        "physics_hz": 59.824596
+      },
+      {
+        "bodies": 2762.0,
+        "awake": 245.0,
+        "fps": 69.565636,
+        "worker_ms": 4.025166,
+        "physics_hz": 59.62769
+      },
+      {
+        "bodies": 2813.0,
+        "awake": 260.0,
+        "fps": 68.000206,
+        "worker_ms": 4.0199018,
+        "physics_hz": 60.116123
+      },
+      {
+        "bodies": 2864.0,
+        "awake": 247.0,
+        "fps": 66.03348,
+        "worker_ms": 4.1411633,
+        "physics_hz": 60.12003
+      },
+      {
+        "bodies": 2914.0,
+        "awake": 245.0,
+        "fps": 61.544014,
+        "worker_ms": 4.2099504,
+        "physics_hz": 59.558723
+      },
+      {
+        "bodies": 2965.0,
+        "awake": 252.0,
+        "fps": 59.42871,
+        "worker_ms": 4.6213436,
+        "physics_hz": 60.41919
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 229.0,
+        "fps": 59.821484,
+        "worker_ms": 4.4790998,
+        "physics_hz": 59.821484
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 115.0,
+        "fps": 57.92771,
+        "worker_ms": 4.5889835,
+        "physics_hz": 59.92522
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 61.0,
+        "fps": 56.196438,
+        "worker_ms": 4.349196,
+        "physics_hz": 60.14005
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 60.0,
+        "fps": 58.084534,
+        "worker_ms": 3.94464,
+        "physics_hz": 60.0535
+      }
+    ],
+    "termination": "User closed the window after observing below 60 FPS; not a completed timing sample."
+  },
+  "candidate": {
+    "complete_90s_run": true,
+    "cadence_samples_at_3000": 31,
+    "median_fps_at_3000": 119.99856,
+    "min_fps_at_3000": 119.54073,
+    "max_fps_at_3000": 234.98991,
+    "cadence": [
+      {
+        "bodies": 53.0,
+        "awake": 53.0,
+        "fps": 121.30929,
+        "worker_ms": 0.13031147,
+        "physics_hz": 60.654644
+      },
+      {
+        "bodies": 103.0,
+        "awake": 102.0,
+        "fps": 119.984764,
+        "worker_ms": 0.24175002,
+        "physics_hz": 59.992382
+      },
+      {
+        "bodies": 153.0,
+        "awake": 144.0,
+        "fps": 119.99953,
+        "worker_ms": 0.3985499,
+        "physics_hz": 59.999763
+      },
+      {
+        "bodies": 203.0,
+        "awake": 186.0,
+        "fps": 119.96677,
+        "worker_ms": 0.6735166,
+        "physics_hz": 59.983383
+      },
+      {
+        "bodies": 253.0,
+        "awake": 211.0,
+        "fps": 120.04324,
+        "worker_ms": 0.65093327,
+        "physics_hz": 59.525574
+      },
+      {
+        "bodies": 303.0,
+        "awake": 254.0,
+        "fps": 119.962234,
+        "worker_ms": 0.94885004,
+        "physics_hz": 59.981117
+      },
+      {
+        "bodies": 353.0,
+        "awake": 248.0,
+        "fps": 119.975426,
+        "worker_ms": 1.0863334,
+        "physics_hz": 59.987713
+      },
+      {
+        "bodies": 403.0,
+        "awake": 267.0,
+        "fps": 120.09734,
+        "worker_ms": 1.204164,
+        "physics_hz": 60.54494
+      },
+      {
+        "bodies": 453.0,
+        "awake": 261.0,
+        "fps": 119.94841,
+        "worker_ms": 1.2754407,
+        "physics_hz": 58.974636
+      },
+      {
+        "bodies": 504.0,
+        "awake": 274.0,
+        "fps": 119.923004,
+        "worker_ms": 1.426082,
+        "physics_hz": 60.45705
+      },
+      {
+        "bodies": 554.0,
+        "awake": 247.0,
+        "fps": 119.999016,
+        "worker_ms": 1.3475164,
+        "physics_hz": 59.999508
+      },
+      {
+        "bodies": 604.0,
+        "awake": 252.0,
+        "fps": 120.05351,
+        "worker_ms": 1.4424261,
+        "physics_hz": 60.522842
+      },
+      {
+        "bodies": 655.0,
+        "awake": 278.0,
+        "fps": 119.92582,
+        "worker_ms": 1.5484499,
+        "physics_hz": 59.46735
+      },
+      {
+        "bodies": 705.0,
+        "awake": 284.0,
+        "fps": 120.0952,
+        "worker_ms": 1.7699509,
+        "physics_hz": 60.54386
+      },
+      {
+        "bodies": 755.0,
+        "awake": 280.0,
+        "fps": 119.94135,
+        "worker_ms": 1.9234498,
+        "physics_hz": 59.970676
+      },
+      {
+        "bodies": 806.0,
+        "awake": 253.0,
+        "fps": 119.951035,
+        "worker_ms": 1.8163667,
+        "physics_hz": 59.47985
+      },
+      {
+        "bodies": 856.0,
+        "awake": 265.0,
+        "fps": 120.07612,
+        "worker_ms": 1.8635409,
+        "physics_hz": 60.53424
+      },
+      {
+        "bodies": 906.0,
+        "awake": 244.0,
+        "fps": 119.94888,
+        "worker_ms": 1.8313664,
+        "physics_hz": 59.97444
+      },
+      {
+        "bodies": 956.0,
+        "awake": 225.0,
+        "fps": 119.999985,
+        "worker_ms": 1.8991166,
+        "physics_hz": 59.999992
+      },
+      {
+        "bodies": 1006.0,
+        "awake": 248.0,
+        "fps": 119.97508,
+        "worker_ms": 1.9134496,
+        "physics_hz": 59.98754
+      },
+      {
+        "bodies": 1056.0,
+        "awake": 230.0,
+        "fps": 120.07373,
+        "worker_ms": 1.9965332,
+        "physics_hz": 59.540695
+      },
+      {
+        "bodies": 1106.0,
+        "awake": 248.0,
+        "fps": 119.93502,
+        "worker_ms": 2.1022837,
+        "physics_hz": 59.96751
+      },
+      {
+        "bodies": 1157.0,
+        "awake": 258.0,
+        "fps": 119.962814,
+        "worker_ms": 2.2031806,
+        "physics_hz": 60.47712
+      },
+      {
+        "bodies": 1207.0,
+        "awake": 248.0,
+        "fps": 120.05074,
+        "worker_ms": 2.1918995,
+        "physics_hz": 59.529293
+      },
+      {
+        "bodies": 1257.0,
+        "awake": 237.0,
+        "fps": 119.98342,
+        "worker_ms": 2.2908335,
+        "physics_hz": 59.99171
+      },
+      {
+        "bodies": 1307.0,
+        "awake": 239.0,
+        "fps": 119.974785,
+        "worker_ms": 2.3404,
+        "physics_hz": 59.987392
+      },
+      {
+        "bodies": 1357.0,
+        "awake": 248.0,
+        "fps": 119.99364,
+        "worker_ms": 2.303034,
+        "physics_hz": 59.99682
+      },
+      {
+        "bodies": 1408.0,
+        "awake": 268.0,
+        "fps": 120.00924,
+        "worker_ms": 2.652672,
+        "physics_hz": 60.500526
+      },
+      {
+        "bodies": 1458.0,
+        "awake": 270.0,
+        "fps": 120.022194,
+        "worker_ms": 2.3503168,
+        "physics_hz": 59.515137
+      },
+      {
+        "bodies": 1508.0,
+        "awake": 233.0,
+        "fps": 151.55066,
+        "worker_ms": 2.6192002,
+        "physics_hz": 59.822628
+      },
+      {
+        "bodies": 1558.0,
+        "awake": 237.0,
+        "fps": 249.9136,
+        "worker_ms": 2.9471998,
+        "physics_hz": 59.979263
+      },
+      {
+        "bodies": 1608.0,
+        "awake": 261.0,
+        "fps": 118.925316,
+        "worker_ms": 2.8439333,
+        "physics_hz": 59.962345
+      },
+      {
+        "bodies": 1658.0,
+        "awake": 256.0,
+        "fps": 117.468124,
+        "worker_ms": 3.0920815,
+        "physics_hz": 60.725048
+      },
+      {
+        "bodies": 1708.0,
+        "awake": 265.0,
+        "fps": 118.99274,
+        "worker_ms": 3.0956671,
+        "physics_hz": 59.996338
+      },
+      {
+        "bodies": 1759.0,
+        "awake": 286.0,
+        "fps": 118.16847,
+        "worker_ms": 3.2356503,
+        "physics_hz": 59.58074
+      },
+      {
+        "bodies": 1809.0,
+        "awake": 270.0,
+        "fps": 118.94327,
+        "worker_ms": 3.233283,
+        "physics_hz": 59.971397
+      },
+      {
+        "bodies": 1859.0,
+        "awake": 261.0,
+        "fps": 120.49597,
+        "worker_ms": 3.2605333,
+        "physics_hz": 59.75007
+      },
+      {
+        "bodies": 1909.0,
+        "awake": 273.0,
+        "fps": 117.99328,
+        "worker_ms": 3.322067,
+        "physics_hz": 59.996582
+      },
+      {
+        "bodies": 1959.0,
+        "awake": 253.0,
+        "fps": 117.975,
+        "worker_ms": 3.4330163,
+        "physics_hz": 59.987286
+      },
+      {
+        "bodies": 2009.0,
+        "awake": 261.0,
+        "fps": 118.998085,
+        "worker_ms": 3.37235,
+        "physics_hz": 59.999035
+      },
+      {
+        "bodies": 2060.0,
+        "awake": 252.0,
+        "fps": 119.47929,
+        "worker_ms": 3.482393,
+        "physics_hz": 60.23336
+      },
+      {
+        "bodies": 2110.0,
+        "awake": 248.0,
+        "fps": 119.952614,
+        "worker_ms": 3.4898834,
+        "physics_hz": 59.976307
+      },
+      {
+        "bodies": 2160.0,
+        "awake": 236.0,
+        "fps": 118.573105,
+        "worker_ms": 3.6822329,
+        "physics_hz": 59.78476
+      },
+      {
+        "bodies": 2211.0,
+        "awake": 254.0,
+        "fps": 117.42807,
+        "worker_ms": 3.7379012,
+        "physics_hz": 59.6926
+      },
+      {
+        "bodies": 2261.0,
+        "awake": 262.0,
+        "fps": 117.99426,
+        "worker_ms": 3.7902336,
+        "physics_hz": 59.99708
+      },
+      {
+        "bodies": 2311.0,
+        "awake": 260.0,
+        "fps": 120.282974,
+        "worker_ms": 3.764459,
+        "physics_hz": 60.638523
+      },
+      {
+        "bodies": 2361.0,
+        "awake": 234.0,
+        "fps": 119.99451,
+        "worker_ms": 3.7854664,
+        "physics_hz": 59.997253
+      },
+      {
+        "bodies": 2412.0,
+        "awake": 237.0,
+        "fps": 119.324265,
+        "worker_ms": 3.7805667,
+        "physics_hz": 59.662132
+      },
+      {
+        "bodies": 2462.0,
+        "awake": 245.0,
+        "fps": 119.687614,
+        "worker_ms": 3.8369012,
+        "physics_hz": 60.338383
+      },
+      {
+        "bodies": 2512.0,
+        "awake": 242.0,
+        "fps": 119.88768,
+        "worker_ms": 3.74295,
+        "physics_hz": 59.94384
+      },
+      {
+        "bodies": 2562.0,
+        "awake": 246.0,
+        "fps": 120.45865,
+        "worker_ms": 3.8406336,
+        "physics_hz": 59.731564
+      },
+      {
+        "bodies": 2612.0,
+        "awake": 232.0,
+        "fps": 119.965546,
+        "worker_ms": 4.0114665,
+        "physics_hz": 59.982773
+      },
+      {
+        "bodies": 2663.0,
+        "awake": 227.0,
+        "fps": 119.61602,
+        "worker_ms": 3.8149347,
+        "physics_hz": 60.302288
+      },
+      {
+        "bodies": 2713.0,
+        "awake": 233.0,
+        "fps": 119.980804,
+        "worker_ms": 3.9764671,
+        "physics_hz": 59.990402
+      },
+      {
+        "bodies": 2763.0,
+        "awake": 236.0,
+        "fps": 119.8788,
+        "worker_ms": 4.170367,
+        "physics_hz": 59.44403
+      },
+      {
+        "bodies": 2814.0,
+        "awake": 239.0,
+        "fps": 120.074104,
+        "worker_ms": 4.1367536,
+        "physics_hz": 60.533226
+      },
+      {
+        "bodies": 2864.0,
+        "awake": 236.0,
+        "fps": 120.465996,
+        "worker_ms": 4.2236495,
+        "physics_hz": 59.735207
+      },
+      {
+        "bodies": 2914.0,
+        "awake": 233.0,
+        "fps": 119.99209,
+        "worker_ms": 4.1854,
+        "physics_hz": 59.996044
+      },
+      {
+        "bodies": 2965.0,
+        "awake": 232.0,
+        "fps": 119.74365,
+        "worker_ms": 4.223721,
+        "physics_hz": 60.366634
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 199.0,
+        "fps": 120.24557,
+        "worker_ms": 4.263517,
+        "physics_hz": 59.6259
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 94.0,
+        "fps": 119.55953,
+        "worker_ms": 4.170361,
+        "physics_hz": 60.273815
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.976974,
+        "worker_ms": 3.8226829,
+        "physics_hz": 59.988487
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.45423,
+        "worker_ms": 3.7235827,
+        "physics_hz": 59.72937
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.54073,
+        "worker_ms": 3.6848037,
+        "physics_hz": 60.264336
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.010376,
+        "worker_ms": 3.8271003,
+        "physics_hz": 59.509277
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.97385,
+        "worker_ms": 3.7228372,
+        "physics_hz": 60.48268
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.48204,
+        "worker_ms": 3.80495,
+        "physics_hz": 59.74316
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 150.82101,
+        "worker_ms": 4.1053777,
+        "physics_hz": 60.52685
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.9458,
+        "worker_ms": 3.8238165,
+        "physics_hz": 59.477257
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.00683,
+        "worker_ms": 3.7071476,
+        "physics_hz": 60.49931
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.02492,
+        "worker_ms": 3.6757505,
+        "physics_hz": 59.516487
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.93713,
+        "worker_ms": 3.7515671,
+        "physics_hz": 59.968567
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.00087,
+        "worker_ms": 3.7068367,
+        "physics_hz": 60.496304
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.10185,
+        "worker_ms": 3.6679165,
+        "physics_hz": 59.554638
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.93998,
+        "worker_ms": 3.738377,
+        "physics_hz": 60.46561
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.023346,
+        "worker_ms": 3.9893496,
+        "physics_hz": 59.51571
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.99856,
+        "worker_ms": 3.7502,
+        "physics_hz": 59.99928
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.92037,
+        "worker_ms": 3.9150834,
+        "physics_hz": 59.960186
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.9897,
+        "worker_ms": 4.1938004,
+        "physics_hz": 59.99485
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 234.98991,
+        "worker_ms": 5.248599,
+        "physics_hz": 59.997425
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 125.5405,
+        "worker_ms": 4.1026,
+        "physics_hz": 59.78119
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.99856,
+        "worker_ms": 3.9459665,
+        "physics_hz": 59.99928
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.1956,
+        "worker_ms": 4.0026236,
+        "physics_hz": 60.0978
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.228004,
+        "worker_ms": 3.9487047,
+        "physics_hz": 60.610813
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.99843,
+        "worker_ms": 3.9470496,
+        "physics_hz": 59.999214
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.797104,
+        "worker_ms": 3.8952494,
+        "physics_hz": 59.403522
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.87988,
+        "worker_ms": 3.9617991,
+        "physics_hz": 59.93994
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 120.32749,
+        "worker_ms": 3.9018855,
+        "physics_hz": 60.660965
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.99617,
+        "worker_ms": 3.8801003,
+        "physics_hz": 59.998085
+      },
+      {
+        "bodies": 3000.0,
+        "awake": 37.0,
+        "fps": 119.60656,
+        "worker_ms": 3.8962996,
+        "physics_hz": 59.309036
+      }
+    ]
+  }
+}

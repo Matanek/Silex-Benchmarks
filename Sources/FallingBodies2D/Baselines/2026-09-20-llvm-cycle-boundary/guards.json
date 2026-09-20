@@ -1,0 +1,1918 @@
+{
+  "ApplicationIntegration-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "test",
+      "Packages/GFX.Physics/Tests/Consumer/Tests/ApplicationIntegration.sx",
+      "--backend",
+      "llvm"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 63767,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 26.13,
+    "sampled_peak_rss_kib": 1719984,
+    "sampled_peak_physical_footprint_kib": 1705507,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CallbackOwnership-debug-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CallbackOwnership.sx",
+      "--backend",
+      "llvm",
+      "--debug",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CallbackOwnership-debug"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60992,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.467,
+    "sampled_peak_rss_kib": 22704,
+    "sampled_peak_physical_footprint_kib": 16930,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CallbackOwnership-release-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CallbackOwnership.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CallbackOwnership-release"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 61037,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.464,
+    "sampled_peak_rss_kib": 9088,
+    "sampled_peak_physical_footprint_kib": 9666,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CycleExternalDescendant-debug-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleExternalDescendant.sx",
+      "--backend",
+      "llvm",
+      "--debug",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CycleExternalDescendant-debug"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60660,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.815,
+    "sampled_peak_rss_kib": 22912,
+    "sampled_peak_physical_footprint_kib": 12978,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CycleExternalDescendant-release-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleExternalDescendant.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CycleExternalDescendant-release"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60720,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.698,
+    "sampled_peak_rss_kib": 37168,
+    "sampled_peak_physical_footprint_kib": 11762,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CycleValueEdges-debug-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleValueEdges.sx",
+      "--backend",
+      "llvm",
+      "--debug",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CycleValueEdges-debug"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60779,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.349,
+    "sampled_peak_rss_kib": 10816,
+    "sampled_peak_physical_footprint_kib": 13394,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CycleValueEdges-release-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleValueEdges.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CycleValueEdges-release"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60811,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.463,
+    "sampled_peak_rss_kib": 20400,
+    "sampled_peak_physical_footprint_kib": 15842,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CycleWideGraph-debug-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleWideGraph.sx",
+      "--backend",
+      "llvm",
+      "--debug",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CycleWideGraph-debug"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60844,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.351,
+    "sampled_peak_rss_kib": 27968,
+    "sampled_peak_physical_footprint_kib": 8130,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "CycleWideGraph-release-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/CycleWideGraph.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/CycleWideGraph-release"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60882,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.46,
+    "sampled_peak_rss_kib": 31488,
+    "sampled_peak_physical_footprint_kib": 11378,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "InheritedBoundCallback-debug-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedBoundCallback.sx",
+      "--backend",
+      "llvm",
+      "--debug",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/InheritedBoundCallback-debug"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 61082,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.35,
+    "sampled_peak_rss_kib": 10928,
+    "sampled_peak_physical_footprint_kib": 12098,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "InheritedBoundCallback-release-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedBoundCallback.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/InheritedBoundCallback-release"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 61116,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.348,
+    "sampled_peak_rss_kib": 35696,
+    "sampled_peak_physical_footprint_kib": 4097,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "InheritedCycle-debug-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedCycle.sx",
+      "--backend",
+      "llvm",
+      "--debug",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/InheritedCycle-debug"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60919,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.346,
+    "sampled_peak_rss_kib": 7488,
+    "sampled_peak_physical_footprint_kib": 3473,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "InheritedCycle-release-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/InheritedCycle.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/InheritedCycle-release"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 60955,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.468,
+    "sampled_peak_rss_kib": 41008,
+    "sampled_peak_physical_footprint_kib": 4705,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "MethodReceiverLifetime-debug-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/MethodReceiverLifetime.sx",
+      "--backend",
+      "llvm",
+      "--debug",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/MethodReceiverLifetime-debug"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 61150,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.462,
+    "sampled_peak_rss_kib": 8896,
+    "sampled_peak_physical_footprint_kib": 4929,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "MethodReceiverLifetime-release-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex/Toolchain/Benchmarks/Optimizer/LlvmEvaluation/MethodReceiverLifetime.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "--nocache",
+      "-o",
+      "/private/tmp/falling-regression-20260920/MethodReceiverLifetime-release"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 61204,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.697,
+    "sampled_peak_rss_kib": 36672,
+    "sampled_peak_physical_footprint_kib": 17602,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "WorldLifetime-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "test",
+      "Packages/GFX.Physics/Tests/Consumer/Tests/WorldLifetime.sx",
+      "--backend",
+      "llvm"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 61259,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 29.718,
+    "sampled_peak_rss_kib": 1611392,
+    "sampled_peak_physical_footprint_kib": 1589859,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "before-compile-6g-guard.json": {
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/Silex/Toolchain/zig-out/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/FallingBodies2D/Main.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "-o",
+      "/private/tmp/falling-regression-20260920/before"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 69292,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 14.206,
+    "sampled_peak_rss_kib": 4141472,
+    "sampled_peak_physical_footprint_kib": 5244823,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 6144,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "before-synchronized-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke-long",
+      "--synchronized"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 76495,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 10.944,
+    "sampled_peak_rss_kib": 141200,
+    "sampled_peak_physical_footprint_kib": 345937,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 45.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "build-guard.json": {
+    "command": [
+      "zig",
+      "build",
+      "-j1",
+      "-Doptimize=ReleaseSmall",
+      "--prefix",
+      "/private/tmp/falling-regression-20260920/toolchain"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain",
+    "pid": 59447,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 45.276,
+    "sampled_peak_rss_kib": 2570864,
+    "sampled_peak_physical_footprint_kib": 1951077,
+    "sampled_peak_processes": 4,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "candidate-compile-6g-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/FallingBodies2D/Main.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "-o",
+      "/private/tmp/falling-regression-20260920/candidate"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 69463,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 126.613,
+    "sampled_peak_rss_kib": 4672560,
+    "sampled_peak_physical_footprint_kib": 5088967,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 6144,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "candidate-compile-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/FallingBodies2D/Main.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "-o",
+      "/private/tmp/falling-regression-20260920/candidate"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 59920,
+    "reason": "physical_footprint_limit",
+    "returncode": -9,
+    "elapsed_seconds": 62.144,
+    "sampled_peak_rss_kib": 4248896,
+    "sampled_peak_physical_footprint_kib": 4251029,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "candidate-profiled-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke-30",
+      "--immediate"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75959,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 30.989,
+    "sampled_peak_rss_kib": 146288,
+    "sampled_peak_physical_footprint_kib": 353537,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 75.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "check-guard.json": {
+    "command": [
+      "zig",
+      "build",
+      "-j1",
+      "check",
+      "-Doptimize=ReleaseSmall"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain",
+    "pid": 65266,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 195.531,
+    "sampled_peak_rss_kib": 2077520,
+    "sampled_peak_physical_footprint_kib": 1707670,
+    "sampled_peak_processes": 5,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-0-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75358,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.479,
+    "sampled_peak_rss_kib": 98272,
+    "sampled_peak_physical_footprint_kib": 288129,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-0-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75375,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.343,
+    "sampled_peak_rss_kib": 98176,
+    "sampled_peak_physical_footprint_kib": 288401,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-1-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75400,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.982,
+    "sampled_peak_rss_kib": 98432,
+    "sampled_peak_physical_footprint_kib": 288913,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-1-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75389,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.983,
+    "sampled_peak_rss_kib": 98496,
+    "sampled_peak_physical_footprint_kib": 288929,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-2-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75413,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.986,
+    "sampled_peak_rss_kib": 98704,
+    "sampled_peak_physical_footprint_kib": 289073,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-2-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75424,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.978,
+    "sampled_peak_rss_kib": 98512,
+    "sampled_peak_physical_footprint_kib": 289153,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-3-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75446,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.99,
+    "sampled_peak_rss_kib": 98544,
+    "sampled_peak_physical_footprint_kib": 289041,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-3-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75435,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.995,
+    "sampled_peak_rss_kib": 98832,
+    "sampled_peak_physical_footprint_kib": 288913,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-4-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75460,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.959,
+    "sampled_peak_rss_kib": 98656,
+    "sampled_peak_physical_footprint_kib": 289137,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-4-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75471,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.966,
+    "sampled_peak_rss_kib": 98480,
+    "sampled_peak_physical_footprint_kib": 288945,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-5-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75492,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.969,
+    "sampled_peak_rss_kib": 98736,
+    "sampled_peak_physical_footprint_kib": 289201,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-5-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75482,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.864,
+    "sampled_peak_rss_kib": 98704,
+    "sampled_peak_physical_footprint_kib": 289233,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-6-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75503,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.972,
+    "sampled_peak_rss_kib": 98512,
+    "sampled_peak_physical_footprint_kib": 288961,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-6-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75514,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.978,
+    "sampled_peak_rss_kib": 98992,
+    "sampled_peak_physical_footprint_kib": 289457,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-7-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75536,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.961,
+    "sampled_peak_rss_kib": 98592,
+    "sampled_peak_physical_footprint_kib": 289089,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-7-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75525,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.992,
+    "sampled_peak_rss_kib": 98704,
+    "sampled_peak_physical_footprint_kib": 289025,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-8-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75547,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.966,
+    "sampled_peak_rss_kib": 98560,
+    "sampled_peak_physical_footprint_kib": 289057,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-8-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75558,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.975,
+    "sampled_peak_rss_kib": 98896,
+    "sampled_peak_physical_footprint_kib": 289393,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-9-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75580,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.968,
+    "sampled_peak_rss_kib": 98480,
+    "sampled_peak_physical_footprint_kib": 288993,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "fixed120-9-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75569,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.979,
+    "sampled_peak_rss_kib": 98880,
+    "sampled_peak_physical_footprint_kib": 289457,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "immediate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/reported",
+      "--stress-3000",
+      "--smoke-long",
+      "--immediate",
+      "--no-panel"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 58821,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 11.378,
+    "sampled_peak_rss_kib": 133040,
+    "sampled_peak_physical_footprint_kib": 320721,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 75.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "install-guard.json": {
+    "command": [
+      "zig",
+      "build",
+      "-j1",
+      "-Doptimize=ReleaseSmall"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain",
+    "pid": 81812,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 0.813,
+    "sampled_peak_rss_kib": 73104,
+    "sampled_peak_physical_footprint_kib": 18403,
+    "sampled_peak_processes": 4,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "installed-compile-guard.json": {
+    "command": [
+      "/Users/nekmata/.local/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/FallingBodies2D/Main.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "-o",
+      "/private/tmp/falling-regression-20260920/installed"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 81932,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 13.861,
+    "sampled_peak_rss_kib": 3717280,
+    "sampled_peak_physical_footprint_kib": 5236599,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 6144,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "installed-smoke-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/installed",
+      "--stress",
+      "--smoke",
+      "--batch-1",
+      "--immediate",
+      "--no-panel",
+      "--fixed-work"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 82166,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 2.159,
+    "sampled_peak_rss_kib": 98592,
+    "sampled_peak_physical_footprint_kib": 288145,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "profiled-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/reported",
+      "--stress-3000",
+      "--smoke-30",
+      "--immediate"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 58997,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 30.877,
+    "sampled_peak_rss_kib": 139008,
+    "sampled_peak_physical_footprint_kib": 344305,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 75.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render-profiled-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke-long",
+      "--immediate",
+      "--render-only",
+      "--no-panel"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 76621,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 11.023,
+    "sampled_peak_rss_kib": 106544,
+    "sampled_peak_physical_footprint_kib": 297857,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 75.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-0-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75591,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.406,
+    "sampled_peak_rss_kib": 105152,
+    "sampled_peak_physical_footprint_kib": 296305,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-0-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75606,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.186,
+    "sampled_peak_rss_kib": 104752,
+    "sampled_peak_physical_footprint_kib": 295889,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-1-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75635,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.403,
+    "sampled_peak_rss_kib": 105536,
+    "sampled_peak_physical_footprint_kib": 296721,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-1-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75619,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.303,
+    "sampled_peak_rss_kib": 104768,
+    "sampled_peak_physical_footprint_kib": 295825,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-2-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75653,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.394,
+    "sampled_peak_rss_kib": 105392,
+    "sampled_peak_physical_footprint_kib": 296529,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-2-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75668,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.185,
+    "sampled_peak_rss_kib": 104816,
+    "sampled_peak_physical_footprint_kib": 296001,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-3-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75694,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.4,
+    "sampled_peak_rss_kib": 105248,
+    "sampled_peak_physical_footprint_kib": 296417,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-3-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75681,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.184,
+    "sampled_peak_rss_kib": 104848,
+    "sampled_peak_physical_footprint_kib": 295937,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-4-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75709,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.406,
+    "sampled_peak_rss_kib": 105424,
+    "sampled_peak_physical_footprint_kib": 296417,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-4-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75724,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.184,
+    "sampled_peak_rss_kib": 104752,
+    "sampled_peak_physical_footprint_kib": 295921,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-5-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75750,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.52,
+    "sampled_peak_rss_kib": 105248,
+    "sampled_peak_physical_footprint_kib": 296417,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-5-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75737,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.189,
+    "sampled_peak_rss_kib": 104976,
+    "sampled_peak_physical_footprint_kib": 295969,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-6-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75770,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.4,
+    "sampled_peak_rss_kib": 105056,
+    "sampled_peak_physical_footprint_kib": 296209,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-6-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75785,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.209,
+    "sampled_peak_rss_kib": 104816,
+    "sampled_peak_physical_footprint_kib": 295985,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-7-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75812,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.501,
+    "sampled_peak_rss_kib": 105456,
+    "sampled_peak_physical_footprint_kib": 296561,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-7-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75798,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.31,
+    "sampled_peak_rss_kib": 104928,
+    "sampled_peak_physical_footprint_kib": 295953,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-8-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75828,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.395,
+    "sampled_peak_rss_kib": 105216,
+    "sampled_peak_physical_footprint_kib": 296385,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-8-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75843,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.187,
+    "sampled_peak_rss_kib": 104992,
+    "sampled_peak_physical_footprint_kib": 296145,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-9-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/before",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75869,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.399,
+    "sampled_peak_rss_kib": 105200,
+    "sampled_peak_physical_footprint_kib": 296353,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "render3000-9-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke",
+      "--immediate",
+      "--no-panel",
+      "--render-only",
+      "--fixed-work",
+      "--batch-1"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 75856,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.186,
+    "sampled_peak_rss_kib": 104640,
+    "sampled_peak_physical_footprint_kib": 295825,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 90.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "settled-before-compile-6g-guard.json": {
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/Silex/Toolchain/zig-out/bin/silex",
+      "compile",
+      "/private/tmp/falling-regression-20260920/Settled.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "-o",
+      "/private/tmp/falling-regression-20260920/settled-before"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 76819,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 66.592,
+    "sampled_peak_rss_kib": 3730480,
+    "sampled_peak_physical_footprint_kib": 5247255,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 6144,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "settled-before-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/settled-before",
+      "--smoke-30",
+      "--immediate"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 80389,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 64.621,
+    "sampled_peak_rss_kib": 141776,
+    "sampled_peak_physical_footprint_kib": 346113,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 150.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "settled-candidate-compile-6g-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/toolchain/bin/silex",
+      "compile",
+      "/private/tmp/falling-regression-20260920/Settled.sx",
+      "--backend",
+      "llvm",
+      "--release",
+      "-o",
+      "/private/tmp/falling-regression-20260920/settled-candidate"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 78568,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 68.833,
+    "sampled_peak_rss_kib": 4432160,
+    "sampled_peak_physical_footprint_kib": 5247335,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 6144,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "settled-candidate-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/settled-candidate",
+      "--smoke-30",
+      "--immediate"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 80956,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 91.408,
+    "sampled_peak_rss_kib": 145552,
+    "sampled_peak_physical_footprint_kib": 355633,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 150.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "synchronized-guard.json": {
+    "command": [
+      "/private/tmp/falling-regression-20260920/candidate",
+      "--stress-3000",
+      "--smoke-long",
+      "--synchronized"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject",
+    "pid": 76325,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 11.055,
+    "sampled_peak_rss_kib": 140688,
+    "sampled_peak_physical_footprint_kib": 346977,
+    "sampled_peak_processes": 1,
+    "limits": {
+      "seconds": 45.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "test-guard.json": {
+    "command": [
+      "zig",
+      "build",
+      "-j1",
+      "test",
+      "-Doptimize=ReleaseSmall"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain",
+    "pid": 67949,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 47.705,
+    "sampled_peak_rss_kib": 158400,
+    "sampled_peak_physical_footprint_kib": 107204,
+    "sampled_peak_processes": 4,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  },
+  "unit-guard.json": {
+    "command": [
+      "zig",
+      "test",
+      "Tools/LlvmEvaluation/CycleRuntime.zig",
+      "-lc"
+    ],
+    "cwd": "/Users/nekmata/Projects/SilexProject/Silex/Toolchain",
+    "pid": 60638,
+    "reason": "completed",
+    "returncode": 0,
+    "elapsed_seconds": 1.673,
+    "sampled_peak_rss_kib": 262544,
+    "sampled_peak_physical_footprint_kib": 194385,
+    "sampled_peak_processes": 2,
+    "limits": {
+      "seconds": 900.0,
+      "mib": 4096,
+      "processes": 8,
+      "polling_seconds": 0.1
+    }
+  }
+}
