@@ -337,6 +337,20 @@ class CadenceMetrics {
 
 // Optional CPU phase timings. Rendering includes swapchain acquisition; scene
 // preparation ends before that wait. Both cover the ordinary graphical path.
+struct FrameInterval {
+    var seconds:float
+    var frames:int
+    var unfocused_frames:int
+    var bodies:int
+    var steps:int
+    var elapsed_ms:float
+    var maximum_ms:float
+    var update_ms:float
+    var prepare_ms:float
+    var present_ms:float
+    var worker_ms:float
+}
+
 class FramePhases {
     var clock:Clock = Clock()
     var frames:int = 0
@@ -344,13 +358,23 @@ class FramePhases {
     var update_ms:float = 0.0
     var prepare_ms:float = 0.0
     var render_ms:float = 0.0
+    var timeline:bool = false
+    var frame_clock:Clock = Clock()
+    var seconds:float = 0.0
+    var previous_revision:int = 0
+    var interval:FrameInterval = FrameInterval()
+    var intervals:FrameInterval[] = []
 }
 
-func begin_update_phase(phases:&FramePhases) { phases.clock.tick() }
+func begin_update_phase(phases:&FramePhases) {
+    if phases.frames == 0 { phases.frame_clock.tick() }
+    phases.clock.tick()
+}
 
 func finish_update_phase(phases:&FramePhases) {
     let elapsed = phases.clock.tick() * 1_000.0
     if phases.frames >= 60 { phases.update_ms += elapsed }
+    if phases.timeline { phases.interval.update_ms += elapsed }
 }
 
 func begin_prepare_phase(phases:&FramePhases) { phases.clock.tick() }
@@ -358,18 +382,47 @@ func begin_prepare_phase(phases:&FramePhases) { phases.clock.tick() }
 func finish_prepare_phase(phases:&FramePhases) {
     let elapsed = phases.clock.tick() * 1_000.0
     if phases.frames >= 60 { phases.prepare_ms += elapsed }
+    if phases.timeline { phases.interval.prepare_ms += elapsed }
 }
 
-func finish_render_phase(phases:&FramePhases) {
+func finish_render_phase(
+    phases:&FramePhases,
+    simulation:@Simulation,
+    async:@PhysicsAsync,
+    window:@Resources.Window
+) {
     let elapsed = phases.clock.tick() * 1_000.0
     if phases.frames >= 60 {
         phases.render_ms += elapsed
         phases.measured++
     }
+    if phases.timeline {
+        let frame_ms = phases.frame_clock.tick() * 1_000.0
+        phases.seconds += frame_ms / 1_000.0
+        phases.interval.frames++
+        if !window.state().keyboard_focused { phases.interval.unfocused_frames++ }
+        phases.interval.elapsed_ms += frame_ms
+        phases.interval.maximum_ms = Math.max(phases.interval.maximum_ms, frame_ms)
+        phases.interval.present_ms += elapsed
+        phases.interval.worker_ms += async.completed_physics_ms()
+        if phases.interval.elapsed_ms >= 1_000.0 {
+            phases.interval.seconds = phases.seconds
+            phases.interval.bodies = simulation.bodies.count()
+            phases.interval.steps = async.current_revision() - phases.previous_revision
+            phases.previous_revision = async.current_revision()
+            phases.intervals.append(phases.interval)
+            phases.interval = FrameInterval()
+        }
+    }
     phases.frames++
 }
 
 func print_frame_phases(phases:@FramePhases) {
+    for interval in phases.intervals {
+        let frames = interval.frames as float
+        let steps = Math.max(1.0, interval.steps as float)
+        print("FALLING_FRAME_INTERVAL seconds=$(interval.seconds) bodies=$(interval.bodies) frames=$(interval.frames) unfocused_frames=$(interval.unfocused_frames) steps=$(interval.steps) frame_ms=$(interval.elapsed_ms / frames) max_frame_ms=$(interval.maximum_ms) update_ms=$(interval.update_ms / frames) prepare_ms=$(interval.prepare_ms / frames) render_and_present_ms=$(interval.present_ms / frames) worker_step_ms=$(interval.worker_ms / steps)")
+    }
     if phases.measured == 0 { return }
     let count = phases.measured as float
     print("FALLING_FRAME_PHASES frames=$(phases.measured) update_ms=$(phases.update_ms / count) prepare_ms=$(phases.prepare_ms / count) render_and_present_ms=$(phases.render_ms / count)")
@@ -1402,8 +1455,10 @@ func main() {
         rendering_settings.present_mode = Rendering.PresentMode.synchronized
     }
     var application = Application()
-    if option_requested("--frame-phases") {
-        application.add_resource(FramePhases())
+    let frame_timeline = option_requested("--frame-timeline")
+    let frame_phases = option_requested("--frame-phases") || frame_timeline
+    if frame_phases {
+        application.add_resource(FramePhases()..timeline = frame_timeline)
         application.add_system(Application.Schedule.update, begin_update_phase)
         application.add_system(Application.Schedule.render, begin_prepare_phase)
     }
@@ -1438,7 +1493,7 @@ func main() {
         }
         application.add_plugin(Plugins.PerformancePanel(panel_settings))
     }
-    if option_requested("--frame-phases") {
+    if frame_phases {
         application.add_after_system(Application.Schedule.update, finish_update_phase)
         application.add_system(Application.Schedule.render, finish_prepare_phase)
         application.add_after_system(Application.Schedule.render, finish_render_phase)

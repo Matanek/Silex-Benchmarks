@@ -28,6 +28,13 @@ periodic refresh, isolating its drawing cost from text and canvas updates.
 rendering after 60 warm-up frames. The last phase includes swapchain acquisition
 and presentation waits; it is not a GPU duration. Scene preparation is measured
 before that wait, so it remains useful when presentation limits the frame rate.
+`--frame-timeline` also records one-second intervals from the first update,
+including body/step counts, unfocused frames, mean and maximum frame interval,
+CPU phases and worker time per completed step. Records are printed only at shutdown to avoid
+terminal output during measurement; an incomplete final interval is omitted.
+For startup diagnosis, use `--smoke-30 --immediate --frame-timeline` without a
+stress population. Spawning and simulation remain on their ordinary real-time
+schedule, so the resulting states are not an equal-work backend comparison.
 
 `--fixed-work` requires a stress population, a bounded smoke mode and
 `--batch-1`. Longer smoke modes keep their frame counts but do not enforce a
