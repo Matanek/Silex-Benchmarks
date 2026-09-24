@@ -18,6 +18,12 @@ and rotations are checked against the physics world before visual synchronizatio
 
 Add `--render-only` for the same frame counts without physics steps. Its final
 state is a separate control, not an expected match for the simulated scene.
+For interactive frame-cost diagnosis, `--no-physics-panel` hides only the
+benchmark's physics metrics, and `--no-performance-panel` hides only the GFX
+performance overlay. `--no-panel` still hides both. These flags leave the
+body count and simulation schedule unchanged.
+`--static-performance-panel` keeps that overlay visible but disables its
+periodic refresh, isolating its drawing cost from text and canvas updates.
 
 `--fixed-work` requires a stress population, a bounded smoke mode and
 `--batch-1`. Longer smoke modes keep their frame counts but do not enforce a

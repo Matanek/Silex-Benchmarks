@@ -486,7 +486,8 @@ struct Simulation {
         self.stress_count = stress_count
         self.render_only = render_only
         self.synchronize_visuals = synchronize_visuals
-        self.show_panel = !option_requested("--no-panel") && !render_only
+        self.show_panel = !option_requested("--no-panel") &&
+            !option_requested("--no-physics-panel") && !render_only
         self.keep_awake = option_requested("--awake")
         self.circles_only = option_requested("--circles-only")
         var emission_limit = Constants.maximum_bodies
@@ -1383,8 +1384,14 @@ func main() {
         ..add_system(Application.Schedule.startup, create_scene)
         ..add_system(Application.Schedule.update, update_simulation)
         ..add_system(Application.Schedule.update, synchronize_physics_visuals)
-    if !option_requested("--no-panel") {
-        application.add_plugin(Plugins.PerformancePanel())
+    if !option_requested("--no-panel") &&
+        !option_requested("--no-performance-panel")
+    {
+        var panel_settings = Plugins.PerformancePanel.Settings()
+        if option_requested("--static-performance-panel") {
+            panel_settings.refresh_interval = 1_000_000.0
+        }
+        application.add_plugin(Plugins.PerformancePanel(panel_settings))
     }
     application.run()
 }
