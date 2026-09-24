@@ -335,6 +335,46 @@ class CadenceMetrics {
     }
 }
 
+// Optional CPU phase timings. Rendering includes swapchain acquisition; scene
+// preparation ends before that wait. Both cover the ordinary graphical path.
+class FramePhases {
+    var clock:Clock = Clock()
+    var frames:int = 0
+    var measured:int = 0
+    var update_ms:float = 0.0
+    var prepare_ms:float = 0.0
+    var render_ms:float = 0.0
+}
+
+func begin_update_phase(phases:&FramePhases) { phases.clock.tick() }
+
+func finish_update_phase(phases:&FramePhases) {
+    let elapsed = phases.clock.tick() * 1_000.0
+    if phases.frames >= 60 { phases.update_ms += elapsed }
+}
+
+func begin_prepare_phase(phases:&FramePhases) { phases.clock.tick() }
+
+func finish_prepare_phase(phases:&FramePhases) {
+    let elapsed = phases.clock.tick() * 1_000.0
+    if phases.frames >= 60 { phases.prepare_ms += elapsed }
+}
+
+func finish_render_phase(phases:&FramePhases) {
+    let elapsed = phases.clock.tick() * 1_000.0
+    if phases.frames >= 60 {
+        phases.render_ms += elapsed
+        phases.measured++
+    }
+    phases.frames++
+}
+
+func print_frame_phases(phases:@FramePhases) {
+    if phases.measured == 0 { return }
+    let count = phases.measured as float
+    print("FALLING_FRAME_PHASES frames=$(phases.measured) update_ms=$(phases.update_ms / count) prepare_ms=$(phases.prepare_ms / count) render_and_present_ms=$(phases.render_ms / count)")
+}
+
 class SpawnSlots {
     var available:bool[]
     var remaining:int
@@ -1362,7 +1402,12 @@ func main() {
         rendering_settings.present_mode = Rendering.PresentMode.synchronized
     }
     var application = Application()
-        ..add_resource(Simulation(
+    if option_requested("--frame-phases") {
+        application.add_resource(FramePhases())
+        application.add_system(Application.Schedule.update, begin_update_phase)
+        application.add_system(Application.Schedule.render, begin_prepare_phase)
+    }
+    application.add_resource(Simulation(
             requested_smoke_frames(),
             requested_stress_count(),
             option_requested("--render-only"),
@@ -1392,6 +1437,12 @@ func main() {
             panel_settings.refresh_interval = 1_000_000.0
         }
         application.add_plugin(Plugins.PerformancePanel(panel_settings))
+    }
+    if option_requested("--frame-phases") {
+        application.add_after_system(Application.Schedule.update, finish_update_phase)
+        application.add_system(Application.Schedule.render, finish_prepare_phase)
+        application.add_after_system(Application.Schedule.render, finish_render_phase)
+        application.add_system(Application.Schedule.shutdown, print_frame_phases)
     }
     application.run()
 }

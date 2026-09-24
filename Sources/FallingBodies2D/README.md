@@ -24,6 +24,10 @@ performance overlay. `--no-panel` still hides both. These flags leave the
 body count and simulation schedule unchanged.
 `--static-performance-panel` keeps that overlay visible but disables its
 periodic refresh, isolating its drawing cost from text and canvas updates.
+`--frame-phases` reports mean CPU time for update, scene preparation and
+rendering after 60 warm-up frames. The last phase includes swapchain acquisition
+and presentation waits; it is not a GPU duration. Scene preparation is measured
+before that wait, so it remains useful when presentation limits the frame rate.
 
 `--fixed-work` requires a stress population, a bounded smoke mode and
 `--batch-1`. Longer smoke modes keep their frame counts but do not enforce a
