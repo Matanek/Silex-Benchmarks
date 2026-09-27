@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "oracle_revision": "e77f175595e64cb44218cc9d9d56fc365ad0e36a",
+  "absolute_tolerance": 0.0001,
+  "unit": "millimetres for integer positions and ray displacement; one-metre sphere radius and box half extents",
+  "cases": [
+    {"id": "sphere-box-gap", "first": "sphere", "second": "box", "first_x_mm": 0, "second_x_mm": 3000, "second_y_degrees": 0, "ray_origin_x_mm": -4000, "ray_delta_x_mm": 8000, "expected_separation": 1.0, "expected_ray_fraction": 0.75},
+    {"id": "sphere-box-tangent", "first": "sphere", "second": "box", "first_x_mm": 0, "second_x_mm": 2000, "second_y_degrees": 0, "ray_origin_x_mm": -4000, "ray_delta_x_mm": 8000, "expected_separation": 0.0, "expected_ray_fraction": 0.625},
+    {"id": "sphere-box-overlap", "first": "sphere", "second": "box", "first_x_mm": 0, "second_x_mm": 1500, "second_y_degrees": 0, "ray_origin_x_mm": -4000, "ray_delta_x_mm": 8000, "expected_separation": -0.5, "expected_ray_fraction": 0.5625},
+    {"id": "sphere-sphere-gap", "first": "sphere", "second": "sphere", "first_x_mm": 0, "second_x_mm": 3000, "second_y_degrees": 0, "ray_origin_x_mm": -4000, "ray_delta_x_mm": 8000, "expected_separation": 1.0, "expected_ray_fraction": 0.75},
+    {"id": "box-box-turned-gap", "first": "box", "second": "box", "first_x_mm": 0, "second_x_mm": 3000, "second_y_degrees": 45, "ray_origin_x_mm": -4000, "ray_delta_x_mm": 8000, "expected_separation": 0.5857864376, "expected_ray_fraction": 0.6982233047}
+  ]
+}

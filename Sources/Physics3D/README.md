@@ -40,3 +40,23 @@ Jolt is used under its [MIT license](https://github.com/jrouwe/JoltPhysics/blob/
 The downloaded archive retains the license and attribution. The oracle
 implements only the fixture's Jolt API calls; it does not embed Jolt into a
 distributed Silex binary.
+
+## Geometry reference cases
+
+`GeometryFixture.json` fixes five shape-pair cases before the Silex 3D query
+implementation: separated, touching and overlapping sphere/box pairs, a
+sphere/sphere gap, and a rotated box/box gap. The boxes have sharp edges
+(Jolt convex radius zero). Run the reference-only cases from `Worktree/`:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/GeometryRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
+The runner checks separation and ray fractions against analytical values,
+and checks the axis-aligned witnesses and normals. Debug/Release Jolt results
+are recorded in `Worktree/.silex/physics3d-oracle/geometry-qualification.json`.
+Separated box faces can have many equally valid closest points; later Silex
+comparison must check surface membership and separation invariants instead
+of requiring identical coordinates for those witnesses. This reference-only
+runner does not claim Silex 3D query parity yet.

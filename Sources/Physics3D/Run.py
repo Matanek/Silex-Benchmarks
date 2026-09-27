@@ -82,11 +82,11 @@ def arguments(data):
     )]
 
 
-def parse_result(output):
+def parse_result(output, fields=FIELDS):
     result = {}
     for line in output.splitlines():
         key, separator, value = line.partition("=")
-        if separator != "=" or key not in FIELDS or key in result:
+        if separator != "=" or key not in fields or key in result:
             fail(f"invalid or duplicate result field: {line}")
         try:
             number = float(value)
@@ -95,8 +95,8 @@ def parse_result(output):
         if not math.isfinite(number):
             fail(f"non-finite result field: {key}")
         result[key] = number
-    if set(result) != set(FIELDS):
-        fail(f"missing result fields: {sorted(set(FIELDS) - set(result))}")
+    if set(result) != set(fields):
+        fail(f"missing result fields: {sorted(set(fields) - set(result))}")
     return result
 
 
@@ -112,8 +112,8 @@ def expected(data):
     )))
 
 
-def compare(actual, reference, tolerance):
-    for key in FIELDS:
+def compare(actual, reference, tolerance, fields=FIELDS):
+    for key in fields:
         if abs(actual[key] - reference[key]) > tolerance:
             fail(f"{key}: {actual[key]} differs from {reference[key]}")
 
@@ -181,12 +181,12 @@ def verified_source(archive_override):
     return source, digest
 
 
-def build_oracle(source, mode):
+def build_oracle(source, mode, oracle_source=HERE / "Oracle.cpp", stem="oracle"):
     directory = BUILD / f"jolt-{mode}"
     checked(["cmake", "-S", str(source / "Build"), "-B", str(directory),
              "-G", "Unix Makefiles", f"-DCMAKE_BUILD_TYPE={mode}", *CMAKE_OPTIONS])
     checked(["cmake", "--build", str(directory), "--target", "Jolt", "-j", "8"])
-    binary = BUILD / f"oracle-{mode.lower()}"
+    binary = BUILD / f"{stem}-{mode.lower()}"
     definitions = ["-DJPH_OBJECT_STREAM", "-DJPH_USE_CPU_COMPUTE"]
     if mode in ("Debug", "Release"):
         definitions += ["-DJPH_DEBUG_RENDERER", "-DJPH_PROFILE_ENABLED"]
@@ -198,7 +198,7 @@ def build_oracle(source, mode):
     checked([compiler, "-std=c++23", "-fno-rtti", "-fno-exceptions",
              *deployment,
              "-O0" if mode == "Debug" else "-O2", *definitions,
-             "-I", str(source), str(HERE / "Oracle.cpp"),
+             "-I", str(source), str(oracle_source),
              str(directory / "libJolt.a"), "-pthread", "-o", str(binary)])
     return binary
 
