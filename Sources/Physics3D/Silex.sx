@@ -1,3 +1,4 @@
+use GFX.Physics
 use STD.Math
 use STD.Process
 
@@ -62,20 +63,33 @@ func fixture() Fixture {
 func main() {
     let input = fixture()
     let rotation = Math.Quat.angle_axis(Math.pi() * 0.5, Math.Vec3.up())
-    let rotated = rotation.rotate(Math.Vec3.right())
-    let elapsed = input.steps as float * input.step_millis as float / 1000.0
-    let position = input.position + input.velocity * elapsed
     let inertia = 0.4 * input.mass as float *
         input.radius as float * input.radius as float
+    var world = Physics.World3D()
+    var body = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(input.radius as float))
+        ..transform = Physics.Transform3D(input.position, rotation)
+        ..linear_velocity = input.velocity
+        ..gravity_scale = 0.0
+        ..mass_properties = Physics.MassProperties3D(input.mass as float, Math.Vec3(inertia)))
+    let delta = input.step_millis as float / 1000.0
+    var step = 0
+    while step < input.steps {
+        world.step(delta)
+        step++
+    }
+    let position = body.world_center_of_mass()
+    let velocity = body.linear_velocity()
+    let rotated = body.rotation().rotate(Math.Vec3.right())
 
     print("position_x=$(position.x)")
     print("position_y=$(position.y)")
     print("position_z=$(position.z)")
-    print("velocity_x=$(input.velocity.x)")
-    print("velocity_y=$(input.velocity.y)")
-    print("velocity_z=$(input.velocity.z)")
+    print("velocity_x=$(velocity.x)")
+    print("velocity_y=$(velocity.y)")
+    print("velocity_z=$(velocity.z)")
     print("rotated_x=$(rotated.x)")
     print("rotated_y=$(rotated.y)")
     print("rotated_z=$(rotated.z)")
-    print("inertia_x=$(inertia)")
+    print("inertia_x=$(body.mass_properties().local_inertia.x)")
 }

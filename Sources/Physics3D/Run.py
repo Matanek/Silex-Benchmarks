@@ -251,7 +251,7 @@ def main():
     }
     for mode in (("Debug", "Release") if options.mode == "both" else (options.mode,)):
         oracle = build_oracle(source, mode)
-        silex = build_silex(mode)
+        silex = build_silex(mode, physics=True)
         configuration = checked([str(oracle), "--configuration"]).strip()
         if not configuration.startswith("Single precision "):
             fail(f"incompatible Jolt precision: {configuration}")
