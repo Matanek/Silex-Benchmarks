@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "id": "equal-spheres-head-on-v1",
+  "oracle_revision": "e77f175595e64cb44218cc9d9d56fc365ad0e36a",
+  "radius_mm": 500,
+  "center_mm": 500,
+  "speed_mm_s": 2000,
+  "step_ms": 250,
+  "absolute_tolerance": 0.0001
+}

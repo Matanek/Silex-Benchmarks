@@ -1,0 +1,63 @@
+use GFX.Physics
+use STD.Math
+use STD.Process
+
+struct Fixture {
+    var radius:float
+    var center:float
+    var speed:float
+    var delta:float
+}
+
+func positive(value:str) int {
+    if value.count() == 0 { panic("empty physics3d contact fixture argument") }
+    var result = 0
+    for scalar in value {
+        if scalar < 48 || scalar > 57 {
+            panic("invalid physics3d contact fixture argument")
+        }
+        let digit = (scalar - 48) as int
+        if result > (9223372036854775807 - digit) / 10 {
+            panic("physics3d contact fixture argument overflow")
+        }
+        result = result * 10 + digit
+    }
+    if result <= 0 { panic("physics3d contact fixture argument must be positive") }
+    return result
+}
+
+func fixture() Fixture {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() != 5 {
+                panic("expected four physics3d contact fixture arguments")
+            }
+            return Fixture(
+                radius:(positive(arguments[1]) as float) / 1000.0,
+                center:(positive(arguments[2]) as float) / 1000.0,
+                speed:(positive(arguments[3]) as float) / 1000.0,
+                delta:(positive(arguments[4]) as float) / 1000.0
+            )
+        }
+    }
+}
+
+func main() {
+    let input = fixture()
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var first = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(input.radius))
+        ..transform = Physics.Transform3D(position:Math.Vec3(-input.center, 0.0, 0.0))
+        ..linear_velocity = Math.Vec3(input.speed, 0.0, 0.0))
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(input.radius))
+        ..transform = Physics.Transform3D(position:Math.Vec3(input.center, 0.0, 0.0))
+        ..linear_velocity = Math.Vec3(-input.speed, 0.0, 0.0))
+    world.step(input.delta)
+    assert(world.contact_count() == 1)
+    print("first_x=$(first.position().x)")
+    print("second_x=$(second.position().x)")
+    print("first_vx=$(first.linear_velocity().x)")
+    print("second_vx=$(second.linear_velocity().x)")
+}
