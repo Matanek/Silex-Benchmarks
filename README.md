@@ -42,6 +42,7 @@ source root and declares every dependency required by the catalog.
 | [FallingBodies2D/](Sources/FallingBodies2D/README.md) | jointly load 2D physics, transform transfer, and rendering; explicit equal-work qualification |
 | `WorldRendering3D/` | measure an instanced 3D world across several GPU and presentation profiles |
 | `PhysicsWorldScale2D.sx` | measure sparse motion and body piles at several scales |
+| [Physics3D/](Sources/Physics3D/README.md) | qualify the first 3D math and free-motion witness against pinned Jolt and an analytical result |
 | `RetainedCanvasGeometry.sx` | compile dense retained Canvas geometry |
 | `AnimatingCanvasGeometry.sx` | update animated circles and lines through reusable Canvas preparation |
 | `DynamicCanvasShadows2D.sx` | compare dynamic retained Canvas placements without shadows and with analytic shadows |

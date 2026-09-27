@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "id": "free-sphere-y-quarter-turn-v1",
+  "oracle_revision": "e77f175595e64cb44218cc9d9d56fc365ad0e36a",
+  "radius": 2,
+  "mass": 5,
+  "position": [1, 2, 3],
+  "velocity": [2, 0, 1],
+  "steps": 4,
+  "step_millis": 250,
+  "absolute_tolerance": 0.00001
+}

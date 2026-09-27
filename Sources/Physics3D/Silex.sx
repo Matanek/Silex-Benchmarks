@@ -1,0 +1,81 @@
+use STD.Math
+use STD.Process
+
+struct Fixture {
+    var radius:int
+    var mass:int
+    var position:Math.Vec3
+    var velocity:Math.Vec3
+    var steps:int
+    var step_millis:int
+}
+
+func parse_nonnegative(value:str) int {
+    if value.count() == 0 { panic("empty physics3d fixture argument") }
+    var result = 0
+    for scalar in value {
+        if scalar < 48 || scalar > 57 {
+            panic("invalid physics3d fixture argument")
+        }
+        let digit = (scalar - 48) as int
+        if result > (9223372036854775807 - digit) / 10 {
+            panic("physics3d fixture argument overflow")
+        }
+        result = result * 10 + digit
+    }
+    return result
+}
+
+func positive(value:str) int {
+    let result = parse_nonnegative(value)
+    if result == 0 { panic("physics3d fixture argument must be positive") }
+    return result
+}
+
+func fixture() Fixture {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() != 11 {
+                panic("expected ten physics3d fixture arguments")
+            }
+            return Fixture(
+                radius:positive(arguments[1]),
+                mass:positive(arguments[2]),
+                position:Math.Vec3(
+                    parse_nonnegative(arguments[3]) as float,
+                    parse_nonnegative(arguments[4]) as float,
+                    parse_nonnegative(arguments[5]) as float
+                ),
+                velocity:Math.Vec3(
+                    parse_nonnegative(arguments[6]) as float,
+                    parse_nonnegative(arguments[7]) as float,
+                    parse_nonnegative(arguments[8]) as float
+                ),
+                steps:positive(arguments[9]),
+                step_millis:positive(arguments[10])
+            )
+        }
+    }
+}
+
+func main() {
+    let input = fixture()
+    let rotation = Math.Quat.angle_axis(Math.pi() * 0.5, Math.Vec3.up())
+    let rotated = rotation.rotate(Math.Vec3.right())
+    let elapsed = input.steps as float * input.step_millis as float / 1000.0
+    let position = input.position + input.velocity * elapsed
+    let inertia = 0.4 * input.mass as float *
+        input.radius as float * input.radius as float
+
+    print("position_x=$(position.x)")
+    print("position_y=$(position.y)")
+    print("position_z=$(position.z)")
+    print("velocity_x=$(input.velocity.x)")
+    print("velocity_y=$(input.velocity.y)")
+    print("velocity_z=$(input.velocity.z)")
+    print("rotated_x=$(rotated.x)")
+    print("rotated_y=$(rotated.y)")
+    print("rotated_z=$(rotated.z)")
+    print("inertia_x=$(inertia)")
+}
