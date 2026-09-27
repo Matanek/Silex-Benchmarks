@@ -1,0 +1,106 @@
+use GFX.Physics
+use STD.Math
+use STD.Process
+
+func fixture_integer(value:str) int {
+    var result = 0
+    var negative = false
+    var count = 0
+    for scalar in value {
+        if count == 0 && scalar == 45 {
+            negative = true
+        } else {
+            if scalar < 48 || scalar > 57 {
+                panic("invalid physics3d geometry fixture argument")
+            }
+            let digit = (scalar - 48) as int
+            if result > (9223372036854775807 - digit) / 10 {
+                panic("physics3d geometry fixture argument overflow")
+            }
+            result = result * 10 + digit
+        }
+        count++
+    }
+    if count == 0 || (negative && count == 1) {
+        panic("empty physics3d geometry fixture argument")
+    }
+    if negative { return -result }
+    return result
+}
+
+func fixture_shape(name:str) Physics.Shape3D {
+    if name == "sphere" {
+        return Physics.Shape3D.sphere(Physics.Sphere3D(1.0))
+    }
+    if name == "box" {
+        return Physics.Shape3D.box(Physics.Box3D(Math.Vec3(2.0)))
+    }
+    panic("unknown physics3d geometry fixture shape")
+}
+
+func run(arguments:str[]) {
+    if arguments.count() != 11 {
+        panic("expected ten physics3d geometry fixture arguments")
+    }
+    let first_x = fixture_integer(arguments[3]) as float / 1000.0
+    let second_x = fixture_integer(arguments[4]) as float / 1000.0
+    let second_degrees = fixture_integer(arguments[5])
+    let second_axis = Math.Vec3(
+        fixture_integer(arguments[6]) as float,
+        fixture_integer(arguments[7]) as float,
+        fixture_integer(arguments[8]) as float
+    )
+    if second_degrees < 0 || second_degrees > 360 {
+        panic("invalid physics3d geometry fixture rotation")
+    }
+    if second_axis.length_squared() <= 0.0 {
+        panic("invalid physics3d geometry fixture axis")
+    }
+    let ray_origin_x = fixture_integer(arguments[9]) as float / 1000.0
+    let ray_delta_x = fixture_integer(arguments[10]) as float / 1000.0
+    if ray_delta_x <= 0.0 {
+        panic("invalid physics3d geometry fixture ray")
+    }
+
+    let first = Physics.ShapePlacement3D(
+        fixture_shape(arguments[1]),
+        Physics.Transform3D(position:Math.Vec3(first_x, 0.0, 0.0))
+    )
+    let second = Physics.ShapePlacement3D(
+        fixture_shape(arguments[2]),
+        Physics.Transform3D(
+            position:Math.Vec3(second_x, 0.0, 0.0),
+            rotation:Math.Quat.angle_axis(
+                second_degrees as float * Math.pi() / 180.0,
+                second_axis
+            )
+        )
+    )
+    let distance = Physics.Geometry3D.distance(first, second)
+    let hit = Physics.Geometry3D.ray_cast(
+        Physics.Ray3D(
+            Math.Vec3(ray_origin_x, 0.0, 0.0),
+            Math.Vec3(ray_delta_x, 0.0, 0.0)
+        ),
+        second
+    )
+    if !hit.hit { panic("geometry fixture ray missed target") }
+    print("separation=$(distance.separation)")
+    print("first_point_x=$(distance.first_point.x)")
+    print("first_point_y=$(distance.first_point.y)")
+    print("first_point_z=$(distance.first_point.z)")
+    print("second_point_x=$(distance.second_point.x)")
+    print("second_point_y=$(distance.second_point.y)")
+    print("second_point_z=$(distance.second_point.z)")
+    print("normal_x=$(distance.normal.x)")
+    print("normal_y=$(distance.normal.y)")
+    print("normal_z=$(distance.normal.z)")
+    print("ray_fraction=$(hit.fraction)")
+}
+
+func main() {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => { run(arguments) }
+    }
+}

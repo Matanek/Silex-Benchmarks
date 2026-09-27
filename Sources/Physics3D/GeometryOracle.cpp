@@ -21,11 +21,11 @@ namespace Physics3D {
 struct Fixture {
     std::string_view first;
     std::string_view second;
-    std::array<int, 5> scalars;
+    std::array<int, 8> scalars;
 };
 
 bool parseFixture(int count, char** values, Fixture& fixture) {
-    if (count != 8) return false;
+    if (count != 11) return false;
     fixture.first = values[1];
     fixture.second = values[2];
     if ((fixture.first != "sphere" && fixture.first != "box") ||
@@ -37,7 +37,8 @@ bool parseFixture(int count, char** values, Fixture& fixture) {
         if (result.ec != std::errc{} || result.ptr != end) return false;
     }
     return fixture.scalars[2] >= 0 && fixture.scalars[2] <= 360 &&
-        fixture.scalars[4] > 0;
+        (fixture.scalars[3] != 0 || fixture.scalars[4] != 0 ||
+         fixture.scalars[5] != 0) && fixture.scalars[7] > 0;
 }
 
 void printVector(std::string_view name, JPH::Vec3Arg vector) {
@@ -61,9 +62,12 @@ int run(const Fixture& fixture) {
     const auto secondX = static_cast<float>(fixture.scalars[1]) / 1000.0f;
     const auto angle = static_cast<float>(fixture.scalars[2]) *
         std::numbers::pi_v<float> / 180.0f;
+    const auto axis = JPH::Vec3(
+        fixture.scalars[3], fixture.scalars[4], fixture.scalars[5]
+    ).Normalized();
     const auto firstTransform = JPH::Mat44::sTranslation(JPH::Vec3(firstX, 0, 0));
     const auto secondTransform = JPH::Mat44::sRotationTranslation(
-        JPH::Quat::sRotation(JPH::Vec3::sAxisY(), angle),
+        JPH::Quat::sRotation(axis, angle),
         JPH::Vec3(secondX, 0, 0)
     );
     JPH::CollideShapeSettings settings;
@@ -78,8 +82,8 @@ int run(const Fixture& fixture) {
     const auto& hit = collector.mHit;
 
     const JPH::RayCast worldRay(
-        JPH::Vec3(static_cast<float>(fixture.scalars[3]) / 1000.0f, 0, 0),
-        JPH::Vec3(static_cast<float>(fixture.scalars[4]) / 1000.0f, 0, 0)
+        JPH::Vec3(static_cast<float>(fixture.scalars[6]) / 1000.0f, 0, 0),
+        JPH::Vec3(static_cast<float>(fixture.scalars[7]) / 1000.0f, 0, 0)
     );
     const auto localRay = worldRay.Transformed(
         secondTransform.InversedRotationTranslation()

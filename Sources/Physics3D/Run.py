@@ -203,17 +203,23 @@ def build_oracle(source, mode, oracle_source=HERE / "Oracle.cpp", stem="oracle")
     return binary
 
 
-def build_silex(mode):
+def build_silex(mode, program="Silex.sx", stem="silex", physics=False):
     standard = PROJECT / "Packages" / "STD"
     checked(["silex", "link", str(standard), "--workspace", str(GROUP)])
+    if physics:
+        physics_source = GROUP / "Packages" / "GFX.Physics"
+        checked(["silex", "link", str(physics_source), "--workspace", str(GROUP)])
+    source_path = f"Silex-Benchmarks/Sources/Physics3D/{program}"
     resolved = checked(["silex", "packages", "resolve",
-                        "Silex-Benchmarks/Sources/Physics3D/Silex.sx"])
+                        source_path])
     if f"STD 0.22.0 workspace-link {standard}" not in resolved:
         fail("STD does not resolve to the intended workspace source")
-    binary = BUILD / f"silex-{mode.lower()}"
+    if physics and f"GFX.Physics 0.7.0 workspace-link {physics_source}" not in resolved:
+        fail("GFX.Physics does not resolve to the Spec lane")
+    binary = BUILD / f"{stem}-{mode.lower()}"
     environment = os.environ.copy()
     environment["ZIG_GLOBAL_CACHE_DIR"] = str(GROUP / ".silex" / "zig")
-    checked(["silex", "compile", "Silex-Benchmarks/Sources/Physics3D/Silex.sx",
+    checked(["silex", "compile", source_path,
              "--debug" if mode == "Debug" else "--release",
              "--output", str(binary)], environment=environment)
     return binary

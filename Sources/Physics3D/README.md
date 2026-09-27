@@ -43,20 +43,21 @@ distributed Silex binary.
 
 ## Geometry reference cases
 
-`GeometryFixture.json` fixes five shape-pair cases before the Silex 3D query
-implementation: separated, touching and overlapping sphere/box pairs, a
-sphere/sphere gap, and a rotated box/box gap. The boxes have sharp edges
-(Jolt convex radius zero). Run the reference-only cases from `Worktree/`:
+`GeometryFixture.json` fixes eight shape-pair cases: separated, touching and
+overlapping sphere/box pairs, a sphere/sphere gap, rotated box/box gaps, and
+oblique configurations. The boxes have sharp edges
+(Jolt convex radius zero). Run the comparison from `Worktree/`:
 
 ```sh
 python3 Silex-Benchmarks/Sources/Physics3D/GeometryRun.py \
   --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
 ```
 
-The runner checks separation and ray fractions against analytical values,
-and checks the axis-aligned witnesses and normals. Debug/Release Jolt results
-are recorded in `Worktree/.silex/physics3d-oracle/geometry-qualification.json`.
-Separated box faces can have many equally valid closest points; later Silex
-comparison must check surface membership and separation invariants instead
-of requiring identical coordinates for those witnesses. This reference-only
-runner does not claim Silex 3D query parity yet.
+The runner checks Jolt separation and ray fractions against analytical values,
+then checks the Silex package's separation, normals, rays and witnesses against
+Jolt and geometric invariants. Debug/Release results for both programs are
+recorded in `Worktree/.silex/physics3d-oracle/geometry-qualification.json`.
+Separated box faces can have many equally valid closest points; the Silex
+comparison checks surface membership and separation invariants instead
+of requiring identical coordinates for those witnesses. This corpus qualifies
+only the listed sphere and box cases; it does not qualify a 3D physics world.
