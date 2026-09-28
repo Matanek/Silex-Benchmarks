@@ -1,0 +1,32 @@
+use GFX.Physics
+use STD.Math
+
+func main() {
+    let compound = Physics.ShapePlacement3D(
+        Physics.Shape3D.compound(Physics.Compound3D([
+            Physics.CompoundChild3D(11,
+                Physics.Shape3D.sphere(Physics.Sphere3D(0.5)),
+                Physics.Transform3D(position:Math.Vec3(-2.0, 0.0, 0.0))),
+            Physics.CompoundChild3D(22,
+                Physics.Shape3D.sphere(Physics.Sphere3D(0.5)),
+                Physics.Transform3D(position:Math.Vec3(2.0, 0.0, 0.0)))
+        ])),
+        Physics.Transform3D(rotation:Math.Quat.angle_axis(
+            Math.half_pi(), Math.Vec3.up()
+        ))
+    )
+    let probe = Physics.ShapePlacement3D(
+        Physics.Shape3D.sphere(Physics.Sphere3D(0.5)),
+        Physics.Transform3D(position:Math.Vec3(0.0, 0.0, -3.25))
+    )
+    let distance = Physics.Geometry3D.distance(probe, compound)
+    let hit = Physics.Geometry3D.ray_cast(
+        Physics.Ray3D(Math.Vec3(0.0, 0.0, -5.0),
+            Math.Vec3(0.0, 0.0, 5.0)), compound
+    )
+    assert(hit.hit)
+    print("separation=$(distance.separation)")
+    print("collision_child=$(distance.second_child_id)")
+    print("ray_fraction=$(hit.fraction)")
+    print("ray_child=$(hit.child_id)")
+}
