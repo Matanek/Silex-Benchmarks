@@ -1,0 +1,23 @@
+use GFX.Physics
+use STD.Math
+
+func main() {
+    var world = Physics.World3D()
+    world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..transform = Physics.Transform3D(position:Math.Vec3(4.0, 0.0, 0.0)))
+    var near = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..transform = Physics.Transform3D(position:Math.Vec3(2.0, 0.0, 0.0)))
+    var hit = world.ray_cast(Physics.Ray3D(Math.Vec3(), Math.Vec3(6.0, 0.0, 0.0)))
+    if let selected = hit {
+        print("near_fraction=$(selected.fraction())")
+        if selected.body().same_body(near) {
+            print("near_selected=1")
+        } else {
+            print("near_selected=0")
+        }
+    } else {
+        panic("world ray did not select a body")
+    }
+}

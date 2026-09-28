@@ -116,3 +116,8 @@ python3 Silex-Benchmarks/Sources/Physics3D/PointRun.py \
 The point fixture checks anchor error, support reaction, pendulum motion, and
 the pendulum's horizontal position within 0.05 world units after two seconds.
 It does not qualify every joint configuration or the per-iteration solver path.
+
+`WorldQueryRun.py` checks that a world ray selects the near sphere even though
+the far sphere was created first. It compares body identity and hit fraction
+`0.25` with Jolt in Debug and Release. Consumer tests cover multiple hits,
+compound child IDs, overlaps, exclusions, and retained results separately.
