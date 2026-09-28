@@ -99,3 +99,20 @@ python3 Silex-Benchmarks/Sources/Physics3D/CapsuleRun.py \
 
 This fixture qualifies the listed capsule/box feature, not all capsule pairs
 or contacts during motion.
+
+## Rigid distance and point constraints
+
+`DistanceRun.py` compares a body suspended at a fixed length with Jolt in
+Debug and Release. `PointRun.py` compares a body suspended at a coincident
+anchor and a separate pendulum with an off-center local anchor. Both runs
+require the pinned archive and write their measurements under
+`Worktree/.silex/physics3d-oracle/`:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/PointRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
+The point fixture checks anchor error, support reaction, pendulum motion, and
+the pendulum's horizontal position within 0.05 world units after two seconds.
+It does not qualify every joint configuration or the per-iteration solver path.

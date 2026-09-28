@@ -1,0 +1,34 @@
+use GFX.Physics
+use STD.Math
+
+func main() {
+    var world = Physics.World3D()
+    var anchor = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..transform = Physics.Transform3D(position:Math.Vec3(0.0, 2.0, 0.0)))
+    var weight = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform = Physics.Transform3D(position:Math.Vec3(0.0, 1.0, 0.0))
+        ..allow_sleep = false)
+    var settings = Physics.PointConstraint3DSettings()
+    settings.second_local_anchor = Math.Vec3(0.0, 1.0, 0.0)
+    var joint = world.create_point_constraint(anchor, weight, settings)
+    var pivot = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..transform = Physics.Transform3D(position:Math.Vec3(10.0, 3.0, 0.0)))
+    var pendulum = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform = Physics.Transform3D(position:Math.Vec3(11.0, 1.0, 0.0))
+        ..allow_sleep = false)
+    var pendulum_settings = Physics.PointConstraint3DSettings()
+    pendulum_settings.second_local_anchor = Math.Vec3(-1.0, 2.0, 0.0)
+    var pendulum_joint = world.create_point_constraint(pivot, pendulum, pendulum_settings)
+    var step = 0
+    while step < 120 {
+        world.step(1.0 / 60.0)
+        step++
+    }
+    print("anchor_error=$(joint.anchor_error().length())")
+    print("height=$(weight.position().y)")
+    print("reaction_weight_ratio=$(Math.abs(joint.reaction_force().y) / (weight.mass_properties().mass * 9.81))")
+    print("pendulum_error=$(pendulum_joint.anchor_error().length())")
+    print("pendulum_x=$(pendulum.position().x - 10.0)")
+}
