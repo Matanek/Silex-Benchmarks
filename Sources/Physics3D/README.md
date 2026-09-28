@@ -3,8 +3,9 @@
 This witness compares a native Silex program with an independently built
 [Jolt Physics v5.6.0](https://github.com/jrouwe/JoltPhysics/releases/tag/v5.6.0)
 oracle and an analytical result. It checks a quarter turn around Y, a solid
-sphere's inertia, and a freely moving body with zero gravity and damping. It
-does not qualify collision handling or a Silex 3D physics world.
+sphere's inertia, and a freely moving body with zero gravity and damping.
+Separate fixtures below qualify bounded contact and sleep behaviors of the
+Silex 3D world.
 
 From the `Jolt-3D-Physics` Spec's `Worktree/` directory, run:
 
@@ -61,3 +62,25 @@ Separated box faces can have many equally valid closest points; the Silex
 comparison checks surface membership and separation invariants instead
 of requiring identical coordinates for those witnesses. This corpus qualifies
 only the listed sphere and box cases; it does not qualify a 3D physics world.
+
+## World contact and sleep cases
+
+`ContactRun.py` compares inelastic and elastic head-on sphere contacts with
+the pinned Jolt oracle in Debug and Release. It checks outgoing velocities
+and bounds positions while allowing the documented difference in when each
+engine advances the response within a step.
+
+`SleepRun.py` starts one active sphere with no gravity or damping, advances
+120 steps of 1/60 second, then commands unit velocity. It compares the first
+sleeping step within two steps and requires both engines to wake immediately
+with the commanded velocity. The observed pinned result is step 30 in Debug
+and Release for both engines. Run it from `Worktree/`:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/SleepRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
+These fixtures qualify their named cases, not arbitrary stacks, materials or
+sleep thresholds. Results are saved under
+`Worktree/.silex/physics3d-oracle/`.

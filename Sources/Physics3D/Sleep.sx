@@ -1,0 +1,21 @@
+use GFX.Physics
+use STD.Math
+
+func main() {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var body = world.create_rigid_body()
+    var sleep_step = 0
+    var step = 1
+    while step <= 120 {
+        world.step(1.0 / 60.0)
+        if sleep_step == 0 && !body.is_awake() { sleep_step = step }
+        step++
+    }
+    body.set_linear_velocity(Math.Vec3(1.0, 0.0, 0.0))
+    var awake = 0
+    if body.is_awake() { awake = 1 }
+    world.step(1.0 / 60.0)
+    print("sleep_step=$(sleep_step)")
+    print("awake_after_command=$(awake)")
+    print("velocity_after_wake=$(body.linear_velocity().x)")
+}
