@@ -84,3 +84,18 @@ python3 Silex-Benchmarks/Sources/Physics3D/SleepRun.py \
 These fixtures qualify their named cases, not arbitrary stacks, materials or
 sleep thresholds. Results are saved under
 `Worktree/.silex/physics3d-oracle/`.
+
+## Rotated capsule against a box
+
+`CapsuleRun.py` compares three separated, tangent and overlapping positions
+of a capsule rotated 30 degrees against a sharp box. Jolt, Silex and the
+analytical side-contact construction must agree within `0.0001` on separation,
+normal and witness points in Debug and Release:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/CapsuleRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
+This fixture qualifies the listed capsule/box feature, not all capsule pairs
+or contacts during motion.

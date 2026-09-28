@@ -1,0 +1,25 @@
+use GFX.Physics
+use STD.Math
+
+func main() {
+    let rotation = Math.Quat.angle_axis(Math.pi() / 6.0, Math.Vec3.back())
+    let box = Physics.ShapePlacement3D(
+        Physics.Shape3D.box(Physics.Box3D(Math.Vec3(2.0)))
+    )
+    for center_mm in [1600, 1500, 1400] {
+        let capsule = Physics.ShapePlacement3D(
+            Physics.Shape3D.capsule(Physics.Capsule3D(0.25, 0.5)),
+            Physics.Transform3D(
+                position:Math.Vec3(center_mm as float / 1000.0, 0.0, 0.0),
+                rotation:rotation
+            )
+        )
+        let result = Physics.Geometry3D.distance(capsule, box)
+        print("separation_$(center_mm)=$(result.separation)")
+        print("first_x_$(center_mm)=$(result.first_point.x)")
+        print("first_y_$(center_mm)=$(result.first_point.y)")
+        print("second_x_$(center_mm)=$(result.second_point.x)")
+        print("second_y_$(center_mm)=$(result.second_point.y)")
+        print("normal_x_$(center_mm)=$(result.normal.x)")
+    }
+}
