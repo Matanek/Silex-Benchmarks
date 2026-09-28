@@ -1,0 +1,31 @@
+use GFX.Physics
+use STD.Math
+
+func counts(
+    world:Physics.World3D,
+    phase:str
+) {
+    var begins:Physics.Contact3D[] = []
+    var ends:Physics.Contact3D[] = []
+    world.write_contact_begin_events(begins)
+    world.write_contact_end_events(ends)
+    print("$(phase)_added=$(begins.count())")
+    print("$(phase)_persisted=$(world.contact_count() - begins.count())")
+    print("$(phase)_removed=$(ends.count())")
+}
+
+func main() {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var fixed = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed)
+    world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..allow_sleep = false
+        ..transform = Physics.Transform3D(position:Math.Vec3(0.9, 0.0, 0.0)))
+    world.step(1.0 / 60.0)
+    counts(world, "entry")
+    world.step(1.0 / 60.0)
+    counts(world, "stay")
+    world.destroy_rigid_body(fixed)
+    world.step(1.0 / 60.0)
+    counts(world, "destroy")
+}
