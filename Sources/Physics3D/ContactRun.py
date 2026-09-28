@@ -15,8 +15,8 @@ from Run import (BUILD, GROUP, HERE, REFERENCE, build_oracle, build_silex,
 FIELDS = ("first_x", "second_x", "first_vx", "second_vx")
 
 
-def fixture():
-    with (HERE / "ContactFixture.json").open(encoding="utf-8") as stream:
+def fixture(path):
+    with path.open(encoding="utf-8") as stream:
         data = json.load(stream)
     if data.get("schema") != 1 or data.get("oracle_revision") != REFERENCE:
         fail("contact fixture schema or Jolt revision differs")
@@ -26,6 +26,9 @@ def fixture():
             fail(f"invalid contact fixture field: {name}")
     if data["center_mm"] != data["radius_mm"]:
         fail("contact fixture must start at first tangency")
+    restitution = data.get("restitution_permille")
+    if type(restitution) is not int or not 0 <= restitution <= 1000:
+        fail("invalid contact restitution")
     tolerance = data.get("absolute_tolerance")
     if type(tolerance) not in (int, float) or not math.isfinite(tolerance) or not 0 < tolerance < 0.001:
         fail("invalid contact tolerance")
@@ -40,14 +43,15 @@ def main():
     if Path.cwd().resolve() != GROUP:
         fail(f"run from the Spec worktree group: {GROUP}")
     self_test()
-    data = fixture()
+    cases = [fixture(HERE / name) for name in
+             ("ContactFixture.json", "ContactElasticFixture.json")]
+    if [case["id"] for case in cases] != [
+        "equal-spheres-head-on-v1", "equal-spheres-elastic-v1"
+    ]:
+        fail("unexpected contact fixture identities")
     source, digest = verified_source(options.archive)
-    arguments = [str(data[name]) for name in
-                 ("radius_mm", "center_mm", "speed_mm_s", "step_ms")]
-    expected = {"first_x": -data["radius_mm"] / 1000,
-                "second_x": data["radius_mm"] / 1000,
-                "first_vx": 0.0, "second_vx": 0.0}
-    record = {"schema": 1, "fixture": data["id"], "oracle_revision": REFERENCE,
+    record = {"schema": 1, "fixtures": [case["id"] for case in cases],
+              "oracle_revision": REFERENCE,
               "archive_sha256": digest, "modes": {}}
     for mode in (("Debug", "Release") if options.mode == "both" else (options.mode,)):
         oracle = build_oracle(source, mode, HERE / "ContactOracle.cpp", "contact-oracle")
@@ -55,15 +59,36 @@ def main():
         configuration = checked([str(oracle), "--configuration"]).strip()
         if not configuration.startswith("Single precision "):
             fail(f"incompatible Jolt precision: {configuration}")
-        actual = parse_result(checked([str(oracle), *arguments]), FIELDS)
-        silex = parse_result(checked([str(candidate), *arguments]), FIELDS)
-        compare(actual, expected, data["absolute_tolerance"], FIELDS)
-        compare(silex, expected, data["absolute_tolerance"], FIELDS)
-        compare(silex, actual, data["absolute_tolerance"], FIELDS)
+        results = {}
+        for case in cases:
+            arguments = [str(case[name]) for name in (
+                "radius_mm", "center_mm", "speed_mm_s", "step_ms",
+                "restitution_permille"
+            )]
+            rebound = case["speed_mm_s"] * case["restitution_permille"] / 1_000_000
+            radius = case["radius_mm"] / 1000
+            advance = rebound * case["step_ms"] / 1000
+            expected_jolt = {"first_x": -radius - advance,
+                             "second_x": radius + advance,
+                             "first_vx": -rebound, "second_vx": rebound}
+            actual = parse_result(checked([str(oracle), *arguments]), FIELDS)
+            silex = parse_result(checked([str(candidate), *arguments]), FIELDS)
+            compare(actual, expected_jolt, case["absolute_tolerance"], FIELDS)
+            compare(silex, actual, case["absolute_tolerance"],
+                    ("first_vx", "second_vx"))
+            tolerance = case["absolute_tolerance"]
+            if not -radius - advance - tolerance <= silex["first_x"] <= -radius + tolerance:
+                fail(f"{case['id']}: first Silex sphere violates contact position bounds")
+            if not radius - tolerance <= silex["second_x"] <= radius + advance + tolerance:
+                fail(f"{case['id']}: second Silex sphere violates contact position bounds")
+            if abs(silex["first_x"] + silex["second_x"]) > tolerance:
+                fail(f"{case['id']}: asymmetric Silex contact response")
+            results[case["id"]] = {"oracle": actual, "silex": silex,
+                                   "analytical_jolt": expected_jolt,
+                                   "silex_position_bound": [radius, radius + advance]}
         record["modes"][mode] = {"jolt_configuration": configuration,
-                                 "oracle": actual, "silex": silex,
-                                 "analytical": expected}
-        print(f"physics3d contact {mode}: Jolt, Silex and analytical witness agree")
+                                 "cases": results}
+        print(f"physics3d contact {mode}: {len(cases)} velocity comparisons and position bounds agree")
     (BUILD / "contact-qualification.json").write_text(
         json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )

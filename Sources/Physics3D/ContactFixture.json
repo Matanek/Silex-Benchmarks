@@ -6,5 +6,6 @@
   "center_mm": 500,
   "speed_mm_s": 2000,
   "step_ms": 250,
+  "restitution_permille": 0,
   "absolute_tolerance": 0.0001
 }

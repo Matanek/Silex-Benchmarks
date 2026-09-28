@@ -24,26 +24,29 @@ struct Fixture {
     int centerMillimeters;
     int speedMillimetersPerSecond;
     int stepMilliseconds;
+    int restitutionPermille;
 };
 
 // -----------------------------------------------------------------------------
 
-bool parsePositive(const char* text, int& value) {
+bool parsePositive(const char* text, int& value, bool allowZero = false) {
     const auto* end = text + std::char_traits<char>::length(text);
     const auto parsed = std::from_chars(text, end, value);
-    return parsed.ec == std::errc{} && parsed.ptr == end && value > 0;
+    return parsed.ec == std::errc{} && parsed.ptr == end &&
+        (value > 0 || (allowZero && value == 0));
 }
 
 bool parseFixture(int count, char** values, Fixture& fixture) {
-    if (count != 5) return false;
-    std::array<int*, 4> fields {
+    if (count != 6) return false;
+    std::array<int*, 5> fields {
         &fixture.radiusMillimeters, &fixture.centerMillimeters,
-        &fixture.speedMillimetersPerSecond, &fixture.stepMilliseconds
+        &fixture.speedMillimetersPerSecond, &fixture.stepMilliseconds,
+        &fixture.restitutionPermille
     };
     for (std::size_t index = 0; index < fields.size(); ++index) {
-        if (!parsePositive(values[index + 1], *fields[index])) return false;
+        if (!parsePositive(values[index + 1], *fields[index], index == 4)) return false;
     }
-    return true;
+    return fixture.restitutionPermille <= 1000;
 }
 
 // -----------------------------------------------------------------------------
@@ -67,6 +70,7 @@ int run(const Fixture& fixture) {
     const auto center = fixture.centerMillimeters / 1000.0f;
     const auto speed = fixture.speedMillimetersPerSecond / 1000.0f;
     const auto delta = fixture.stepMilliseconds / 1000.0f;
+    const auto restitution = fixture.restitutionPermille / 1000.0f;
     JPH::RefConst<JPH::SphereShape> sphere = new JPH::SphereShape(radius);
     JPH::BodyCreationSettings firstSettings(
         sphere, JPH::RVec3(-center, 0.0, 0.0), JPH::Quat::sIdentity(),
@@ -82,6 +86,8 @@ int run(const Fixture& fixture) {
     secondSettings.mAngularDamping = 0.0f;
     firstSettings.mFriction = 0.0f;
     secondSettings.mFriction = 0.0f;
+    firstSettings.mRestitution = restitution;
+    secondSettings.mRestitution = restitution;
 
     auto& bodies = world.GetBodyInterface();
     const auto first = bodies.CreateAndAddBody(firstSettings, JPH::EActivation::Activate);
