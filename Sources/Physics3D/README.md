@@ -171,3 +171,39 @@ policy difference in both modes rather than claiming exact parity.
 one step overlaps a fixed wall halfway through the turn but has no contact at
 the endpoint. It demonstrates the documented translation-only limit; the
 current continuous sweep does not claim rotation-only impacts.
+
+## 3D world scale and contact load
+
+`WorldScale.sx` measures only physics, with a fixed 1/60-second step and no
+renderer. `sparse` places separated spheres in zero gravity, `bin` drops
+spheres into a fixed floor and four walls, and `column` settles a staggered
+4-by-4 tower of small boxes on a wide floor. Each run reports creation time,
+total and maximum step time, contact counts, a position checksum and the
+minimum body-center height. The executable rejects non-finite poses, missing
+contacts in contact scenarios and bodies beyond its collision bounds.
+
+From the workspace root or the Spec's `Worktree/` root, run the Release
+campaign with the compiler selected for that checkout:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/WorldScaleRun.py \
+  --silex Silex/Toolchain/zig-out/bin/silex
+```
+
+The campaign compiles once, warms six fixed workloads, then runs seven
+Release processes per workload in alternating order. It verifies identical
+contacts and checksums across repetitions and saves each raw result, median,
+minimum, maximum and MAD to `.silex/physics3d-world-scale-campaign.json`.
+The default cases are 1,024 sparse spheres; 256, 512 and 1,024 bin spheres;
+and 128- and 256-box columns, each for 60 steps. Both columns must keep their
+box centers above the floor guard. The campaign measures simulation time only
+and makes no claim about window FPS, rendering cost or Jolt parity.
+
+On the measured macOS ARM64 host, seven-run Release medians for this candidate
+are 0.96 ms/step for 1,024 sparse spheres, 2.57/5.73/11.67 ms/step for
+256/512/1,024 bin spheres, and 14.18/28.80 ms/step for 128/256 boxes. The
+raw results and timing dispersion are in
+`Baselines/2026-09-29-iterative-position-macos-arm64.json`. The earlier
+`pre-sweep` and `sweep` records isolate the pair-search gain; the final
+position solver changes contact counts and poses, so only the final record
+qualifies the current engine.

@@ -1,0 +1,185 @@
+use GFX.Physics
+use STD.Math
+use STD.Process
+use STD.Time.Clock
+
+func count_argument(value:str) int {
+    if value == "32" { return 32 }
+    if value == "64" { return 64 }
+    if value == "128" { return 128 }
+    if value == "256" { return 256 }
+    if value == "512" { return 512 }
+    if value == "1024" { return 1024 }
+    panic("expected 32, 64, 128, 256, 512 or 1024 bodies")
+}
+
+func steps_argument(value:str) int {
+    if value == "30" { return 30 }
+    if value == "60" { return 60 }
+    if value == "120" { return 120 }
+    if value == "240" { return 240 }
+    panic("expected 30, 60, 120 or 240 steps")
+}
+
+func add_bin_wall(world:Physics.World3D, size:Math.Vec3, position:Math.Vec3) {
+    world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.box(Physics.Box3D(size))
+        ..transform = Physics.Transform3D(position:position))
+}
+
+func run_scale(mode:str, body_count:int, step_count:int) {
+    if mode != "sparse" && mode != "bin" && mode != "column" {
+        panic("expected sparse, bin or column")
+    }
+    var clock = Clock()
+    clock.tick()
+    var world = Physics.World3D(Physics.World3DSettings()
+        ..gravity = Math.Vec3())
+    if mode == "bin" {
+        world.set_gravity(Math.Vec3(0.0, -9.81, 0.0))
+        add_bin_wall(world, Math.Vec3(5.0, 0.5, 5.0),
+            Math.Vec3(0.0, -0.25, 0.0))
+        add_bin_wall(world, Math.Vec3(0.5, 8.0, 5.0),
+            Math.Vec3(-2.75, 4.0, 0.0))
+        add_bin_wall(world, Math.Vec3(0.5, 8.0, 5.0),
+            Math.Vec3(2.75, 4.0, 0.0))
+        add_bin_wall(world, Math.Vec3(5.0, 8.0, 0.5),
+            Math.Vec3(0.0, 4.0, -2.75))
+        add_bin_wall(world, Math.Vec3(5.0, 8.0, 0.5),
+            Math.Vec3(0.0, 4.0, 2.75))
+    } else if mode == "column" {
+        world.set_gravity(Math.Vec3(0.0, -9.81, 0.0))
+        add_bin_wall(world, Math.Vec3(24.0, 0.5, 24.0),
+            Math.Vec3(0.0, -0.25, 0.0))
+    }
+    var bodies:Physics.RigidBody3D[] = []
+    var index = 0
+    while index < body_count {
+        var position = Math.Vec3()
+        if mode == "bin" {
+            let column = index % 10
+            let row = (index / 10) % 10
+            let layer = index / 100
+            position = Math.Vec3(
+                (column as float - 4.5) * 0.41,
+                0.6 + layer as float * 0.41,
+                (row as float - 4.5) * 0.41
+            )
+        } else if mode == "column" {
+            let column = index % 4
+            let row = (index / 4) % 4
+            let layer = index / 16
+            position = Math.Vec3(
+                (column as float - 1.5) * 0.31 + layer as float * 0.025,
+                0.16 + layer as float * 0.31,
+                (row as float - 1.5) * 0.31
+            )
+        } else {
+            let column = index % 32
+            let row = index / 32
+            position = Math.Vec3(
+                column as float * 1.0,
+                2.0,
+                row as float * 1.0
+            )
+        }
+        var shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.2))
+        if mode == "column" {
+            shape = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(0.3)))
+        }
+        var body = world.create_rigid_body(Physics.RigidBody3DSettings()
+            ..shape = shape
+            ..transform = Physics.Transform3D(position:position)
+            ..allow_sleep = false
+            ..friction = 0.6)
+        bodies.append(body)
+        index++
+    }
+    let create_ms = clock.tick() * 1000.0
+    var contacts_total = 0
+    var first_step_ms = 0.0
+    var maximum_step_ms = 0.0
+    var step_ms = 0.0
+    var step = 0
+    while step < step_count {
+        clock.tick()
+        world.step(1.0 / 60.0)
+        let elapsed = clock.tick() * 1000.0
+        if step == 0 { first_step_ms = elapsed }
+        if elapsed > maximum_step_ms { maximum_step_ms = elapsed }
+        step_ms += elapsed
+        contacts_total += world.contact_count()
+        step++
+    }
+    var outside = 0
+    var low = 0
+    var minimum_y = 1000000.0
+    var checksum = 0.0
+    for body in bodies {
+        let position = body.position()
+        minimum_y = Math.min(minimum_y, position.y)
+        if position.x != position.x || position.y != position.y ||
+            position.z != position.z || Math.abs(position.x) > 1000.0 ||
+            Math.abs(position.y) > 1000.0 || Math.abs(position.z) > 1000.0
+        {
+            panic("non-finite or escaped dynamic body pose")
+        }
+        if mode == "bin" {
+            if Math.abs(position.x) > 2.51 || Math.abs(position.z) > 2.51 {
+                outside++
+            }
+            if position.y < 0.19 { low++ }
+        } else if mode == "column" {
+            if Math.abs(position.x) > 12.01 ||
+                Math.abs(position.z) > 12.01 { outside++ }
+            if position.y < 0.14 { low++ }
+        }
+        checksum += position.x + position.y * 2.0 + position.z * 3.0
+    }
+    var expected_bodies = body_count
+    if mode == "bin" { expected_bodies += 5 }
+    if mode == "column" { expected_bodies++ }
+    if world.body_count() != expected_bodies {
+        panic("body count changed during stress run")
+    }
+    if mode == "sparse" && contacts_total != 0 {
+        panic("sparse workload unexpectedly collided")
+    }
+    if mode == "bin" && contacts_total == 0 {
+        panic("bin workload did not produce contacts")
+    }
+    if mode == "column" && contacts_total == 0 {
+        panic("column workload did not produce contacts")
+    }
+    print("bodies=$(body_count)")
+    print("steps=$(step_count)")
+    print("mode=$(mode)")
+    print("contacts_total=$(contacts_total)")
+    print("contacts_last=$(world.contact_count())")
+    print("outside=$(outside)")
+    print("low=$(low)")
+    print("minimum_y=$(minimum_y)")
+    print("checksum=$(checksum)")
+    print("create_ms=$(create_ms)")
+    print("first_step_ms=$(first_step_ms)")
+    print("maximum_step_ms=$(maximum_step_ms)")
+    print("step_ms=$(step_ms)")
+    if outside != 0 || low != 0 {
+        panic("dynamic bodies escaped the collision surface")
+    }
+}
+
+func main() {
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() == 4 {
+                run_scale(arguments[1], count_argument(arguments[2]),
+                    steps_argument(arguments[3]))
+                return
+            }
+        }
+    }
+    panic("usage: WorldScale sparse|bin|column 32|64|128|256|512|1024 30|60|120|240")
+}
