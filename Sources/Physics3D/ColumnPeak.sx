@@ -1,0 +1,76 @@
+use GFX.Physics
+use STD.Math
+use STD.Process
+use STD.Time.Clock
+
+// Match StressScene column 256, including its default sleep settings.
+func main() {
+    var allow_sleep = true
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => {
+            if arguments.count() == 2 && arguments[1] == "awake" {
+                allow_sleep = false
+            } else if arguments.count() != 1 {
+                panic("usage: ColumnPeak [awake]")
+            }
+        }
+    }
+    var world = Physics.World3D()
+    world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(24.0, 0.5, 24.0)))
+        ..transform = Physics.Transform3D(position:Math.Vec3(0.0, -0.25, 0.0)))
+    var bodies:Physics.RigidBody3D[] = []
+    var index = 0
+    while index < 256 {
+        let column = index % 4
+        let row = (index / 4) % 4
+        let layer = index / 16
+        bodies.append(world.create_rigid_body(Physics.RigidBody3DSettings()
+            ..shape = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(0.3)))
+            ..transform = Physics.Transform3D(position:Math.Vec3(
+                (column as float - 1.5) * 0.31 + layer as float * 0.025,
+                0.16 + layer as float * 0.31,
+                (row as float - 1.5) * 0.31))
+            ..friction = 0.6
+            ..allow_sleep = allow_sleep))
+        index++
+    }
+    var clock = Clock()
+    var timings:float[] = []
+    var awake_counts:int[] = []
+    var contact_counts:int[] = []
+    var checksums:float[] = []
+    var minimum_heights:float[] = []
+    var step = 0
+    while step < 600 {
+        clock.tick()
+        world.step(1.0 / 60.0)
+        timings.append(clock.tick() * 1000.0)
+        var awake = 0
+        var checksum = 0.0
+        var minimum_y = 1000.0
+        for body in bodies {
+            if body.is_awake() { awake++ }
+            let p = body.position()
+            minimum_y = Math.min(minimum_y, p.y)
+            if p.y < 0.0 || Math.abs(p.x) > 12.01 || Math.abs(p.z) > 12.01 ||
+                p.x != p.x || p.y != p.y || p.z != p.z || p.y > 20.0 {
+                panic("column body escaped its floor or has a non-finite pose: step=$(step) x=$(p.x) y=$(p.y) z=$(p.z)")
+            }
+            checksum += p.x + p.y * 2.0 + p.z * 3.0
+        }
+        awake_counts.append(awake)
+        contact_counts.append(world.contact_count())
+        checksums.append(checksum)
+        minimum_heights.append(minimum_y)
+        step++
+    }
+    assert(minimum_heights[599] >= 0.14)
+    step = 0
+    while step < timings.count() {
+        print("$(step),$(timings[step]),$(awake_counts[step]),$(contact_counts[step]),$(checksums[step]),$(minimum_heights[step])")
+        step++
+    }
+}

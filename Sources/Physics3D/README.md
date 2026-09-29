@@ -252,3 +252,36 @@ Every reported non-timing observable is identical before and after, including
 contact counts and the final position checksum. Raw measurements and MAD are
 in `Baselines/2026-09-29-column-optimization-macos-arm64.json`. These are physics
 step timings, not interactive FPS.
+
+
+## Column peak, with scene sleep settings
+
+`ColumnPeak.sx` follows the exact `StressScene column 256` setup for 600 fixed
+steps (ten simulated seconds), including default sleep. It records every step's
+cost, awake bodies, contacts, position checksum and minimum center height.
+Unlike the short `WorldScale column` timing, this includes the collapse and
+late sleep-island work. Bodies must remain finite and above y=0 within the
+floor; the final minimum height must be at least 0.14. The old solver already
+has transient center heights below 0.14 during collapse, which are retained
+in the raw rows rather than hidden by a final-only check.
+
+Compile a frozen baseline and candidate with the same compiler and benchmark
+source, then run from `Worktree/` with no other builds or simulations running:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/ColumnPeakRun.py \
+  --before .silex/column-peak-before --after .silex/column-peak-after \
+  --silex Silex/Toolchain/zig-out/bin/silex \
+  --output .silex/column-peak-comparison.json
+```
+
+Three alternating pairs of fresh processes preserve startup and late peaks.
+The runner reports mean, p95, maximum and worst consecutive 60-step mean,
+with repetition medians, MAD, binary/compiler/source hashes and raw samples.
+The default requires identical non-timing observables at every step across
+both versions. `--observables deterministic` instead requires exact per-version
+repeatability plus the same physical bounds, for mathematically equivalent
+changes that alter floating-point rounding. Use that mode only alongside
+independent physical regression tests, and state the changed trajectories.
+It does not assert cross-version equality or a rendered FPS improvement.
+A MAD above 5% for mean, p95 or worst-60 cost rejects the campaign.
