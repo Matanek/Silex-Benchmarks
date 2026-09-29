@@ -29,8 +29,8 @@ func add_bin_wall(world:Physics.World3D, size:Math.Vec3, position:Math.Vec3) {
 }
 
 func run_scale(mode:str, body_count:int, step_count:int) {
-    if mode != "sparse" && mode != "bin" && mode != "column" {
-        panic("expected sparse, bin or column")
+    if mode != "sparse" && mode != "bin" && mode != "column" && mode != "topple" {
+        panic("expected sparse, bin, column or topple")
     }
     var clock = Clock()
     clock.tick()
@@ -48,7 +48,7 @@ func run_scale(mode:str, body_count:int, step_count:int) {
             Math.Vec3(0.0, 4.0, -2.75))
         add_bin_wall(world, Math.Vec3(5.0, 8.0, 0.5),
             Math.Vec3(0.0, 4.0, 2.75))
-    } else if mode == "column" {
+    } else if (mode == "column" || mode == "topple") {
         world.set_gravity(Math.Vec3(0.0, -9.81, 0.0))
         add_bin_wall(world, Math.Vec3(24.0, 0.5, 24.0),
             Math.Vec3(0.0, -0.25, 0.0))
@@ -66,7 +66,7 @@ func run_scale(mode:str, body_count:int, step_count:int) {
                 0.6 + layer as float * 0.41,
                 (row as float - 4.5) * 0.41
             )
-        } else if mode == "column" {
+        } else if (mode == "column" || mode == "topple") {
             let column = index % 4
             let row = (index / 4) % 4
             let layer = index / 16
@@ -85,7 +85,7 @@ func run_scale(mode:str, body_count:int, step_count:int) {
             )
         }
         var shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.2))
-        if mode == "column" {
+        if (mode == "column" || mode == "topple") {
             shape = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(0.3)))
         }
         var body = world.create_rigid_body(Physics.RigidBody3DSettings()
@@ -103,6 +103,13 @@ func run_scale(mode:str, body_count:int, step_count:int) {
     var step_ms = 0.0
     var step = 0
     while step < step_count {
+        if mode == "topple" && step == 60 {
+            var top = body_count - 16
+            while top < body_count {
+                bodies[top].apply_impulse(Math.Vec3(0.08, 0.0, 0.0))
+                top++
+            }
+        }
         clock.tick()
         world.step(1.0 / 60.0)
         let elapsed = clock.tick() * 1000.0
@@ -130,7 +137,7 @@ func run_scale(mode:str, body_count:int, step_count:int) {
                 outside++
             }
             if position.y < 0.19 { low++ }
-        } else if mode == "column" {
+        } else if (mode == "column" || mode == "topple") {
             if Math.abs(position.x) > 12.01 ||
                 Math.abs(position.z) > 12.01 { outside++ }
             if position.y < 0.14 { low++ }
@@ -139,7 +146,7 @@ func run_scale(mode:str, body_count:int, step_count:int) {
     }
     var expected_bodies = body_count
     if mode == "bin" { expected_bodies += 5 }
-    if mode == "column" { expected_bodies++ }
+    if (mode == "column" || mode == "topple") { expected_bodies++ }
     if world.body_count() != expected_bodies {
         panic("body count changed during stress run")
     }
@@ -149,7 +156,7 @@ func run_scale(mode:str, body_count:int, step_count:int) {
     if mode == "bin" && contacts_total == 0 {
         panic("bin workload did not produce contacts")
     }
-    if mode == "column" && contacts_total == 0 {
+    if (mode == "column" || mode == "topple") && contacts_total == 0 {
         panic("column workload did not produce contacts")
     }
     print("bodies=$(body_count)")
@@ -181,5 +188,5 @@ func main() {
             }
         }
     }
-    panic("usage: WorldScale sparse|bin|column 32|64|128|256|512|1024 30|60|120|240")
+    panic("usage: WorldScale sparse|bin|column|topple 32|64|128|256|512|1024 30|60|120|240")
 }

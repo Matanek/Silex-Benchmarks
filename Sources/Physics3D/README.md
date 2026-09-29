@@ -199,11 +199,56 @@ and 128- and 256-box columns, each for 60 steps. Both columns must keep their
 box centers above the floor guard. The campaign measures simulation time only
 and makes no claim about window FPS, rendering cost or Jolt parity.
 
-On the measured macOS ARM64 host, seven-run Release medians for this candidate
-are 0.96 ms/step for 1,024 sparse spheres, 2.57/5.73/11.67 ms/step for
+Before the column optimization, seven-run Release medians on the macOS
+ARM64 host were 0.96 ms/step for 1,024 sparse spheres, 2.57/5.73/11.67 ms/step for
 256/512/1,024 bin spheres, and 14.18/28.80 ms/step for 128/256 boxes. The
 raw results and timing dispersion are in
 `Baselines/2026-09-29-iterative-position-macos-arm64.json`. The earlier
 `pre-sweep` and `sweep` records isolate the pair-search gain; the final
-position solver changes contact counts and poses, so only the final record
-qualifies the current engine.
+position solver changes contact counts and poses, so only the iterative-position record
+qualifies that earlier engine revision.
+
+### Compare the column optimization
+
+`topple` starts from the same column, then applies an X impulse of 0.08 to
+its top 16 boxes at step 60. The 240-step case covers both settlement and
+motion after the disturbance. The impulse is deliberately smaller than the
+interactive scene's Space impulse (0.8), which launches the light top boxes
+beyond this benchmark's finite floor. Both column modes disable sleep so
+the timed workload continues to solve the full population.
+
+`ColumnCompareRun.py` compares two prebuilt Release binaries compiled from
+the **same** `WorldScale.sx` source with the **same** compiler. Preserve one
+binary before applying the physics change, then build the other. From the
+workspace root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/ColumnCompareRun.py \
+  --before .silex/column-before --after .silex/column-after \
+  --silex Silex/Toolchain/zig-out/bin/silex \
+  --output .silex/column-comparison.json
+```
+
+It warms both executables, alternates executable and case order over seven
+repetitions, and saves binary/source/compiler hashes, every raw sample and
+median/MAD statistics. It requires identical final contacts, position checksum,
+minimum height and bounds across versions and repetitions. A failed run or
+MAD above 5% rejects the campaign. Its two workloads are `column 256 60`
+and `topple 256 240`; reported times exclude creation and rendering.
+
+The implementation changes portable Silex geometry and solver code, with no
+backend or native-provider change. Timings qualify macOS ARM64 Release only;
+X64, Linux and Windows performance has not been measured.
+
+On the measured macOS ARM64 host, the paired seven-run campaign gives:
+
+| Workload | Before (ms/step) | After (ms/step) | Speedup |
+| --- | ---: | ---: | ---: |
+| Column, 256 boxes, 60 steps | 29.359 | 12.711 | 2.31× |
+| Topple, 256 boxes, 240 steps | 24.306 | 11.948 | 2.03× |
+
+The compared physics revisions are `e0dbc2d` (before) and `10096c1` (after).
+Every reported non-timing observable is identical before and after, including
+contact counts and the final position checksum. Raw measurements and MAD are
+in `Baselines/2026-09-29-column-optimization-macos-arm64.json`. These are physics
+step timings, not interactive FPS.
