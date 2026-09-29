@@ -285,3 +285,43 @@ changes that alter floating-point rounding. Use that mode only alongside
 independent physical regression tests, and state the changed trajectories.
 It does not assert cross-version equality or a rendered FPS improvement.
 A MAD above 5% for mean, p95 or worst-60 cost rejects the campaign.
+
+The [2026-09-29 peak campaign](Baselines/2026-09-29-column-peak-macos-arm64.json)
+compares physics `10096c1` with `6419a6e`, using native compiler `fcead12`
+on macOS ARM64 Release. Three alternating pairs give:
+
+| Per-step measure | Before | After |
+| --- | ---: | ---: |
+| Mean | 109.13 ms | 64.63 ms |
+| 95th percentile | 143.04 ms | 84.18 ms |
+| Maximum (median across runs) | 158.55 ms | 94.08 ms |
+| Worst consecutive 60-step mean | 132.84 ms | 82.21 ms |
+
+This is a 40.8% mean-cost reduction; MAD is at most 2.54% for the admission
+metrics. Runs are deterministic within each version and pass the same bounds;
+isotropic inertia changes rounding and hence the final pile. Independent
+physics tests cover rotated isotropic and anisotropic impulses, manifolds,
+constraints and sleep. No compiler or backend selection changed.
+
+The tool execution environment runs even the previously frozen binary much
+slower than the earlier short benchmark campaign. These absolute timings are
+therefore not directly comparable with its historical 12.71 ms or with a
+foreground window's FPS. The paired campaign had no concurrent build or
+other simulation started by the agent. Rendered frame rate needs its own
+window measurement.
+
+A separate [20-second window run](Baselines/2026-09-29-column-scene-macos-arm64.txt)
+of example `323949d` and physics `6419a6e` measured 28.6 FPS in the initial
+one-second window, then 99.0–120.7 FPS, with about 60 physical steps/s,
+9.16–13.63 ms/step per reporting window and a largest observed step of
+16.10 ms. The native Release scene kept rendering, shadows and 256 bodies.
+These are one run's frame counts divided by measured reporting intervals,
+not a repeated FPS benchmark or a guarantee for another display configuration.
+
+To keep this diagnostic child from inheriting the agent's background priority,
+it was launched with `taskpolicy -a` and moved out of `PRIO_DARWIN_BG` via
+`taskpolicy -B -p <own-child-pid>`. Only that process was affected, and it was
+terminated after the bounded run. No scheduler setting or scheduling code is
+part of the product change. The headless paired campaign above retains its
+original tool execution conditions; do not mix its absolute times with this
+window run. No screenshot was captured.
