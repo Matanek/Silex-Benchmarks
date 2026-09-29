@@ -113,6 +113,19 @@ python3 Silex-Benchmarks/Sources/Physics3D/PointRun.py \
   --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
 ```
 
+`DistanceSpringRun.py` compares four samples of a 2 Hz, damping-ratio-0.1
+free oscillation against pinned Jolt in Debug and Release. Both start one
+body at length 3 with target length 2 and zero gravity. The sample at 12
+steps permits a 0.1-unit difference and later samples 0.05 because the
+engines integrate poses at different points in the step; the measured early
+values are 1.584 in Jolt and 1.669 in Silex. The fixture checks the
+oscillation and decay, not identical per-step trajectories:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/DistanceSpringRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
 The point fixture checks anchor error, support reaction, pendulum motion, and
 the pendulum's horizontal position within 0.05 world units after two seconds.
 It does not qualify every joint configuration or the per-iteration solver path.
