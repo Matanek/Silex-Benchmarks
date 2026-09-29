@@ -421,3 +421,53 @@ windows reach about 9 FPS, 27–28 ms/step and four catch-up steps per frame.
 The measured CPU gain is not a resolution of that rendered bottleneck. Work
 continues on allocation and contact-processing cost without lowering the body
 count or solver iteration count. No screenshot was captured.
+
+
+### 2026-09-30 small allocations and contact traversal
+
+Same Apple M3 Pro / 18 GiB / macOS ARM64 / Native Release configuration.
+Seven paired fresh processes per scenario, one discarded warm-up per version,
+alternating order and identical normal child priority. Baseline compiler
+`fcead12` / physics `6419a6e`; candidate compiler `e369b1e` / physics `4cbed35`.
+All per-step aggregate observables match exactly. Maximum MAD across all reported metrics: 3.44%.
+
+| Workload | Median mean ms/step | Reduction | Median p95 ms | Worst 60-step mean ms |
+| --- | ---: | ---: | ---: | ---: |
+| 256-box column | 10.19 → 5.98 | 41.4% | 13.23 → 7.50 | 13.08 → 7.45 |
+| 1,024-sphere progressive jet | 14.67 → 7.31 | 50.2% | 31.24 → 15.60 | 31.30 → 15.64 |
+
+Raw [column](Baselines/2026-09-30-column-heap-contacts-macos-arm64.json) and
+[jet](Baselines/2026-09-30-jet-heap-contacts-macos-arm64.json) data retain all
+samples and hashes. These are cumulative gains over the retained baseline,
+including the previous structural candidate; they are CPU physics times, not FPS.
+
+The new changes reduce the initial ARM64 system-heap list reservation to
+128 bytes (previously 16 KiB on macOS), retain geometric growth, cache immutable
+body identities in contact snapshots, reuse previous-contact lookup results,
+avoid copying warm-start points and merge ordered event snapshots linearly.
+No body count, timestep, solver iteration, sleep threshold or floating operation
+was changed. General inlining and inertia-function-splitting probes that did
+not improve the workload were discarded.
+
+[Local validation](Baselines/2026-09-30-heap-contacts-validation-macos-arm64.txt)
+records 281 physics tests, compiler check/test, differential gate, qualified
+robustness and explicit Debug/Release small-collection growth/lifetime tests.
+Distributed-target execution remains outstanding; this is a macOS ARM64 result.
+The baseline penetration limitation documented above remains open.
+
+
+The final bounded 30-second rendered runs are retained separately:
+[column](Baselines/2026-09-30-column-heap-contacts-scene-macos-arm64.txt) and
+[bin](Baselines/2026-09-30-bin-heap-contacts-scene-macos-arm64.txt).
+The column reports **115.6–119.5 FPS** over all 29 windows.
+The progressive bin begins near 120 FPS but its last ten reporting windows
+are **14.1–14.5 FPS**, with
+16.40–16.83 ms/step and four catch-up steps/frame.
+The late dense stage extends beyond the 900-step CPU fixture and the rendered
+emitter is driven by frame time, so these are complementary workloads.
+
+The CPU cost is substantially reduced, but the full bin is **not yet a fluid
+interactive demonstration**. The remaining native solver cost and catch-up
+behavior stay open; this result does not establish Unity/Godot parity. No
+screenshot was captured and no renderer or simulation-quality setting was
+lowered to obtain these numbers.

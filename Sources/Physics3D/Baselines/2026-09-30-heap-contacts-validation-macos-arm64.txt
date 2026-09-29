@@ -1,0 +1,67 @@
+Local candidate validation — macOS ARM64
+Native backend; solver iterations, timestep, body counts and floating operations unchanged.
+Silex: e369b1e02bd07fffb56b2c9abd5051bf9c5e0a3e
+Packages/GFX.Physics: 4cbed35c9e4fb302a4034686fef421297a7ab197
+Silex-Examples: 323949d4a7882dc41e9859a647b39f59d0a456d4
+
+zig build check — exit 0
+log_sha256=e603e53cac73c117c404fde024343dc7ab3bb231787b793f8d1f86266eff8f19
+84 passed; 0 skipped; 0 failed; 0 leaked.
+215 passed; 0 failed in 76 files
+optimizer oracle: semantic verification
+verified: 28 corpus programs
+optimizer oracle: optimizer quick admission passed
+
+zig build test — exit 0
+log_sha256=2e0b5c492c5dd49a1a4a90d91a0beaa63cb53cfa742ccc0343f9c553d969348d
+215 passed; 0 failed in 76 files
+
+zig build optimizer-gate — exit 0
+log_sha256=52849665ce71d385179ae2fd1a9cf353c64715f9b1bdd0087ebb7ce6d717d884
+84 passed; 0 skipped; 0 failed; 0 leaked.
+optimizer oracle: optimization coverage registry
+optimizer oracle: semantic verification
+verified: 28 corpus programs
+optimizer oracle: cold and warm cache reproducibility
+optimizer oracle: metamorphic qualification
+optimizer oracle: native optimizer regression qualification
+qualified: 64 integer failures with ordered output in Debug/Release
+qualified: 43 numeric conversions with exact values and diagnostics in Debug/Release
+qualified: 60 fixed regressions and 8 generated native scenarios
+optimizer oracle: deterministic numeric fuzzing
+verified: 128 generated programs (seed 1..128)
+optimizer oracle: LLVM differential fuzzing
+verified: 32 LLVM programs (seed 1..32)
+optimizer oracle: Silex Release versus LLVM -O3
+optimizer oracle: ranked Silex optimization priorities
+optimizer oracle: optimizer qualification gate passed
+
+zig build optimizer-robustness-qualified — exit 0
+log_sha256=23c95102d6efa40c756f0a16204de07c46181de1d53edeb8b2bc26ab97c0ef50
+84 passed; 0 skipped; 0 failed; 0 leaked.
+optimizer oracle: qualified adversarial interaction campaign
+qualified: 144 pairwise cases, 5 risk triplets, 41 native cases, 4 negative cases
+optimizer oracle: cache invalidation and concurrency stress passed
+optimizer oracle: large package graph and function stress passed
+
+Physics consumer suite — exit 0
+log_sha256=af9435119ed4f105c16b8c3be56d8302da6daa31ad85cac335815e38e851dbee
+ok - WorldSettings.sx :: disable continuous collision without changing discrete motion
+ok - WorldSettings.sx :: apply deterministic wake policies to dynamic settings
+ok - WorldSettings.sx :: report logical live-world counters
+281 passed; 0 failed in 50 files
+
+SmallCollectionGrowth explicit Debug and Release — exit 0
+log_sha256=334928c71218f59c329f351f18233a8cfe4b1c1b31b1ecd7844602359ef2269e
+small collection growth passed
+debug small collections passed
+small collection growth passed
+release small collections passed
+
+ColumnPeak and JetPeak compiled Native Release without cache. StressScene compiled explicit Native Debug and Release without cache.
+The optimizer gate used Apple clang 21.0.0 (clang-2100.1.1.101) via /Library/Developer/CommandLineTools/usr/bin and SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk.
+Sealed dependency histories were read through 17 temporary links to canonical checkouts, removed after the gate. No dependency content or protected baseline changed.
+Small-list reservation changes Darwin/Windows ARM64 system-heap paths; Linux ARM64 retains its mmap page floor. X64 allocation remains unchanged. Contact traversal is common to all targets.
+Remote target execution and sealed external optimizer qualification remain outstanding. These measurements establish macOS ARM64 results only.
+The jet retains its baseline floor-penetration debt: the 0.19 m center-height target is not met. Exact aggregate observables do not establish full per-body state equivalence.
+The first robustness attempt reached report sealing and refused to replace the prior compiler’s sealed report (SealedReportConflict). Previous reports were preserved intact under .silex/optimizer-evidence-before-heap-20260930/robustness; the complete rerun passed with fresh report paths. No oracle condition or source was weakened.
