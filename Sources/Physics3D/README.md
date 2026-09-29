@@ -121,3 +121,16 @@ It does not qualify every joint configuration or the per-iteration solver path.
 the far sphere was created first. It compares body identity and hit fraction
 `0.25` with Jolt in Debug and Release. Consumer tests cover multiple hits,
 compound child IDs, overlaps, exclusions, and retained results separately.
+
+`SensorRun.py` checks a complete sphere passage through a fixed spherical
+sensor. Both engines must emit one begin and one end, retain the overlap over
+multiple steps, and leave the moving body's final position and velocity at
+2 and 1 after four seconds without gravity or damping. Run it from `Worktree/`:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/SensorRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
+The fixture qualifies this traversal and event lifetime; consumer tests cover
+mask changes, group overrides, query filtering, and recycled body identities.
