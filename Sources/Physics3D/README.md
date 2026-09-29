@@ -325,3 +325,99 @@ terminated after the bounded run. No scheduler setting or scheduling code is
 part of the product change. The headless paired campaign above retains its
 original tool execution conditions; do not mix its absolute times with this
 window run. No screenshot was captured.
+
+
+## Paired column and progressive-jet qualification
+
+`StressPeakRun.py` extends the ten-second column workload with `JetPeak.sx`:
+1,024 spheres emitted at 80 bodies/s into the scene's five-wall bin, over 900
+fixed steps (15 simulated seconds). The source times `world.step` only;
+emission, observable checks and output are outside that interval. This is a
+CPU physics benchmark, not a rendering-FPS benchmark.
+
+Run from the workspace/group root after freezing the baseline and compiling
+both configurations in Native Release. Use a separate output per scenario:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/StressPeakRun.py \
+  --scenario column --before .silex/column-peak-solver-borrow \
+  --after .silex/column-structural-final \
+  --before-silex .silex/silex-physics-baseline \
+  --silex Silex/Toolchain/zig-out/bin/silex \
+  --foreground-child --output .silex/column-structural.json
+```
+
+Use `--scenario jet` and the corresponding jet binaries for the second charge.
+The macOS-only foreground option changes the runner's own child processes;
+it is necessary when the invoking tool inherits background priority. Keep it
+identical for both versions. Do not overlap the campaign with compilation or
+another simulation.
+
+Each configuration gets one discarded warm-up, then seven fresh-process runs
+in alternating order. Mean, p95, maximum and worst consecutive 60-step mean
+are retained with every raw sample. Mean, p95 and worst-window MAD must each
+be at most 5%. Exact mode compares awake counts, contact counts, weighted
+position checksum and minimum height at every step; it does not compare each
+body's complete state. Reports bind source/compiler/binary hashes and the
+candidate repositories' HEADs plus tracked-diff hashes.
+
+The progressive jet reveals an existing quality limitation: the baseline's
+last minimum center height is about 0.1658 m for radius-0.2 m spheres. The cost
+benchmark checks finite positions and enclosure containment, and reports
+penetration separately. Passing this benchmark does **not** establish a
+0.19 m minimum-center-height guarantee. Exact observable equality prevents
+this optimization campaign from concealing a changed pile behind timing gains.
+
+
+### 2026-09-29 structural candidate
+
+Apple M3 Pro, 18 GiB RAM, macOS ARM64, Native Release. Seven paired fresh
+processes per scenario after warm-up, identical normal child priority, no
+concurrent build or simulation started by the runner. Baseline: compiler
+`fcead12`, physics `6419a6e`; candidate: compiler `fd7dd83`, physics `292f340`.
+All non-timing observables match exactly at every step across configurations
+and repetitions. Maximum MAD across all reported metrics is 4.40%.
+
+| Workload | Median mean ms/step | Mean-cost reduction | Median p95 ms | Worst 60-step mean ms |
+| --- | ---: | ---: | ---: | ---: |
+| 256-box column | 10.42 → 8.17 | 21.6% | 13.48 → 9.76 | 13.34 → 9.65 |
+| 1,024-sphere progressive jet | 14.64 → 12.10 | 17.3% | 31.67 → 26.46 | 31.87 → 26.58 |
+
+Raw [column](Baselines/2026-09-29-column-structural-macos-arm64.json) and
+[jet](Baselines/2026-09-29-jet-structural-macos-arm64.json) samples retain every
+step and artifact hash. These compare the cumulative compiler and broad-phase
+changes, not the broad-phase change alone. The latter contributed only a small
+part in exploratory isolation. The solver retains its iterations, timestep,
+sleep settings and floating-point operations.
+
+The native code generator now preserves arithmetic registers around plain
+class-field transfers, distinguishes actual CFG cycles from backward inline
+continuations, and removes balanced owner references around proven readers
+and numeric value stores. The class/reference barriers that can change object
+lifetime remain protected. [Local validation](Baselines/2026-09-29-structural-validation-macos-arm64.txt)
+records the 280 physics tests and compiler check/test, optimizer gate and
+qualified robustness. Distributed-target execution and sealed external
+qualification remain outstanding; this host result does not establish portable
+performance or full optimizer admission.
+
+The dense jet still needs about 26.5 ms at p95. This candidate improves the
+measured cost; it does not meet a 16.7 ms physics budget for every jet step.
+A same-source LLVM control was roughly four times faster in exploratory runs
+and retained the same aggregate observations. That control locates substantial
+remaining native-code overhead; it is not a qualified cross-engine comparison,
+a backend-default change, or a rendered FPS promise.
+
+
+Two bounded 30-second rendered runs used the same candidate with normal child
+priority. The [column log](Baselines/2026-09-29-column-structural-scene-macos-arm64.txt)
+and [bin log](Baselines/2026-09-29-bin-structural-scene-macos-arm64.txt) include
+all reporting windows, including startup:
+
+- column: 114.9–120.3 FPS across 29 reported windows
+- bin: 8.6–120.1 FPS across 29 reported windows
+
+The filled bin is still unacceptable as an interactive stress demo: its late
+windows reach about 9 FPS, 27–28 ms/step and four catch-up steps per frame.
+The measured CPU gain is not a resolution of that rendered bottleneck. Work
+continues on allocation and contact-processing cost without lowering the body
+count or solver iteration count. No screenshot was captured.

@@ -1,0 +1,73 @@
+use GFX.Physics
+use STD.Math
+use STD.Time.Clock
+
+func wall(world:&Physics.World3D, size:Math.Vec3, position:Math.Vec3) {
+    world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.box(Physics.Box3D(size))
+        ..transform = Physics.Transform3D(position:position))
+}
+
+// The scene's 80 spheres/s jet, sampled on a deterministic 60 Hz clock.
+func main() {
+    var world = Physics.World3D()
+    wall(world, Math.Vec3(5.0, 0.5, 5.0), Math.Vec3(0.0, -0.25, 0.0))
+    wall(world, Math.Vec3(0.5, 8.0, 5.0), Math.Vec3(-2.75, 4.0, 0.0))
+    wall(world, Math.Vec3(0.5, 8.0, 5.0), Math.Vec3(2.75, 4.0, 0.0))
+    wall(world, Math.Vec3(5.0, 8.0, 0.5), Math.Vec3(0.0, 4.0, -2.75))
+    wall(world, Math.Vec3(5.0, 8.0, 0.5), Math.Vec3(0.0, 4.0, 2.75))
+    var bodies:Physics.RigidBody3D[] = []
+    var emission = 0.0
+    var timings:float[] = []
+    var awake_counts:int[] = []
+    var contact_counts:int[] = []
+    var checksums:float[] = []
+    var minimum_heights:float[] = []
+    var clock = Clock()
+    var step = 0
+    while step < 900 {
+        emission = Math.min(8.0, emission + (1.0 / 60.0) * 80.0)
+        while emission >= 1.0 && bodies.count() < 1024 {
+            let lane = (bodies.count() * 37) % 25
+            bodies.append(world.create_rigid_body(Physics.RigidBody3DSettings()
+                ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.2))
+                ..transform = Physics.Transform3D(position:Math.Vec3(
+                    -1.2 + (lane % 5) as float * 0.43, 7.4,
+                    ((lane / 5) as float - 2.0) * 0.43))
+                ..linear_velocity = Math.Vec3(2.0, -1.0, 0.0)
+                ..friction = 0.6))
+            emission -= 1.0
+        }
+        clock.tick()
+        world.step(1.0 / 60.0)
+        timings.append(clock.tick() * 1000.0)
+        var awake = 0
+        var checksum = 0.0
+        var minimum_y = 1000.0
+        for body in bodies {
+            if body.is_awake() { awake++ }
+            let p = body.position()
+            minimum_y = Math.min(minimum_y, p.y)
+            if p.y < 0.0 || p.y > 9.5 || Math.abs(p.x) > 2.51 ||
+                Math.abs(p.z) > 2.51 || p.x != p.x || p.y != p.y || p.z != p.z {
+                panic("jet escaped its container or has a non-finite pose")
+            }
+            checksum += p.x + p.y * 2.0 + p.z * 3.0
+        }
+        awake_counts.append(awake)
+        contact_counts.append(world.contact_count())
+        checksums.append(checksum)
+        minimum_heights.append(minimum_y)
+        step++
+    }
+    assert(bodies.count() == 1024 && world.body_count() == 1029)
+    // Containment is checked each step. Report minimum height separately: the
+    // reference solver already permits floor penetration in this pile.
+    assert(contact_counts[899] > 0)
+    step = 0
+    while step < timings.count() {
+        print("$(step),$(timings[step]),$(awake_counts[step]),$(contact_counts[step]),$(checksums[step]),$(minimum_heights[step])")
+        step++
+    }
+}

@@ -1,0 +1,44 @@
+Local candidate validation — macOS ARM64
+Compiler: fd7dd83a18ef7dc9b63a912fad267c6dbb31c24f
+Physics: 292f3405510068b1a66f8c94784e3e9ae7728ea9
+Examples: 323949d4a7882dc41e9859a647b39f59d0a456d4
+Mode: native; no backend default changed.
+All commands below exited 0. Compiler builds ran from Silex/Toolchain; Silex consumers ran from group root.
+
+zig build check
+log_sha256=eb46a12682d989b4ed5fd5768eb31021a6f8afd61066add10d9a8329d70cf6de
+verified: 28 corpus programs
+optimizer oracle: optimizer quick admission passed
+214 passed; 0 failed in 75 files
+
+zig build test
+log_sha256=f997822e0e3a51791c813c6ec239ea6093d6788dab6df9c0d0b13e50d829bbc1
+214 passed; 0 failed in 75 files
+
+zig build optimizer-gate
+log_sha256=bc89f8053c8672e760349bf9e4fc8c90ed85241b88ae2905bee8d710ae7e7037
+verified: 28 corpus programs
+qualified: 64 integer failures with ordered output in Debug/Release
+qualified: 43 numeric conversions with exact values and diagnostics in Debug/Release
+qualified: 60 fixed regressions and 8 generated native scenarios
+verified: 128 generated programs (seed 1..128)
+verified: 32 LLVM programs (seed 1..32)
+optimizer oracle: optimizer qualification gate passed
+
+zig build optimizer-robustness-qualified
+log_sha256=4c058e1a946788ed1ddbbdbf40bcb6b1069532e452fbf1f63a384fd76565fe8f
+qualified: 144 pairwise cases, 5 risk triplets, 41 native cases, 4 negative cases
+optimizer oracle: cache invalidation and concurrency stress passed
+optimizer oracle: large package graph and function stress passed
+
+silex test Packages/GFX.Physics/Tests/Consumer/Tests --nocache
+log_sha256=4df38076f08df93562b9d5330ca1e0423f281c6a144b602e89a86dbcf527aae5
+280 passed; 0 failed in 50 files
+
+The optimizer gate used Apple clang 21.0.0 (clang-2100.1.1.101), selected via PATH=/Library/Developer/CommandLineTools/usr/bin:..., and SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk.
+Sealed dependency histories were read through temporary links to existing canonical checkouts. All 17 links were removed after the gate; dependency contents and user package links were unchanged.
+ColumnPeak, JetPeak: native Release compiled without cache.
+StressScene: explicit native Debug and Release compiled without cache.
+Target scope: common reference elision affects all six targets; ARM64 allocation is active on macOS/Linux ARM64 only. Windows ARM64 keeps its existing machine-lowering policy; the X64 lane-only admission contract is unchanged.
+Remote native execution and sealed external qualification have not run for this candidate. Local results do not establish portable performance or complete remote admission.
+The jet cost fixture reports pre-existing floor penetration (~0.1658 m minimum center at the last step with radius 0.2 m); its containment pass does not establish the separate 0.19 m quality target.
