@@ -1,0 +1,26 @@
+use GFX.Physics
+use STD.Math
+
+func main() {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..is_sensor = true)
+    var moving = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..transform = Physics.Transform3D(position:Math.Vec3(-1.0, 0.0, 0.0))
+        ..linear_velocity = Math.Vec3(120.0, 0.0, 0.0)
+        ..continuous_collision = true
+        ..allow_sleep = false)
+    world.step(1.0 / 60.0)
+    var begins:Physics.Contact3D[] = []
+    var ends:Physics.Contact3D[] = []
+    world.write_contact_begin_events(begins)
+    world.write_contact_end_events(ends)
+    print("added=$(begins.count())")
+    print("persisted=$(world.contact_count())")
+    print("removed=$(ends.count())")
+    print("final_x=$(moving.position().x)")
+    print("final_vx=$(moving.linear_velocity().x)")
+}

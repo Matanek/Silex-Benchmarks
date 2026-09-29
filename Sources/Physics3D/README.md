@@ -134,3 +134,27 @@ python3 Silex-Benchmarks/Sources/Physics3D/SensorRun.py \
 
 The fixture qualifies this traversal and event lifetime; consumer tests cover
 mask changes, group overrides, query filtering, and recycled body identities.
+
+## Fast linear collision and one-step sensor crossing
+
+`ContinuousRun.py` sends a sphere from `x=-1` at 120 units/second toward a
+0.1-unit wall for one 1/60-second step. Without continuous collision, the
+Silex body finishes at `x=1` with no contact. With it, both engines report one
+contact and stop at the near face; Jolt finishes at about `x=-0.28`, Silex at
+`x=-0.30`, reflecting their different contact slop. The runner records both
+Debug and Release results:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/ContinuousRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
+`FastSensorRun.py` uses the same one-step speed and a spherical sensor. Both
+engines preserve `x=1` and velocity 120. Pinned Jolt emits no contact event;
+Silex intentionally emits a transient begin and end. The runner records this
+policy difference in both modes rather than claiming exact parity.
+
+`RotationLimit.sx` is a separate Silex diagnostic. A blade rotating 180° in
+one step overlaps a fixed wall halfway through the turn but has no contact at
+the endpoint. It demonstrates the documented translation-only limit; the
+current continuous sweep does not claim rotation-only impacts.
