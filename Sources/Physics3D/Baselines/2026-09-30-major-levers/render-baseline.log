@@ -1,0 +1,35 @@
+binary_sha256=08ecadd7806107e6594dcc50a047bc49077e7ba4e98fac4348d31196b5257d6f
+scenario=bin 1024
+normal_priority_own_child=true
+bounded_stop=True
+Physics 3D stress: bin, 1024 dynamic bodies
+Bin emits 80 spheres/s; Space topples the column; P pauses physics; Escape quits
+Silex Physics 3D — bin 78/1024 bodies (78 awake) — 57.665417 steps/s — 0.12746553 ms/step — peak 0.472 ms — 0.5 steps/frame — physics 0.063732766 ms/frame — 116 frames/1.0058022 s
+Silex Physics 3D — bin 159/1024 bodies (159 awake) — 60.51399 steps/s — 0.9290984 ms/step — peak 1.672 ms — 0.5041322 steps/frame — physics 0.46838847 ms/frame — 121 frames/1.0080314 s
+Silex Physics 3D — bin 239/1024 bodies (239 awake) — 59.997704 steps/s — 1.8510834 ms/step — peak 2.495 ms — 0.5 steps/frame — physics 0.9255417 ms/frame — 120 frames/1.0000383 s
+Silex Physics 3D — bin 320/1024 bodies (320 awake) — 59.50061 steps/s — 2.5288665 ms/step — peak 2.976 ms — 0.49586776 steps/frame — physics 1.2539834 ms/frame — 121 frames/1.008393 s
+Silex Physics 3D — bin 400/1024 bodies (400 awake) — 60.513103 steps/s — 3.1632454 ms/step — peak 3.659 ms — 0.5041322 steps/frame — physics 1.594694 ms/frame — 121 frames/1.0080462 s
+Silex Physics 3D — bin 481/1024 bodies (481 awake) — 59.505455 steps/s — 3.9066503 ms/step — peak 4.4189997 ms — 0.49586776 steps/frame — physics 1.937182 ms/frame — 121 frames/1.0083109 s
+Silex Physics 3D — bin 562/1024 bodies (562 awake) — 60.493786 steps/s — 4.694017 ms/step — peak 5.242 ms — 0.5041322 steps/frame — physics 2.3664052 ms/frame — 121 frames/1.008368 s
+Silex Physics 3D — bin 642/1024 bodies (642 awake) — 59.939594 steps/s — 5.7910166 ms/step — peak 6.459 ms — 0.5 steps/frame — physics 2.8955083 ms/frame — 120 frames/1.0010078 s
+Silex Physics 3D — bin 722/1024 bodies (722 awake) — 59.886917 steps/s — 7.317249 ms/step — peak 7.955 ms — 0.5 steps/frame — physics 3.6586244 ms/frame — 120 frames/1.0018883 s
+Silex Physics 3D — bin 802/1024 bodies (802 awake) — 59.945263 steps/s — 8.666065 ms/step — peak 9.348001 ms — 0.5 steps/frame — physics 4.3330326 ms/frame — 120 frames/1.0009131 s
+Silex Physics 3D — bin 882/1024 bodies (882 awake) — 59.88037 steps/s — 9.850016 ms/step — peak 11.004 ms — 0.5607477 steps/frame — physics 5.523373 ms/frame — 107 frames/1.0019978 s
+Silex Physics 3D — bin 962/1024 bodies (962 awake) — 59.72312 steps/s — 11.220416 ms/step — peak 12.426 ms — 0.75949365 steps/frame — physics 8.521835 ms/frame — 79 frames/1.004636 s
+Silex Physics 3D — bin 1024/1024 bodies (1024 awake) — 59.263016 steps/s — 12.5498495 ms/step — peak 13.495 ms — 1.0526316 steps/frame — physics 13.210368 ms/frame — 57 frames/1.0124358 s
+Silex Physics 3D — bin 1024/1024 bodies (1024 awake) — 59.969173 steps/s — 13.83555 ms/step — peak 14.809 ms — 1.6666666 steps/frame — physics 23.05925 ms/frame — 36 frames/1.000514 s
+Silex Physics 3D — bin 1024/1024 bodies (1024 awake) — 58.834366 steps/s — 14.727705 ms/step — peak 15.799001 ms — 2.1034484 steps/frame — physics 30.978966 ms/frame — 29 frames/1.036809 s
+Silex Physics 3D — bin 1024/1024 bodies (1024 awake) — 59.36056 steps/s — 15.212451 ms/step — peak 15.983001 ms — 3.0 steps/frame — physics 45.637352 ms/frame — 20 frames/1.0107721 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 59.920006 steps/s — 15.125619 ms/step — peak 16.021 ms — 3.3333333 steps/frame — physics 50.418728 ms/frame — 18 frames/1.001335 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 59.626736 steps/s — 15.422916 ms/step — peak 16.299 ms — 3.8125 steps/frame — physics 58.79987 ms/frame — 16 frames/1.023031 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 59.989983 steps/s — 15.408649 ms/step — peak 16.203 ms — 4.0 steps/frame — physics 61.634598 ms/frame — 15 frames/1.000167 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 59.49948 steps/s — 15.5418 ms/step — peak 16.423 ms — 4.0 steps/frame — physics 62.1672 ms/frame — 15 frames/1.0084121 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 58.767986 steps/s — 15.736751 ms/step — peak 16.529999 ms — 4.0 steps/frame — physics 62.947002 ms/frame — 15 frames/1.020964 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 58.520428 steps/s — 15.807115 ms/step — peak 16.661 ms — 4.0 steps/frame — physics 63.22846 ms/frame — 15 frames/1.025283 s
+Silex Physics 3D — bin 1024/1024 bodies (1022 awake) — 58.285583 steps/s — 15.887368 ms/step — peak 16.679 ms — 4.0 steps/frame — physics 63.549473 ms/frame — 15 frames/1.029414 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 57.96603 steps/s — 15.981435 ms/step — peak 16.749 ms — 4.0 steps/frame — physics 63.92574 ms/frame — 15 frames/1.035089 s
+Silex Physics 3D — bin 1024/1024 bodies (1022 awake) — 58.07493 steps/s — 15.950513 ms/step — peak 16.787 ms — 4.0 steps/frame — physics 63.80205 ms/frame — 15 frames/1.033148 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 57.20589 steps/s — 16.1951 ms/step — peak 16.987 ms — 4.0 steps/frame — physics 64.7804 ms/frame — 15 frames/1.048843 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 57.11153 steps/s — 16.21313 ms/step — peak 17.255999 ms — 4.0 steps/frame — physics 64.85252 ms/frame — 15 frames/1.050576 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 57.923782 steps/s — 15.951218 ms/step — peak 16.312 ms — 4.0 steps/frame — physics 63.80487 ms/frame — 15 frames/1.035844 s
+Silex Physics 3D — bin 1024/1024 bodies (1023 awake) — 57.753006 steps/s — 16.030216 ms/step — peak 16.838 ms — 4.0 steps/frame — physics 64.120865 ms/frame — 15 frames/1.0389069 s

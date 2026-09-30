@@ -1,0 +1,468 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "compiler": "251d4ec827e15e117d945d22532290f8c19ae48c",
+  "baseline_physics": "1d77c5e917d9bf7df1fa1a5b9def6628dfcf60b6",
+  "candidate_source_sha256": "0542607a167a525aa1b5a8c12736a3da8d5b11ef9602c81c95efd754eeb4a325",
+  "rendering": false,
+  "runs": [
+    {
+      "case": "AquariumFill",
+      "arguments": [],
+      "kind": "baseline",
+      "log": "01-AquariumFill-baseline.csv",
+      "mean_ms": 11.089717829666666,
+      "late_ms": 15.7804883,
+      "binary_sha256": "de6b20b26ec935d128bdb276b92aa422407eb1ec24cf2a355bdad2178b4da384",
+      "last_observables": [
+        1799.0,
+        15.905001,
+        1024.0,
+        2926.0,
+        0.19999999,
+        1.6863577,
+        -4.8115172,
+        4.8108354,
+        -2.3337996,
+        2.3114173,
+        10.968113,
+        84.480545,
+        23.0,
+        589.0,
+        16.060966,
+        0.18147087
+      ]
+    },
+    {
+      "case": "AquariumFill",
+      "arguments": [],
+      "kind": "candidate",
+      "log": "02-AquariumFill-candidate.csv",
+      "mean_ms": 8.357450208166666,
+      "late_ms": 11.734421600000001,
+      "binary_sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652",
+      "last_observables": [
+        1799.0,
+        12.043,
+        1024.0,
+        3006.0,
+        0.19999999,
+        1.7370108,
+        -4.8104963,
+        4.815027,
+        -2.313655,
+        2.3084981,
+        11.876157,
+        84.31848,
+        27.0,
+        553.0,
+        11.865602,
+        0.18229617
+      ]
+    },
+    {
+      "case": "AquariumFill",
+      "arguments": [],
+      "kind": "candidate",
+      "log": "03-AquariumFill-candidate.csv",
+      "mean_ms": 8.401686056533332,
+      "late_ms": 11.82011685,
+      "binary_sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652",
+      "last_observables": [
+        1799.0,
+        12.082999,
+        1024.0,
+        3006.0,
+        0.19999999,
+        1.7370108,
+        -4.8104963,
+        4.815027,
+        -2.313655,
+        2.3084981,
+        11.876157,
+        84.31848,
+        27.0,
+        553.0,
+        11.93475,
+        0.18229617
+      ]
+    },
+    {
+      "case": "AquariumFill",
+      "arguments": [],
+      "kind": "baseline",
+      "log": "04-AquariumFill-baseline.csv",
+      "mean_ms": 10.844761215133333,
+      "late_ms": 15.3451246,
+      "binary_sha256": "de6b20b26ec935d128bdb276b92aa422407eb1ec24cf2a355bdad2178b4da384",
+      "last_observables": [
+        1799.0,
+        15.479,
+        1024.0,
+        2926.0,
+        0.19999999,
+        1.6863577,
+        -4.8115172,
+        4.8108354,
+        -2.3337996,
+        2.3114173,
+        10.968113,
+        84.480545,
+        23.0,
+        589.0,
+        15.5784855,
+        0.18147087
+      ]
+    },
+    {
+      "case": "AquariumFill",
+      "arguments": [],
+      "kind": "baseline",
+      "log": "05-AquariumFill-baseline.csv",
+      "mean_ms": 10.955894847733333,
+      "late_ms": 15.5578451,
+      "binary_sha256": "de6b20b26ec935d128bdb276b92aa422407eb1ec24cf2a355bdad2178b4da384",
+      "last_observables": [
+        1799.0,
+        15.631,
+        1024.0,
+        2926.0,
+        0.19999999,
+        1.6863577,
+        -4.8115172,
+        4.8108354,
+        -2.3337996,
+        2.3114173,
+        10.968113,
+        84.480545,
+        23.0,
+        589.0,
+        15.778518,
+        0.18147087
+      ]
+    },
+    {
+      "case": "AquariumFill",
+      "arguments": [],
+      "kind": "candidate",
+      "log": "06-AquariumFill-candidate.csv",
+      "mean_ms": 8.8483908964,
+      "late_ms": 12.424066100000001,
+      "binary_sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652",
+      "last_observables": [
+        1799.0,
+        12.744,
+        1024.0,
+        3006.0,
+        0.19999999,
+        1.7370108,
+        -4.8104963,
+        4.815027,
+        -2.313655,
+        2.3084981,
+        11.876157,
+        84.31848,
+        27.0,
+        553.0,
+        12.546569,
+        0.18229617
+      ]
+    },
+    {
+      "case": "ColumnPeak",
+      "arguments": [],
+      "kind": "candidate",
+      "log": "07-ColumnPeak-candidate.csv",
+      "mean_ms": 6.474393339833333,
+      "late_ms": 6.8602850155,
+      "binary_sha256": "32c4a5decea098f64c8073dba7885aa4e54ca34c77f2bbb61381c12285ce015b",
+      "last_observables": [
+        599.0,
+        6.972,
+        229.0,
+        496.0,
+        365.96222,
+        0.15006599
+      ]
+    },
+    {
+      "case": "ColumnPeak",
+      "arguments": [],
+      "kind": "baseline",
+      "log": "08-ColumnPeak-baseline.csv",
+      "mean_ms": 6.382746664833333,
+      "late_ms": 6.7856399845,
+      "binary_sha256": "0a101330a3313b5c76b1d9a9ae816a51ff6bde4a05e2844c4dab2e35c1b56ac3",
+      "last_observables": [
+        599.0,
+        6.906,
+        229.0,
+        496.0,
+        365.96222,
+        0.15006599
+      ]
+    },
+    {
+      "case": "ColumnPeak",
+      "arguments": [],
+      "kind": "baseline",
+      "log": "09-ColumnPeak-baseline.csv",
+      "mean_ms": 6.2966783265,
+      "late_ms": 6.730634991,
+      "binary_sha256": "0a101330a3313b5c76b1d9a9ae816a51ff6bde4a05e2844c4dab2e35c1b56ac3",
+      "last_observables": [
+        599.0,
+        6.832,
+        229.0,
+        496.0,
+        365.96222,
+        0.15006599
+      ]
+    },
+    {
+      "case": "ColumnPeak",
+      "arguments": [],
+      "kind": "candidate",
+      "log": "10-ColumnPeak-candidate.csv",
+      "mean_ms": 6.47312832405,
+      "late_ms": 6.9152349905,
+      "binary_sha256": "32c4a5decea098f64c8073dba7885aa4e54ca34c77f2bbb61381c12285ce015b",
+      "last_observables": [
+        599.0,
+        6.978,
+        229.0,
+        496.0,
+        365.96222,
+        0.15006599
+      ]
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "4096"
+      ],
+      "kind": "baseline",
+      "log": "11-SpherePileScale-4096-baseline.csv",
+      "mean_ms": 58.923924,
+      "late_ms": 65.250236,
+      "binary_sha256": "101df1dda43c79c2ee191ce9ee93bfb5f39b001be16055e24ee37383cb136767",
+      "last_observables": [
+        4096.0,
+        599.0,
+        65.60941,
+        4096.0,
+        11579.0,
+        0.15658234,
+        2.0259151,
+        4.756359
+      ]
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "4096"
+      ],
+      "kind": "candidate",
+      "log": "12-SpherePileScale-4096-candidate.csv",
+      "mean_ms": 41.938411,
+      "late_ms": 46.6775376,
+      "binary_sha256": "baac59c70e72c7423cd86f7732df383986aed1c7deb3ca24797e545eaa291855",
+      "last_observables": [
+        4096.0,
+        599.0,
+        47.01748,
+        4096.0,
+        11529.0,
+        0.16836298,
+        1.912531,
+        4.826118
+      ]
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "4096"
+      ],
+      "kind": "candidate",
+      "log": "13-SpherePileScale-4096-candidate.csv",
+      "mean_ms": 43.291218,
+      "late_ms": 48.1871148,
+      "binary_sha256": "baac59c70e72c7423cd86f7732df383986aed1c7deb3ca24797e545eaa291855",
+      "last_observables": [
+        4096.0,
+        599.0,
+        48.448753,
+        4096.0,
+        11529.0,
+        0.16836298,
+        1.912531,
+        4.826118
+      ]
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "4096"
+      ],
+      "kind": "baseline",
+      "log": "14-SpherePileScale-4096-baseline.csv",
+      "mean_ms": 59.1755896,
+      "late_ms": 65.62789719999999,
+      "binary_sha256": "101df1dda43c79c2ee191ce9ee93bfb5f39b001be16055e24ee37383cb136767",
+      "last_observables": [
+        4096.0,
+        599.0,
+        66.15638,
+        4096.0,
+        11579.0,
+        0.15658234,
+        2.0259151,
+        4.756359
+      ]
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "8192"
+      ],
+      "kind": "candidate",
+      "log": "15-SpherePileScale-8192-candidate.csv",
+      "mean_ms": 88.2969202,
+      "late_ms": 97.947356,
+      "binary_sha256": "baac59c70e72c7423cd86f7732df383986aed1c7deb3ca24797e545eaa291855",
+      "last_observables": [
+        8192.0,
+        599.0,
+        98.74838,
+        8192.0,
+        23512.0,
+        0.16737413,
+        2.1533964,
+        4.5093694
+      ]
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "8192"
+      ],
+      "kind": "baseline",
+      "log": "16-SpherePileScale-8192-baseline.csv",
+      "mean_ms": 126.8823754,
+      "late_ms": 140.033686,
+      "binary_sha256": "101df1dda43c79c2ee191ce9ee93bfb5f39b001be16055e24ee37383cb136767",
+      "last_observables": [
+        8192.0,
+        599.0,
+        140.58815,
+        8192.0,
+        23398.0,
+        0.1678486,
+        2.1525748,
+        4.629677
+      ]
+    }
+  ],
+  "cpu": "Apple M3 Pro",
+  "build": "Native Release, no cache",
+  "step_seconds": 0.016666666666666666,
+  "quality_settings": "unchanged: 12 velocity iterations, 4 position iterations, gravity, restitution, friction, zero damping, sleep thresholds",
+  "source_hashes": {
+    "Silex-Benchmarks/Sources/Physics3D/AquariumFill.sx": "13d19107132ed087820c774c1aeb759a814b861eff28a0179105b1e2db3b271d",
+    "Silex-Benchmarks/Sources/Physics3D/ColumnPeak.sx": "16294d845e7ecdc1bb0801c927d36b115273becd0fe455ecf1b644f04eb0baf3",
+    "Silex-Benchmarks/Sources/Physics3D/SpherePileScale.sx": "be5ae3cb66fd3a804e63e25e81bd23458f2808c4fd7f5225c32060fd427d55e2"
+  },
+  "summary": [
+    {
+      "case": "AquariumFill",
+      "arguments": [],
+      "baseline": {
+        "runs": 3,
+        "median_ms": 10.955894847733333,
+        "mad_ms": 0.11113363259999964
+      },
+      "candidate": {
+        "runs": 3,
+        "median_ms": 8.401686056533332,
+        "mad_ms": 0.044235848366666275
+      },
+      "reduction_percent": 23.313557009251884
+    },
+    {
+      "case": "ColumnPeak",
+      "arguments": [],
+      "baseline": {
+        "runs": 2,
+        "median_ms": 6.339712495666667,
+        "mad_ms": 0.04303416916666647
+      },
+      "candidate": {
+        "runs": 2,
+        "median_ms": 6.473760831941666,
+        "mad_ms": 0.0006325078916664673
+      },
+      "reduction_percent": -2.1144229547731763
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "4096"
+      ],
+      "baseline": {
+        "runs": 2,
+        "median_ms": 59.0497568,
+        "mad_ms": 0.1258328000000013
+      },
+      "candidate": {
+        "runs": 2,
+        "median_ms": 42.6148145,
+        "mad_ms": 0.6764034999999993
+      },
+      "reduction_percent": 27.832362384937028
+    },
+    {
+      "case": "SpherePileScale",
+      "arguments": [
+        "8192"
+      ],
+      "baseline": {
+        "runs": 1,
+        "median_ms": 126.8823754,
+        "mad_ms": 0.0
+      },
+      "candidate": {
+        "runs": 1,
+        "median_ms": 88.2969202,
+        "mad_ms": 0.0
+      },
+      "reduction_percent": 30.410413643627287
+    }
+  ],
+  "llvm_control": {
+    "backend": "LLVM Release",
+    "repetitions": 1,
+    "log": "llvm-control.csv",
+    "mean_ms": 2.8805889047333335,
+    "late_ms": 4.03107832,
+    "sampled_physics_equal_native": true,
+    "binary_sha256": "b2be972c55362a4fb35f493331beb8a47a0c0e6a2c2c2470dccfc09d96eeaff1"
+  },
+  "column_sampled_physics_equal": true,
+  "candidate_physics": "d955a1aec00a36ccdda8d2461801d5cc07a74f15",
+  "validation": "286 consumer tests passed in 52 files; analytic momentum/friction and exhaustive spatial pairs included",
+  "rendered_scene": {
+    "examples_commit": "82a8501e2af680e630212dca523b41f2fc4cd01e",
+    "candidate_binary_sha256": "f8614e40f6d4dbca8ac2b7c7540c3c159491f6f4b294ec38c2ad9ea1e5aa07b1",
+    "duration_seconds": 30,
+    "baseline_log": "render-baseline.log",
+    "candidate_log": "render-candidate.log",
+    "sampling": "single bounded window run; last ten full one-second samples; baseline from previous same-scene run",
+    "candidate_fps_approx": [
+      60,
+      64
+    ],
+    "baseline_fps_approx": [
+      14,
+      15
+    ]
+  }
+}

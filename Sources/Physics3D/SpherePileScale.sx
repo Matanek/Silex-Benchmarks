@@ -1,0 +1,79 @@
+use GFX.Physics
+use STD.Math
+use STD.Process
+use STD.Time.Clock
+
+func wall(world:&Physics.World3D, size:Math.Vec3, position:Math.Vec3) {
+    world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.box(Physics.Box3D(size))
+        ..transform = Physics.Transform3D(position:position))
+}
+
+func run_pile(count:int, width:int, depth:int) {
+    var world = Physics.World3D()
+    let floor_width = width as float * 0.43 + 2.0
+    let floor_depth = depth as float * 0.43 + 2.0
+    wall(world, Math.Vec3(floor_width, 0.5, floor_depth), Math.Vec3(0.0, -0.25, 0.0))
+    wall(world, Math.Vec3(0.2, 6.0, floor_depth), Math.Vec3(-floor_width * 0.5 - 0.1, 3.0, 0.0))
+    wall(world, Math.Vec3(0.2, 6.0, floor_depth), Math.Vec3(floor_width * 0.5 + 0.1, 3.0, 0.0))
+    wall(world, Math.Vec3(floor_width, 6.0, 0.2), Math.Vec3(0.0, 3.0, -floor_depth * 0.5 - 0.1))
+    wall(world, Math.Vec3(floor_width, 6.0, 0.2), Math.Vec3(0.0, 3.0, floor_depth * 0.5 + 0.1))
+    var bodies:Physics.RigidBody3D[] = []
+    var index = 0
+    while index < count {
+        let x = index % width
+        let z = (index / width) % depth
+        let y = index / (width * depth)
+        bodies.append(world.create_rigid_body(Physics.RigidBody3DSettings()
+            ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.2))
+            ..transform = Physics.Transform3D(position:Math.Vec3(
+                (x as float - (width - 1) as float * 0.5) * 0.43 + Math.sin(index as float * 2.3999632) * 0.01,
+                0.6 + y as float * 0.43,
+                (z as float - (depth - 1) as float * 0.5) * 0.43 + Math.cos(index as float * 1.618034) * 0.01))
+            ..friction = 0.6))
+        index++
+    }
+    var clock = Clock()
+    var elapsed = 0.0
+    var minimum_y = 1000.0
+    var maximum_speed = 0.0
+    var step = 0
+    while step < 600 {
+        clock.tick()
+        world.step(1.0 / 60.0)
+        elapsed += clock.tick() * 1000.0
+        var awake = 0
+        var height = 0.0
+        for body in bodies {
+            let p = body.position()
+            assert(p.x == p.x && p.y == p.y && p.z == p.z)
+            assert(p.y >= 0.0 && p.y < 6.0)
+            assert(Math.abs(p.x) < floor_width * 0.5 && Math.abs(p.z) < floor_depth * 0.5)
+            minimum_y = Math.min(minimum_y, p.y)
+            height = Math.max(height, p.y)
+            maximum_speed = Math.max(maximum_speed, body.linear_velocity().length())
+            if body.is_awake() { awake++ }
+        }
+        if step % 60 == 59 {
+            print("$(count),$(step),$(elapsed / 60.0),$(awake),$(world.contact_count()),$(minimum_y),$(height),$(maximum_speed)")
+            elapsed = 0.0
+        }
+        step++
+    }
+    assert(world.body_count() == count + 5)
+}
+
+func main() {
+    match Process.arguments() {
+        success(args) => {
+            if args.count() == 2 {
+                if args[1] == "1024" { run_pile(1024, 16, 8); return }
+                if args[1] == "4096" { run_pile(4096, 32, 16); return }
+                if args[1] == "8192" { run_pile(8192, 46, 23); return }
+            }
+        }
+        failure(error) => { panic(error.detail) }
+    }
+    panic("usage: SpherePileScale 1024|4096|8192")
+}

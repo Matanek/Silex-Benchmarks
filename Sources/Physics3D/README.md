@@ -508,3 +508,29 @@ is identical between the corrected baseline and specialized candidate.
 This is a local CPU comparison, not a rendered FPS claim or cross-platform
 qualification. The full pile remains awake at 30 seconds; the settling and
 floor-penetration quality issues remain open.
+
+## Dense sphere scaling
+
+`SpherePileScale.sx` measures 600 fixed steps at 60 Hz with 1,024, 4,096 or
+8,192 initially separated spheres in an approximately eight-layer pile. The
+floor area grows with the count; radius 0.2 m, gravity, zero damping and
+friction 0.6 stay fixed. This is a fully populated pile, distinct from the
+progressive `AquariumFill.sx` jet and from rendered FPS measurements.
+
+From the Spec's `Worktree/` root:
+
+```sh
+Silex/Toolchain/zig-out/bin/silex compile Silex-Benchmarks/Sources/Physics3D/SpherePileScale.sx --release --nocache -o .silex/sphere-pile-scale
+.silex/sphere-pile-scale 4096
+```
+
+CSV columns are body count, step, mean milliseconds per step over the last
+60 steps, awake bodies, contacts, minimum center height over the run, current
+pile height, and maximum linear speed over the run. Every step checks finite
+poses and containment; the existing 0.19 m floor-height quality target remains
+a separate gate. This benchmark reports penetration rather than claiming
+that dense-pile quality is already qualified.
+
+The [September 30 comparison](Baselines/2026-09-30-major-levers/README.md)
+records the frozen native baseline, the sphere solver and spatial grid
+candidate, raw measurements, the column control, and the rendered aquarium.
