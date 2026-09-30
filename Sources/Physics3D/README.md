@@ -471,3 +471,40 @@ interactive demonstration**. The remaining native solver cost and catch-up
 behavior stay open; this result does not establish Unity/Godot parity. No
 screenshot was captured and no renderer or simulation-quality setting was
 lowered to obtain these numbers.
+
+
+## Horizontal aquarium fill and settling diagnostic
+
+`AquariumFill.sx` follows the horizontal 10 × 4 × 5 m aquarium, with 1,024
+spheres emitted at 80/s, a deterministic lateral nozzle spread, and 1,800
+fixed steps at 60 Hz. It checks containment each step and checks that the
+final pile occupies both horizontal dimensions instead of isolated planar
+stacks. Its CSV records contact and awake counts, linear/angular motion,
+per-second mean step costs and the minimum center height over the entire run.
+The generator uses zero angular damping as a diagnostic control.
+
+The containment guard is distinct from the **still failing 0.19 m floor
+quality gate**: transient penetration is reported rather than silently
+filtered out. This scene changes the old tall-bin workload; do not compare
+its numbers directly with `JetPeak` or the historical rendered bin.
+
+```sh
+silex compile Silex-Benchmarks/Sources/Physics3D/AquariumFill.sx --release \
+  -o .silex/aquarium-fill
+.silex/aquarium-fill
+```
+
+The sphere specialization comparison uses the same dispersed emitter and
+friction reprojection on both sides. Thus the measured change isolates the
+geometric fast paths, not a different fill pattern, damping or sleep threshold.
+Raw measurements and binary hashes live under
+[the aquarium comparison](Baselines/2026-09-30-aquarium/comparison.json).
+
+Three balanced pairs on macOS ARM64 (Apple M3 Pro, native Release) measure
+median mean cost **13.728 → 11.464 ms/step** (−16.5%) over the complete run,
+and **19.636 → 16.237 ms/step** (−17.3%) over its last ten seconds.
+Every sampled physical observable, including the all-step minimum height,
+is identical between the corrected baseline and specialized candidate.
+This is a local CPU comparison, not a rendered FPS claim or cross-platform
+qualification. The full pile remains awake at 30 seconds; the settling and
+floor-penetration quality issues remain open.

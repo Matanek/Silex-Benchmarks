@@ -1,0 +1,89 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "processor": "Apple M3 Pro",
+  "steps": 1800,
+  "bodies": 1024,
+  "seed": "sin(index * 2.3999632)",
+  "step_seconds": 0.016666666666666666,
+  "rendering": false,
+  "source_sha256": "13d19107132ed087820c774c1aeb759a814b861eff28a0179105b1e2db3b271d",
+  "baseline": "GFX.Physics 4cbed35 plus tangent-plane reprojection; new dispersed aquarium",
+  "candidate": "sphere detection and position specialization on the same corrected solver",
+  "all_sampled_observables_equal": true,
+  "runs": [
+    {
+      "run": 1,
+      "kind": "baseline",
+      "mean_ms": 13.728237794333333,
+      "last10s_mean_ms": 19.7323156,
+      "binary_sha256": "63ab266248ec1e6f0374907c958c5abd31c0a1972b947304d95f4749b4e29469"
+    },
+    {
+      "run": 2,
+      "kind": "candidate",
+      "mean_ms": 11.463655997666667,
+      "last10s_mean_ms": 16.2367438,
+      "binary_sha256": "b7b8d6c7e34ca4f29894306b62d79398f44b3a83ebb40fa62be7b5492757698d"
+    },
+    {
+      "run": 3,
+      "kind": "candidate",
+      "mean_ms": 11.213497199733332,
+      "last10s_mean_ms": 15.7881549,
+      "binary_sha256": "b7b8d6c7e34ca4f29894306b62d79398f44b3a83ebb40fa62be7b5492757698d"
+    },
+    {
+      "run": 4,
+      "kind": "baseline",
+      "mean_ms": 13.659734902266667,
+      "last10s_mean_ms": 19.4294284,
+      "binary_sha256": "63ab266248ec1e6f0374907c958c5abd31c0a1972b947304d95f4749b4e29469"
+    },
+    {
+      "run": 5,
+      "kind": "baseline",
+      "mean_ms": 13.7340034401,
+      "last10s_mean_ms": 19.6362548,
+      "binary_sha256": "63ab266248ec1e6f0374907c958c5abd31c0a1972b947304d95f4749b4e29469"
+    },
+    {
+      "run": 6,
+      "kind": "candidate",
+      "mean_ms": 11.483945495266665,
+      "last10s_mean_ms": 16.4812896,
+      "binary_sha256": "b7b8d6c7e34ca4f29894306b62d79398f44b3a83ebb40fa62be7b5492757698d"
+    }
+  ],
+  "compiler_head": "e369b1e02bd07fffb56b2c9abd5051bf9c5e0a3e",
+  "physics_head": "1d77c5e917d9bf7df1fa1a5b9def6628dfcf60b6",
+  "physics_baseline_head": "4cbed35c9e4fb302a4034686fef421297a7ab197",
+  "summary": {
+    "mean_ms": {
+      "baseline_median": 13.728237794333333,
+      "candidate_median": 11.463655997666667,
+      "reduction_percent": 16.495793783535916,
+      "baseline_range": [
+        13.659734902266667,
+        13.7340034401
+      ],
+      "candidate_range": [
+        11.213497199733332,
+        11.483945495266665
+      ]
+    },
+    "last10s_mean_ms": {
+      "baseline_median": 19.6362548,
+      "candidate_median": 16.2367438,
+      "reduction_percent": 17.312420492730617,
+      "baseline_range": [
+        19.4294284,
+        19.7323156
+      ],
+      "candidate_range": [
+        15.7881549,
+        16.4812896
+      ]
+    }
+  }
+}
