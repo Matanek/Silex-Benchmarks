@@ -1,0 +1,3 @@
+ok - sphere jet emits progressively and caps each slow frame
+ok - instanced groups preserve body poses and retain unchanged revisions
+2 passed; 0 failed
