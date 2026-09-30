@@ -1,0 +1,16 @@
+[
+  {
+    "backend": "native",
+    "binary_sha256": "6bf63f469834cf52140e35783df78bee048d56060844d48ccf5bfaba0e1b169a",
+    "duration_limit_seconds": 70,
+    "termination": "SIGTERM after measurement",
+    "exit": 0
+  },
+  {
+    "backend": "llvm",
+    "binary_sha256": "7aacaf7d2a1c6be17c09ed3e7285b78bc0eb3fdea813d1ac7553f5a409bcf761",
+    "duration_limit_seconds": 70,
+    "termination": "SIGTERM after measurement",
+    "exit": 0
+  }
+]

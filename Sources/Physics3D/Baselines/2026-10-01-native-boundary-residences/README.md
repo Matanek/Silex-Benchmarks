@@ -30,3 +30,22 @@ type n'est réutilisé.
 
 Linux et Windows ARM64 concernés, sans exécution sur ces hôtes ici. X64 reste
 inchangé. Ce résultat ne prouve pas encore l'objectif interactif de 120 FPS.
+
+## Contrôle interactif à 2 048 corps
+
+Scène Native du candidat puis contrôle LLVM inchangé, 70 secondes chacun,
+présentation immédiate Metal, priorité normale ; aucun build/test concurrent.
+Médianes sur les secondes pleines après remplissage, tous les corps éveillés :
+
+| Mesure | Native | LLVM |
+|---|---:|---:|
+| fps | 13.792 | 105.868 |
+| ms_step | 17.752 | 9.246 |
+| steps_s | 55.169 | 59.855 |
+| physics_ms_frame | 71.006 | 5.233 |
+
+Ce contrôle confirme que l'objectif n'est pas atteint : Native dépasse encore
+le budget du pas et sature le rattrapage. Les variations thermiques/système
+interdisent de déduire un pourcentage strict en comparant ce passage aux runs
+interactifs des sessions précédentes. Les mesures A/B fixes ci-dessus restent
+la preuve d'admission des changements. Détails et hashes dans `scene-2048/`.
