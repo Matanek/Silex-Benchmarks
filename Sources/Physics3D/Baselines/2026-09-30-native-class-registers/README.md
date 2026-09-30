@@ -79,3 +79,33 @@ uses the fallback. The prerequisite graph correction also reaches X64 scalar
 FP allocation. Execution and performance here are verified only on macOS
 ARM64; this is not a six-target qualification. No remote publication or local
 baseline integration is part of this campaign.
+
+## Interactive diagnostic: 2,048 spheres
+
+After the CPU campaign, the same StressScene source at Examples `312fad5`
+was compiled with candidate `bbc8b9f` (ReleaseFast bootstrap, Native Release,
+`--nocache`). The frozen explicit LLVM scene binary was then run separately.
+Both log immediate presentation and the Metal driver. Each process ran for
+70 wall-clock seconds and was deliberately stopped with SIGTERM; the signal
+is the measurement harness shutdown, not a spontaneous crash. Logs and binary
+hashes are in `scene-2048/`. No screenshots were taken.
+
+Only one-second telemetry samples after the counter reaches 2,048/2,048 are
+included below. Every such sample reports all 2,048 bodies awake.
+
+| Metric | Native | LLVM |
+|---|---:|---:|
+| Samples | 41 | 44 |
+| FPS, median (range) | 10.13 (9.88–11.55) | 146.86 (122.18–149.99) |
+| Physics ms/step, median | 24.20 | 9.71 |
+| Physics steps/frame, median | 4.00 | 0.41 |
+| Physics ms/frame, median | 96.79 | 3.97 |
+| Physics steps/s, median | 40.51 | 59.94 |
+
+This is a diagnostic single passage per backend, not the fixed-work paired
+qualification above: frame pacing and simulation advancement differ. It
+confirms that the candidate still cannot sustain 120 FPS in the active 2,048
+body scene. Native saturates the four-step catch-up limit; its physics work
+accounts for nearly all frame time. No result from a paused simulation is
+used. The public scratch executable `physics3d-stress-scene-release` now
+contains this candidate; no baseline integration or publication occurred.
