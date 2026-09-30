@@ -1,0 +1,44 @@
+[
+  {
+    "kind": "llvm",
+    "log": "control-01-llvm.csv",
+    "mean_ms": 2.950020111066667,
+    "late_ms": 4.14088507,
+    "binary_sha256": "b2be972c55362a4fb35f493331beb8a47a0c0e6a2c2c2470dccfc09d96eeaff1"
+  },
+  {
+    "kind": "original",
+    "log": "control-02-original.csv",
+    "mean_ms": 8.8562700034,
+    "late_ms": 12.4235978,
+    "binary_sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652"
+  },
+  {
+    "kind": "candidate",
+    "log": "control-03-candidate.csv",
+    "mean_ms": 8.184329735766667,
+    "late_ms": 11.4552444,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "kind": "candidate",
+    "log": "control-04-candidate.csv",
+    "mean_ms": 8.160835916633333,
+    "late_ms": 11.42460315,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "kind": "original",
+    "log": "control-05-original.csv",
+    "mean_ms": 8.859386462666667,
+    "late_ms": 12.4339134,
+    "binary_sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652"
+  },
+  {
+    "kind": "llvm",
+    "log": "control-06-llvm.csv",
+    "mean_ms": 2.95094718,
+    "late_ms": 4.1476565999999995,
+    "binary_sha256": "b2be972c55362a4fb35f493331beb8a47a0c0e6a2c2c2470dccfc09d96eeaff1"
+  }
+]

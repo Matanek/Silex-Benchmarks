@@ -1,0 +1,15 @@
+{
+  "compiler_baseline": "87133ed79a1c5ab8f8192d1bed2dcac3265036ce",
+  "compiler_candidate": "bbc8b9ff1754fe44440ef8fa9f0cf08b67ffc3b1",
+  "compiler_original": "251d4ec827e15e117d945d22532290f8c19ae48c",
+  "physics": "d955a1aec00a36ccdda8d2461801d5cc07a74f15",
+  "host": "Apple M3 Pro, macOS 26.6.2 ARM64",
+  "application_mode": "Release",
+  "candidate_bootstrap_mode": "Debug",
+  "source_sha256": {
+    "AquariumFill": "13d19107132ed087820c774c1aeb759a814b861eff28a0179105b1e2db3b271d",
+    "ColumnPeak": "16294d845e7ecdc1bb0801c927d36b115273becd0fe455ecf1b644f04eb0baf3"
+  },
+  "correctness": "All non-timing CSV fields exactly equal within each scene and across Aquarium LLVM/original/candidate controls",
+  "validation_log_sha256": "22640495db52c1b3ee0694519b7242d3db69b23e8f9c0ff81560938fad0d7af3"
+}

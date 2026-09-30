@@ -1,0 +1,130 @@
+[
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "01-AquariumFill-baseline.csv",
+    "mean_ms": 8.691311307,
+    "late_ms": 12.23823455,
+    "binary_sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "02-AquariumFill-candidate.csv",
+    "mean_ms": 8.261208190333333,
+    "late_ms": 11.6568224,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "03-AquariumFill-candidate.csv",
+    "mean_ms": 8.201033065633334,
+    "late_ms": 11.4554066,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "04-AquariumFill-baseline.csv",
+    "mean_ms": 8.599639503266667,
+    "late_ms": 12.03725135,
+    "binary_sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "05-AquariumFill-baseline.csv",
+    "mean_ms": 8.595481263066667,
+    "late_ms": 12.0451333,
+    "binary_sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "06-AquariumFill-candidate.csv",
+    "mean_ms": 8.164343597233334,
+    "late_ms": 11.4408665,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "07-AquariumFill-candidate.csv",
+    "mean_ms": 8.182161603333334,
+    "late_ms": 11.4626817,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "08-AquariumFill-baseline.csv",
+    "mean_ms": 8.568440907466666,
+    "late_ms": 12.0063096,
+    "binary_sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "09-ColumnPeak-baseline.csv",
+    "mean_ms": 6.67656668225,
+    "late_ms": 7.33130007,
+    "binary_sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "10-ColumnPeak-candidate.csv",
+    "mean_ms": 6.330675004,
+    "late_ms": 6.91620006,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "11-ColumnPeak-candidate.csv",
+    "mean_ms": 6.277356652166667,
+    "late_ms": 6.92289999,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "12-ColumnPeak-baseline.csv",
+    "mean_ms": 6.6742516648,
+    "late_ms": 7.3248000399999995,
+    "binary_sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "13-ColumnPeak-baseline.csv",
+    "mean_ms": 6.6655483331,
+    "late_ms": 7.33950007,
+    "binary_sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "14-ColumnPeak-candidate.csv",
+    "mean_ms": 6.277716663166666,
+    "late_ms": 6.9148999700000005,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "15-ColumnPeak-candidate.csv",
+    "mean_ms": 6.301971663133333,
+    "late_ms": 6.9334000399999995,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "16-ColumnPeak-baseline.csv",
+    "mean_ms": 6.692308332133333,
+    "late_ms": 7.3428,
+    "binary_sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62"
+  }
+]
