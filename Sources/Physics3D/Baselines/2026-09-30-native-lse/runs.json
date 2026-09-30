@@ -1,0 +1,146 @@
+[
+  {
+    "workload": "AquariumFill",
+    "variant": "A",
+    "file": "AquariumFill-01-A.csv",
+    "binary": "levers-AquariumFill-candidate",
+    "sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652",
+    "mean": 8.820074480066667,
+    "samples": 30
+  },
+  {
+    "workload": "AquariumFill",
+    "variant": "B",
+    "file": "AquariumFill-02-B.csv",
+    "binary": "native-gap-lse",
+    "sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3",
+    "mean": 8.593322743766667,
+    "samples": 30
+  },
+  {
+    "workload": "AquariumFill",
+    "variant": "B",
+    "file": "AquariumFill-03-B.csv",
+    "binary": "native-gap-lse",
+    "sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3",
+    "mean": 8.579972141,
+    "samples": 30
+  },
+  {
+    "workload": "AquariumFill",
+    "variant": "A",
+    "file": "AquariumFill-04-A.csv",
+    "binary": "levers-AquariumFill-candidate",
+    "sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652",
+    "mean": 8.875210408733333,
+    "samples": 30
+  },
+  {
+    "workload": "AquariumFill",
+    "variant": "A",
+    "file": "AquariumFill-05-A.csv",
+    "binary": "levers-AquariumFill-candidate",
+    "sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652",
+    "mean": 8.880927376633334,
+    "samples": 30
+  },
+  {
+    "workload": "AquariumFill",
+    "variant": "B",
+    "file": "AquariumFill-06-B.csv",
+    "binary": "native-gap-lse",
+    "sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3",
+    "mean": 8.606149057066666,
+    "samples": 30
+  },
+  {
+    "workload": "AquariumFill",
+    "variant": "B",
+    "file": "AquariumFill-07-B.csv",
+    "binary": "native-gap-lse",
+    "sha256": "f46d6b98dafe810fd8c8ed6984c1eaf09f657d175630415f830839cec32f83c3",
+    "mean": 8.626023068566667,
+    "samples": 30
+  },
+  {
+    "workload": "AquariumFill",
+    "variant": "A",
+    "file": "AquariumFill-08-A.csv",
+    "binary": "levers-AquariumFill-candidate",
+    "sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652",
+    "mean": 8.854936715000001,
+    "samples": 30
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "A",
+    "file": "ColumnPeak-01-A.csv",
+    "binary": "levers-ColumnPeak-candidate",
+    "sha256": "32c4a5decea098f64c8073dba7885aa4e54ca34c77f2bbb61381c12285ce015b",
+    "mean": 6.883226665466666,
+    "samples": 600
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "B",
+    "file": "ColumnPeak-02-B.csv",
+    "binary": "native-gap-lse-column",
+    "sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62",
+    "mean": 6.818556654833333,
+    "samples": 600
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "B",
+    "file": "ColumnPeak-03-B.csv",
+    "binary": "native-gap-lse-column",
+    "sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62",
+    "mean": 6.7386899953,
+    "samples": 600
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "A",
+    "file": "ColumnPeak-04-A.csv",
+    "binary": "levers-ColumnPeak-candidate",
+    "sha256": "32c4a5decea098f64c8073dba7885aa4e54ca34c77f2bbb61381c12285ce015b",
+    "mean": 6.801344994583333,
+    "samples": 600
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "A",
+    "file": "ColumnPeak-05-A.csv",
+    "binary": "levers-ColumnPeak-candidate",
+    "sha256": "32c4a5decea098f64c8073dba7885aa4e54ca34c77f2bbb61381c12285ce015b",
+    "mean": 6.8251333394166664,
+    "samples": 600
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "B",
+    "file": "ColumnPeak-06-B.csv",
+    "binary": "native-gap-lse-column",
+    "sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62",
+    "mean": 6.808711668116667,
+    "samples": 600
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "B",
+    "file": "ColumnPeak-07-B.csv",
+    "binary": "native-gap-lse-column",
+    "sha256": "740f6e7fd312e363cf8f43317ec864e8df8b4fe25fcd19be57127632fe027b62",
+    "mean": 6.898806655083333,
+    "samples": 600
+  },
+  {
+    "workload": "ColumnPeak",
+    "variant": "A",
+    "file": "ColumnPeak-08-A.csv",
+    "binary": "levers-ColumnPeak-candidate",
+    "sha256": "32c4a5decea098f64c8073dba7885aa4e54ca34c77f2bbb61381c12285ce015b",
+    "mean": 6.940045005866667,
+    "samples": 600
+  }
+]
