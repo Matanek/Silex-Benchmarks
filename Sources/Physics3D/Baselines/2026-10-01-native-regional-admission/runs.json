@@ -1,0 +1,130 @@
+[
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "01-AquariumFill-baseline.csv",
+    "mean_ms": 7.3461289367000004,
+    "late_ms": 10.2858763,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "02-AquariumFill-candidate.csv",
+    "mean_ms": 6.800313206566667,
+    "late_ms": 9.54774815,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "03-AquariumFill-candidate.csv",
+    "mean_ms": 6.835314699333333,
+    "late_ms": 9.5800315,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "04-AquariumFill-baseline.csv",
+    "mean_ms": 7.3539214127,
+    "late_ms": 10.285972600000001,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "05-AquariumFill-baseline.csv",
+    "mean_ms": 7.320680632733334,
+    "late_ms": 10.2459132,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "06-AquariumFill-candidate.csv",
+    "mean_ms": 6.869555762233333,
+    "late_ms": 9.6205544,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "07-AquariumFill-candidate.csv",
+    "mean_ms": 6.84599518,
+    "late_ms": 9.5839636,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "08-AquariumFill-baseline.csv",
+    "mean_ms": 7.3442225206666665,
+    "late_ms": 10.2771012,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "09-ColumnPeak-baseline.csv",
+    "mean_ms": 5.91326000025,
+    "late_ms": 6.53389996,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "10-ColumnPeak-candidate.csv",
+    "mean_ms": 6.030408332083334,
+    "late_ms": 6.551799969999999,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "11-ColumnPeak-candidate.csv",
+    "mean_ms": 5.963796659,
+    "late_ms": 6.5922,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "12-ColumnPeak-baseline.csv",
+    "mean_ms": 5.8865566625,
+    "late_ms": 6.49150001,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "13-ColumnPeak-baseline.csv",
+    "mean_ms": 5.908543334966667,
+    "late_ms": 6.50859996,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "14-ColumnPeak-candidate.csv",
+    "mean_ms": 5.9757933308,
+    "late_ms": 6.60569993,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "15-ColumnPeak-candidate.csv",
+    "mean_ms": 5.966726665166667,
+    "late_ms": 6.5877000599999995,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "16-ColumnPeak-baseline.csv",
+    "mean_ms": 5.920498336716666,
+    "late_ms": 6.52710006,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  }
+]
