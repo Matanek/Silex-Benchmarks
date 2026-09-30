@@ -1,0 +1,130 @@
+[
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "01-AquariumFill-baseline.csv",
+    "mean_ms": 6.853074824466667,
+    "late_ms": 9.6227026,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "02-AquariumFill-candidate.csv",
+    "mean_ms": 6.704257928933333,
+    "late_ms": 9.3835001,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "03-AquariumFill-candidate.csv",
+    "mean_ms": 6.6926367041,
+    "late_ms": 9.3864116,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "04-AquariumFill-baseline.csv",
+    "mean_ms": 6.834166204266666,
+    "late_ms": 9.5665369,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "05-AquariumFill-baseline.csv",
+    "mean_ms": 6.836873951133334,
+    "late_ms": 9.559215,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "06-AquariumFill-candidate.csv",
+    "mean_ms": 6.718950498666667,
+    "late_ms": 9.3836427,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "07-AquariumFill-candidate.csv",
+    "mean_ms": 6.7006249494,
+    "late_ms": 9.3844648,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "08-AquariumFill-baseline.csv",
+    "mean_ms": 6.8332567165333336,
+    "late_ms": 9.5706617,
+    "binary_sha256": "2ffbd6a8e72245d96fead17c148571b3e1da21daa57bbb0821dd98bffd7a8ec3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "09-ColumnPeak-baseline.csv",
+    "mean_ms": 5.9403866669,
+    "late_ms": 6.57380007,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "10-ColumnPeak-candidate.csv",
+    "mean_ms": 5.6849366705,
+    "late_ms": 6.26060003,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "11-ColumnPeak-candidate.csv",
+    "mean_ms": 5.6922016595,
+    "late_ms": 6.3067,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "12-ColumnPeak-baseline.csv",
+    "mean_ms": 5.964398331216667,
+    "late_ms": 6.55320006,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "13-ColumnPeak-baseline.csv",
+    "mean_ms": 5.880771663483333,
+    "late_ms": 6.52769994,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "14-ColumnPeak-candidate.csv",
+    "mean_ms": 5.666643333633333,
+    "late_ms": 6.25090003,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "15-ColumnPeak-candidate.csv",
+    "mean_ms": 5.661913330533333,
+    "late_ms": 6.26429993,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "16-ColumnPeak-baseline.csv",
+    "mean_ms": 5.94279334185,
+    "late_ms": 6.59840006,
+    "binary_sha256": "53e1e3106edcc5ed14089258c2e846d0a8fa47b4bd82d1493c108e9b07a9d86b"
+  }
+]
