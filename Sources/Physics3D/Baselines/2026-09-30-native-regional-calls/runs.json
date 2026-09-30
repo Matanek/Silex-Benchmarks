@@ -1,0 +1,130 @@
+[
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "01-AquariumFill-baseline.csv",
+    "mean_ms": 8.0639295522,
+    "late_ms": 11.3233669,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "02-AquariumFill-candidate.csv",
+    "mean_ms": 7.644671822566667,
+    "late_ms": 10.6952219,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "03-AquariumFill-candidate.csv",
+    "mean_ms": 7.6210675766666665,
+    "late_ms": 10.6606316,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "04-AquariumFill-baseline.csv",
+    "mean_ms": 8.173874717766667,
+    "late_ms": 11.443630299999999,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "05-AquariumFill-baseline.csv",
+    "mean_ms": 8.166623512666666,
+    "late_ms": 11.44087805,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "06-AquariumFill-candidate.csv",
+    "mean_ms": 7.651908502666667,
+    "late_ms": 10.7156954,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "07-AquariumFill-candidate.csv",
+    "mean_ms": 7.6239929877,
+    "late_ms": 10.6603508,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "08-AquariumFill-baseline.csv",
+    "mean_ms": 8.160974119933334,
+    "late_ms": 11.4358174,
+    "binary_sha256": "b01b95af0967db81d742d67ba7502c60bfad2055f220f14b3d579128c2865760"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "09-ColumnPeak-baseline.csv",
+    "mean_ms": 6.281840008883333,
+    "late_ms": 6.93489997,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "10-ColumnPeak-candidate.csv",
+    "mean_ms": 6.091430001,
+    "late_ms": 6.6592,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "11-ColumnPeak-candidate.csv",
+    "mean_ms": 6.057438332833334,
+    "late_ms": 6.65669999,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "12-ColumnPeak-baseline.csv",
+    "mean_ms": 6.277065005833333,
+    "late_ms": 6.9320001,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "13-ColumnPeak-baseline.csv",
+    "mean_ms": 6.284550000366667,
+    "late_ms": 6.93640005,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "14-ColumnPeak-candidate.csv",
+    "mean_ms": 6.06049,
+    "late_ms": 6.68499995,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "15-ColumnPeak-candidate.csv",
+    "mean_ms": 6.038705000833334,
+    "late_ms": 6.64309991,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "16-ColumnPeak-baseline.csv",
+    "mean_ms": 6.2811916615,
+    "late_ms": 6.916,
+    "binary_sha256": "0dd8e13526966f0ff3b319fb02c2ca0fc42ae276d67b75f824213bba2766d570"
+  }
+]
