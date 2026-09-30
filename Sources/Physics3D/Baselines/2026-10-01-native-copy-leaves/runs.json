@@ -1,0 +1,130 @@
+[
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "01-AquariumFill-baseline.csv",
+    "mean_ms": 7.635917968433334,
+    "late_ms": 10.67743215,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "02-AquariumFill-candidate.csv",
+    "mean_ms": 7.217505925933334,
+    "late_ms": 10.11674495,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "03-AquariumFill-candidate.csv",
+    "mean_ms": 7.3180597999999994,
+    "late_ms": 10.2384154,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "04-AquariumFill-baseline.csv",
+    "mean_ms": 7.6258028762666665,
+    "late_ms": 10.6515771,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "05-AquariumFill-baseline.csv",
+    "mean_ms": 7.616935938666667,
+    "late_ms": 10.66766595,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "06-AquariumFill-candidate.csv",
+    "mean_ms": 7.2846183561,
+    "late_ms": 10.2011084,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "07-AquariumFill-candidate.csv",
+    "mean_ms": 7.297729346,
+    "late_ms": 10.21553755,
+    "binary_sha256": "26b7b3288c4cb249f651d319f70236242ac4c9c1c26e89a274963fe736118111"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "08-AquariumFill-baseline.csv",
+    "mean_ms": 7.630214559066666,
+    "late_ms": 10.65863725,
+    "binary_sha256": "f7183f3b135cd3f2927b914800fa926805fcf7f5ed38a70ff5e35347414bbd4f"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "09-ColumnPeak-baseline.csv",
+    "mean_ms": 5.983779995333333,
+    "late_ms": 6.5435,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "10-ColumnPeak-candidate.csv",
+    "mean_ms": 5.900363329833334,
+    "late_ms": 6.47980001,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "11-ColumnPeak-candidate.csv",
+    "mean_ms": 5.875364998833334,
+    "late_ms": 6.4866999100000005,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "12-ColumnPeak-baseline.csv",
+    "mean_ms": 5.974118335133333,
+    "late_ms": 6.5813999999999995,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "13-ColumnPeak-baseline.csv",
+    "mean_ms": 5.9986866734,
+    "late_ms": 6.59379993,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "14-ColumnPeak-candidate.csv",
+    "mean_ms": 5.859206666133334,
+    "late_ms": 6.46329997,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "15-ColumnPeak-candidate.csv",
+    "mean_ms": 5.865848339633334,
+    "late_ms": 6.55670005,
+    "binary_sha256": "9db2e256afa411016f74509e667e8276672ef2fb372fb721eb079b81752bdd4d"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "16-ColumnPeak-baseline.csv",
+    "mean_ms": 6.035536671833333,
+    "late_ms": 6.62429997,
+    "binary_sha256": "376ba9b1614c8d5dce989ddb36e401cc483737085cee61eaf67a442517bbe511"
+  }
+]
