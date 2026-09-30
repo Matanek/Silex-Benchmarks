@@ -1,0 +1,130 @@
+[
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "01-AquariumFill-baseline.csv",
+    "mean_ms": 6.449139446233334,
+    "late_ms": 9.10914825,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "02-AquariumFill-candidate.csv",
+    "mean_ms": 6.302198420566667,
+    "late_ms": 8.80232345,
+    "binary_sha256": "c11383506ae61bcf44e0eb34ef2b1c8f7fc913fa8b8e5f2bdbb1f3b2d5f29cbc"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "03-AquariumFill-candidate.csv",
+    "mean_ms": 6.320653992966667,
+    "late_ms": 8.862009950000001,
+    "binary_sha256": "c11383506ae61bcf44e0eb34ef2b1c8f7fc913fa8b8e5f2bdbb1f3b2d5f29cbc"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "04-AquariumFill-baseline.csv",
+    "mean_ms": 6.551922983766667,
+    "late_ms": 9.182963449999999,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "05-AquariumFill-baseline.csv",
+    "mean_ms": 6.6234597488,
+    "late_ms": 9.2942303,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "06-AquariumFill-candidate.csv",
+    "mean_ms": 6.265939297866667,
+    "late_ms": 8.75424955,
+    "binary_sha256": "c11383506ae61bcf44e0eb34ef2b1c8f7fc913fa8b8e5f2bdbb1f3b2d5f29cbc"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "candidate",
+    "log": "07-AquariumFill-candidate.csv",
+    "mean_ms": 6.2938743589,
+    "late_ms": 8.8224584,
+    "binary_sha256": "c11383506ae61bcf44e0eb34ef2b1c8f7fc913fa8b8e5f2bdbb1f3b2d5f29cbc"
+  },
+  {
+    "case": "AquariumFill",
+    "kind": "baseline",
+    "log": "08-AquariumFill-baseline.csv",
+    "mean_ms": 6.704068732366667,
+    "late_ms": 9.38473495,
+    "binary_sha256": "fd775edea3368a3704d61b55319234d6e9927a5a29624e24e22f7a16cfcedbb7"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "09-ColumnPeak-baseline.csv",
+    "mean_ms": 5.644961672333333,
+    "late_ms": 6.2671,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "10-ColumnPeak-candidate.csv",
+    "mean_ms": 5.656924990666667,
+    "late_ms": 6.26530007,
+    "binary_sha256": "8de04fb4207e7bf8c6cd36704aae250c4d1cc245773a96c5b1a92e9fbc8224dc"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "11-ColumnPeak-candidate.csv",
+    "mean_ms": 5.640088336183333,
+    "late_ms": 6.22890007,
+    "binary_sha256": "8de04fb4207e7bf8c6cd36704aae250c4d1cc245773a96c5b1a92e9fbc8224dc"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "12-ColumnPeak-baseline.csv",
+    "mean_ms": 5.668451665516667,
+    "late_ms": 6.25409998,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "13-ColumnPeak-baseline.csv",
+    "mean_ms": 5.669078332333333,
+    "late_ms": 6.27060001,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "14-ColumnPeak-candidate.csv",
+    "mean_ms": 5.599653342183333,
+    "late_ms": 6.1973,
+    "binary_sha256": "8de04fb4207e7bf8c6cd36704aae250c4d1cc245773a96c5b1a92e9fbc8224dc"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "candidate",
+    "log": "15-ColumnPeak-candidate.csv",
+    "mean_ms": 5.61592167615,
+    "late_ms": 6.19920001,
+    "binary_sha256": "8de04fb4207e7bf8c6cd36704aae250c4d1cc245773a96c5b1a92e9fbc8224dc"
+  },
+  {
+    "case": "ColumnPeak",
+    "kind": "baseline",
+    "log": "16-ColumnPeak-baseline.csv",
+    "mean_ms": 5.660378342483333,
+    "late_ms": 6.25010006,
+    "binary_sha256": "245a8b68d6358e893ce469751722a01af00fa8b42610e38886bf0ab0821ec3d3"
+  }
+]
