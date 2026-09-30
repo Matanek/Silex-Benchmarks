@@ -3,8 +3,8 @@
 Measured on Apple M3 Pro, macOS 26.6.2 ARM64, Native Release, `--nocache`.
 Compiler baseline `251d4ec827e15e117d945d22532290f8c19ae48c`; candidate
 `87133ed79a1c5ab8f8192d1bed2dcac3265036ce`. Physics is unchanged at
-`d955a1aec00a36ccdda8d2461801d5cc07a74f15`. Both programs were compiled
-with Debug bootstrap compilers; application code is Release. Candidate binaries
+`d955a1aec00a36ccdda8d2461801d5cc07a74f15`. The candidate used a Debug bootstrap compiler; the baseline bootstrap mode
+was not separately recorded. Both application binaries are Release. Candidate binaries
 were built before adding the regression tests and comments; the executable
 encoder implementation matches the candidate commit. Their hashes are recorded
 in `runs.json`.
