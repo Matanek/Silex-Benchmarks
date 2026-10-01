@@ -1,0 +1,50 @@
+[
+  {
+    "kind": "llvm",
+    "log": "01-llvm.csv",
+    "mean_ms": 2.9742477529999998,
+    "late_ms": 4.17154647,
+    "exit": 0,
+    "binary_sha256": "b2be972c55362a4fb35f493331beb8a47a0c0e6a2c2c2470dccfc09d96eeaff1"
+  },
+  {
+    "kind": "original",
+    "log": "02-original.csv",
+    "mean_ms": 8.605371359466666,
+    "late_ms": 12.1230154,
+    "exit": 0,
+    "binary_sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652"
+  },
+  {
+    "kind": "qualified",
+    "log": "03-qualified.csv",
+    "mean_ms": 5.9984374868,
+    "late_ms": 8.389304600000001,
+    "exit": 0,
+    "binary_sha256": "6b660e5775ea51d5572c89006e16344f90e00d1143107bb668cc37f3246e4f16"
+  },
+  {
+    "kind": "qualified",
+    "log": "04-qualified.csv",
+    "mean_ms": 6.020943244166666,
+    "late_ms": 8.42755155,
+    "exit": 0,
+    "binary_sha256": "6b660e5775ea51d5572c89006e16344f90e00d1143107bb668cc37f3246e4f16"
+  },
+  {
+    "kind": "original",
+    "log": "05-original.csv",
+    "mean_ms": 8.721920223933333,
+    "late_ms": 12.2514205,
+    "exit": 0,
+    "binary_sha256": "47bafe4c094f1f6cf5e89e49b2a8ba719f427fcffa789611c73afd6acd5ce652"
+  },
+  {
+    "kind": "llvm",
+    "log": "06-llvm.csv",
+    "mean_ms": 2.9542217256533334,
+    "late_ms": 4.1454917,
+    "exit": 0,
+    "binary_sha256": "b2be972c55362a4fb35f493331beb8a47a0c0e6a2c2c2470dccfc09d96eeaff1"
+  }
+]
