@@ -3,6 +3,7 @@ use STD.Math
 use STD.Process
 use STD.Time.Stopwatch
 use Tensor
+use Tensor.Profile
 use Tensor.Neural
 use Tensor.Optim
 
@@ -194,9 +195,11 @@ func gpu_report(
     )
 }
 
-func measure_gpu(family:str, batch:int) {
+func measure_gpu(family:str, batch:int, profiled:bool = false) {
     let iterations = neural_iterations(family, batch)
     var device = GPU.Device()
+    var profile:Profile? = null
+    if profiled { profile = Profile(device) }
     let input = neural_input(family, batch).to(device)
     let target = neural_targets(batch).to(device)
     var forward_model = neural_model(family, 201); forward_model.to(device)
@@ -286,10 +289,16 @@ func measure_gpu(family:str, batch:int) {
     device.wait_until_idle(); full.stop()
     let full_stats = device.command_stats(); assert(full_stats.uploads == 0 && full_stats.downloads == 0)
     gpu_report("step_resident", family, batch, iterations, full, "spaced", device)
+    if var observer = profile {
+        let stats = observer.snapshot()
+        print("SILEX_TENSOR_PROFILE family=$(family) batch=$(batch) uploads=$(stats.uploads) downloads=$(stats.downloads) allocations=$(stats.buffer_allocations) releases=$(stats.buffer_releases) active_bytes=$(stats.active_bytes) peak_bytes=$(stats.peak_bytes) compilations=$(stats.pipeline_compilations) passes=$(stats.compute_passes) bindings=$(stats.pipeline_bindings) dispatches=$(stats.dispatches) submissions=$(stats.submissions) fences=$(stats.fence_creations)")
+    }
 }
 
-func measure_end_to_end(family:str, batch:int) {
+func measure_end_to_end(family:str, batch:int, profiled:bool = false) {
     var device = GPU.Device()
+    var profile:Profile? = null
+    if profiled { profile = Profile(device) }
     let cpu_input = neural_input(family, batch)
     let cpu_target = neural_targets(batch)
     var model = neural_model(family, 401)
@@ -307,6 +316,10 @@ func measure_end_to_end(family:str, batch:int) {
     optimizer.zero_grad(); model.cpu()
     elapsed.stop(); assert(observed >= 0.0)
     gpu_report("step_end_to_end", family, batch, 1, elapsed, "every_step", device)
+    if var observer = profile {
+        let stats = observer.snapshot()
+        print("SILEX_TENSOR_PROFILE family=$(family) batch=$(batch) uploads=$(stats.uploads) downloads=$(stats.downloads) allocations=$(stats.buffer_allocations) releases=$(stats.buffer_releases) active_bytes=$(stats.active_bytes) peak_bytes=$(stats.peak_bytes) compilations=$(stats.pipeline_compilations) passes=$(stats.compute_passes) bindings=$(stats.pipeline_bindings) dispatches=$(stats.dispatches) submissions=$(stats.submissions) fences=$(stats.fence_creations)")
+    }
 }
 
 func verify_neural() {
@@ -329,14 +342,14 @@ func verify_neural() {
     print("SILEX_TENSOR_NEURAL_VERIFY status=pass uploads=0 hidden_downloads=0")
 }
 
-func measure_family(family:str) {
+func measure_family(family:str, profiled:bool = false) {
     var batches:int[] = [4, 16, 64]
     if family == "cnn" { batches = [1, 4, 16] }
     for batch in batches {
         measure_construction(family, batch)
         measure_cpu(family, batch)
-        measure_gpu(family, batch)
-        measure_end_to_end(family, batch)
+        measure_gpu(family, batch, profiled)
+        measure_end_to_end(family, batch, profiled)
     }
 }
 
@@ -346,11 +359,14 @@ func main() {
         success(arguments) => {
             for argument in arguments {
                 if argument == "--verify" { verify_neural(); return }
+                if argument == "--profile-mlp" { verify_neural(); measure_family("mlp", true); return }
                 if argument == "--measure-mlp" { verify_neural(); measure_family("mlp"); return }
+                if argument == "--profile-cnn" { verify_neural(); measure_family("cnn", true); return }
                 if argument == "--measure-cnn" { verify_neural(); measure_family("cnn"); return }
+                if argument == "--profile-rnn" { verify_neural(); measure_family("rnn", true); return }
                 if argument == "--measure-rnn" { verify_neural(); measure_family("rnn"); return }
             }
         }
     }
-    panic("expected --verify or one --measure-* neural family")
+    panic("expected --verify, --measure-* or --profile-* neural family")
 }

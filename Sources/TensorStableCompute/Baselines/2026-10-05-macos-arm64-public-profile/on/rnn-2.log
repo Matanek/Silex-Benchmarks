@@ -1,0 +1,61 @@
+SILEX_TENSOR_NEURAL_VERIFY status=pass uploads=0 hidden_downloads=0
+SILEX_TENSOR_NEURAL phase=construction family=rnn backend=cpu batch=4 iterations=5 elapsed_ms=0.305 per_iteration_ms=0.061 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_cold family=rnn backend=cpu batch=4 iterations=1 elapsed_ms=2.7580001 per_iteration_ms=2.7580001 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_hot family=rnn backend=cpu batch=4 iterations=3 elapsed_ms=8.578 per_iteration_ms=2.8593333 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=backward_cold family=rnn backend=cpu batch=4 iterations=1 elapsed_ms=2.738 per_iteration_ms=2.738 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=backward_hot family=rnn backend=cpu batch=4 iterations=3 elapsed_ms=7.983 per_iteration_ms=2.661 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_sgd family=rnn backend=cpu batch=4 iterations=3 elapsed_ms=0.43 per_iteration_ms=0.14333333 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_adam family=rnn backend=cpu batch=4 iterations=3 elapsed_ms=1.6029999 per_iteration_ms=0.5343333 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=loss_read family=rnn backend=cpu batch=4 iterations=1 elapsed_ms=0.001 per_iteration_ms=0.001 observation=every_step uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_resident family=rnn backend=cpu batch=4 iterations=3 elapsed_ms=15.388 per_iteration_ms=5.129333 observation=spaced uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_cold family=rnn backend=gpu batch=4 iterations=1 elapsed_ms=21.461 per_iteration_ms=21.461 observation=none uploads=0 downloads=0 compute_passes=43
+SILEX_TENSOR_NEURAL phase=forward_hot family=rnn backend=gpu batch=4 iterations=3 elapsed_ms=52.536 per_iteration_ms=17.512 observation=none uploads=0 downloads=0 compute_passes=129
+SILEX_TENSOR_NEURAL phase=backward_cold family=rnn backend=gpu batch=4 iterations=1 elapsed_ms=41.703 per_iteration_ms=41.703 observation=none uploads=0 downloads=0 compute_passes=111
+SILEX_TENSOR_NEURAL phase=backward_hot family=rnn backend=gpu batch=4 iterations=3 elapsed_ms=114.603 per_iteration_ms=38.201 observation=none uploads=0 downloads=0 compute_passes=333
+SILEX_TENSOR_NEURAL phase=step_sgd family=rnn backend=gpu batch=4 iterations=3 elapsed_ms=17.059 per_iteration_ms=5.686333 observation=none uploads=0 downloads=0 compute_passes=50
+SILEX_TENSOR_NEURAL phase=step_adam family=rnn backend=gpu batch=4 iterations=3 elapsed_ms=73.968 per_iteration_ms=24.656 observation=none uploads=0 downloads=0 compute_passes=220
+SILEX_TENSOR_NEURAL phase=loss_read family=rnn backend=gpu batch=4 iterations=1 elapsed_ms=0.141 per_iteration_ms=0.141 observation=every_step uploads=0 downloads=1 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_resident family=rnn backend=gpu batch=4 iterations=3 elapsed_ms=242.64801 per_iteration_ms=80.88267 observation=spaced uploads=0 downloads=0 compute_passes=699
+SILEX_TENSOR_PROFILE family=rnn batch=4 uploads=17 downloads=1 allocations=2840 releases=2774 active_bytes=27032 peak_bytes=35760 compilations=21 passes=2823 bindings=2823 dispatches=2823 submissions=2841 fences=2841
+SILEX_TENSOR_NEURAL phase=step_end_to_end family=rnn backend=gpu batch=4 iterations=1 elapsed_ms=66.655 per_iteration_ms=66.655 observation=every_step uploads=7 downloads=6 compute_passes=173
+SILEX_TENSOR_PROFILE family=rnn batch=4 uploads=7 downloads=6 allocations=180 releases=177 active_bytes=1044 peak_bytes=18344 compilations=11 passes=173 bindings=173 dispatches=173 submissions=186 fences=186
+SILEX_TENSOR_NEURAL phase=construction family=rnn backend=cpu batch=16 iterations=5 elapsed_ms=0.328 per_iteration_ms=0.0656 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_cold family=rnn backend=cpu batch=16 iterations=1 elapsed_ms=8.224 per_iteration_ms=8.224 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_hot family=rnn backend=cpu batch=16 iterations=3 elapsed_ms=24.019999 per_iteration_ms=8.006666 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=backward_cold family=rnn backend=cpu batch=16 iterations=1 elapsed_ms=9.446 per_iteration_ms=9.446 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=backward_hot family=rnn backend=cpu batch=16 iterations=3 elapsed_ms=28.071 per_iteration_ms=9.356999 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_sgd family=rnn backend=cpu batch=16 iterations=3 elapsed_ms=0.42400002 per_iteration_ms=0.14133334 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_adam family=rnn backend=cpu batch=16 iterations=3 elapsed_ms=1.61 per_iteration_ms=0.5366667 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=loss_read family=rnn backend=cpu batch=16 iterations=1 elapsed_ms=0.002 per_iteration_ms=0.002 observation=every_step uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_resident family=rnn backend=cpu batch=16 iterations=3 elapsed_ms=48.069 per_iteration_ms=16.023 observation=spaced uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_cold family=rnn backend=gpu batch=16 iterations=1 elapsed_ms=24.258001 per_iteration_ms=24.258001 observation=none uploads=0 downloads=0 compute_passes=43
+SILEX_TENSOR_NEURAL phase=forward_hot family=rnn backend=gpu batch=16 iterations=3 elapsed_ms=57.422 per_iteration_ms=19.140667 observation=none uploads=0 downloads=0 compute_passes=129
+SILEX_TENSOR_NEURAL phase=backward_cold family=rnn backend=gpu batch=16 iterations=1 elapsed_ms=40.953 per_iteration_ms=40.953 observation=none uploads=0 downloads=0 compute_passes=111
+SILEX_TENSOR_NEURAL phase=backward_hot family=rnn backend=gpu batch=16 iterations=3 elapsed_ms=115.171 per_iteration_ms=38.39033 observation=none uploads=0 downloads=0 compute_passes=333
+SILEX_TENSOR_NEURAL phase=step_sgd family=rnn backend=gpu batch=16 iterations=3 elapsed_ms=17.102 per_iteration_ms=5.7006664 observation=none uploads=0 downloads=0 compute_passes=50
+SILEX_TENSOR_NEURAL phase=step_adam family=rnn backend=gpu batch=16 iterations=3 elapsed_ms=75.772 per_iteration_ms=25.257334 observation=none uploads=0 downloads=0 compute_passes=220
+SILEX_TENSOR_NEURAL phase=loss_read family=rnn backend=gpu batch=16 iterations=1 elapsed_ms=0.14299999 per_iteration_ms=0.14299999 observation=every_step uploads=0 downloads=1 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_resident family=rnn backend=gpu batch=16 iterations=3 elapsed_ms=238.933 per_iteration_ms=79.64433 observation=spaced uploads=0 downloads=0 compute_passes=699
+SILEX_TENSOR_PROFILE family=rnn batch=16 uploads=17 downloads=1 allocations=2840 releases=2774 active_bytes=30920 peak_bytes=73488 compilations=21 passes=2823 bindings=2823 dispatches=2823 submissions=2841 fences=2841
+SILEX_TENSOR_NEURAL phase=step_end_to_end family=rnn backend=gpu batch=16 iterations=1 elapsed_ms=65.961006 per_iteration_ms=65.961006 observation=every_step uploads=7 downloads=6 compute_passes=173
+SILEX_TENSOR_PROFILE family=rnn batch=16 uploads=7 downloads=6 allocations=180 releases=177 active_bytes=4164 peak_bytes=55304 compilations=11 passes=173 bindings=173 dispatches=173 submissions=186 fences=186
+SILEX_TENSOR_NEURAL phase=construction family=rnn backend=cpu batch=64 iterations=5 elapsed_ms=0.33400002 per_iteration_ms=0.066800006 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_cold family=rnn backend=cpu batch=64 iterations=1 elapsed_ms=28.468 per_iteration_ms=28.468 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_hot family=rnn backend=cpu batch=64 iterations=2 elapsed_ms=56.937 per_iteration_ms=28.4685 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=backward_cold family=rnn backend=cpu batch=64 iterations=1 elapsed_ms=35.639 per_iteration_ms=35.639 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=backward_hot family=rnn backend=cpu batch=64 iterations=2 elapsed_ms=70.606 per_iteration_ms=35.303 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_sgd family=rnn backend=cpu batch=64 iterations=2 elapsed_ms=0.274 per_iteration_ms=0.137 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_adam family=rnn backend=cpu batch=64 iterations=2 elapsed_ms=1.097 per_iteration_ms=0.5485 observation=none uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=loss_read family=rnn backend=cpu batch=64 iterations=1 elapsed_ms=0.002 per_iteration_ms=0.002 observation=every_step uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_resident family=rnn backend=cpu batch=64 iterations=2 elapsed_ms=119.069 per_iteration_ms=59.5345 observation=spaced uploads=0 downloads=0 compute_passes=0
+SILEX_TENSOR_NEURAL phase=forward_cold family=rnn backend=gpu batch=64 iterations=1 elapsed_ms=24.474 per_iteration_ms=24.474 observation=none uploads=0 downloads=0 compute_passes=43
+SILEX_TENSOR_NEURAL phase=forward_hot family=rnn backend=gpu batch=64 iterations=2 elapsed_ms=41.162 per_iteration_ms=20.581 observation=none uploads=0 downloads=0 compute_passes=86
+SILEX_TENSOR_NEURAL phase=backward_cold family=rnn backend=gpu batch=64 iterations=1 elapsed_ms=40.661 per_iteration_ms=40.661 observation=none uploads=0 downloads=0 compute_passes=111
+SILEX_TENSOR_NEURAL phase=backward_hot family=rnn backend=gpu batch=64 iterations=2 elapsed_ms=77.887 per_iteration_ms=38.9435 observation=none uploads=0 downloads=0 compute_passes=222
+SILEX_TENSOR_NEURAL phase=step_sgd family=rnn backend=gpu batch=64 iterations=2 elapsed_ms=11.617 per_iteration_ms=5.8085 observation=none uploads=0 downloads=0 compute_passes=30
+SILEX_TENSOR_NEURAL phase=step_adam family=rnn backend=gpu batch=64 iterations=2 elapsed_ms=51.806 per_iteration_ms=25.903 observation=none uploads=0 downloads=0 compute_passes=150
+SILEX_TENSOR_NEURAL phase=loss_read family=rnn backend=gpu batch=64 iterations=1 elapsed_ms=0.148 per_iteration_ms=0.148 observation=every_step uploads=0 downloads=1 compute_passes=0
+SILEX_TENSOR_NEURAL phase=step_resident family=rnn backend=gpu batch=64 iterations=2 elapsed_ms=160.18001 per_iteration_ms=80.090004 observation=spaced uploads=0 downloads=0 compute_passes=466
+SILEX_TENSOR_PROFILE family=rnn batch=64 uploads=17 downloads=1 allocations=1985 releases=1919 active_bytes=46472 peak_bytes=234384 compilations=21 passes=1968 bindings=1968 dispatches=1968 submissions=1986 fences=1986
+SILEX_TENSOR_NEURAL phase=step_end_to_end family=rnn backend=gpu batch=64 iterations=1 elapsed_ms=67.776 per_iteration_ms=67.776 observation=every_step uploads=7 downloads=6 compute_passes=173
+SILEX_TENSOR_PROFILE family=rnn batch=64 uploads=7 downloads=6 allocations=180 releases=177 active_bytes=16644 peak_bytes=213128 compilations=11 passes=173 bindings=173 dispatches=173 submissions=186 fences=186

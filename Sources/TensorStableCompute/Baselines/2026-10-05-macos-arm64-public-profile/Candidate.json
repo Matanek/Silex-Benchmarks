@@ -1,0 +1,10 @@
+{
+  "tensor_candidate": "85ba3a6a8083490844ef85216e00674cb47ccf22",
+  "compiler_commit": "adc634539714ae7b3f1301ca619308d832c08bdd",
+  "benchmark_parent": "5599f77a79b065a830740e757501ecad5b5ab167",
+  "harness_sha256": "f83b0ff454c6176d5916c852a12c5798c38ef193f45665a6e442a37a290b1336",
+  "measurement_binary_sha256": "5ac4e1de74ede71bdc9b9d5971fb61655d371de9705602755a44705002e5fb8c",
+  "module_source_hashes_verified": true,
+  "validation": "103 consumer tests plus 14 internal guards, immutable snapshot diagnostic, Debug/Release verify; 75 Release processes with identical commands",
+  "integration": "pending explicit acceptance of this exact local candidate set"
+}

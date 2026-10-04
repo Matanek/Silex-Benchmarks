@@ -1,0 +1,5 @@
+2026-10-05 01:13:38.227 ProfileLifetime-c8fe133f2e41a352e49ae50fed81dfe0c3d63d0b75b49a33d4062da5bfe05c08[63271:13073110] Metal API Validation Enabled
+ok - retire the device registry after its last storage and observer
+2026-10-05 01:13:40.370 ProfileLifetime-dbfd12a3c92ee26a766d3756d1889d50f6811a6113dd95461b0d11a684342252[63335:13073679] Metal API Validation Enabled
+ok - retire registry entries across repeated device lifetimes
+2 passed; 0 failed

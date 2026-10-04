@@ -1,0 +1,3 @@
+ok - release graph edges after backward while the result remains alive
+ok - release every training graph across repeated optimizer steps
+2 passed; 0 failed

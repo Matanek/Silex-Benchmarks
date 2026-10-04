@@ -1,0 +1,19 @@
+2026-10-05 01:22:18.252 tensor-neural-profile-release[67420:13102735] Metal API Validation Enabled
+        1.33 real         0.48 user         0.83 sys
+            76103680  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               11850  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+               34912  involuntary context switches
+         11943540018  instructions retired
+          4558023882  cycles elapsed
+            92504904  peak memory footprint

@@ -1,0 +1,6 @@
+ok - reuse compiled elementwise binary reduction and linear pipelines
+ok - release repeated reduction and linear temporaries after warmup
+ok - reuse gather convolution pooling and dropout pipelines
+ok - reuse backward pipelines and release each consumed graph
+ok - reuse optimizer pipelines across repeated GPU training steps
+5 passed; 0 failed

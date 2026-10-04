@@ -1,0 +1,19 @@
+2026-10-05 01:20:23.149 tensor-neural-adam-warm-release[67094:13099459] Metal API Validation Enabled
+        4.09 real         1.94 user         2.16 sys
+            75776000  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               22230  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+               92226  involuntary context switches
+         37388048742  instructions retired
+         14389105074  cycles elapsed
+            92144480  peak memory footprint

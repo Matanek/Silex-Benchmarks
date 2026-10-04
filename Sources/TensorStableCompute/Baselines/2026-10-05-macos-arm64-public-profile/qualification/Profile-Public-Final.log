@@ -1,0 +1,17 @@
+2026-10-05 01:23:34.524 Profiling-b9ea7b102794f54238a3139d7afca0596add9aaa7091ee8dbaa71e3d4f9ba668[67668:13105028] Metal API Validation Enabled
+ok - observe resident Tensor compute without transfers
+2026-10-05 01:23:35.203 Profiling-cb061f379b828efc2a89cb039e5394f7faa32ef5b659d3de010cfd695a4a9f06[67673:13105115] Metal API Validation Enabled
+ok - reset one overlapping period and release temporary buffers
+2026-10-05 01:23:35.882 Profiling-c74843cb3cb52ac4a320573bf6d3a25b33ef946ac0d50e8dc1af8e5d667f3fd8[67677:13105152] Metal API Validation Enabled
+ok - isolate Tensor periods from other devices and GFX resets
+2026-10-05 01:23:36.580 Profiling-21fa2f77c08d28e93784bee939048e8baf256dafacf5aa1601402f341f99db05[67715:13105473] Metal API Validation Enabled
+ok - count requested integer and empty storage bytes
+2026-10-05 01:23:37.248 Profiling-d9e072f90721d7f37319c5ad24b1c3b14f44ab6bd039d1b1985a9c3a376c6909[67722:13105547] Metal API Validation Enabled
+ok - observe copy materialization without counting views as buffers
+2026-10-05 01:23:37.928 Profiling-6b107319caa44aec9e6ee5b6070ef162edae723db515826b9b293862c0c7af7a[67726:13105584] Metal API Validation Enabled
+ok - reading resetting and dropping profiles issues no GPU commands
+2026-10-05 01:23:38.609 Profiling-d8c1f2b766d84f7d19c86f0c65cc7a98c0f26468b22e70c948aec504b7d4ee2b[67731:13105622] Metal API Validation Enabled
+ok - attribute releases of earlier buffers and shared views
+2026-10-05 01:23:39.479 Profiling-9e7c6947af1350473a478709cb1a4d6043179edff903296eb2ca27889e23bb15[67736:13105659] Metal API Validation Enabled
+ok - preserve training values with public collection active or inactive
+8 passed; 0 failed
