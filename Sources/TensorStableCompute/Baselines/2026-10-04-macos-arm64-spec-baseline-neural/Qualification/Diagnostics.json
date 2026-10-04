@@ -1,0 +1,536 @@
+[
+  {
+    "fixture": "AdamBeta.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:39:9: runtime error: Tensor.Optim.Adam requires finite 0 <= beta1 < 1\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradCast.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:443:13: runtime error: Tensor.cast cannot change placement or dtype inside a tracked graph; call detach() first\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradConsumed.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:130:28: runtime error: Tensor.backward cannot reuse a consumed graph\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradInteger.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Autograd/@Variable.sx:11:13: runtime error: Tensor.Autograd.Variable supports only dtype float32\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradNonScalar.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:464:29: runtime error: Tensor.backward without a seed requires a scalar output\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradSeed.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:450:13: runtime error: Tensor.backward seed must be float32 with the output shape\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradSeedDType.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:450:13: runtime error: Tensor.backward seed must be float32 with the output shape\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradSeedPlacement.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:453:13: runtime error: Tensor.backward seed must use the output placement\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradTransfer.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:443:13: runtime error: Tensor.to cannot change placement or dtype inside a tracked graph; call detach() first\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "AutogradUntracked.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:444:5: runtime error: Tensor.backward requires a result connected to a tracked Variable\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "BroadcastShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:133:13: runtime error: Tensor.add cannot broadcast shapes [2, 3] and [2, 4]\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ByteSizeOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:219:58: runtime error: Tensor physical byte size overflows int\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CastRange.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:486:47: runtime error: invalid numeric conversion\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CheckpointAdditional.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:74:17: runtime error: Tensor.Neural.Checkpoint.load contains additional parameter 'extra'\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CheckpointDType.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:158:13: runtime error: Tensor.Neural.Checkpoint.load supports dtype float32 only\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CheckpointMissing.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:56:17: runtime error: Tensor.Neural.Checkpoint.load is missing parameter 'dense.bias'\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CheckpointSchema.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:143:9: runtime error: Tensor.Neural.Checkpoint.load requires schema version 1\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CheckpointShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:59:17: runtime error: Tensor.Neural.Checkpoint.load shape mismatch for parameter 'dense.weight'\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ConvolutionShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Spatial.sx:45:9: runtime error: Tensor.conv2d input channels must match kernel input channels\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CopyTensor.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/CopyTensor.sx:6:20: error: 'copy' cannot clone a value that reaches a nocopy class\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "CrossDevice.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:437:43: runtime error: Tensor.to cannot migrate between GPU devices; call cpu().to(other_device)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "DTypeMismatch.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:409:44: runtime error: Tensor.add requires matching dtypes\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "DenseDimensions.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Dense.sx:29:13: runtime error: Tensor.Neural.Dense.forward requires the last input dimension to match input_features\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "DotRank.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@LinearAlgebra.sx:17:52: runtime error: Tensor.dot requires two rank-1 tensors\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "DotShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@LinearAlgebra.sx:18:50: runtime error: Tensor.dot requires vectors with the same length\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "DropoutProbability.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Dropout.sx:7:13: runtime error: Tensor.dropout probability must be in [0, 1)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "EmptyMax.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Reductions.sx:92:9: runtime error: Tensor.max cannot reduce an empty domain\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "EmptyMean.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Reductions.sx:92:9: runtime error: Tensor.mean cannot reduce an empty domain\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "EmptyMin.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Reductions.sx:92:9: runtime error: Tensor.min cannot reduce an empty domain\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "Extraction.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:433:13: runtime error: Tensor.values does not match the tensor dtype; use the matching extractor or cast(dtype)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "FloatOnlyUnary.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:315:9: runtime error: Tensor.sqrt supports only dtype float32; call cast(DType.float32())\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GPUExtraction.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:428:28: runtime error: Tensor.values is CPU-only; call cpu().values\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GPUIndex.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:428:28: runtime error: Tensor.at is CPU-only; call cpu().at\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GPUInteger.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:420:13: runtime error: Tensor.add GPU computation supports only dtype float32; call cpu().cast(DType.float32()).to(device)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GPUIntegerDot.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:420:13: runtime error: Tensor.dot GPU computation supports only dtype float32; call cpu().cast(DType.float32()).to(device)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GPUIntegerMatmul.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:420:13: runtime error: Tensor.matmul GPU computation supports only dtype float32; call cpu().cast(DType.float32()).to(device)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GPUIntegerPair.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:420:13: runtime error: Tensor.add GPU computation supports only dtype float32; call cpu().cast(DType.float32()).to(device)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GPUIntegerReduction.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:420:13: runtime error: Tensor.sum GPU computation supports only dtype float32; call cpu().cast(DType.float32()).to(device)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GatherShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Composition.sx:105:17: runtime error: Tensor.gather indices must match every source dimension outside the selected axis\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "GradientClipNonFinite.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Adam.sx:76:17: runtime error: Tensor.Optim.clip_grad_norm rejected a non-finite global gradient norm\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "IndexBounds.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:49:17: runtime error: Tensor.at index is outside the tensor shape\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "IndexRank.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:43:45: runtime error: Tensor.at requires one index per dimension\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "InitializerBounds.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Initialization.sx:11:13: runtime error: Tensor.uniform requires finite bounds with minimum < maximum\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "IntegerDivideZero.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.divide division by zero for dtype int32\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "IntegerMean.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:247:13: runtime error: Tensor.mean supports only dtype float32; call cast(DType.float32())\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "IntegerMultiplyOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.multiply overflow for dtype int8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "IntegerOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.add overflow for dtype int8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "LinearDType.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:409:44: runtime error: Tensor.dot requires matching dtypes\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "LinearPlacement.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:410:46: runtime error: Tensor.dot requires matching placements\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "MatmulRank.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@LinearAlgebra.sx:22:46: runtime error: Tensor.matmul requires tensors of rank 2 or greater\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "MatmulShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@LinearAlgebra.sx:24:9: runtime error: Tensor.matmul requires matching inner dimensions\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NarrowAxis.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:214:35: runtime error: Tensor.narrow axis is outside the tensor rank\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NarrowBounds.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:147:13: runtime error: Tensor.narrow range is outside the selected axis\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NarrowNegative.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:147:13: runtime error: Tensor.narrow range is outside the selected axis\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NegativeAxis.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:214:35: runtime error: Tensor.permute axis is outside the tensor rank\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NegativeIndex.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:49:17: runtime error: Tensor.at index is outside the tensor shape\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NegativeShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:158:28: runtime error: Tensor shape dimensions must be non-negative\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NeuralAxis.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:214:35: runtime error: Tensor.softmax axis is outside the tensor rank\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NeuralDType.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:315:9: runtime error: Tensor.relu supports only dtype float32; call cast(DType.float32())\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "NeuralTargetShape.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Neural.sx:45:17: runtime error: Tensor.cross_entropy dense targets must have the same shape as the logits\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "OptimizerDuplicateName.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:15:17: runtime error: Tensor.Optim.SGD requires unique parameter names; duplicate 'weight'\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "OptimizerStatePlacement.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:61:9: runtime error: Tensor.Optim.Adam.step requires first-moment state on parameter 'second' placement\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ParameterName.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Parameter.sx:10:25: runtime error: Tensor.Neural.Parameter requires a non-empty name\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "PermuteAxis.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:214:35: runtime error: Tensor.permute axis is outside the tensor rank\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "PermuteDuplicate.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:118:31: runtime error: Tensor.permute axes must be unique\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "PermuteRank.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:110:42: runtime error: Tensor.permute requires one axis per dimension\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "Placement.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:410:46: runtime error: Tensor.add requires matching placements\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ReductionAxis.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:214:35: runtime error: Tensor.sum axis is outside the tensor rank\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ReductionDuplicate.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Reductions.sx:42:44: runtime error: Tensor.max axes must be unique\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ReshapeEmpty.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:205:25: runtime error: Tensor.reshape cannot infer an ambiguous empty dimension\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ReshapeInference.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:196:32: runtime error: Tensor.reshape accepts at most one inferred dimension\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ReshapeMismatch.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:209:40: runtime error: Tensor.reshape shape must preserve the element count\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ReshapeNegative.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:199:32: runtime error: Tensor.reshape dimensions must be non-negative or -1\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ReshapeStrided.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:103:13: runtime error: Tensor.reshape requires a contiguous tensor; call contiguous().reshape(shape)\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "SGDLearningRate.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:27:9: runtime error: Tensor.Optim.SGD requires finite learning_rate > 0\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ScalarDTypeMismatch.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:409:44: runtime error: Tensor.add requires matching dtypes\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "SelectAxis.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:214:35: runtime error: Tensor.select axis is outside the tensor rank\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "SelectBounds.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:129:13: runtime error: Tensor.select index is outside the selected axis\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "ShapeOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Layout.sx:219:58: runtime error: Tensor shape cardinality overflows int\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "SignedDivideOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.divide non-representable quotient for dtype int32\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "SignedDotOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.multiply overflow for dtype int8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "SignedNegateOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:363:31: runtime error: Tensor.negate overflow for dtype int8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "SignedSumOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.add overflow for dtype int8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "TransposeRank.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:111:31: runtime error: Tensor.transpose requires rank 2; use permute(axes) for other ranks\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "UnsignedMatmulOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.multiply overflow for dtype uint8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "UnsignedNegate.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:305:9: runtime error: Tensor.negate requires float32 or a signed integer dtype\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "UnsignedOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.add overflow for dtype uint8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "UnsignedSumOverflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.add overflow for dtype uint8\n",
+    "rejection_observed": true
+  },
+  {
+    "fixture": "UnsignedUnderflow.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Operations.sx:300:5: runtime error: Tensor.subtract underflow for dtype uint16\n",
+    "rejection_observed": true
+  }
+]

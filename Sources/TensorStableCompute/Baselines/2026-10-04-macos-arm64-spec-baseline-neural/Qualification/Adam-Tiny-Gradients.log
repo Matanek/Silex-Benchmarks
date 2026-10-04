@@ -1,0 +1,7 @@
+2026-10-04 17:12:36.276 OptimizersGPU-61bb2e0e564c4466b3726729869116e13ffdd3af05099c3be8ee896ae1e1cb5b[19930:12615159] Metal API Validation Enabled
+ok - keep clipping and Adam updates resident while matching CPU
+2026-10-04 17:12:36.922 OptimizersGPU-7993cd9730922acd98b05368eea87a7d949543d76d7dfa0abe39fbbbcd728553[19934:12615194] Metal API Validation Enabled
+ok - move parameters after optimizer construction but before state initialization
+2026-10-04 17:12:37.608 OptimizersGPU-0819c973770afbc6e868941e1b826b07ea16b7fc450c37aaa36f0507c15f5a73[19940:12615236] Metal API Validation Enabled
+ok - match the independent first Adam update for tiny signed gradients
+3 passed; 0 failed

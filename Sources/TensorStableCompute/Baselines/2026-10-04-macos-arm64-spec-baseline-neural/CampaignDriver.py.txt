@@ -1,0 +1,60 @@
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib, json, subprocess, sys
+root = Path.cwd()
+benchmark = root / "Silex-Benchmarks"
+results = benchmark / "Sources/TensorStableCompute/Baselines/2026-10-04-macos-arm64-spec-baseline-neural"
+binary = root / ".silex/tensor-neural-release"
+silex = root / "Silex/Toolchain/zig-out/bin/silex"
+def output(args):
+    return subprocess.run(args, check=True, capture_output=True, text=True).stdout.strip()
+if output(["git", "-C", str(benchmark), "status", "--porcelain"]):
+    sys.exit("Le dépôt du banc doit être propre avant une campagne.")
+if results.exists():
+    sys.exit("La campagne existe déjà ; ne pas écraser ses échantillons.")
+results.mkdir(parents=True)
+repos = {key: root / name for key, name in {
+    "benchmark": "Silex-Benchmarks", "silex": "Silex", "tensor": "Packages/Tensor",
+    "gfx_gpu": "Packages/GFX.GPU", "gfx": "Packages/GFX", "std": "Packages/STD"
+}.items()}
+metadata = {
+    "date": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    "os": "macOS " + output(["sw_vers", "-productVersion"]) + " (" + output(["sw_vers", "-buildVersion"]) + ")",
+    "architecture": output(["uname", "-m"]),
+    "cpu": output(["sysctl", "-n", "machdep.cpu.brand_string"]),
+    "gpu": "à relever",
+    "gpu_driver": "Apple Metal supplied by macOS " + output(["sw_vers", "-buildVersion"]),
+    "memory_bytes": output(["sysctl", "-n", "hw.memsize"]),
+    "silex": output([str(silex), "--version"]),
+    "diagnostic_mode": "debug", "measurement_mode": "release",
+    "processes_per_family": 5, "families": "mlp,cnn,rnn",
+    "mlp_batches": "4,16,64", "cnn_batches": "1,4,16", "rnn_batches": "4,16,64",
+    "family_order": "mlp,cnn,rnn;cnn,rnn,mlp;rnn,mlp,cnn;mlp,cnn,rnn;cnn,rnn,mlp",
+    "within_batch_order": "cpu_then_gpu_then_end_to_end",
+    "silex_binary_sha256": hashlib.sha256(silex.read_bytes()).hexdigest(),
+    "measurement_binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+    "harness_sha256": hashlib.sha256((benchmark / "Sources/TensorStableCompute/Neural.sx").read_bytes()).hexdigest()
+}
+for key, repo in repos.items():
+    if output(["git", "-C", str(repo), "status", "--porcelain"]):
+        sys.exit("Dépôt de mesure non propre : " + str(repo))
+    metadata[key + "_commit"] = output(["git", "-C", str(repo), "rev-parse", "HEAD"])
+metadata["gpu_inventory"] = output(["system_profiler", "SPDisplaysDataType", "-json"])
+metadata["gpu"] = json.loads(metadata["gpu_inventory"])["SPDisplaysDataType"][0]["sppci_model"]
+(results / "metadata.txt").write_text("".join(str(key) + "=" + str(value) + "\n" for key, value in metadata.items() if key != "gpu_inventory"))
+(results / "Configuration.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n")
+artifacts = root.parent / "Memory/Artifacts"
+for source, dest in [("Neural-Build-Debug.log", "build-debug.log"), ("Neural-Build-Release.log", "build-release.log"), ("Neural-Verify-Debug.log", "diagnostic-debug.log"), ("Neural-Verify-Release.log", "diagnostic-release.log")]:
+    (results / dest).write_bytes((artifacts / source).read_bytes())
+# Aucun build concurrent. Conserver la rotation exacte et le coût de chaque processus.
+families = ("mlp", "cnn", "rnn")
+for repetition in range(1, 6):
+    offset = (repetition - 1) % 3
+    for family in families[offset:] + families[:offset]:
+        print("MESURE", family, repetition, "/ 5", flush=True)
+        with (results / (family + "-" + str(repetition) + ".log")).open("w") as stdout, (results / (family + "-" + str(repetition) + ".time")).open("w") as stderr:
+            result = subprocess.run(["/usr/bin/time", "-l", str(binary), "--measure-" + family], stdout=stdout, stderr=stderr)
+        if result.returncode:
+            sys.exit("Échantillon rejeté : " + family + " " + str(repetition) + " exit=" + str(result.returncode))
+subprocess.run([sys.executable, str(benchmark / "Sources/TensorStableCompute/SummarizeNeural.py"), str(results)], check=True)
+print("BASELINE", results, flush=True)

@@ -1,0 +1,3 @@
+ok - retain PyTorch-compatible SGD momentum state
+ok - retain PyTorch-compatible Adam moments and per-parameter step
+2 passed; 0 failed

@@ -1,0 +1,11 @@
+{
+  "sha256": "70b1c26b0d01ffc0f952d7fe9cfed3cca798eead1da8c4102cc3e4d7f9bbc13a",
+  "mode": "release",
+  "orders": [
+    "normal",
+    "reverse",
+    "normal",
+    "reverse",
+    "normal"
+  ]
+}

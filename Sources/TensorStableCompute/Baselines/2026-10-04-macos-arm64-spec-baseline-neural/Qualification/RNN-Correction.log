@@ -1,0 +1,5 @@
+2026-10-04 17:12:33.448 TrainingRNNGPU-98821248d7dada1c0630863fcdc44a27a3d03e127c8e73923118dc8d368f9154[19887:12614979] Metal API Validation Enabled
+ok - train compare clip and restore the recurrent classifier on GPU
+2026-10-04 17:12:34.939 TrainingRNNGPU-fb232f9540800e9409f8ad37c58f49c2fd70735b5bb6418f8b0025f8e36b8fe0[19898:12615063] Metal API Validation Enabled
+ok - bound symmetric recurrent bias gradients before Adam amplification
+2 passed; 0 failed

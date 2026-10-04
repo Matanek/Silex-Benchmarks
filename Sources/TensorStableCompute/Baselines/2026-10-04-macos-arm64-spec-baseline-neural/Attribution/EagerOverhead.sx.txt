@@ -1,0 +1,56 @@
+use GFX.GPU
+use STD.Process
+use STD.Time.Stopwatch
+use Tensor
+
+func chain(left:Tensor, right:Tensor) Tensor {
+    return left.add(1.0).multiply(0.5).matmul(right).sum().add(1.0)
+}
+
+func gpu_measure(n:int, each:bool) {
+    var device = GPU.Device()
+    let left = Tensor.ones([n, n]).to(device)
+    let right = Tensor.ones([n, n]).to(device)
+    var result = chain(left, right)
+    var index = 0
+    while index < 5 { result = chain(left, right); device.wait_until_idle(); index++ }
+    device.reset_command_stats()
+    var host = Stopwatch(); host.start(); index = 0
+    while index < 20 {
+        result = chain(left, right)
+        if each { device.wait_until_idle() }
+        index++
+    }
+    host.stop()
+    var final_wait = Stopwatch(); final_wait.start(); device.wait_until_idle(); final_wait.stop()
+    let stats = device.command_stats()
+    assert(stats.uploads == 0 && stats.downloads == 0 && stats.compute_passes == 100)
+    assert(result.cpu().item() == (n * n * n + 1) as float)
+    print("ATTRIBUTION backend=gpu n=$(n) wait_each=$(each) iterations=20 host_ms=$(host.get_elapsed_milliseconds()) final_wait_ms=$(final_wait.get_elapsed_milliseconds()) passes=$(stats.compute_passes) uploads=$(stats.uploads) downloads=$(stats.downloads)")
+}
+
+func cpu_measure(n:int) {
+    let left = Tensor.ones([n, n]); let right = Tensor.ones([n, n])
+    var result = chain(left, right); var index = 0
+    while index < 5 { result = chain(left, right); index++ }
+    var elapsed = Stopwatch(); elapsed.start(); index = 0
+    while index < 20 { result = chain(left, right); index++ }
+    elapsed.stop(); assert(result.item() == (n * n * n + 1) as float)
+    print("ATTRIBUTION backend=cpu n=$(n) iterations=20 elapsed_ms=$(elapsed.get_elapsed_milliseconds())")
+}
+
+func main() {
+    assert(GPU.Device.is_supported())
+    var reverse = false
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => { for argument in arguments { if argument == "--reverse" { reverse = true } } }
+    }
+    var sizes:int[] = [2, 64]
+    if reverse { sizes = [64, 2] }
+    for n in sizes {
+        cpu_measure(n)
+        if reverse { gpu_measure(n, true); gpu_measure(n, false) }
+        else { gpu_measure(n, false); gpu_measure(n, true) }
+    }
+}

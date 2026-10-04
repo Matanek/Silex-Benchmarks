@@ -1,0 +1,6 @@
+ATTRIBUTION backend=cpu n=64 iterations=20 elapsed_ms=488.402
+ATTRIBUTION backend=gpu n=64 wait_each=true iterations=20 host_ms=99.923 final_wait_ms=0.001 passes=100 uploads=0 downloads=0
+ATTRIBUTION backend=gpu n=64 wait_each=false iterations=20 host_ms=40.188 final_wait_ms=1.222 passes=100 uploads=0 downloads=0
+ATTRIBUTION backend=cpu n=2 iterations=20 elapsed_ms=0.123
+ATTRIBUTION backend=gpu n=2 wait_each=true iterations=20 host_ms=35.149002 final_wait_ms=0.0 passes=100 uploads=0 downloads=0
+ATTRIBUTION backend=gpu n=2 wait_each=false iterations=20 host_ms=35.659 final_wait_ms=0.007 passes=100 uploads=0 downloads=0

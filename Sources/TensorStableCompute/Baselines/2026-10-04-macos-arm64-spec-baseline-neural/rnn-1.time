@@ -1,0 +1,19 @@
+2026-10-04 17:18:43.601 tensor-neural-release[27754:12655616] Metal API Validation Enabled
+        4.28 real         2.02 user         2.26 sys
+            75497472  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               22463  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+               93832  involuntary context switches
+         37798162193  instructions retired
+         14649241886  cycles elapsed
+            91718472  peak memory footprint

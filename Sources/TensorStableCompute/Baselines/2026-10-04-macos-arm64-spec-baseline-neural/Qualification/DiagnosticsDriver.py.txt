@@ -1,0 +1,21 @@
+from pathlib import Path
+import json, os, subprocess, sys
+root = Path.cwd()
+binary = root / "Silex/Toolchain/zig-out/bin/silex"
+fixtures = root / "Packages/Tensor/Tests/Consumer/Diagnostics"
+logs = root.parent / "Memory/Artifacts/Diagnostics"
+logs.mkdir(exist_ok=True)
+results = []
+for source in sorted(fixtures.glob("*.sx")):
+    result = subprocess.run([str(binary), "run", str(source.relative_to(root))], capture_output=True, text=True)
+    output = result.stdout + result.stderr
+    (logs / (source.stem + ".log")).write_text(output)
+    # Refuser un crash, une panne de liaison/plateforme ou une réussite inattendue.
+    forbidden = ("LinkFailed", "could not initialize", "PermissionDenied", "terminated by signal", "signal SIG")
+    ok = result.returncode > 0 and not any(text in output for text in forbidden)
+    ok = ok and ("runtime error:" in output or "error:" in output)
+    results.append({"fixture": source.name, "exit_code": result.returncode, "diagnostic": output, "rejection_observed": ok})
+    print(source.name, "rejet attendu" if ok else "ÉCHEC DE QUALIFICATION", flush=True)
+(logs / "Results.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
+print("DIAGNOSTIC_REJECTIONS", sum(row["rejection_observed"] for row in results), "/", len(results), flush=True)
+sys.exit(0 if all(row["rejection_observed"] for row in results) else 1)
