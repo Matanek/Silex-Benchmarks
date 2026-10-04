@@ -1,0 +1,121 @@
+ok - Tests/Autograd.sx :: differentiate a repeated leaf and accumulate across eager graphs
+ok - Tests/Autograd.sx :: differentiate broadcasting reductions views and explicit seeds
+ok - Tests/Autograd.sx :: detach provenance and preserve an absent disconnected gradient
+ok - Tests/Autograd.sx :: differentiate unary operations reductions and layer normalization
+ok - Tests/Autograd.sx :: differentiate batched matmul concatenation and repeated gather indices
+ok - Tests/Autograd.sx :: differentiate convolution pooling dropout and losses
+2026-10-04 17:40:29.187 AutogradGPU-ad1154cad597964e750869f3098fce65b20d507d6c92147f136999b5c58c3b9a[38547:12736679] Metal API Validation Enabled
+ok - Tests/AutogradGPU.sx :: keep broadcast activation and reduction backward resident on GPU
+2026-10-04 17:40:29.824 AutogradGPU-11593774aaa6ae3f2f6f8b125703f105df2a4afbff761004249be703313dea3a[38551:12736741] Metal API Validation Enabled
+ok - Tests/AutogradGPU.sx :: keep batched matmul and repeated gather backward resident on GPU
+2026-10-04 17:40:30.478 AutogradGPU-b073c654b3b94686a334ba9c34db9a6f50ab17b13fb18c5224761ffc2c0364c8[38555:12736776] Metal API Validation Enabled
+ok - Tests/AutogradGPU.sx :: keep convolution pooling and dropout backward resident on GPU
+2026-10-04 17:40:31.143 AutogradGPU-cc47f836963593d9921a263832723e9f14545b1850f0718d50b55e7ede83aa7f[38559:12736831] Metal API Validation Enabled
+ok - Tests/AutogradGPU.sx :: match normalization loss and recurrent oracle gradients on GPU
+ok - Tests/Checkpoint.sx :: save deterministic parameters and restore a fresh model
+ok - Tests/Core.sx :: inspect the closed dtype family
+ok - Tests/Core.sx :: construct and extract all runtime dtypes
+ok - Tests/Core.sx :: keep let tensors readable while ordinary assignment shares storage
+ok - Tests/Core.sx :: normalize default Silex numeric aliases
+ok - Tests/Core.sx :: create typed filled tensors and scalar items
+ok - Tests/Core.sx :: cast explicitly on CPU and preserve shape
+ok - Tests/Core.sx :: cast one exact CPU value to every dtype
+ok - Tests/Core.sx :: run float32 scalar and pair arithmetic on CPU
+ok - Tests/DTypeImport.sx :: import the root DType declaration directly
+ok - Tests/Elementwise.sx :: broadcast scalars singleton dimensions different ranks and empty axes
+ok - Tests/Elementwise.sx :: compute all float32 binary and unary verbs on CPU
+ok - Tests/Elementwise.sx :: compute binary arithmetic for every integer dtype on CPU
+ok - Tests/Elementwise.sx :: preserve representable integer extrema
+ok - Tests/Elementwise.sx :: address transposed and broadcast views without changing the inputs
+2026-10-04 17:40:42.672 GPU-252f7030adb2c50e54dbd5177f2410df9e1acefdadfc9cf7aeb8b60ace246eb3[38734:12737584] Metal API Validation Enabled
+ok - Tests/GPU.sx :: roundtrip all dtypes through one GPU device
+2026-10-04 17:40:43.886 GPUCompute-6a0fa95af5bf15716847c7b32c5730d0d2145a8de05256a46d301c9f4e11facf[38760:12737703] Metal API Validation Enabled
+ok - Tests/GPUCompute.sx :: chain float32 GPU kernels without an intermediate readback
+2026-10-04 17:40:44.498 GPUCompute-82bdc8c268bd41feb4b5fef0fc0404b0cacbe28c982b0a8a8919cf4bdcb2ecb4[38764:12737741] Metal API Validation Enabled
+ok - Tests/GPUCompute.sx :: broadcast tensor pairs and strided views on the GPU
+2026-10-04 17:40:45.113 GPUCompute-b502d92e9ef4e65c3022ec210065015711a7acf831f1075af31097a45fe3e987[38768:12737775] Metal API Validation Enabled
+ok - Tests/GPUCompute.sx :: match a composed unary float32 corpus on CPU and GPU
+2026-10-04 17:40:45.725 GPUCompute-5df0abbb9246657726c3a399994625d39ff862f61e701b3ae3ffb3e6610052b9[38772:12737807] Metal API Validation Enabled
+ok - Tests/GPUCompute.sx :: compute a narrowed GPU view into compact result storage
+2026-10-04 17:40:46.343 GPUCompute-354916af71f74f434af9c9d534f10c9af18534a2539d936929b7f829364df853[38776:12737843] Metal API Validation Enabled
+ok - Tests/GPUCompute.sx :: broadcast float32 GPU tensors from rank zero through five
+2026-10-04 17:40:47.539 GPULinearReduction-08cc678f43470e3a39a62b395f17027959b0261e9560d6751798838e04bd8750[38802:12737927] Metal API Validation Enabled
+ok - Tests/GPULinearReduction.sx :: keep float reductions resident on the GPU
+2026-10-04 17:40:48.145 GPULinearReduction-e7ed9a92cfd1c49a1e06bd5fb4e72fcd6463b8370704c7bc2d1825a34ee85551[38806:12737962] Metal API Validation Enabled
+ok - Tests/GPULinearReduction.sx :: match CPU dot and matmul on resident GPU views
+ok - Tests/GPULinearReduction.sx :: reduce float32 GPU tensors from rank zero through five
+ok - Tests/GPULinearReduction.sx :: handle empty GPU reduction and linear domains
+ok - Tests/GPULinearReduction.sx :: preserve the reduction oracle for signed zeros on GPU
+ok - Tests/GPULinearReduction.sx :: match larger floating workloads within the documented tolerance
+ok - Tests/GPUStress.sx :: release bounded GPU chains after completion
+2026-10-04 17:40:52.855 GPUViews-509f81caa6df5ca9ae24dbeaecf153457071906664b59a7dacd2fbd71bda6134[39784:12740560] Metal API Validation Enabled
+ok - Tests/GPUViews.sx :: transform GPU metadata without upload download or compute
+2026-10-04 17:40:53.406 GPUViews-5ad2650294c71d6e34b7dca026dc065daba53be6dc8aa1dba7fe52a84e673a45[40034:12741004] Metal API Validation Enabled
+ok - Tests/GPUViews.sx :: materialize every GPU dtype without changing its representation
+ok - Tests/LayersCore.sx :: compose heterogeneous layers and collect stable parameters
+ok - Tests/LayersCore.sx :: run convolution pooling flatten and recurrent layers
+ok - Tests/LayersCore.sx :: propagate train and eval only to stateful dropout
+ok - Tests/LinearAlgebra.sx :: compute float dot products and rectangular matrix products
+ok - Tests/LinearAlgebra.sx :: honor strided matrix operands and empty inner dimensions
+ok - Tests/LinearAlgebra.sx :: compute dot and matmul for every integer dtype on CPU
+ok - Tests/Neural.sx :: compute neural activations normalization and losses on CPU
+ok - Tests/Neural.sx :: compose gather and multiply batched tensors on CPU
+ok - Tests/Neural.sx :: convolve and pool NCHW tensors on CPU
+ok - Tests/Neural.sx :: initialize and drop values reproducibly
+2026-10-04 17:41:01.828 NeuralGPU-2ec82ee070a6384651d7933b916f8af3465e0dc4482c7955507f237e42de5745[40780:12742586] Metal API Validation Enabled
+ok - Tests/NeuralGPU.sx :: keep neural activations normalization and losses resident on GPU
+2026-10-04 17:41:02.486 NeuralGPU-13f23692ebf096f082e1fb49b95d77001ae6a493bd9275a3248b137dee4afdac[40784:12742652] Metal API Validation Enabled
+ok - Tests/NeuralGPU.sx :: compose gather and batched matrix products on GPU without readback
+2026-10-04 17:41:03.135 NeuralGPU-d0b647062759e3e461024db534d240df3066ea9e4635c6f19a38d8369dfb5c30[40788:12742689] Metal API Validation Enabled
+ok - Tests/NeuralGPU.sx :: run convolution pooling and dropout on GPU without mask upload
+ok - Tests/NeuralOracleDifferential.sx :: match PyTorch and TensorFlow MLP layers gradients optimizers and trajectory
+ok - Tests/NeuralOracleDifferential.sx :: match PyTorch and TensorFlow CNN layers gradients optimizers and trajectory
+ok - Tests/NeuralOracleDifferential.sx :: match PyTorch and TensorFlow RNN layers gradients optimizers and trajectory
+ok - Tests/NeuralOracleDifferential.sx :: match a smooth tanh derivative against finite differences
+ok - Tests/Optimizers.sx :: train named parameters through zero_grad backward and SGD step
+ok - Tests/Optimizers.sx :: replace a named parameter through the public package boundary
+ok - Tests/Optimizers.sx :: match coupled weight decay and momentum across SGD steps
+ok - Tests/Optimizers.sx :: match bias-corrected Adam state across multiple steps
+ok - Tests/Optimizers.sx :: clip one global norm and preserve missing gradients
+ok - Tests/Optimizers.sx :: return a resident zero norm when every gradient is absent
+2026-10-04 17:41:11.309 OptimizersGPU-61bb2e0e564c4466b3726729869116e13ffdd3af05099c3be8ee896ae1e1cb5b[40898:12743182] Metal API Validation Enabled
+ok - Tests/OptimizersGPU.sx :: keep clipping and Adam updates resident while matching CPU
+2026-10-04 17:41:11.886 OptimizersGPU-7993cd9730922acd98b05368eea87a7d949543d76d7dfa0abe39fbbbcd728553[40902:12743248] Metal API Validation Enabled
+ok - Tests/OptimizersGPU.sx :: move parameters after optimizer construction but before state initialization
+2026-10-04 17:41:12.436 OptimizersGPU-0819c973770afbc6e868941e1b826b07ea16b7fc450c37aaa36f0507c15f5a73[40906:12743285] Metal API Validation Enabled
+ok - Tests/OptimizersGPU.sx :: match the independent first Adam update for tiny signed gradients
+ok - Tests/OracleDifferential.sx :: oracle comparison harness rejects deliberate mutations
+ok - Tests/OracleDifferential.sx :: match multi-oracle float32 elementwise fixtures
+ok - Tests/OracleDifferential.sx :: match functional shape and view fixtures
+ok - Tests/OracleDifferential.sx :: match construction extraction and exact casts for all dtypes
+ok - Tests/OracleDifferential.sx :: match exact integer arithmetic fixtures for every integer dtype
+ok - Tests/OracleDifferential.sx :: match multi-oracle reductions and linear algebra
+ok - Tests/OracleDifferential.sx :: match PyTorch and TensorFlow neural fixtures
+ok - Tests/OracleDifferential.sx :: match PyTorch and TensorFlow eager gradients
+ok - Tests/OracleDifferential.sx :: match PyTorch optimizer values state and global clipping
+2026-10-04 17:41:19.189 OracleDifferential-1c5442342e587cc3e4ec9f548454f775cdf189f46c222973e5f19aecd2f0f969[40968:12743642] Metal API Validation Enabled
+ok - Tests/OracleDifferential.sx :: run the float32 oracle fixture on the available GPU
+ok - Tests/Reductions.sx :: reduce ranks zero through five globally
+ok - Tests/Reductions.sx :: reduce selected axes and preserve dimensions on strided views
+ok - Tests/Reductions.sx :: treat an empty axes list as no reduction
+ok - Tests/Reductions.sx :: define empty sums and preserve empty outputs without reduction domains
+ok - Tests/Reductions.sx :: propagate NaN and retain infinities in float reductions
+ok - Tests/Reductions.sx :: reduce every integer dtype on CPU
+2026-10-04 17:41:24.245 TrainingCNNGPU-6300e4f3a3fa3cc88fd54c86b304b2a6649ac4d472fdb14125152054fbc749d2[41040:12744001] Metal API Validation Enabled
+ok - Tests/TrainingCNNGPU.sx :: train compare and restore the CNN on GPU
+2026-10-04 17:41:26.201 TrainingMLPGPU-bb930f0fc92b9d33ef55f3978c359d3850971af4a8f31c4876ed3867103d79dd[41066:12744097] Metal API Validation Enabled
+ok - Tests/TrainingMLPGPU.sx :: train compare and restore the MLP on GPU
+ok - Tests/TrainingNetworks.sx :: repeat one seeded training trajectory
+ok - Tests/TrainingNetworks.sx :: train checkpoint and restore a deterministic MLP
+ok - Tests/TrainingNetworks.sx :: train checkpoint and restore a deterministic CNN
+ok - Tests/TrainingNetworks.sx :: train clip checkpoint and restore a deterministic recurrent classifier
+2026-10-04 17:41:31.898 TrainingRNNGPU-98821248d7dada1c0630863fcdc44a27a3d03e127c8e73923118dc8d368f9154[41161:12744681] Metal API Validation Enabled
+ok - Tests/TrainingRNNGPU.sx :: train compare clip and restore the recurrent classifier on GPU
+2026-10-04 17:41:33.499 TrainingRNNGPU-fb232f9540800e9409f8ad37c58f49c2fd70735b5bb6418f8b0025f8e36b8fe0[41165:12744738] Metal API Validation Enabled
+ok - Tests/TrainingRNNGPU.sx :: bound symmetric recurrent bias gradients before Adam amplification
+ok - Tests/Views.sx :: model ranks zero through five and empty dimensions
+ok - Tests/Views.sx :: reshape and flatten share contiguous layout metadata
+ok - Tests/Views.sx :: permute transpose select narrow and contiguous preserve logical order
+ok - Tests/Views.sx :: index every CPU dtype through a strided view
+ok - Tests/Views.sx :: keep a view alive after its parent leaves scope
+95 passed; 0 failed in 25 files

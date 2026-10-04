@@ -1,0 +1,29 @@
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib,json,subprocess,sys
+root=Path.cwd();bench=root/"Silex-Benchmarks"
+parent=bench/"Sources/TensorStableCompute/Baselines/2026-10-04-macos-arm64-adam-warm-moments"
+config=json.loads((parent/"Configuration.json").read_text())
+binary=root/".silex/tensor-neural-release"
+assert hashlib.sha256(binary.read_bytes()).hexdigest()==config["binaries"]["reference"]
+results=parent/"NegativeControl";results.mkdir()
+config={"date":datetime.now(timezone.utc).isoformat(),"binary_sha256":config["binaries"]["reference"],
+        "reason":"Control regressions in unchanged forward/backward; five A/A pairs per family",
+        "same_binary":True,"orders":["a,b","b,a","a,b","b,a","a,b"]}
+(results/"Configuration.json").write_text(json.dumps(config,indent=2)+"\n")
+for name in ["a","b"]:
+    d=results/name;d.mkdir()
+    (d/"metadata.txt").write_text((parent/"reference/metadata.txt").read_text()+"negative_control=same_reference_binary\n")
+families=("mlp","cnn","rnn")
+for rep in range(1,6):
+    offset=(rep-1)%3
+    for family in families[offset:]+families[:offset]:
+        for name in (["a","b"] if rep%2 else ["b","a"]):
+            print("CONTROL",rep,family,name,flush=True)
+            target=results/name
+            with (target/(family+"-"+str(rep)+".log")).open("w") as stdout,(target/(family+"-"+str(rep)+".time")).open("w") as stderr:
+                run=subprocess.run(["/usr/bin/time","-l",str(binary),"--measure-"+family],stdout=stdout,stderr=stderr)
+            if run.returncode:sys.exit("Invalid control sample")
+for name in ["a","b"]:
+    subprocess.run([sys.executable,str(bench/"Sources/TensorStableCompute/SummarizeNeural.py"),str(results/name)],check=True)
+print("CONTROL_COMPLETE",flush=True)

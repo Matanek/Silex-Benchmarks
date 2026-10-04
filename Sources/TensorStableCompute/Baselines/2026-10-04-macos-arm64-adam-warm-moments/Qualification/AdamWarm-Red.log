@@ -1,0 +1,5 @@
+2026-10-04 17:35:36.076 AdamWarmState-381bb35a6d580b4b0db6ca92d9298d175f094b90efc2e260831c8c76ebdea841[36551:12721855] Metal API Validation Enabled
+Packages/Tensor/Tests/AdamWarmState.sx:34:5: runtime error: assertion failed: condition is false
+silex: native test 'initialize Adam moments only on each parameters first gradient' exited with code 1
+FAILED - initialize Adam moments only on each parameters first gradient
+0 passed; 1 failed

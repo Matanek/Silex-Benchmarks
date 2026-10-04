@@ -1,0 +1,68 @@
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib, json, subprocess, sys
+root = Path.cwd()
+bench = root / "Silex-Benchmarks"
+results = bench / "Sources/TensorStableCompute/Baselines/2026-10-04-macos-arm64-adam-warm-moments"
+old = bench / "Sources/TensorStableCompute/Baselines/2026-10-04-macos-arm64-spec-baseline-neural"
+base = json.loads((old / "Configuration.json").read_text())
+def out(args):
+    return subprocess.run(args, capture_output=True, text=True, check=True).stdout.strip()
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+repos = {key:root / path for key, path in {
+    "silex":"Silex", "tensor":"Packages/Tensor", "std":"Packages/STD",
+    "gfx":"Packages/GFX", "gfx_gpu":"Packages/GFX.GPU", "benchmark":"Silex-Benchmarks"
+}.items()}
+heads = {}
+for key, repo in repos.items():
+    if out(["git", "-C", str(repo), "status", "--porcelain"]):
+        sys.exit("Dirty candidate: " + key)
+    heads[key] = out(["git", "-C", str(repo), "rev-parse", "HEAD"])
+for key in ["silex", "std", "gfx", "gfx_gpu"]:
+    assert heads[key] == base[key + "_commit"]
+assert digest(root / "Silex/Toolchain/zig-out/bin/silex") == base["silex_binary_sha256"]
+assert digest(bench / "Sources/TensorStableCompute/Neural.sx") == base["harness_sha256"]
+assert out(["sw_vers", "-buildVersion"]) in base["os"]
+assert out(["sysctl", "-n", "machdep.cpu.brand_string"]) == base["cpu"]
+if results.exists():
+    sys.exit("Do not replace a measured campaign")
+binaries = {"reference":root / ".silex/tensor-neural-release", "candidate":root / ".silex/tensor-neural-adam-warm-release"}
+assert digest(binaries["reference"]) == base["measurement_binary_sha256"]
+configuration = {"date":datetime.now(timezone.utc).isoformat(), "reference":base, "candidate_heads":heads,
+                 "binaries":{key:digest(binary) for key,binary in binaries.items()},
+                 "compiler_sha256":base["silex_binary_sha256"], "harness_sha256":base["harness_sha256"],
+                 "pairs_per_family":5, "orders":["reference,candidate", "candidate,reference", "reference,candidate", "candidate,reference", "reference,candidate"],
+                 "family_rotation":["mlp,cnn,rnn", "cnn,rnn,mlp", "rnn,mlp,cnn", "mlp,cnn,rnn", "cnn,rnn,mlp"],
+                 "within_batch_order":"cpu_then_gpu_then_end_to_end",
+                 "admission":"Adam gain median >=5%, larger than both relative MADs and >=4 favourable pairs out of5; inspect control regressions >=5% larger than MADs"}
+results.mkdir()
+(results / "Configuration.json").write_text(json.dumps(configuration,ensure_ascii=False,indent=2)+"\n")
+for name in binaries:
+    path = results / name; path.mkdir()
+    meta = dict(base)
+    meta["date"] = configuration["date"]
+    meta["measurement_binary_sha256"] = configuration["binaries"][name]
+    meta["comparison_order"] = ";".join(configuration["orders"])
+    meta["family_order"] = ";".join(configuration["family_rotation"])
+    if name == "candidate":
+        for key,head in heads.items(): meta[key + "_commit"] = head
+    (path / "metadata.txt").write_text("".join(str(k)+"="+str(v)+"\n" for k,v in meta.items() if k != "gpu_inventory"))
+    (path / "Configuration.json").write_text(json.dumps(meta,ensure_ascii=False,indent=2)+"\n")
+families = ("mlp", "cnn", "rnn")
+for rep in range(1,6):
+    offset = (rep-1)%3
+    for family in families[offset:]+families[:offset]:
+        order = ("reference", "candidate") if rep%2 else ("candidate", "reference")
+        for name in order:
+            print("PAIR", rep, family, name, flush=True)
+            target = results / name
+            with (target / (family+"-"+str(rep)+".log")).open("w") as stdout, (target / (family+"-"+str(rep)+".time")).open("w") as stderr:
+                run = subprocess.run(["/usr/bin/time", "-l", str(binaries[name]), "--measure-"+family], stdout=stdout, stderr=stderr)
+            if run.returncode: sys.exit("Invalid sample: " + str(run.returncode))
+for name in binaries:
+    subprocess.run([sys.executable,str(bench / "Sources/TensorStableCompute/SummarizeNeural.py"),str(results / name)],check=True)
+for key,repo in repos.items():
+    assert out(["git", "-C", str(repo), "rev-parse", "HEAD"]) == heads[key]
+for key,binary in binaries.items(): assert digest(binary) == configuration["binaries"][key]
+print("COMPLETE",results,flush=True)

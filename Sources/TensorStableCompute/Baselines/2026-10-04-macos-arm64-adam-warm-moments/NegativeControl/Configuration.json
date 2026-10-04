@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-04T15:46:25.358590+00:00",
+  "binary_sha256": "053d7fdc4df68df236ceeaac4c87aca1fc48603b1480b47ffeb1e14f404843aa",
+  "reason": "Control regressions in unchanged forward/backward; five A/A pairs per family",
+  "same_binary": true,
+  "orders": [
+    "a,b",
+    "b,a",
+    "a,b",
+    "b,a",
+    "a,b"
+  ]
+}
