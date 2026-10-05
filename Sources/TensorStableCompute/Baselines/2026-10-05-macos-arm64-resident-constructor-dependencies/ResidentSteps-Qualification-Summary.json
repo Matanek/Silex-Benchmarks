@@ -1,0 +1,26 @@
+[
+  {
+    "label": "After-Debug",
+    "status": "pass",
+    "exit_code": 0,
+    "compiler_sha256": "d112bcc77d68a23b68348f41a7270d5009b817ec36070d631ac02acd3607ae3f",
+    "binary_sha256": "0854796832569ba898e92bd262f76f21dc63b8eda600312ad8ba8ff68e48f4af",
+    "source_sha256": "490c00cb3148a8f1e5bd75ee32929bf6a87ddd2a7c6f3bcd57cf2c7fcf9981c3"
+  },
+  {
+    "label": "After-Release",
+    "status": "pass",
+    "exit_code": 0,
+    "compiler_sha256": "d112bcc77d68a23b68348f41a7270d5009b817ec36070d631ac02acd3607ae3f",
+    "binary_sha256": "dcb6cb406135492ef60f7bcc15490c38ae58d292df6f45b605976f3864370f38",
+    "source_sha256": "490c00cb3148a8f1e5bd75ee32929bf6a87ddd2a7c6f3bcd57cf2c7fcf9981c3"
+  },
+  {
+    "label": "Before-Release",
+    "status": "pass",
+    "exit_code": 0,
+    "compiler_sha256": "50e232a744eb525230da95de5f3ab8aef750510e8bd230ce6210593f185a8865",
+    "binary_sha256": "9f1d9d144c97f2419670eccf8a294b2eadcad7cbf945488f97b461b44b6421a3",
+    "source_sha256": "490c00cb3148a8f1e5bd75ee32929bf6a87ddd2a7c6f3bcd57cf2c7fcf9981c3"
+  }
+]
