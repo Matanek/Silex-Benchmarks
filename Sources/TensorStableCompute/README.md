@@ -124,7 +124,10 @@ No timing threshold is enforced by the correctness verifier.
 ## Resident steps across six model families
 
 `ResidentSteps.sx` compares MLP, CNN, SimpleRNN, GRU, LSTM and Transformer
-training using seeds 481/482, asymmetric inputs and AdamW at 0.01. Each family
+training using seeds 481/482, asymmetric inputs and AdamW at 0.01 with an
+explicit epsilon of 1e-4. That setting limits amplification of float32
+roundoff in nearly zero attention key-bias gradients when comparing complete
+independently evolved CPU/Metal states. Each family
 warms up for two steps, then times three complete resident steps including
 `zero_grad`, forward, cross-entropy, backward, update and final GPU completion.
 Full outputs, parameters, gradients, both optimizer moments and step counts
