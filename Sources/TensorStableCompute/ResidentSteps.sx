@@ -1,0 +1,128 @@
+use GFX.GPU
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+use Tensor
+use Tensor.Profile
+use Tensor.Neural
+use Tensor.Optim
+
+struct ObservedStep {
+    let loss:float
+    let values:float[]
+}
+func resident_model(family:str) Neural.Sequential {
+    var layers:Neural.Layer[]=[]
+    if family=="mlp" {layers=[Neural.Dense("hidden",2,4,481),Neural.Activation.tanh(),Neural.Dense("classifier",4,2,482)]}
+    else if family=="cnn" {layers=[Neural.Conv2D("features",1,2,2,481),Neural.Activation.tanh(),Neural.AveragePool2D(2,stride:1),Neural.Flatten(),Neural.Dense("classifier",8,2,482)]}
+    else if family=="rnn" {layers=[Neural.SimpleRNN("memory",2,3,481),Neural.Dense("classifier",3,2,482)]}
+    else if family=="gru" {layers=[Neural.GRU("memory",2,3,481),Neural.Dense("classifier",3,2,482)]}
+    else if family=="lstm" {layers=[Neural.LSTM("memory",2,3,481),Neural.Dense("classifier",3,2,482)]}
+    else if family=="transformer" {layers=[Neural.TransformerBlock("block",4,2,6,481),Neural.Flatten(),Neural.Dense("classifier",12,2,482)]}
+    else {panic("unknown resident model family")}
+    return Neural.Sequential(layers)
+}
+func resident_input(family:str) Tensor {
+    var shape:int[]=[2,3,2]
+    if family=="mlp" {shape=[2,2]}
+    else if family=="cnn" {shape=[2,1,4,4]}
+    else if family=="transformer" {shape=[2,3,4]}
+    var count=1;for dimension in shape {count*=dimension}
+    var values:float[]=[];var index=0
+    while index<count {values.append((index%7) as float/10.0-0.3);index++}
+    return Tensor(values,shape)
+}
+func append_observed(tensor:Tensor,values:float[]) {
+    for value in tensor.detach().cpu().values() {assert(Math.is_finite(value));values.append(value)}
+}
+func resident_step(model:Neural.Layer,input:Tensor,target:Tensor,optimizer:Optim.AdamW) {
+    optimizer.zero_grad();model.forward(input).cross_entropy(target,1).backward();optimizer.step()
+}
+func observe_family(family:str,device:GPU.Device?,report:bool) ObservedStep {
+    var model=resident_model(family)
+    var input=resident_input(family)
+    var labels:int32[]=[0,1];var target=Tensor.vector(labels)
+    if let gpu=device {input=input.to(gpu);target=target.to(gpu);model.to(gpu)}
+    var parameters=model.parameters();var optimizer=Optim.AdamW(parameters,learning_rate:0.01)
+    var iteration=0;while iteration<2 {resident_step(model,input,target,optimizer);iteration++}
+    var profile:Profile?=null
+    if let gpu=device {gpu.wait_until_idle();profile=Profile(gpu);gpu.reset_command_stats()}
+    var elapsed=Stopwatch();elapsed.start();iteration=0
+    while iteration<3 {resident_step(model,input,target,optimizer);iteration++}
+    if let gpu=device {gpu.wait_until_idle()}
+    elapsed.stop()
+    var passes=0;var submissions=0;var allocations=0;var releases=0;var peak=0;var backend="cpu"
+    if let gpu=device {
+        backend="gpu";let stats=gpu.command_stats()
+        assert(stats.uploads==0 && stats.downloads==0 && stats.compute_passes>0)
+        passes=stats.compute_passes
+        if let observer=profile {
+            let counters=observer.snapshot()
+            assert(counters.uploads==0 && counters.downloads==0 && counters.pipeline_compilations==0)
+            print("RESIDENT_DIAGNOSTIC family=$(family) gpu_passes=$(passes) tensor_passes=$(counters.compute_passes) submissions=$(counters.submissions)")
+            // Noncontiguous views also submit GPU-to-GPU copy commands.
+            assert(counters.compute_passes==passes && counters.submissions>=passes)
+            assert(counters.fence_creations==counters.submissions)
+            submissions=counters.submissions
+            allocations=counters.buffer_allocations;releases=counters.buffer_releases;peak=counters.peak_bytes
+        }
+    }
+    // Full observations and readbacks are outside the resident timed region.
+    let output=model.forward(input).detach()
+    let loss=output.cross_entropy(target,1).detach().cpu().item()
+    assert(Math.is_finite(loss) && loss>=0.0)
+    var observed:float[]=[];append_observed(output,observed)
+    for parameter in parameters {
+        append_observed(parameter.value(),observed)
+        if let gradient=parameter.gradient() {append_observed(gradient,observed)}
+        else {panic("resident benchmark expected every parameter gradient")}
+    }
+    let saved=optimizer.state().cpu()
+    for entry in saved.parameters {
+        assert(entry.step_count==5)
+        if let first=entry.first_moment {append_observed(first,observed)}
+        else {panic("resident benchmark expected first moment")}
+        if let second=entry.second_moment {append_observed(second,observed)}
+        else {panic("resident benchmark expected second moment")}
+    }
+    if report {
+        print("SILEX_TENSOR_RESIDENT family=$(family) backend=$(backend) iterations=3 elapsed_ms=$(elapsed.get_elapsed_milliseconds()) passes=$(passes) submissions=$(submissions) allocations=$(allocations) releases=$(releases) peak_bytes=$(peak) uploads=0 downloads=0 loss=$(loss) observations=$(observed.count())")
+        var index=0;for value in observed {print("SILEX_TENSOR_RESIDENT_VALUE family=$(family) backend=$(backend) index=$(index) value=$(value)");index++}
+    }
+    return ObservedStep(loss:loss,values:observed)
+}
+func verify_resident() {
+    assert(GPU.Device.is_supported())
+    var device=GPU.Device(GPU.DeviceSettings(debug:true))
+    var observer=Profile(device)
+    var families:str[]=["mlp","cnn","rnn","gru","lstm","transformer"]
+    for family in families {
+        let cpu=observe_family(family,null,false);let gpu=observe_family(family,device,false)
+        assert(cpu.values.count()==gpu.values.count())
+        assert(Math.abs(cpu.loss-gpu.loss)<=0.00002)
+        var index=0
+        while index<cpu.values.count() {
+            assert(Math.abs(cpu.values[index]-gpu.values[index])<=0.00002*(1.0+Math.abs(cpu.values[index])))
+            index++
+        }
+        assert(observer.snapshot().live_buffers==0 && observer.snapshot().active_bytes==0)
+    }
+    print("SILEX_TENSOR_RESIDENT_VERIFY status=pass families=6 full_state=pass")
+}
+func main() {
+    var measuring=false;var cpu=false;var reverse=false
+    match Process.arguments() {
+        failure(error)=>{panic(error.detail)}
+        success(arguments)=>{for argument in arguments {
+            if argument=="--verify" {verify_resident();return}
+            if argument=="--measure" {measuring=true}
+            if argument=="--cpu" {cpu=true}
+            if argument=="--reverse" {reverse=true}
+        }}
+    }
+    if !measuring {panic("expected --verify or --measure [--cpu] [--reverse]")}
+    var device:GPU.Device?=null;if !cpu {device=GPU.Device()}
+    var families:str[]=["mlp","cnn","rnn","gru","lstm","transformer"]
+    if reverse {families=["transformer","lstm","gru","rnn","cnn","mlp"]}
+    for family in families {let observed=observe_family(family,device,true);assert(observed.values.count()>0)}
+}

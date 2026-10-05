@@ -120,3 +120,31 @@ outside timing, values and counters are always checked, and the dependent case
 is a separate counterexample. Freeze sources and binaries before collecting
 balanced repetitions and same-binary controls; retain all raw samples.
 No timing threshold is enforced by the correctness verifier.
+
+## Resident steps across six model families
+
+`ResidentSteps.sx` compares MLP, CNN, SimpleRNN, GRU, LSTM and Transformer
+training using seeds 481/482, asymmetric inputs and AdamW at 0.01. Each family
+warms up for two steps, then times three complete resident steps including
+`zero_grad`, forward, cross-entropy, backward, update and final GPU completion.
+Full outputs, parameters, gradients, both optimizer moments and step counts
+are observed after timing. `--verify` compares every observed CPU/Metal value
+with an absolute/relative tolerance of 2e-5 and checks complete resource release.
+
+```sh
+ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/ResidentSteps.sx \
+  --release --output /private/tmp/tensor-resident-steps
+/private/tmp/tensor-resident-steps --verify
+/private/tmp/tensor-resident-steps --measure
+/private/tmp/tensor-resident-steps --measure --reverse
+```
+
+`--cpu` selects CPU measurement. GPU rows report compute passes, submissions,
+allocations, releases and peak requested buffer bytes. Noncontiguous views can
+submit GPU-to-GPU copies in addition to compute passes; every resident region
+requires zero CPU/GPU transfers and zero pipeline compilations. Scalar rows
+retain the complete final observations for comparisons between binaries.
+Freeze sources and binaries before running balanced process pairs and
+same-binary controls. A compiler comparison records both compiler identities;
+equal Tensor sources alone do not establish an equal toolchain.
