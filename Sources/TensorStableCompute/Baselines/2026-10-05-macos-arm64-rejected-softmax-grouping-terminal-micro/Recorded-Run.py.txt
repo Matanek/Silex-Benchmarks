@@ -1,0 +1,107 @@
+from pathlib import Path
+import argparse, subprocess, os, json, hashlib, platform, math, csv
+
+parser=argparse.ArgumentParser();parser.add_argument('harness',choices=['micro','models']);args=parser.parse_args()
+w=Path.cwd();a=w.parent/'Memory/Artifacts';harness=args.harness
+out=a/('Task39B-'+harness+'-Campaign');out.mkdir(exist_ok=False)
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def git(repo,*args):return subprocess.check_output(['git',*args],cwd=w/repo,text=True).strip()
+repos=['Silex','Silex-Documentation','Packages/Tensor','Packages/STD','Packages/GFX','Packages/GFX.GPU','Silex-Benchmarks']
+heads={r:git(r,'rev-parse','HEAD') for r in repos}
+statuses={r:git(r,'status','--porcelain') for r in repos}
+diff_hashes={r:hashlib.sha256(subprocess.check_output(['git','diff','HEAD'],cwd=w/r)).hexdigest() for r in repos}
+qualification=json.loads((a/'Task39B-Binary-Qualification.json').read_text())
+assert len(qualification['results'])==8 and all(r['status']=='pass' for r in qualification['results'])
+compilers={'before':Path('/Users/nekmata/.local/bin/silex'),'after':Path('/Users/nekmata/.local/bin/silex')}
+assert all(sha(p)=='9b5ceb5e1a951bb8a92190d690ed68a0b85ddb1c577b302c539f42dbc21e833c' for p in compilers.values())
+if harness=='micro':
+    binaries={'before':a/'Task39B-SoftmaxGrouping-before-release','after':a/'Task39B-SoftmaxGrouping-after-release'}
+    source=w/'Silex-Benchmarks/Sources/TensorStableCompute/SoftmaxGrouping.sx'
+else:
+    binaries={'before':a/'Task39B-ResidentSteps-before-release','after':a/'Task39B-ResidentSteps-after-release'}
+    source=w/'Silex-Benchmarks/Sources/TensorStableCompute/ResidentSteps.sx'
+protocol=a.parent/'Task39-Terminal-Protocol.md'
+fingerprints={str(p.relative_to(w)):sha(p) for p in (w/'Packages/Tensor/Module').rglob('*') if p.is_file()}
+fingerprints[str(source.relative_to(w))]=sha(source)
+configuration=dict(heads=heads,compiler_sha256={k:sha(p) for k,p in compilers.items()},binary_sha256={k:sha(p) for k,p in binaries.items()},fingerprints=fingerprints,protocol_sha256=sha(protocol),platform=platform.platform(),architecture=platform.machine(),mode='Release',metric='synchronized wall milliseconds',primary_pairs=16,control_pairs_per_binary=8,total_processes=384 if harness=='micro' else 64,harness=harness,observation_tolerance=0.00002,baseline_compiler_commit=heads['Silex'],baseline_tensor_commit='7d91f411c70caa12e0f2bf4ebdf388abfe1ab1bd',statuses=statuses,diff_hashes=diff_hashes,baseline_module=qualification['baseline_module'],after_compiler_commit=heads['Silex'])
+if harness=='models':configuration.update(optimizer='AdamW',learning_rate=0.01,epsilon=0.0001,warmup_steps=2,timed_steps=3,observations_per_process=1700)
+for name,command in [('os',['/usr/bin/sw_vers']),('chip',['/usr/sbin/sysctl','-n','machdep.cpu.brand_string'])]:
+    x=subprocess.run(command,text=True,capture_output=True);configuration[name]=dict(exit_code=x.returncode,stdout=x.stdout,stderr=x.stderr)
+for k,p in binaries.items():
+ entry=next(r for r in qualification['results'] if r['label']==p.name)
+ assert entry['binary_sha256']==sha(p) and entry['source_sha256']==sha(source)
+for f,h in fingerprints.items():assert qualification['candidate_fingerprints'][f]==h,f
+(out/'Configuration.json').write_text(json.dumps(configuration,indent=2)+'\n')
+rows=[];runs=[];reference={}
+def parse(stdout,variant):
+    prefix='SOFTMAX_GROUPING ' if harness=='micro' else 'SILEX_TENSOR_RESIDENT '
+    parsed=[dict(item.split('=',1) for item in line.split()[1:]) for line in stdout.splitlines() if line.startswith(prefix)]
+    assert len(parsed)==(1 if harness=='micro' else 6)
+    observations={}
+    if harness=='models':
+        for line in stdout.splitlines():
+            if line.startswith('SILEX_TENSOR_RESIDENT_VALUE '):
+                value=dict(item.split('=',1) for item in line.split()[1:]);family=value['family'];values=observations.setdefault(family,[])
+                assert int(value['index'])==len(values);v=float(value['value']);assert math.isfinite(v);values.append(v)
+    for r in parsed:
+        assert math.isfinite(float(r['elapsed_ms'])) and float(r['elapsed_ms'])>=0
+        if harness=='micro':
+            size=int(r['size']);assert size in [1,7,257,4096,65536,63]
+            iterations=512 if size<=257 or r['case']=='strided' else 64
+            assert int(r['iterations'])==iterations and int(r['passes'])==iterations*5
+            assert int(r['submissions'])==(iterations*5 if variant=='before' else iterations)
+            assert int(r['allocations'])+int(r['reuses'])==iterations*5
+            assert int(r['observations'])==(49 if r['case']=='strided' else size)
+            assert r['uploads']=='0' and r['downloads']=='0'
+            assert math.isfinite(float(r['cold_ms'])) and float(r['cold_ms'])>=0
+            assert 0<=int(r['cached_bytes'])<=1048576
+        else:
+            assert r['backend']=='gpu' and r['iterations']=='3' and r['uploads']=='0' and r['downloads']=='0'
+            assert int(r['passes'])>0 and int(r['allocations'])>=0
+            assert math.isfinite(float(r['cold_ms'])) and float(r['cold_ms'])>=0
+            family=r['family'];values=observations[family]
+            cardinalities={'mlp':92,'cnn':116,'rnn':108,'gru':288,'lstm':372,'transformer':724}
+            assert len(values)==int(r['observations'])==cardinalities[family] and math.isfinite(float(r['loss']))
+            identity=(family,variant)
+            if identity not in reference:reference[identity]=dict(values=values,loss=float(r['loss']),passes=r['passes'],submissions=r['submissions'],allocations=r['allocations'])
+            expected=reference[identity]
+            other=reference.get((family,'before' if variant=='after' else 'after'))
+            if other:
+                assert r['passes']==other['passes'] and len(values)==len(other['values'])
+                assert all(abs(x-y)<=0.00002*(1+abs(y)) for x,y in zip(values,other['values'])),family
+            assert len(values)==len(expected['values']) and r['passes']==expected['passes'] and r['submissions']==expected['submissions']
+            assert abs(float(r['loss'])-expected['loss'])<=0.00002
+            assert all(abs(x-y)<=0.00002*(1+abs(y)) for x,y in zip(values,expected['values'])),family
+    keys=[(r['case'],r['size']) if harness=='micro' else r['family'] for r in parsed]
+    assert len(set(keys))==len(parsed)
+    return parsed
+def run(group,pair,arm,variant,reverse,case=None):
+    name=f'{group}-{pair:02d}-{arm}-{variant}'+('' if case is None else f'-case{case}');command=[str(binaries[variant]),'--measure']+(['--reverse'] if reverse else [])
+    if case is not None:command.append(f'--case-{case}')
+    x=subprocess.run(['/usr/bin/time','-l',*command],text=True,capture_output=True,timeout=300)
+    log=out/(name+'.log');timer=out/(name+'.time');log.write_text(x.stdout);timer.write_text(x.stderr)
+    assert x.returncode==0,(name,x.returncode,x.stdout,x.stderr)
+    parsed=parse(x.stdout,variant)
+    for r in parsed:r.update(group=group,pair=pair,arm=arm,variant=variant,reverse=reverse,run=name)
+    rows.extend(parsed);runs.append(dict(name=name,args=command,group=group,pair=pair,arm=arm,variant=variant,reverse=reverse,exit_code=x.returncode,stdout_sha256=sha(log),stderr_sha256=sha(timer)))
+    (out/'Rows.json').write_text(json.dumps(rows,indent=2)+'\n');(out/'Runs.json').write_text(json.dumps(runs,indent=2)+'\n')
+    print(name,'PASS',len(parsed),'rows',flush=True)
+for case in (range(6) if harness=='micro' else [None]):
+ for pair in range(1,17):
+     order=['before','after'] if pair%2 else ['after','before']
+     for arm,variant in enumerate(order):run('main',pair,arm,variant,pair%2==0,case)
+ for pair in range(1,9):
+     order=['before','after'] if pair%2 else ['after','before']
+     for variant in order:
+         for arm in range(2):run('control',pair,arm,variant,pair%2==0,case)
+for f,h in fingerprints.items():assert sha(w/f)==h,f
+for r,h in heads.items():assert git(r,'rev-parse','HEAD')==h and git(r,'status','--porcelain')==statuses[r] and hashlib.sha256(subprocess.check_output(['git','diff','HEAD'],cwd=w/r)).hexdigest()==diff_hashes[r],r
+for k,p in binaries.items():assert sha(p)==configuration['binary_sha256'][k]
+for k,p in compilers.items():assert sha(p)==configuration['compiler_sha256'][k]
+assert sha(protocol)==configuration['protocol_sha256']
+assert len(runs)==(384 if harness=='micro' else 64) and len(rows)==384
+fields=sorted({k for r in rows for k in r})
+with (out/'Measurements.csv').open('w',newline='') as f:
+    writer=csv.DictWriter(f,fieldnames=fields,lineterminator='\n');writer.writeheader();writer.writerows(rows)
+(out/'Verified.json').write_text(json.dumps(dict(processes=len(runs),rows=len(rows),unchanged=True,full_observations_checked=harness=='models'),indent=2)+'\n')
+print('VERIFIED',len(runs),'processes',len(rows),'rows, exact binaries and sources unchanged',flush=True)

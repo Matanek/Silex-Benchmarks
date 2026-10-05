@@ -190,3 +190,45 @@ and [model campaign](Baselines/2026-10-05-macos-arm64-ready-buffer-reuse-models/
 retain raw samples, sources, protocol, configurations, controls and standalone
 verification/measurement recipes. The private pool releases every cached buffer
 at the last Tensor storage even when a public Profile remains alive.
+
+## Rejected five-pass softmax grouping
+
+The October 5 experiment preserved all five existing Float32 shaders/passes,
+sharing one command buffer and completion token. Public values/gradients, views,
+aliases, profiles and resource release were correct. The first prototype passed
+456 tests over 108 sources and Debug/Release harness checks; its hot results
+were indeterminate. A reduced ownership probe found five native waits on one
+shared fence; terminal completion reduced these to one.
+
+The terminal experiment isolated each size in its own process, kept the same
+compiler and admission thresholds, warmed up 16 calls, and used 512 hot calls
+for the small vectors/view and 64 for the two large vectors. The strided case
+regressed by a paired median **25.627%**, MAD 2.728 percentage points, all 16
+pairs slower, with valid A/A controls. No case had an admitted decrease. The
+vector-7 after A/A was invalid and remains indeterminate. The prototype was
+**removed completely**; Tensor remains at its ready-buffer baseline. No new
+Tensor API or optimized behavior is shipped from this experiment.
+
+[First microcases](Baselines/2026-10-05-macos-arm64-rejected-softmax-grouping-first-micro/README.md),
+[unchanged model states](Baselines/2026-10-05-macos-arm64-rejected-softmax-grouping-first-models/README.md),
+and [terminal isolated cases](Baselines/2026-10-05-macos-arm64-rejected-softmax-grouping-terminal-micro/README.md)
+preserve 512 processes, raw measurements, fixed rules, exact prototype snapshots
+and standalone `Verify.py` tools. The model campaign checks 108,800 full scalar
+observations; all six families are indeterminate and their submission counts
+are unchanged. Process RSS and requested buffer peaks are reported separately
+from physical GPU memory. This rejects this particular region/representation;
+it does not establish that other command regions or kernel fusion cannot help.
+
+`SoftmaxGrouping.sx` remains a public research harness that verifies complete
+results on the current eager implementation. Build from the workspace root:
+
+```sh
+silex compile Silex-Benchmarks/Sources/TensorStableCompute/SoftmaxGrouping.sx --release --output /private/tmp/tensor-softmax-grouping
+/private/tmp/tensor-softmax-grouping --verify
+/private/tmp/tensor-softmax-grouping --measure --case-5
+```
+
+`--case-0` through `--case-5` select vectors 1/7/257/4096/65536 and the strided
+view. Collection must use distinct qualified before/after binaries, one compiler,
+16 paired runs and 8 A/A pairs per arm; never compare a new workload to the old
+recorded timings or run it concurrently with builds/tests.

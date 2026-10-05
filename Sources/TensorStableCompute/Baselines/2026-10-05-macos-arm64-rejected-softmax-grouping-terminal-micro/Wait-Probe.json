@@ -1,0 +1,22 @@
+{
+  "restored": true,
+  "compiler_sha256": "9b5ceb5e1a951bb8a92190d690ed68a0b85ddb1c577b302c539f42dbc21e833c",
+  "results": [
+    {
+      "variant": "repeated",
+      "waits": 5,
+      "expected": 5,
+      "status": "pass",
+      "exit_code": 0,
+      "source_sha256": "404e516af44d2f60792586c933be021c7a93fcb79e5c8ff9f63d1d6eb4e21441"
+    },
+    {
+      "variant": "terminal",
+      "waits": 1,
+      "expected": 1,
+      "status": "pass",
+      "exit_code": 0,
+      "source_sha256": "70f3abbfcec21834481b4f63090a13587b98e600f4b27ceb1b09ac6768fd7ca4"
+    }
+  ]
+}
