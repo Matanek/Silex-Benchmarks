@@ -1,0 +1,121 @@
+use Tensor
+use Tensor.Profile
+use GFX.GPU
+use STD.Process
+use STD.Time.Stopwatch
+
+func resident_work(source:Tensor,device:GPU.Device,operations:int,retain:bool,dependent:bool) Tensor {
+    var result=source
+    var retained:Tensor[]=[]
+    var index=0
+    while index<operations {
+        if dependent {result=result.add(1.0)} else {result=source.add(1.0)}
+        if retain {retained.append(result)}
+        index++
+    }
+    device.wait_until_idle()
+    return result
+}
+
+func resource_work(device:GPU.Device,size:int,operations:int,retain:bool,dependent:bool,report:bool) {
+    let source=Tensor.ones([size]).to(device)
+    var warmup=resident_work(source,device,4,false,false)
+    var profile=Profile(device)
+    profile.reset()
+    let baseline=profile.snapshot()
+    var elapsed=Stopwatch();elapsed.start()
+    let result=resident_work(source,device,operations,retain,dependent)
+    elapsed.stop()
+    let stats=profile.snapshot()
+    assert(stats.uploads==0 && stats.downloads==0)
+    assert(stats.buffer_allocations==operations && stats.buffer_releases<=operations-1)
+    if !dependent {assert(stats.buffer_releases==operations-1)}
+    assert(stats.compute_passes==operations && stats.dispatches==operations && stats.submissions==operations && stats.fence_creations==operations)
+    let live=operations-stats.buffer_releases
+    assert(stats.live_buffers==baseline.live_buffers+live && stats.active_bytes==baseline.active_bytes+live*size*4)
+    assert(stats.peak_bytes<=baseline.active_bytes+operations*size*4)
+    let values=result.cpu().values()
+    var expected=2.0;if dependent {expected=1.0+operations as float}
+    for value in values {assert(value==expected)}
+    if report {
+        var mode="replace"
+        if retain {mode="retain"}
+        if dependent {mode="dependent"}
+        print("SILEX_TENSOR_RESOURCE phase=resident mode=$(mode) size=$(size) operations=$(operations) elapsed_ms=$(elapsed.get_elapsed_milliseconds()) allocations=$(stats.buffer_allocations) releases=$(stats.buffer_releases) submissions=$(stats.submissions) peak_delta_bytes=$(stats.peak_bytes-baseline.active_bytes) uploads=$(stats.uploads) downloads=$(stats.downloads)")
+    }
+}
+
+func buffer_work(device:GPU.Device,size:int,operations:int,reuse:bool,report:bool) {
+    var existing=device.buffer(GPU.BufferSettings(size:size*4,usage:GPU.BufferUsage.storage(),name:"Resource lifecycle control"))
+    device.wait_until_idle()
+    var elapsed=Stopwatch();elapsed.start()
+    var checksum=0;var index=0
+    while index<operations {
+        if reuse {checksum+=existing.size()}
+        else {
+            var allocated=device.buffer(GPU.BufferSettings(size:size*4,usage:GPU.BufferUsage.storage(),name:"Resource lifecycle control"))
+            checksum+=allocated.size()
+        }
+        index++
+    }
+    device.wait_until_idle();elapsed.stop()
+    assert(checksum==operations*size*4)
+    if report {
+        var mode="create_release";if reuse {mode="existing"}
+        print("SILEX_TENSOR_RESOURCE phase=buffer_control mode=$(mode) size=$(size) operations=$(operations) elapsed_ms=$(elapsed.get_elapsed_milliseconds()) checksum=$(checksum)")
+    }
+}
+
+func verify() {
+    assert(GPU.Device.is_supported())
+    var device=GPU.Device(GPU.DeviceSettings(debug:true))
+    var lifetime=Profile(device)
+    let baseline=lifetime.snapshot()
+    for size in [1,256,4096] {
+        resource_work(device,size,8,false,false,false)
+        assert(lifetime.snapshot().live_buffers==baseline.live_buffers && lifetime.snapshot().active_bytes==baseline.active_bytes)
+        resource_work(device,size,8,true,false,false)
+        assert(lifetime.snapshot().live_buffers==baseline.live_buffers && lifetime.snapshot().active_bytes==baseline.active_bytes)
+        resource_work(device,size,8,false,true,false)
+        assert(lifetime.snapshot().live_buffers==baseline.live_buffers && lifetime.snapshot().active_bytes==baseline.active_bytes)
+        buffer_work(device,size,16,false,false)
+        buffer_work(device,size,16,true,false)
+    }
+    print("SILEX_TENSOR_RESOURCE_VERIFY status=pass")
+}
+
+func measure(reverse:bool) {
+    var device=GPU.Device()
+    for size in [1,256,4096,65536] {
+        if reverse {
+            resource_work(device,size,64,true,false,true)
+            resource_work(device,size,64,false,false,true)
+        } else {
+            resource_work(device,size,64,false,false,true)
+            resource_work(device,size,64,true,false,true)
+        }
+        resource_work(device,size,64,false,true,true)
+        if reverse {
+            buffer_work(device,size,4096,true,true)
+            buffer_work(device,size,4096,false,true)
+        } else {
+            buffer_work(device,size,4096,false,true)
+            buffer_work(device,size,4096,true,true)
+        }
+    }
+}
+func main() {
+    var measuring=false;var reverse=false
+    match Process.arguments() {
+        failure(error)=>{panic(error.detail)}
+        success(arguments)=>{
+            for argument in arguments {
+                if argument=="--verify" {verify();return}
+                if argument=="--measure" {measuring=true}
+                if argument=="--reverse" {reverse=true}
+            }
+        }
+    }
+    if !measuring {panic("expected --verify or --measure [--reverse]")}
+    measure(reverse)
+}

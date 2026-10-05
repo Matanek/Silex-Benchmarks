@@ -1,6 +1,6 @@
 # Tensor memory and compute
 
-This campaign measures the public Tensor 0.1.0 surface without exposing
+This campaign measures the public Tensor surface without exposing
 benchmark instrumentation in the package API. It separates:
 
 - CPU construction from an existing typed array and typed extraction;
@@ -73,7 +73,7 @@ different configurations.
 
 Release measurements from macOS ARM64 are evidence for that machine and those
 exact commits only. Integer results characterize construction, extraction and
-bit-exact transfer cost; Tensor 0.1.0 makes no integer GPU compute claim.
+bit-exact transfer cost; this campaign does not measure integer GPU compute.
 
 Run the neural campaign separately after committing its harness:
 
@@ -88,3 +88,35 @@ generated summary reports dispersion and CPU/GPU ratios without generalizing
 beyond the recorded machine, driver and commits. Stable live graph and buffer
 counts are enforced by package-private Tensor tests rather than inferred from
 process RSS.
+
+## Eager resource attribution
+
+`EagerResources.sx` separates result lifetime from GFX buffer creation/release.
+It compares 64 independent additions with replacement or retention of their
+results, then checks a chain of 64 dependent additions. All three cases have
+64 allocations, passes, submissions and fences on the eager reference, with
+zero resident transfers. Exact analytical outputs are checked after timing.
+Retention is bounded to 64 results (16 MiB at the largest measured size), and
+all buffers are released after each verifier case. A separate GFX control
+compares creating/releasing 4,096 buffers with accessing one existing buffer;
+these calls are outside Tensor.Profile and do not measure physical Metal VRAM
+allocation or demonstrate a Tensor pool speedup.
+
+From the workspace root, compile this source with an explicit path and output:
+
+```sh
+ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/EagerResources.sx \
+  --release --output /private/tmp/tensor-eager-resources
+/private/tmp/tensor-eager-resources --verify
+/private/tmp/tensor-eager-resources --measure
+/private/tmp/tensor-eager-resources --measure --reverse
+```
+
+`--verify` enables Metal validation and checks sizes 1, 256 and 4,096.
+`--measure` reports synchronized wall time at sizes 1, 256, 4,096 and 65,536;
+`--reverse` reverses the independent and buffer-control pairs. Warmups are
+outside timing, values and counters are always checked, and the dependent case
+is a separate counterexample. Freeze sources and binaries before collecting
+balanced repetitions and same-binary controls; retain all raw samples.
+No timing threshold is enforced by the correctness verifier.
