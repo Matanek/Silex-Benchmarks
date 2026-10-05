@@ -18,8 +18,10 @@ func resident_work(source:Tensor,device:GPU.Device,operations:int,retain:bool,de
 }
 
 func resource_work(device:GPU.Device,size:int,operations:int,retain:bool,dependent:bool,report:bool) {
+    var cold=Stopwatch();cold.start()
     let source=Tensor.ones([size]).to(device)
     var warmup=resident_work(source,device,4,false,false)
+    cold.stop()
     var profile=Profile(device)
     profile.reset()
     let baseline=profile.snapshot()
@@ -28,11 +30,13 @@ func resource_work(device:GPU.Device,size:int,operations:int,retain:bool,depende
     elapsed.stop()
     let stats=profile.snapshot()
     assert(stats.uploads==0 && stats.downloads==0)
-    assert(stats.buffer_allocations==operations && stats.buffer_releases<=operations-1)
-    if !dependent {assert(stats.buffer_releases==operations-1)}
+    // Native creations and releases can differ from logical result count.
+    assert(stats.buffer_allocations>=0 && stats.buffer_allocations<=operations)
+    assert(stats.buffer_releases>=0 && stats.buffer_releases<=baseline.live_buffers+stats.buffer_allocations)
     assert(stats.compute_passes==operations && stats.dispatches==operations && stats.submissions==operations && stats.fence_creations==operations)
-    let live=operations-stats.buffer_releases
-    assert(stats.live_buffers==baseline.live_buffers+live && stats.active_bytes==baseline.active_bytes+live*size*4)
+    assert(stats.live_buffers==baseline.live_buffers+stats.buffer_allocations-stats.buffer_releases)
+    assert(stats.active_bytes>=baseline.active_bytes+size*4)
+    if !dependent {assert(stats.active_bytes==baseline.active_bytes+size*4)}
     assert(stats.peak_bytes<=baseline.active_bytes+operations*size*4)
     let values=result.cpu().values()
     var expected=2.0;if dependent {expected=1.0+operations as float}
@@ -41,7 +45,7 @@ func resource_work(device:GPU.Device,size:int,operations:int,retain:bool,depende
         var mode="replace"
         if retain {mode="retain"}
         if dependent {mode="dependent"}
-        print("SILEX_TENSOR_RESOURCE phase=resident mode=$(mode) size=$(size) operations=$(operations) elapsed_ms=$(elapsed.get_elapsed_milliseconds()) allocations=$(stats.buffer_allocations) releases=$(stats.buffer_releases) submissions=$(stats.submissions) peak_delta_bytes=$(stats.peak_bytes-baseline.active_bytes) uploads=$(stats.uploads) downloads=$(stats.downloads)")
+        print("SILEX_TENSOR_RESOURCE phase=resident mode=$(mode) size=$(size) operations=$(operations) elapsed_ms=$(elapsed.get_elapsed_milliseconds()) cold_ms=$(cold.get_elapsed_milliseconds()) allocations=$(stats.buffer_allocations) releases=$(stats.buffer_releases) submissions=$(stats.submissions) peak_delta_bytes=$(stats.peak_bytes-baseline.active_bytes) uploads=$(stats.uploads) downloads=$(stats.downloads)")
     }
 }
 

@@ -1,0 +1,20 @@
+SILEX_TENSOR_RESOURCE phase=resident mode=replace size=1 operations=64 elapsed_ms=4.931 cold_ms=2.88 allocations=64 releases=63 submissions=64 peak_delta_bytes=8 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=retain size=1 operations=64 elapsed_ms=1.885 cold_ms=0.51699996 allocations=64 releases=63 submissions=64 peak_delta_bytes=256 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=dependent size=1 operations=64 elapsed_ms=3.68 cold_ms=0.494 allocations=64 releases=0 submissions=64 peak_delta_bytes=256 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=create_release size=1 operations=4096 elapsed_ms=13.065001 checksum=16384
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=existing size=1 operations=4096 elapsed_ms=0.012 checksum=16384
+SILEX_TENSOR_RESOURCE phase=resident mode=replace size=256 operations=64 elapsed_ms=5.198 cold_ms=0.686 allocations=64 releases=63 submissions=64 peak_delta_bytes=2048 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=retain size=256 operations=64 elapsed_ms=1.6880001 cold_ms=0.494 allocations=64 releases=63 submissions=64 peak_delta_bytes=65536 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=dependent size=256 operations=64 elapsed_ms=3.7789998 cold_ms=0.472 allocations=64 releases=0 submissions=64 peak_delta_bytes=65536 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=create_release size=256 operations=4096 elapsed_ms=9.076 checksum=4194304
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=existing size=256 operations=4096 elapsed_ms=0.011 checksum=4194304
+SILEX_TENSOR_RESOURCE phase=resident mode=replace size=4096 operations=64 elapsed_ms=4.988 cold_ms=0.655 allocations=64 releases=63 submissions=64 peak_delta_bytes=32768 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=retain size=4096 operations=64 elapsed_ms=1.449 cold_ms=0.501 allocations=64 releases=63 submissions=64 peak_delta_bytes=1048576 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=dependent size=4096 operations=64 elapsed_ms=2.5019999 cold_ms=0.498 allocations=64 releases=44 submissions=64 peak_delta_bytes=753664 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=create_release size=4096 operations=4096 elapsed_ms=13.95 checksum=67108864
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=existing size=4096 operations=4096 elapsed_ms=0.008 checksum=67108864
+SILEX_TENSOR_RESOURCE phase=resident mode=replace size=65536 operations=64 elapsed_ms=6.185 cold_ms=1.114 allocations=64 releases=63 submissions=64 peak_delta_bytes=524288 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=retain size=65536 operations=64 elapsed_ms=2.195 cold_ms=0.957 allocations=64 releases=63 submissions=64 peak_delta_bytes=16777216 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=resident mode=dependent size=65536 operations=64 elapsed_ms=3.907 cold_ms=0.954 allocations=64 releases=0 submissions=64 peak_delta_bytes=16777216 uploads=0 downloads=0
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=create_release size=65536 operations=4096 elapsed_ms=13.632999 checksum=1073741824
+SILEX_TENSOR_RESOURCE phase=buffer_control mode=existing size=65536 operations=4096 elapsed_ms=0.009000001 checksum=1073741824

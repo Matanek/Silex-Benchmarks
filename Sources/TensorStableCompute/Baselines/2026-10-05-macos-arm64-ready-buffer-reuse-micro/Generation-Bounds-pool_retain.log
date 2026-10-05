@@ -1,0 +1,4 @@
+BOUNDS policy=pool_retain baseline=117 end=117 peak=154 native_peak=163 per_step=103
+2026-10-05 22:18:01.255 PoolNeuralBoundsProbe-0392628da61c104a00b933129aec95520c30c5a31d23494b086c2a33c4148763[1595:15745965] Metal API Validation Enabled
+ok - bound hot neural graph buffers fences and pipelines per step
+1 passed; 0 failed

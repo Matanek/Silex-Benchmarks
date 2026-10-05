@@ -1,0 +1,994 @@
+[
+  {
+    "name": "main-01-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 1,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "86b7ea1efe2d1b3ab782f5fb1c49372e48d98c71622e9faa91de3a44d994be1f",
+    "stderr_sha256": "c5265612d9b8aff813ccc9c6b94f557ae83ee9b539aff69acb72f3e876a10c6d"
+  },
+  {
+    "name": "main-01-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 1,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "b91b8abc57b8b527d4dc687b0fa6f68169c366aa2916497acb38905b63154762",
+    "stderr_sha256": "046959f26f626fcf1bda20326c4403239f0cbb52ab1e8a545e05c82adb2c5d80"
+  },
+  {
+    "name": "main-02-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 2,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "6c23b4da692afed6441732a04da68f24f48613c1039703af4c0df784c32fb654",
+    "stderr_sha256": "baf2d83ce27cb7c4afb410fbca8c73bb09db06100c4b9e1de8547de6245f7933"
+  },
+  {
+    "name": "main-02-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 2,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "c207d0ff317e717619d846628549f651d056c2f4f5103d73422ff84b0cb6b3a5",
+    "stderr_sha256": "128e184e54e76a3e046613e777310888c0b2ef3047c8a2aedcb52e4cbf5e2946"
+  },
+  {
+    "name": "main-03-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 3,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "5fbe5981690c35f4f0b0d23a25835f304f1f4bd52d68d047232c306f90d34c15",
+    "stderr_sha256": "1eae25fb299ff0c9e880f40d7b5c64b08115bfe335b241892203dd71f049a373"
+  },
+  {
+    "name": "main-03-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 3,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "543a629de8e8d0b6327422de0cc3940b9160258ac354761e71b036c021899a29",
+    "stderr_sha256": "5e65730f02e09b2295d0b2f6ff11acd26aedef24b3bc06dcba7d91f5116c9d03"
+  },
+  {
+    "name": "main-04-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 4,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "01ef6e9a8e90e3ab4f8e9bd5f8d25e17dba35bcdac3b62ad05710cb5c2f6228f",
+    "stderr_sha256": "1c63816f10ad9b6327d3ae838818cd04cfca82f12b62a19e76bf4d220e1730c7"
+  },
+  {
+    "name": "main-04-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 4,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "1ebc82106c8704a087bde7e9f63ae0697e1e0ec6faa6743db0bb0b7158c1003b",
+    "stderr_sha256": "b864d0aa1202fa87c844ecddf568a367667781af203ae60c805d692668e3ab81"
+  },
+  {
+    "name": "main-05-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 5,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "f5567291ba399969aa2f8cd90a28150f1cd713972e8fc632948a8ad09c0e13fc",
+    "stderr_sha256": "5066781809a4fbb73780d4e8a81ba68e4054e006377ccc7a85cd4158c6667a84"
+  },
+  {
+    "name": "main-05-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 5,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "3927bc4b59becee7dbfdf584f4384de8af5ca043cf5d3ccbea45b4e767da25e6",
+    "stderr_sha256": "72a5c206b39f7252dd313c2e53215be03fd1d872dbf729bb04dae41411333026"
+  },
+  {
+    "name": "main-06-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 6,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "47d1efcd0f69e2b308a4aab15c5149a78b5e54ae278f8ac6a7a14afd474001b8",
+    "stderr_sha256": "211fa2505a5df47642ea9a024652bc32c5dcca97463e0b002ff6c2baf402a949"
+  },
+  {
+    "name": "main-06-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 6,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "e97cef50a3dd453b862ac848d2035ebfcc01e624737a499364cd221ee4fdb1a4",
+    "stderr_sha256": "4c31b0d0c5f9cbf5b46851822171a696d128c6f8788f73e1917e9e01e1b37cf0"
+  },
+  {
+    "name": "main-07-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 7,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "90ec9c254618f82dd3e2a14b8c7e5de09d1d7bbcf1ac5cf8de9b86265d466a40",
+    "stderr_sha256": "17f834a2fa9671c5535d8c076086465765ccf67c15f95f5ceb76390492b30566"
+  },
+  {
+    "name": "main-07-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 7,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "a4778e015f662a6911843d6ed8d8d18268853a9e4f20895632db20ccfeb28dd8",
+    "stderr_sha256": "c9d3e3378293f5ede5a7aaf5a7547f9724f9a209c1926deaa93697071673b1b1"
+  },
+  {
+    "name": "main-08-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 8,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "a60fb2ce988343117ad0e7b4180c39e928ad4deb31bbdd844a6381063c822022",
+    "stderr_sha256": "e2dc837c40ab2d18cefabb0bf09776134d80f6c4f7a36a875e9379d6dc46eb18"
+  },
+  {
+    "name": "main-08-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 8,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "41526a53d5946cd0792aa8a512de01ddfa5cab3507f96490396f576476ffdbd0",
+    "stderr_sha256": "aa0325c34c3eedc27bab6a0ed65f891096d9654611401c0d83e7a9a904bbf650"
+  },
+  {
+    "name": "main-09-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 9,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "4b545c5a5d900ff781d77ae993e29d3eaa2067dd751604bf0ca805d780b093d6",
+    "stderr_sha256": "091f547f0352db7d47db04ac19f5ad6c709501ab33a397b3fb7b9d24f31d3e6b"
+  },
+  {
+    "name": "main-09-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 9,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "cc28de164687176acd297a3a59f6a43d916ffff98e6bb90d0affc4fd46588c71",
+    "stderr_sha256": "6274a1db129d92ae11478ff4e64d28fc3eeab28cdd4023aa555917903462f2ce"
+  },
+  {
+    "name": "main-10-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 10,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "0d95e2d63b0b560f75d0387e99303936a618b08a4db1377ae3b320dc58a10a17",
+    "stderr_sha256": "4a5f6e07c47d41cc9a3afbcf38a2b5f48242038aee150eb318ddc3efe4c957f4"
+  },
+  {
+    "name": "main-10-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 10,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "a6b6b72a47a4bdc8391c3ae7553689b43f09715f0291528c9c9a86ab184d3953",
+    "stderr_sha256": "f44761c5f624f3d4f5bef90b56c74d0732941e07ad6f841072c23d4dd57d3109"
+  },
+  {
+    "name": "main-11-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 11,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "b48a68716c3e37b3564b9b6d25a347260bbfc8290de7be2c2e28c5c2f11c05a3",
+    "stderr_sha256": "faa25afb062ed965c5c2d227f1e45bd3608fc5aeba5dabe5c41ef246c1c5dd7b"
+  },
+  {
+    "name": "main-11-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 11,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "856b579f13b98b5ed8f81e02cdc0f8b2860614f10ee3d4112f93e35b285af5e0",
+    "stderr_sha256": "68bcc9b88878429bbd25ff2176e014a24e1af290bb00a1eadc12ec592df278b9"
+  },
+  {
+    "name": "main-12-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 12,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "b397b2decc26d52124d150d38fb48d1f6caa686e979f8f8763bf8124e54b73ce",
+    "stderr_sha256": "0881523eeab3e2d944b7381ec205c680c1caa28c93c93f78fe00d263cd29b061"
+  },
+  {
+    "name": "main-12-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 12,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "219a3c4c20ef62d4feb6a1319a959fa822905c8a9ff7ed77f4f80b20e466b2f3",
+    "stderr_sha256": "7387a2e9dce764809f926a8b2ec01c9ee9e3f099c9523665c6bf8442ba9e879d"
+  },
+  {
+    "name": "main-13-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 13,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "e8a22f50e4e3a459b323d5c983c915e8933c6930fcf0c73e3863144bb8691680",
+    "stderr_sha256": "ff3a0cafb541235e3d4ca06881c29f3ebbee7feec01c7ebd5a5a31c8bab9f497"
+  },
+  {
+    "name": "main-13-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 13,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "7d1274adb86f178740e85d15c496ce55e0126f740690c729c8856699118d2df4",
+    "stderr_sha256": "f3a47faba49063788a910da9b32a08acfaad4dad1747436b8d044ea84e37bfb4"
+  },
+  {
+    "name": "main-14-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 14,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "09d14225b7f5e93c8c6de149e3927b6244ce6a2affb65e91f15a344058059c73",
+    "stderr_sha256": "7b68b30db07066273623ca0dd3a8a41fa2e82d8154a636b6aedbc70a4ae2e7eb"
+  },
+  {
+    "name": "main-14-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 14,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "650e0d12d224327adf888dad9083f70506255de54bfa0b741281c34484f83e76",
+    "stderr_sha256": "48c211a07207da0258df01049382d7b2c7f91b580e816555e3b96555abd25c5b"
+  },
+  {
+    "name": "main-15-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 15,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "b8e9c52715d49ade6947a1b76b8560231db64750e480ad2f12e076154ade6b97",
+    "stderr_sha256": "0fe355282f8fb9d9dede91321f014da28ac5c6ca5a6346c67ad1c81c2ea3508f"
+  },
+  {
+    "name": "main-15-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 15,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "32a7d235ad678cbfe81eb99094fd26ed81f2d9e6f42111e3db45546242c5edbc",
+    "stderr_sha256": "c28fc72324c5acde8ce61c67d55829b0fc52b9ac66cf7c900eb1292c49b0aef3"
+  },
+  {
+    "name": "main-16-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 16,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "71ef498f5b7bd13c2d32ae3ef48de6dbcd24b7c006d044449334529b5dd7f738",
+    "stderr_sha256": "c9a490be93a185497686c2af7275d09a8b6e3ea359511886a4877c6fd7e7b148"
+  },
+  {
+    "name": "main-16-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 16,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "6aeb3d2217bbca95d0687fb19ae2a11a5fad4d01d3d627fae6a25841af045bc5",
+    "stderr_sha256": "3a783133ee9cd50506486dad632a9c914741d2cef591e8b2bfd96f852146e451"
+  },
+  {
+    "name": "control-01-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "2a2b6181878137750143e0c33d8cea819f3a40c0e639935d7d1284130c1d452e",
+    "stderr_sha256": "b13f22315518d7e9f6bba0d3f604aa106ff7262ef859cb8e4ab27bb078ade8f1"
+  },
+  {
+    "name": "control-01-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "45dfbd9e1beae5fb06eec02ebd0989dc5c328b1e69edc3073c59f7e9b5be6d2d",
+    "stderr_sha256": "e9d9da54b3457a52b1a25cffb5183c507c4cacab541a539a36968ef7a8b5e4aa"
+  },
+  {
+    "name": "control-01-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "32ff452695d59ae6538db21d311b39b6f04f845b06710170b95bbdf217b94943",
+    "stderr_sha256": "42f4aa37637ab6b97337eafa749ffe1cc6779e5d2a5da69a66900b8fa786a814"
+  },
+  {
+    "name": "control-01-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "8720a6169a4d4d5b1085c5f32852ec3863e9388806e3fd1d76c786ecf225499d",
+    "stderr_sha256": "0d11d6ea94fc4a18ace1c2459936e705e3b47779a3ee936d9b532662c52ff128"
+  },
+  {
+    "name": "control-02-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "21d373708463ec63492ff4978abbdbe2997a58356f12609853e7fc99a6652d15",
+    "stderr_sha256": "81a979d4d88e9c4be66b53e3a5edffdf40e0705ce7a2c67160ff7950b31c8669"
+  },
+  {
+    "name": "control-02-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "6f149d7e65eedabfff8421756229841b1c85f2ab000dd2020f514d83a69942c8",
+    "stderr_sha256": "9d280a48bb902b90c8d8d71d959309b287a1fbc51b5c29f45cd17caf4d36d26b"
+  },
+  {
+    "name": "control-02-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "2d1728b75d9a4a0f196c882097e7ef089dc7a490f81188e2a5b4bde89fac64e5",
+    "stderr_sha256": "2e8a37b55ae01e5405af0e18defcfe4d992b970dd7f841235153a46f25d7ff45"
+  },
+  {
+    "name": "control-02-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "5a64708edebcfa1961654f92fbfdd8cd5305f444036c532683509375e52935a6",
+    "stderr_sha256": "3ba129bef4350367c0bce601d9236eec088c18cdfa9f9ef723de318e81d9ffd5"
+  },
+  {
+    "name": "control-03-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "7db2c9d1f0d0bfb6d09646af9e50e3d324c5beddd741080e9d8cdc77a874650b",
+    "stderr_sha256": "6b29684131ccd3b4a22abbbb3e7c179065ad86f49650aa3745a57a6ea191a3ba"
+  },
+  {
+    "name": "control-03-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "48f14801421ca202d62a2368d0426f3493e12ce84fe38cde3ee772fe640e3dc5",
+    "stderr_sha256": "349a882e8f2078b0d211b0fb4de93ff505ba85e0b6870dff2053e3347625de69"
+  },
+  {
+    "name": "control-03-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "90ca82f2719acd0ef9670ebf8ffed814ebe11f4d1e0ea17532471e07560a2618",
+    "stderr_sha256": "8aa51ca9dee98fd435b20481b946212fc17004b90252cdd1267245f4962ddd07"
+  },
+  {
+    "name": "control-03-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "ee95d734d8afc576cb3e8ea5eb01962caba4844d8254e604fe7414d68db5c072",
+    "stderr_sha256": "e70883f494aaf7c2ddda132b0738a552771927e6957c9fe8d74933657e5a4717"
+  },
+  {
+    "name": "control-04-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "0a281fb29d75d854cc454c6e7dd0e5b4887e221d8cee5ccaedcfdffade28aad9",
+    "stderr_sha256": "c4f3e250f699ad25e0e3ccfc6051c11cf93a270d71555b865818e37a4eccc643"
+  },
+  {
+    "name": "control-04-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "973f1cc1f14400e87d6335c1d33456d23cf24fc914163266207386c22b2e2d9f",
+    "stderr_sha256": "d20476aec9e34faf27000f891333d9231bc5b6388859402b95735857f43c9fa3"
+  },
+  {
+    "name": "control-04-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "6a743ca6a73ec5fd59e32f88ec0240921118c07e6e594492651d958dc36a2bd1",
+    "stderr_sha256": "9d76e77709fdabbb0a2f1bf17d24b889aad091f4a6a968f82d10456696aa5182"
+  },
+  {
+    "name": "control-04-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "eecb595de7aed9dfff7884fc7024e578199495f495a9ec7409adcaa1a84c66bf",
+    "stderr_sha256": "f3d47394192fad4d289ae1d56292933d787ff7373dc6d84ca9d6850f96bc1a3a"
+  },
+  {
+    "name": "control-05-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "faed14f85c53a2c5dabcb867c3801bf8462d7e22dbab5dfc8e66dc21268d3719",
+    "stderr_sha256": "63144d0d1e57c8f8bd53290bb906c50af29301b8cb3f863a3906c6652eb7d563"
+  },
+  {
+    "name": "control-05-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "e99eae06bfddb5649c34363516dfde73bac56ee0e438aac63c0af00a6eb93eb4",
+    "stderr_sha256": "d75417ec9ef87c11ac75ced3d6ea250f9cbb73ea83dc43973c57ca68572a762d"
+  },
+  {
+    "name": "control-05-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "db3b77c69252580bc42fbee5cbd951f75c73de9123c6bb1b8b33e4581fa6acca",
+    "stderr_sha256": "80fb42d8178a6f73429e27d0793417d5566965c27ee55490243a8ed8d327e2cc"
+  },
+  {
+    "name": "control-05-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "f73a1cc1b0d9414b5a8eb377af2eaa65baef862579cfb35152a658310dc647a5",
+    "stderr_sha256": "68de3303cec3b07c95275819d2a9f05c666d44cab6b246d18274bb7e00480d05"
+  },
+  {
+    "name": "control-06-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "5cb84154fdc67ace3b0273306a61c48aa3728c5bebe9cf603fa7d2f33b5ca490",
+    "stderr_sha256": "f586ef78ee447a048c9380fa990c3e987b6d3e40530f43177855d59137437ce0"
+  },
+  {
+    "name": "control-06-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "404d5422ba1b30995a0e48451acb9ddfd87f98abeec05d09f38b1f91fc46f6ff",
+    "stderr_sha256": "27fcb1592d0e97ae9393de1118d45821f51f85ba8602ebf0961b434196361781"
+  },
+  {
+    "name": "control-06-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "8d365bb2350a3db41787c433bd72de4c3afe270a316e80b92f90ed22b5714fac",
+    "stderr_sha256": "0790b7ef0e21fd19591014a1aea989bfd9c3a0a25aa284c25f7630e465091e6d"
+  },
+  {
+    "name": "control-06-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "b705b710f96c88b9dbc92c9b21f155129beaff8e5bf125d636601ba620157887",
+    "stderr_sha256": "44fc03f071714a260aa332a9a81b5e0f025f4bb055e5e63171ac86c75065d898"
+  },
+  {
+    "name": "control-07-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "302d84a6d0ebfbf1606712d664d908e1e15629191af69558749be2fae47d8cd8",
+    "stderr_sha256": "d0c97f4573f21dfe49c184d15b1983a34e03e976d8a8d32ca1a68c059dda94f4"
+  },
+  {
+    "name": "control-07-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "12464f3569e1b1ec8e2fe76042c2e21511bff16e81df5ec65d2b32fb724e609d",
+    "stderr_sha256": "26db98ba9beac92b7b871df9d6dea37471f23220c698edc9650e9215c35abade"
+  },
+  {
+    "name": "control-07-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "7bee2a29ef4a80165cb1b0234f25097c4f8dc5defe5eceea49a6e4673a1bcf30",
+    "stderr_sha256": "60ab7a709078bdfad0c12da6aee8b3f34921161d5fa26a482d947254adfd75fe"
+  },
+  {
+    "name": "control-07-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "cb48efaedc1a88adf5e0c4e6ac9f2f7c574dc2b4add815ed31bc4decd99d2a1e",
+    "stderr_sha256": "e29c1013a26851e5b7ec055295fb16a4974af5668baf4818c37370f90f827d86"
+  },
+  {
+    "name": "control-08-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "6a30fc0cb0f017d11d65bf87bb17bfe8314059804ba9aa246c20a222171044f7",
+    "stderr_sha256": "4668662da278af6b0f637888e9721423d14534426d07030908017e90aaf2d85c"
+  },
+  {
+    "name": "control-08-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-after-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "8faf12ea483d862f50f2aa8034154f99b453831a3453e0a8a0617d9cab7ef448",
+    "stderr_sha256": "69a6af128f7e78a0d84af41d863601da98242d64a0f9dc1132f2b0f714388435"
+  },
+  {
+    "name": "control-08-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "2cc2c1ae0af96775997ccd824f813446a02cc99fcbea04f3ec2e2c179c29b34b",
+    "stderr_sha256": "5cfac29ad014cbb08ef08884546f8282b1e6d05e0762b4bc2ff9a04c98b40dd8"
+  },
+  {
+    "name": "control-08-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task38-EagerResources-before-release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "f47553de2ecd60e83b24ae97a4d54c15f219bebcabb0e557c17d9f1b9b0cdbfe",
+    "stderr_sha256": "9f56bd5d3b73e6abb2ff01f15c6cbf2b4688ec94e515b1882d4557555753b1b8"
+  }
+]

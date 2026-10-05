@@ -39,6 +39,7 @@ func resident_step(model:Neural.Layer,input:Tensor,target:Tensor,optimizer:Optim
     optimizer.zero_grad();model.forward(input).cross_entropy(target,1).backward();optimizer.step()
 }
 func observe_family(family:str,device:GPU.Device?,report:bool) ObservedStep {
+    var cold=Stopwatch();cold.start()
     var model=resident_model(family)
     var input=resident_input(family)
     var labels:int32[]=[0,1];var target=Tensor.vector(labels)
@@ -47,6 +48,8 @@ func observe_family(family:str,device:GPU.Device?,report:bool) ObservedStep {
     // comparable across independently evolved CPU/Metal float32 states.
     var parameters=model.parameters();var optimizer=Optim.AdamW(parameters,learning_rate:0.01,epsilon:0.0001)
     var iteration=0;while iteration<2 {resident_step(model,input,target,optimizer);iteration++}
+    if let gpu=device {gpu.wait_until_idle()}
+    cold.stop()
     var profile:Profile?=null
     if let gpu=device {gpu.wait_until_idle();profile=Profile(gpu);gpu.reset_command_stats()}
     var elapsed=Stopwatch();elapsed.start();iteration=0
@@ -93,7 +96,7 @@ func observe_family(family:str,device:GPU.Device?,report:bool) ObservedStep {
     }
     assert(observed.count()==expected_observations && observed.count()>4)
     if report {
-        print("SILEX_TENSOR_RESIDENT family=$(family) backend=$(backend) iterations=3 elapsed_ms=$(elapsed.get_elapsed_milliseconds()) passes=$(passes) submissions=$(submissions) allocations=$(allocations) releases=$(releases) peak_bytes=$(peak) uploads=0 downloads=0 loss=$(loss) observations=$(observed.count())")
+        print("SILEX_TENSOR_RESIDENT family=$(family) backend=$(backend) iterations=3 elapsed_ms=$(elapsed.get_elapsed_milliseconds()) cold_ms=$(cold.get_elapsed_milliseconds()) passes=$(passes) submissions=$(submissions) allocations=$(allocations) releases=$(releases) peak_bytes=$(peak) uploads=0 downloads=0 loss=$(loss) observations=$(observed.count())")
         var index=0;for value in observed {print("SILEX_TENSOR_RESIDENT_VALUE family=$(family) backend=$(backend) index=$(index) value=$(value)");index++}
     }
     return ObservedStep(loss:loss,values:observed)

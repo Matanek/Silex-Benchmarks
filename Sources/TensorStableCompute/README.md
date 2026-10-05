@@ -94,7 +94,8 @@ process RSS.
 `EagerResources.sx` separates result lifetime from GFX buffer creation/release.
 It compares 64 independent additions with replacement or retention of their
 results, then checks a chain of 64 dependent additions. All three cases have
-64 allocations, passes, submissions and fences on the eager reference, with
+64 logical results, passes, submissions and fences. The eager reference makes
+64 native buffer allocations; a ready-buffer cache can reuse reservations, with
 zero resident transfers. Exact analytical outputs are checked after timing.
 Retention is bounded to 64 results (16 MiB at the largest measured size), and
 all buffers are released after each verifier case. A separate GFX control
@@ -115,8 +116,10 @@ ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
 
 `--verify` enables Metal validation and checks sizes 1, 256 and 4,096.
 `--measure` reports synchronized wall time at sizes 1, 256, 4,096 and 65,536;
-`--reverse` reverses the independent and buffer-control pairs. Warmups are
-outside timing, values and counters are always checked, and the dependent case
+`--reverse` reverses the independent and buffer-control pairs. The separate
+`cold_ms` includes input upload, pipeline creation and the four synchronized
+warmup operations. Warmups are outside the main hot timing, values and counters
+are always checked, and the dependent case
 is a separate counterexample. Freeze sources and binaries before collecting
 balanced repetitions and same-binary controls; retain all raw samples.
 No timing threshold is enforced by the correctness verifier.
@@ -144,10 +147,46 @@ ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
 ```
 
 `--cpu` selects CPU measurement. GPU rows report compute passes, submissions,
-allocations, releases and peak requested buffer bytes. Noncontiguous views can
+actual native allocations, releases and peak requested bytes in use by values.
+`cold_ms` separately includes construction, upload, pipeline creation and the
+two warmup steps through GPU completion. Noncontiguous views can
 submit GPU-to-GPU copies in addition to compute passes; every resident region
 requires zero CPU/GPU transfers and zero pipeline compilations. Scalar rows
 retain the complete final observations for comparisons between binaries.
 Freeze sources and binaries before running balanced process pairs and
 same-binary controls. A compiler comparison records both compiler identities;
 equal Tensor sources alone do not establish an equal toolchain.
+
+## Ready buffer reuse on the corrected eager reference
+
+The 5 October 2026 Release comparison on Apple M3 Pro / Metal uses one exact
+compiler, 16 before/after pairs and eight A/A pairs per binary. Eager Tensor
+allocates every result; the candidate reuses ready storage in a private cache
+bounded to 32 exact size/dtype entries and 1 MiB per device. No command grouping
+or shader change is included. All 451 Tensor tests and the eight Debug/Release
+benchmark binaries pass; the six-family campaign retains 108,800 complete
+scalar observations, with unchanged epsilon 1e-4 and tolerance 2e-5.
+
+| Family | Eager median, three steps | Reuse median | Median paired change | Verdict |
+| --- | ---: | ---: | ---: | --- |
+| MLP | 10.000 ms | 10.184 ms | +3.61% | Indeterminate |
+| CNN | 10.492 ms | 10.569 ms | +0.76% | Indeterminate |
+| SimpleRNN | 14.468 ms | 14.129 ms | -5.10% | Indeterminate |
+| GRU | 28.911 ms | 28.030 ms | -2.87% | Indeterminate |
+| LSTM | 29.550 ms | 29.724 ms | -0.01% | Indeterminate |
+| Transformer | 40.260 ms | 37.853 ms | -5.89% | Admitted decrease |
+
+Transformer has paired MAD 1.20 percentage points, 14/16 favorable pairs,
+and valid A/A controls. The other families, all cold costs and all twelve
+resident microcases remain indeterminate under the frozen 5% / 3 MAD / 14 of
+16 rule. Median Transformer native creations decrease from 1365 to 643 while
+passes/submissions stay identical. Fewer allocations alone do not prove speed.
+Median process RSS for the six-family workload rises from 81,510,400 to
+83,869,696 bytes; this includes allocator/driver costs and is not physical VRAM.
+No cross-platform performance claim is made.
+
+The [micro campaign](Baselines/2026-10-05-macos-arm64-ready-buffer-reuse-micro/README.md)
+and [model campaign](Baselines/2026-10-05-macos-arm64-ready-buffer-reuse-models/README.md)
+retain raw samples, sources, protocol, configurations, controls and standalone
+verification/measurement recipes. The private pool releases every cached buffer
+at the last Tensor storage even when a public Profile remains alive.
