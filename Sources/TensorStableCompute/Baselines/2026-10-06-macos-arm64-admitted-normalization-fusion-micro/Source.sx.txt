@@ -1,0 +1,104 @@
+use GFX.GPU
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+use Tensor
+use Tensor.Profile
+
+func verify_values(result:Tensor, cpu:Tensor) {
+    let expected = cpu.layer_norm(1, epsilon:0.25).values()
+    let observed = result.cpu().values()
+    assert(expected.count() == observed.count())
+    var index = 0
+    while index < observed.count() {
+        assert(Math.is_finite(observed[index]))
+        assert(Math.abs(observed[index] - expected[index]) <= 0.00002)
+        index++
+    }
+}
+
+func warm_normalization(input:Tensor) { let temporary = input.layer_norm(1, epsilon:0.25) }
+
+func measure_normalization(device:GPU.Device, size:int, view:bool, report:bool) {
+    var cold = Stopwatch()
+    cold.start()
+    var values:float[] = []
+    var index = 0
+    while index < size { values.append((index % 13) as float / 3.0 - 2.0); index++ }
+    var cpu = Tensor.vector(values)
+    var input = cpu.to(device)
+    var name = "vector"
+    if view {
+        cpu = cpu.reshape([7, 9]).transpose().narrow(0, 1, 7)
+        input = input.reshape([7, 9]).transpose().narrow(0, 1, 7)
+        name = "strided"
+    }
+    index = 0
+    while index < 16 { warm_normalization(input); index++ }
+    device.wait_until_idle()
+    cold.stop()
+    var profile = Profile(device)
+    device.reset_command_stats()
+    var timer = Stopwatch()
+    timer.start()
+    var result = input
+    var iterations = 64
+    if size <= 257 || view { iterations = 512 }
+    index = 0
+    while index < iterations { result = input.layer_norm(1, epsilon:0.25); index++ }
+    device.wait_until_idle()
+    timer.stop()
+    let stats = profile.snapshot()
+    let native = device.command_stats()
+    assert((stats.compute_passes == iterations * 6 || stats.compute_passes == iterations * 7) && stats.pipeline_bindings == stats.compute_passes && stats.dispatches == stats.compute_passes)
+    assert(native.compute_passes == stats.compute_passes && stats.fence_creations == stats.submissions)
+    assert(stats.submissions == stats.compute_passes)
+    assert(stats.uploads == 0 && stats.downloads == 0 && stats.pipeline_compilations == 0)
+    assert(stats.buffer_allocations + stats.buffer_reuses == stats.compute_passes)
+    assert(stats.cached_buffers <= 32 && stats.cached_bytes <= 1048576)
+    assert(stats.live_buffers == stats.in_use_buffers + stats.cached_buffers)
+    assert(stats.allocated_bytes == stats.active_bytes + stats.cached_bytes)
+    // Observe every output value after the synchronized timed region.
+    verify_values(result, cpu)
+    let preserved = input.cpu().values()
+    let originals = cpu.values()
+    index = 0
+    while index < originals.count() { assert(preserved[index] == originals[index]); index++ }
+    if report {
+        print("NORMALIZATION_FUSION case=$(name) size=$(size) iterations=$(iterations) elapsed_ms=$(timer.get_elapsed_milliseconds()) cold_ms=$(cold.get_elapsed_milliseconds()) passes=$(stats.compute_passes) submissions=$(stats.submissions) allocations=$(stats.buffer_allocations) reuses=$(stats.buffer_reuses) peak_bytes=$(stats.peak_bytes) peak_allocated_bytes=$(stats.peak_allocated_bytes) cached_bytes=$(stats.cached_bytes) observations=$(originals.count()) uploads=0 downloads=0")
+    }
+}
+
+func main() {
+    assert(GPU.Device.is_supported())
+    var report = false
+    var reverse = false
+    var selected_case = -1
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => { for argument in arguments {
+            if argument == "--measure" { report = true }
+            if argument == "--reverse" { reverse = true }
+            var case_index = 0
+            while case_index < 6 {
+                if argument == "--case-$(case_index)" { selected_case = case_index }
+                case_index++
+            }
+        } }
+    }
+    var device = GPU.Device(GPU.DeviceSettings(debug:!report))
+    var sizes:int[] = [1, 7, 257, 4096, 65536, 63]
+    if selected_case >= 0 {
+        measure_normalization(device, sizes[selected_case], selected_case == 5, report)
+        print("NORMALIZATION_FUSION_VERIFY status=pass cases=1 full_values=pass")
+        return
+    }
+    var index = 0
+    while index < sizes.count() {
+        var selected = index
+        if reverse { selected = sizes.count() - 1 - index }
+        measure_normalization(device, sizes[selected], selected == 5, report)
+        index++
+    }
+    print("NORMALIZATION_FUSION_VERIFY status=pass cases=6 full_values=pass")
+}

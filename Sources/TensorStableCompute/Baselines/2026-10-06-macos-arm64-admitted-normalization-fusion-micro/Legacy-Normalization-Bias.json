@@ -1,0 +1,17 @@
+{
+  "restored": true,
+  "baseline_tensor_commit": "7d91f411c70caa12e0f2bf4ebdf388abfe1ab1bd",
+  "compiler_sha256": "9b5ceb5e1a951bb8a92190d690ed68a0b85ddb1c577b302c539f42dbc21e833c",
+  "results": [
+    {
+      "variant": "before",
+      "status": "pass",
+      "exit_code": 0
+    },
+    {
+      "variant": "after",
+      "status": "pass",
+      "exit_code": 0
+    }
+  ]
+}

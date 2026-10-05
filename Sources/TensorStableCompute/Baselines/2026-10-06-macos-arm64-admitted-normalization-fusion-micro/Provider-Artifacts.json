@@ -1,0 +1,78 @@
+[
+  {
+    "target": "macos-arm64",
+    "status": "pass",
+    "artifacts": [
+      {
+        "provider": "SDL3",
+        "path": "Boundary/macos-arm64/libSDL3.a",
+        "sha256": "6baa6830c8a52dba6c86aff5992066fd67c7625369356531f4517b1bfc55150f"
+      }
+    ]
+  },
+  {
+    "target": "macos-x64",
+    "status": "pass",
+    "artifacts": [
+      {
+        "provider": "SDL3",
+        "path": "Boundary/macos-x64/libSDL3.a",
+        "sha256": "2d61a1c57af4828e5563bbf1cc17df7335f2e5f291c1dea3d1e0b46d97050ae0"
+      }
+    ]
+  },
+  {
+    "target": "linux-arm64",
+    "status": "pass",
+    "artifacts": [
+      {
+        "provider": "SDL3",
+        "path": "Boundary/linux-arm64/libSDL3.a",
+        "sha256": "937ac55efcc9a78afddd17320ada9e03704a8a470ff8e74990743ad73762f436"
+      }
+    ]
+  },
+  {
+    "target": "linux-x64",
+    "status": "pass",
+    "artifacts": [
+      {
+        "provider": "SDL3",
+        "path": "Boundary/linux-x64/libSDL3.a",
+        "sha256": "307863a80e696052ba4944d62533598889a08068badeec7e2729f096f4f2eada"
+      }
+    ]
+  },
+  {
+    "target": "windows-arm64",
+    "status": "pass",
+    "artifacts": [
+      {
+        "provider": "SDL3",
+        "path": "Boundary/windows-arm64/SDL3.lib",
+        "sha256": "692a2c16dbb0924c2ce54509e2ac1b5c3043f1c3983e9cf1a47cdcc9a13dab19"
+      },
+      {
+        "provider": "WindowsGuids",
+        "path": "Boundary/windows-arm64/libuuid.a",
+        "sha256": "38ba88ad9bc2dd1b39fffdd841ed2ebee16def636aecb3d71bc7ff4ab56c590a"
+      }
+    ]
+  },
+  {
+    "target": "windows-x64",
+    "status": "pass",
+    "artifacts": [
+      {
+        "provider": "SDL3",
+        "path": "Boundary/windows-x64/SDL3.lib",
+        "sha256": "e8140461894524526b3fe595fa38a7fdbbc15ea51456e3578b33f7dda3007fae"
+      },
+      {
+        "provider": "WindowsGuids",
+        "path": "Boundary/windows-x64/libuuid.a",
+        "sha256": "ac282e2aea591a82bbd23d992aefa73fe4f9d615bf8cf849b09726ac3113a503"
+      }
+    ]
+  }
+]

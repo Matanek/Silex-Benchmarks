@@ -1,0 +1,14 @@
+2026-10-06 00:06:58.352 Task14-ResidentSteps-before-release[38478:15979510] Metal API Validation Enabled
+RESIDENT_DIAGNOSTIC family=mlp gpu_passes=321 tensor_passes=321 submissions=321
+SILEX_TENSOR_RESIDENT_VERIFY_FAMILY family=mlp observations=92 cpu_loss=0.60591376 gpu_loss=0.60591364
+RESIDENT_DIAGNOSTIC family=cnn gpu_passes=327 tensor_passes=327 submissions=327
+SILEX_TENSOR_RESIDENT_VERIFY_FAMILY family=cnn observations=116 cpu_loss=0.88840735 gpu_loss=0.88840735
+RESIDENT_DIAGNOSTIC family=rnn gpu_passes=474 tensor_passes=474 submissions=474
+SILEX_TENSOR_RESIDENT_VERIFY_FAMILY family=rnn observations=108 cpu_loss=1.10966 gpu_loss=1.1096601
+RESIDENT_DIAGNOSTIC family=gru gpu_passes=888 tensor_passes=888 submissions=996
+SILEX_TENSOR_RESIDENT_VERIFY_FAMILY family=gru observations=288 cpu_loss=0.7121435 gpu_loss=0.7121435
+RESIDENT_DIAGNOSTIC family=lstm gpu_passes=900 tensor_passes=900 submissions=972
+SILEX_TENSOR_RESIDENT_VERIFY_FAMILY family=lstm observations=372 cpu_loss=0.6812817 gpu_loss=0.68128157
+RESIDENT_DIAGNOSTIC family=transformer gpu_passes=1353 tensor_passes=1353 submissions=1365
+SILEX_TENSOR_RESIDENT_VERIFY_FAMILY family=transformer observations=724 cpu_loss=0.047556497 gpu_loss=0.047556497
+SILEX_TENSOR_RESIDENT_VERIFY status=pass families=6 full_state=pass

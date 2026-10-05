@@ -1,0 +1,9 @@
+2026-10-05 23:56:32.234 Task14-ElementwiseFusionProof-Release[27836:15928635] Metal API Validation Enabled
+FUSION_WITNESS rank=2 count=6 dimensions=1 epsilon=0.25
+FUSION_WITNESS rank=2 count=6 dimensions=2 epsilon=0.25
+FUSION_WITNESS rank=5 count=6 dimensions=3 epsilon=0.25
+FUSION_WITNESS rank=2 count=21 dimensions=1 epsilon=0.25
+FUSION_WITNESS rank=2 count=6 dimensions=1 epsilon=0.25
+FUSION_WITNESS rank=2 count=514 dimensions=1 epsilon=0.00001
+FUSION_WITNESS rank=2 count=15 dimensions=1 epsilon=0.25
+ELEMENTWISE_FUSION_RELEASE_PROOF cases=6 status=pass

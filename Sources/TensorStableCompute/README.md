@@ -232,3 +232,34 @@ silex compile Silex-Benchmarks/Sources/TensorStableCompute/SoftmaxGrouping.sx --
 view. Collection must use distinct qualified before/after binaries, one compiler,
 16 paired runs and 8 A/A pairs per arm; never compare a new workload to the old
 recorded timings or run it concurrently with builds/tests.
+
+
+## Qualified add-sqrt normalization fusion
+
+Run `NormalizationFusion.sx` with `--verify` for all six complete value checks
+or `--measure --case-0` through `--case-5` for isolated workloads. The workload
+normalizes float32 vectors of 1/7/257/4096/65536 values and a transpose/narrow
+view, with epsilon 0.25, 16 warmups and 512 small/view or 64 large calls.
+Timing ends after explicit device completion; all output values and preserved
+inputs are checked afterward. Profile counters verify six forward passes
+instead of seven, with one fewer temporary lease/submission/fence.
+
+The October 6, 2026 native Release Apple M3 Pro / Metal comparison uses Tensor
+7d91f411 as baseline and the same exact compiler on both arms. Sixteen pairs,
+eight A/A controls per binary and the unchanged 5% / 3 MAD / 14-of-16 rule
+admit paired gains of 9.50% (one value), 10.38% (seven) and 9.08% (strided).
+All 16 pairs favor the candidate in each admitted case. Other sizes, cold costs
+and all six model families remain indeterminate, with no admitted regression;
+indeterminate does not establish neutrality. All 108800 model observations
+remain qualified at fixed tolerance 2e-5 and AdamW epsilon 1e-4. Transformer
+avoids six forward passes over three steps, without an admitted timing gain.
+
+Raw logs, time/RSS, CSV/JSON, frozen protocol, sources, five exact candidate
+module files, eight Debug/Release qualifications, the 457-test corpus summary,
+six-target shader/link qualifications and verifiers are in
+[the micro campaign](Baselines/2026-10-06-macos-arm64-admitted-normalization-fusion-micro/README.md)
+and [the model campaign](Baselines/2026-10-06-macos-arm64-admitted-normalization-fusion-models/README.md).
+Both standalone `Verify.py` programs recompute the evidence. RSS is process
+memory, not physical VRAM. Six targets compile/link; runtime and gain claims
+are limited to macOS arm64 / Metal. The pre-existing constant-1000 centering
+bias is retained as a separate exact eager GPU witness, without relaxed tolerances.

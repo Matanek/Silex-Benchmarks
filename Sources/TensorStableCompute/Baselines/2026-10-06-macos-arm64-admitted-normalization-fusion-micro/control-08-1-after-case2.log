@@ -1,0 +1,2 @@
+NORMALIZATION_FUSION case=vector size=257 iterations=512 elapsed_ms=178.896 cold_ms=15.698999 passes=3072 submissions=3072 allocations=6 reuses=3066 peak_bytes=7220 peak_allocated_bytes=7220 cached_bytes=3096 observations=257 uploads=0 downloads=0
+NORMALIZATION_FUSION_VERIFY status=pass cases=1 full_values=pass
