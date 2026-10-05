@@ -1,0 +1,4 @@
+SILEX_TENSOR_KERNEL phase=tensor mode=inactive operations=64 elapsed_ms=103.453 passes=64 uploads=0 downloads=0
+SILEX_TENSOR_KERNEL phase=tensor mode=profiled operations=64 elapsed_ms=109.251 passes=64 uploads=0 downloads=0
+SILEX_TENSOR_KERNEL phase=raw_kernel mode=wait_each operations=64 elapsed_ms=16.949 passes=64 uploads=0 downloads=0
+SILEX_TENSOR_KERNEL phase=raw_kernel mode=wait_final operations=64 elapsed_ms=4.7089996 passes=64 uploads=0 downloads=0

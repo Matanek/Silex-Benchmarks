@@ -1,0 +1,90 @@
+// Temporary owning-namespace diagnostic, never a public Tensor API.
+use GFX.GPU
+use STD.Process
+use STD.Time.Stopwatch
+
+func issue_kernel(device:GPU.Device,pipeline:GPU.ComputePipeline,metadata:uint8[],input:GPU.Buffer,output:GPU.Buffer) GPU.Fence {
+    var commands=device.commands()
+    commands.compute_uniform(0,@metadata[0:metadata.count()])
+    commands.compute_uniform(1,1.0)
+    var writable:GPU.WritableBuffer[]=[GPU.WritableBuffer(buffer:output)]
+    var compute=commands.compute(buffers:writable)
+    compute.bind(pipeline);compute.storage_buffer(0,input);compute.dispatch(1);compute.finish()
+    return commands.submit_and_track()
+}
+func raw_kernel(device:GPU.Device,retain:bool,report:bool) {
+    // Profile owns the otherwise unused private cache registry entry for this probe.
+    var owner=Profile(device)
+    var cache=GPUKernelCache(device);var pipeline=cache.elementwise()
+    let metadata=elementwise_metadata(binary_code(BinaryOperation.add),Layout([1]))
+    var input=device.buffer(GPU.BufferSettings(size:4,usage:GPU.BufferUsage.storage()))
+    var output=device.buffer(GPU.BufferSettings(size:4,usage:GPU.BufferUsage.storage()))
+    var upload=device.upload_buffer(4);var data:float[]=[1.0];upload.write_floats(@data[0:1])
+    var ingress=device.commands();var transfer=ingress.copy();transfer.upload(upload,input,4);transfer.finish()
+    var uploaded=ingress.submit_and_track();uploaded.wait()
+    var warmup=0;while warmup<4 {var fence=issue_kernel(device,pipeline,metadata,input,output);fence.wait();warmup++}
+    device.wait_until_idle();device.reset_command_stats()
+    var fences:GPU.Fence[]=[]
+    var elapsed=Stopwatch();elapsed.start()
+    var index=0
+    while index<64 {
+        var fence=issue_kernel(device,pipeline,metadata,input,output)
+        if retain {fences.append(fence)} else {fence.wait()}
+        index++
+    }
+    device.wait_until_idle();fences=[];elapsed.stop()
+    let stats=device.command_stats()
+    assert(stats.compute_passes==64 && stats.uploads==0 && stats.downloads==0)
+    var download=device.download_buffer(4)
+    var egress=device.commands();var read=egress.copy();read.download(output,download,4);read.finish()
+    var observed=egress.submit_and_track();observed.wait()
+    assert(download.read_floats(count:1)[0]==2.0)
+    if report {
+        var mode="wait_each";if retain {mode="wait_final"}
+        print("SILEX_TENSOR_KERNEL phase=raw_kernel mode=$(mode) operations=64 elapsed_ms=$(elapsed.get_elapsed_milliseconds()) passes=$(stats.compute_passes) uploads=$(stats.uploads) downloads=$(stats.downloads)")
+    }
+}
+func tensor_kernel(device:GPU.Device,profiled:bool,report:bool) {
+    let source=Tensor.ones([1]).to(device)
+    var warm=source.add(1.0);device.wait_until_idle()
+    var profile:Profile?=null
+    if profiled {profile=Profile(device)}
+    device.reset_command_stats()
+    var result=source
+    var elapsed=Stopwatch();elapsed.start()
+    var index=0;while index<64 {result=source.add(1.0);index++}
+    device.wait_until_idle();elapsed.stop()
+    let stats=device.command_stats()
+    assert(stats.compute_passes==64 && stats.uploads==0 && stats.downloads==0)
+    if let p=profile {assert(p.snapshot().buffer_allocations==64 && p.snapshot().submissions==64)}
+    assert(result.cpu().values()[0]==2.0)
+    if report {
+        var mode="inactive";if profiled {mode="profiled"}
+        print("SILEX_TENSOR_KERNEL phase=tensor mode=$(mode) operations=64 elapsed_ms=$(elapsed.get_elapsed_milliseconds()) passes=$(stats.compute_passes) uploads=$(stats.uploads) downloads=$(stats.downloads)")
+    }
+}
+func verify() {
+    var device=GPU.Device(GPU.DeviceSettings(debug:true))
+    raw_kernel(device,false,false);raw_kernel(device,true,false);tensor_kernel(device,false,false);tensor_kernel(device,true,false)
+    assert(gpu_profile_device_count()==0)
+    print("SILEX_TENSOR_KERNEL_VERIFY status=pass")
+}
+func measure(reverse:bool) {
+    var device=GPU.Device()
+    if reverse {raw_kernel(device,true,true);raw_kernel(device,false,true);tensor_kernel(device,true,true);tensor_kernel(device,false,true)}
+    else {tensor_kernel(device,false,true);tensor_kernel(device,true,true);raw_kernel(device,false,true);raw_kernel(device,true,true)}
+    assert(gpu_profile_device_count()==0)
+}
+func main() {
+    var measuring=false;var reverse=false
+    match Process.arguments() {
+        failure(error)=>{panic(error.detail)}
+        success(arguments)=>{for argument in arguments {
+            if argument=="--verify" {verify();return}
+            if argument=="--measure" {measuring=true}
+            if argument=="--reverse" {reverse=true}
+        }}
+    }
+    if !measuring {panic("expected --verify or --measure [--reverse]")}
+    measure(reverse)
+}

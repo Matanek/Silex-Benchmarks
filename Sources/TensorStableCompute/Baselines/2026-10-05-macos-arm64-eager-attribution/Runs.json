@@ -1,0 +1,338 @@
+[
+  {
+    "name": "main-01",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "9186eac9783cce8b0b90fd0e8047b3266520c077ae20fa9cca73d45df76c0c3d",
+    "stderr_sha256": "5d86098059c5099ee88fabba873f9d89281759796d330829875f9dcb642ed885"
+  },
+  {
+    "name": "main-02",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "7a81590e767b814e97f1d5ccae55a6bd7302dbf27bb196aae311d0bb15c63926",
+    "stderr_sha256": "d930718e267d08449f874ec3ef4c58b6a55bebb8dee23370a9aaf76789dac2ad"
+  },
+  {
+    "name": "main-03",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "641aeb6ae1b67ba58b8e403850b6ce6c211ce902d11b4d6c2e15b78e29451b0f",
+    "stderr_sha256": "4b46fd74f9849b5ed294dccb5534d1041666c5b240eff99ef75592864e475f32"
+  },
+  {
+    "name": "main-04",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "dcf7fdf170aefc21980edc1ea578ee8bd41e957776d49eb235a2e179cf8b5e00",
+    "stderr_sha256": "ac5c8e1447d4e171c9cf83caa502e54b8ed06ed494a5c8edfdc6547e5e496018"
+  },
+  {
+    "name": "main-05",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "8665fcffa05346c9380294bcc9e00ab44d7c8dab535ccd70ee9afd84fc68bb93",
+    "stderr_sha256": "eb965653c7825daebdb2ff503c8d99ef0e99245b2f014086d74ede4ea8361432"
+  },
+  {
+    "name": "main-06",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "fba190e761080a9cff97ea8d8e1e555c9bab625bdece34796c65613d076c9fec",
+    "stderr_sha256": "e933857ca868bf99eabae5862182b88eadaa2a562c60242960b5f53491370f7e"
+  },
+  {
+    "name": "main-07",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "c5624f36950abbd20d52f15ae28c91a40c0315e96853a05562000a2031af2e5c",
+    "stderr_sha256": "d4081f5529eeb2943c1356d2a46bb4ae73bbc21c60922fe8827557f1e5f7d9e1"
+  },
+  {
+    "name": "main-08",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "5de5bd5b9d92d15327c6c8666d22fa58af8525cd50ac718fed5b2693ee7cc2e7",
+    "stderr_sha256": "904ab2ead36e167975fa71894e4b027df62306e88a44b0b526795d7029b20029"
+  },
+  {
+    "name": "main-09",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "d4c6de859ab9c1c788c291002d5b012e46bbf68e3f08dbf7a3361ba54aad58db",
+    "stderr_sha256": "5f8964ea3f3ad6115aba69870a4ffb027f8dcb7d145a24286ff90dcf8aab53bf"
+  },
+  {
+    "name": "main-10",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e67ff8c18005af09b9594fc8432c7c30e4cec29d377668bc9a9e99c041792fb7",
+    "stderr_sha256": "74c9f1c1bd853a36f783caafcd6a153608f496bafe902877abefb90f34cd43a4"
+  },
+  {
+    "name": "main-11",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "b5b9f0dfa74088cc63e2cc87766c6ee92065649232c1a38c2f0f44f95ec7bcc8",
+    "stderr_sha256": "eb97ed4ac871c48b6fc1202ad45c2f158759ba109ab635ac822ed5de5f30e443"
+  },
+  {
+    "name": "main-12",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "297e61f3ee004c21c0cfa67a364751c8acd116cd1e0b3e35a26f649fb5bf2632",
+    "stderr_sha256": "e409712a759ab40bda8b45d06d75d478edbfd093fe4adb28ae3b6d6080de66bd"
+  },
+  {
+    "name": "main-13",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "c17f99c02c85e46b81665ed896275df28d7bb1eb9075eff5bc43a676481b299a",
+    "stderr_sha256": "ef564539be95ca01b4cd3b12ca5c4b1e065ae6f16933369f5f6fdbfd96d96c58"
+  },
+  {
+    "name": "main-14",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "514c50f9a270f60e27ba3b81c143124f46098e56b309c33671f76f7a8e3e1b8b",
+    "stderr_sha256": "8485258f6b7ce935cd9e17e1c1ca801744b17967f8f5dc10b0eb478b05cc243a"
+  },
+  {
+    "name": "main-15",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "67cae7c33145d580a6c0e4d149c89c564e457c0d775980c05d53db0bd7125f99",
+    "stderr_sha256": "7d88099a40a9e35f17cbbcefe070e9d66cf7310231f3002d7e3450a154d24068"
+  },
+  {
+    "name": "main-16",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "d7f71c48a8d42e996c5547e8e687569214042aa3f6eebf1cfe957bb3f7baec77",
+    "stderr_sha256": "eaba1aea65cef516362e94d4a920baf0b2f08f873b4c749ff188ee715ff2e598"
+  },
+  {
+    "name": "control-01",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "661a2bc3dffaa5dcaa92939e1a8c9f50b5cac873e4a1469d99d78e1d42ed4811",
+    "stderr_sha256": "da56733188f57b6079d3d95f99d513b9e21febec6f2203d503112c61899b1ac4"
+  },
+  {
+    "name": "control-02",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "6c5c1de56db7910f7434a35405e7d5d4a82977d72dee7f94c84fbbbc9d6f45a7",
+    "stderr_sha256": "f077ec9d2658af549f58eacaff551b5c1c27998412de41027b300ea1a6d4294f"
+  },
+  {
+    "name": "control-03",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "d82c28ec854dd417fcfdb21282e1e04a98ce60f6482c2fe27b3f68ed7897c2bf",
+    "stderr_sha256": "6c9c073c40fe63f7e9b7e21d36851b61f1c8a2043b4614d351d0f600ab099629"
+  },
+  {
+    "name": "control-04",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "b6f9946c68376ec7dbdbb3fcf62bbc74a6edfc338edc485be8203c5a35e298b6",
+    "stderr_sha256": "9829d40ff985ab76d7c5231b817dc46ce283904b467fb1bc4323f35a4c6e3218"
+  },
+  {
+    "name": "control-05",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "c4e96b20b6a915ee4cabbb6352d9b878603c32ee47c652fd6d435a1579e20b08",
+    "stderr_sha256": "01af6351fe78e5c56a9d95570735d8e2b3ecac834251d669b4a98ff185bfbca6"
+  },
+  {
+    "name": "control-06",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "9f9cb1c6d0119b814f9e4c1f14c5801b9f6224c81569e676dd710aae6713d671",
+    "stderr_sha256": "e4c1d02de34c9cb27e4bc566763c637805da679e27d0654ba3958f8bbb69dead"
+  },
+  {
+    "name": "control-07",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e4d78c1c8795d1bbf36024fe9f04acd4b1408dd9f9e6109fb2d075c715386769",
+    "stderr_sha256": "da28099f54ddd6bd3230f9d30e66a93b6ce290e131bd343f3052691639c1ed6b"
+  },
+  {
+    "name": "control-08",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "dfdff1765d20fc635cc9831c75018079710c8c68503b40fa7ead83ee333736f2",
+    "stderr_sha256": "6460ad3fabdf4810656c6d6cd3bf6aca2f146cf9e0a37286f4cdccc1fdee6fc9"
+  },
+  {
+    "name": "control-09",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "06ddfc501b199bb1492df8019f2c2557604a9170d3ac9dc0165211b735dcc4e4",
+    "stderr_sha256": "a70e74bd2acbf1bf05ac3a335eccf4f37aad3a1cc9d8288d45440b4a988ab518"
+  },
+  {
+    "name": "control-10",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "7ea88260c523148f07326268fcfcc6cd52c9594d05d93bbd9806e15e5d1d765f",
+    "stderr_sha256": "a5c07acf02df785c90e8b00a2fe10c09132a21cfd347101f8e898c4ec3f98d27"
+  },
+  {
+    "name": "control-11",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "11e7ee9a06e1177f5995fad9b1a27f99d074f0aaa6b19bc5b45a4e05d3f4a9db",
+    "stderr_sha256": "78bd047f3a17c027e5f89ff5a8dc96aae663e7fcceb1ab34b8807c01509b87e3"
+  },
+  {
+    "name": "control-12",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "8b8b55676404af1e91b28d6a04f52021a2dd06b1b58b02d544754623e4f61646",
+    "stderr_sha256": "29dc4f1b899fe906835f9bd6b910ae258bbc990ad0b151937b0e226fc9fbf1d7"
+  },
+  {
+    "name": "control-13",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "39955e78f469f267a205efe2f4a1a57a3739011cc98d00729bcb0e9cd083edce",
+    "stderr_sha256": "f7559010d704cfd754a5a518b2746237ee3d0e1280290c513a0881ca528284d7"
+  },
+  {
+    "name": "control-14",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "4ea2e576ea4bf1dddb88ed97fde36732564233bce53427e62fe7fc3101cbd0d4",
+    "stderr_sha256": "8ce321067a8834db6b40cd36e980b5dd555150b4c874190cbcf27a83f01abae2"
+  },
+  {
+    "name": "control-15",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "2611cac77e43bf383dd280c5d06aac33de2862185a473dd1b5bda20b13368cac",
+    "stderr_sha256": "52954039afebcbdd457950d10739bc8defc361e25069404caeeb4e38d999923d"
+  },
+  {
+    "name": "control-16",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/EagerAttribution-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "3f772423ada129f413784736cea289003d49a91c2f4dbd1e60487c015f998f60",
+    "stderr_sha256": "d820eb1cd304c52b2278c69f417fc38202f8e8124ecfd5c686b5ac05fc013d84"
+  }
+]
