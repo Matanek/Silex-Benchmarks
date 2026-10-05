@@ -1,0 +1,2 @@
+SOFTMAX_GROUPING case=vector size=7 iterations=512 elapsed_ms=58.041 cold_ms=5.6679997 passes=2560 submissions=512 allocations=5 reuses=2555 peak_bytes=212 peak_allocated_bytes=212 cached_bytes=92 observations=7 uploads=0 downloads=0
+SOFTMAX_GROUPING_VERIFY status=pass cases=1 full_values=pass

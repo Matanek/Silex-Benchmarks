@@ -1,0 +1,7 @@
+{
+  "status": "pass",
+  "exit_code": 0,
+  "compiler_sha256": "9b5ceb5e1a951bb8a92190d690ed68a0b85ddb1c577b302c539f42dbc21e833c",
+  "binary_sha256": "7bb808354b795fc412dea4337b5ec2c1d4fe918a51bb3fc7de6f78f35e7b1545",
+  "source_sha256": "f785fb239c13bd716710012f21bd03ea993f8aa072c2db94aeb9ac9ddd3c1c3c"
+}

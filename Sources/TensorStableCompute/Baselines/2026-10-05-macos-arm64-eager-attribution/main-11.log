@@ -1,0 +1,4 @@
+SILEX_TENSOR_ATTRIBUTION phase=metadata mode=generate operations=1024 elapsed_ms=2.457 checksum=90112
+SILEX_TENSOR_ATTRIBUTION phase=metadata mode=existing operations=1024 elapsed_ms=0.168 checksum=90112
+SILEX_TENSOR_ATTRIBUTION phase=empty_commands mode=wait_each operations=64 elapsed_ms=1.7689999 uploads=0 downloads=0 passes=0
+SILEX_TENSOR_ATTRIBUTION phase=empty_commands mode=wait_final operations=64 elapsed_ms=0.565 uploads=0 downloads=0 passes=0

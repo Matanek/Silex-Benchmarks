@@ -1,6 +1,6 @@
 # Tensor memory and compute
 
-This campaign measures the public Tensor 0.1.0 surface without exposing
+This campaign measures the public Tensor surface without exposing
 benchmark instrumentation in the package API. It separates:
 
 - CPU construction from an existing typed array and typed extraction;
@@ -73,7 +73,7 @@ different configurations.
 
 Release measurements from macOS ARM64 are evidence for that machine and those
 exact commits only. Integer results characterize construction, extraction and
-bit-exact transfer cost; Tensor 0.1.0 makes no integer GPU compute claim.
+bit-exact transfer cost; this campaign does not measure integer GPU compute.
 
 Run the neural campaign separately after committing its harness:
 
@@ -88,3 +88,147 @@ generated summary reports dispersion and CPU/GPU ratios without generalizing
 beyond the recorded machine, driver and commits. Stable live graph and buffer
 counts are enforced by package-private Tensor tests rather than inferred from
 process RSS.
+
+## Eager resource attribution
+
+`EagerResources.sx` separates result lifetime from GFX buffer creation/release.
+It compares 64 independent additions with replacement or retention of their
+results, then checks a chain of 64 dependent additions. All three cases have
+64 logical results, passes, submissions and fences. The eager reference makes
+64 native buffer allocations; a ready-buffer cache can reuse reservations, with
+zero resident transfers. Exact analytical outputs are checked after timing.
+Retention is bounded to 64 results (16 MiB at the largest measured size), and
+all buffers are released after each verifier case. A separate GFX control
+compares creating/releasing 4,096 buffers with accessing one existing buffer;
+these calls are outside Tensor.Profile and do not measure physical Metal VRAM
+allocation or demonstrate a Tensor pool speedup.
+
+From the workspace root, compile this source with an explicit path and output:
+
+```sh
+ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/EagerResources.sx \
+  --release --output /private/tmp/tensor-eager-resources
+/private/tmp/tensor-eager-resources --verify
+/private/tmp/tensor-eager-resources --measure
+/private/tmp/tensor-eager-resources --measure --reverse
+```
+
+`--verify` enables Metal validation and checks sizes 1, 256 and 4,096.
+`--measure` reports synchronized wall time at sizes 1, 256, 4,096 and 65,536;
+`--reverse` reverses the independent and buffer-control pairs. The separate
+`cold_ms` includes input upload, pipeline creation and the four synchronized
+warmup operations. Warmups are outside the main hot timing, values and counters
+are always checked, and the dependent case
+is a separate counterexample. Freeze sources and binaries before collecting
+balanced repetitions and same-binary controls; retain all raw samples.
+No timing threshold is enforced by the correctness verifier.
+
+## Resident steps across six model families
+
+`ResidentSteps.sx` compares MLP, CNN, SimpleRNN, GRU, LSTM and Transformer
+training using seeds 481/482, asymmetric inputs and AdamW at 0.01 with an
+explicit epsilon of 1e-4. That setting limits amplification of float32
+roundoff in nearly zero attention key-bias gradients when comparing complete
+independently evolved CPU/Metal states. Each family
+warms up for two steps, then times three complete resident steps including
+`zero_grad`, forward, cross-entropy, backward, update and final GPU completion.
+Full outputs, parameters, gradients, both optimizer moments and step counts
+are observed after timing. `--verify` compares every observed CPU/Metal value
+with an absolute/relative tolerance of 2e-5 and checks complete resource release.
+
+```sh
+ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/ResidentSteps.sx \
+  --release --output /private/tmp/tensor-resident-steps
+/private/tmp/tensor-resident-steps --verify
+/private/tmp/tensor-resident-steps --measure
+/private/tmp/tensor-resident-steps --measure --reverse
+```
+
+`--cpu` selects CPU measurement. GPU rows report compute passes, submissions,
+actual native allocations, releases and peak requested bytes in use by values.
+`cold_ms` separately includes construction, upload, pipeline creation and the
+two warmup steps through GPU completion. Noncontiguous views can
+submit GPU-to-GPU copies in addition to compute passes; every resident region
+requires zero CPU/GPU transfers and zero pipeline compilations. Scalar rows
+retain the complete final observations for comparisons between binaries.
+Freeze sources and binaries before running balanced process pairs and
+same-binary controls. A compiler comparison records both compiler identities;
+equal Tensor sources alone do not establish an equal toolchain.
+
+## Ready buffer reuse on the corrected eager reference
+
+The 5 October 2026 Release comparison on Apple M3 Pro / Metal uses one exact
+compiler, 16 before/after pairs and eight A/A pairs per binary. Eager Tensor
+allocates every result; the candidate reuses ready storage in a private cache
+bounded to 32 exact size/dtype entries and 1 MiB per device. No command grouping
+or shader change is included. All 451 Tensor tests and the eight Debug/Release
+benchmark binaries pass; the six-family campaign retains 108,800 complete
+scalar observations, with unchanged epsilon 1e-4 and tolerance 2e-5.
+
+| Family | Eager median, three steps | Reuse median | Median paired change | Verdict |
+| --- | ---: | ---: | ---: | --- |
+| MLP | 10.000 ms | 10.184 ms | +3.61% | Indeterminate |
+| CNN | 10.492 ms | 10.569 ms | +0.76% | Indeterminate |
+| SimpleRNN | 14.468 ms | 14.129 ms | -5.10% | Indeterminate |
+| GRU | 28.911 ms | 28.030 ms | -2.87% | Indeterminate |
+| LSTM | 29.550 ms | 29.724 ms | -0.01% | Indeterminate |
+| Transformer | 40.260 ms | 37.853 ms | -5.89% | Admitted decrease |
+
+Transformer has paired MAD 1.20 percentage points, 14/16 favorable pairs,
+and valid A/A controls. The other families, all cold costs and all twelve
+resident microcases remain indeterminate under the frozen 5% / 3 MAD / 14 of
+16 rule. Median Transformer native creations decrease from 1365 to 643 while
+passes/submissions stay identical. Fewer allocations alone do not prove speed.
+Median process RSS for the six-family workload rises from 81,510,400 to
+83,869,696 bytes; this includes allocator/driver costs and is not physical VRAM.
+No cross-platform performance claim is made.
+
+The [micro campaign](Baselines/2026-10-05-macos-arm64-ready-buffer-reuse-micro/README.md)
+and [model campaign](Baselines/2026-10-05-macos-arm64-ready-buffer-reuse-models/README.md)
+retain raw samples, sources, protocol, configurations, controls and standalone
+verification/measurement recipes. The private pool releases every cached buffer
+at the last Tensor storage even when a public Profile remains alive.
+
+## Rejected five-pass softmax grouping
+
+The October 5 experiment preserved all five existing Float32 shaders/passes,
+sharing one command buffer and completion token. Public values/gradients, views,
+aliases, profiles and resource release were correct. The first prototype passed
+456 tests over 108 sources and Debug/Release harness checks; its hot results
+were indeterminate. A reduced ownership probe found five native waits on one
+shared fence; terminal completion reduced these to one.
+
+The terminal experiment isolated each size in its own process, kept the same
+compiler and admission thresholds, warmed up 16 calls, and used 512 hot calls
+for the small vectors/view and 64 for the two large vectors. The strided case
+regressed by a paired median **25.627%**, MAD 2.728 percentage points, all 16
+pairs slower, with valid A/A controls. No case had an admitted decrease. The
+vector-7 after A/A was invalid and remains indeterminate. The prototype was
+**removed completely**; Tensor remains at its ready-buffer baseline. No new
+Tensor API or optimized behavior is shipped from this experiment.
+
+[First microcases](Baselines/2026-10-05-macos-arm64-rejected-softmax-grouping-first-micro/README.md),
+[unchanged model states](Baselines/2026-10-05-macos-arm64-rejected-softmax-grouping-first-models/README.md),
+and [terminal isolated cases](Baselines/2026-10-05-macos-arm64-rejected-softmax-grouping-terminal-micro/README.md)
+preserve 512 processes, raw measurements, fixed rules, exact prototype snapshots
+and standalone `Verify.py` tools. The model campaign checks 108,800 full scalar
+observations; all six families are indeterminate and their submission counts
+are unchanged. Process RSS and requested buffer peaks are reported separately
+from physical GPU memory. This rejects this particular region/representation;
+it does not establish that other command regions or kernel fusion cannot help.
+
+`SoftmaxGrouping.sx` remains a public research harness that verifies complete
+results on the current eager implementation. Build from the workspace root:
+
+```sh
+silex compile Silex-Benchmarks/Sources/TensorStableCompute/SoftmaxGrouping.sx --release --output /private/tmp/tensor-softmax-grouping
+/private/tmp/tensor-softmax-grouping --verify
+/private/tmp/tensor-softmax-grouping --measure --case-5
+```
+
+`--case-0` through `--case-5` select vectors 1/7/257/4096/65536 and the strided
+view. Collection must use distinct qualified before/after binaries, one compiler,
+16 paired runs and 8 A/A pairs per arm; never compare a new workload to the old
+recorded timings or run it concurrently with builds/tests.

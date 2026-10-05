@@ -1,0 +1,2 @@
+SOFTMAX_GROUPING case=strided size=63 iterations=512 elapsed_ms=48.372997 cold_ms=5.949 passes=2560 submissions=2560 allocations=5 reuses=2555 peak_bytes=1540 peak_allocated_bytes=1540 cached_bytes=644 observations=49 uploads=0 downloads=0
+SOFTMAX_GROUPING_VERIFY status=pass cases=1 full_values=pass

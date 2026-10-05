@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "policy": "eager_production",
+      "exit_code": 0
+    },
+    {
+      "policy": "eager_retain",
+      "exit_code": 0
+    },
+    {
+      "policy": "pool_production",
+      "exit_code": 0
+    },
+    {
+      "policy": "pool_retain",
+      "exit_code": 0
+    }
+  ],
+  "restored": true,
+  "fingerprints": {
+    "Packages/Tensor/Module/@Storage.sx": "6877a52ff3ac44011830abf5e888e2e10d37bafe9b16c2884d74f5d0dc4b6e3e",
+    "Packages/Tensor/Module/@Profile.sx": "a7bb8fe1d301d9662e3505e576b945016a4d4ddc988e9dbb55b274f6cd60c8f3"
+  }
+}

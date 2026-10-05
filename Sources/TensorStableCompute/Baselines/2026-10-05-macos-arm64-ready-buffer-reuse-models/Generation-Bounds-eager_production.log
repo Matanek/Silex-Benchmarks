@@ -1,0 +1,4 @@
+BOUNDS policy=eager_production baseline=65 end=62 peak=81 per_step=103
+2026-10-05 22:17:56.352 PoolNeuralBoundsProbe-2289262c2f7ba20e1fb2a442ef51f8e9801ea6a4b3d1737d10b65de617348dba[1492:15745615] Metal API Validation Enabled
+ok - bound hot neural graph buffers fences and pipelines per step
+1 passed; 0 failed

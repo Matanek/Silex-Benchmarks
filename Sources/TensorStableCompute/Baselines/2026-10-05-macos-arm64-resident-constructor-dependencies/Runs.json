@@ -1,0 +1,994 @@
+[
+  {
+    "name": "main-01-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 1,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "7f20aa4cfe5856354b2f3dc4fe95255df122b37cff2fa36f2cce281f1d781de8",
+    "stderr_sha256": "5d5d9e48ca5afb77d57d8c215a310503b0768bd9009d22b5013c084041236304"
+  },
+  {
+    "name": "main-01-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 1,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "f3eec29edcc9484551a8e5168c8c2e6ddb5dcfa88b82bc1454d81b82500fd3d5",
+    "stderr_sha256": "f3bc0f543626506547b788bfea6a7d604d135d7123f19305f1b77b5680f8c4a9"
+  },
+  {
+    "name": "main-02-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 2,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "4d1469571e6f123fe85b5d00840e7b614b7c0910aa2d23aa3da12d0758b355a5",
+    "stderr_sha256": "b70a23fff3f72019a5353440135db129ce04e0dab7069d55b7dd62aa5efa14df"
+  },
+  {
+    "name": "main-02-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 2,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "a7167fcaff94eebf09646b85b2ba89e0d5c9bf8ea24e4afd8cecc6080604e0eb",
+    "stderr_sha256": "68fe4e7fafecbf01af0e2bea43bd234100c188bb349865f30df0184399dc6a73"
+  },
+  {
+    "name": "main-03-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 3,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "382da557d032eec086c09eedcf87644c4f97050b1240bfa7aa0f0d24ea99ac31",
+    "stderr_sha256": "0bc71413746a2adba4d57a8b7f3b50906d16193fb16d4608e02f4ca3687cc96f"
+  },
+  {
+    "name": "main-03-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 3,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "a5a2aa600076066ddc431fd776017df57919b5f9afd648883880d681c441d05b",
+    "stderr_sha256": "a974831e8cf361f451b471b59db6995e5733037c5b228410cf49ed0ba251e194"
+  },
+  {
+    "name": "main-04-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 4,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "8f02c788973b24a9202c85233c3a9639fbd4abe48613f3ae5d470a39fcacf456",
+    "stderr_sha256": "d66118b49d7a99cbc1c1ba1ee3da2ac013572734d020507489f89e9de5321b94"
+  },
+  {
+    "name": "main-04-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 4,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "495171e8a6fcfe6a75a216f00adf578afc5be2b9d8d4644547e756bbb4ee51fb",
+    "stderr_sha256": "2fd1f2f747f366b46e655820f1367a04fd0bf11ae8ec0988f07dd7d777c59b8e"
+  },
+  {
+    "name": "main-05-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 5,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "ac4776a751b6a90d27910e666894cb3baa009a6e52ed4ce88bd5b4d7cb179110",
+    "stderr_sha256": "60a7ed0232fcc62441aac390406170b3dd52c0eaa1c35a8def0000fa44d03826"
+  },
+  {
+    "name": "main-05-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 5,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "cad20d03061afc0e2ed5e8cb94163308ce17bb31faf5b587168170176b24984e",
+    "stderr_sha256": "062bb748e2eba3d7878a086bde2abf0fde1ea2ccdb673f4258dc6faa7a44129e"
+  },
+  {
+    "name": "main-06-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 6,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "e58fa568cf648866a0d7424cbdaada5e4362ce818779ea0d6f95530f46822653",
+    "stderr_sha256": "7033177c3a52532c08ed4d433f05f7fc9ec1454206c62e937f8dc283d87709fb"
+  },
+  {
+    "name": "main-06-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 6,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "e8574da471f5ed9dc56e57d5f6287b04d5af13efda9b8789359da409eea612cc",
+    "stderr_sha256": "a113179afb60cf7182b44f3ee40b6d136090812da1ae6669adf8614d6595f18b"
+  },
+  {
+    "name": "main-07-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 7,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "f11d74f031de6c29bd0858d7c6eb7df9214445b59d974d4e9ea1f371f5ff77be",
+    "stderr_sha256": "77c267ed531f5e00ea1ab23e4614fe7b2f77ab245819df59ad3cc237c30cb55b"
+  },
+  {
+    "name": "main-07-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 7,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "02cd6f9f7574790966f1a1dbe9253aad4e002da36d15f3720f1f8d6d26d1d7f4",
+    "stderr_sha256": "a6e545d97fcd8c71fc2f01ace5d386581aa32bf55f3becd1bbbbbe61f7816417"
+  },
+  {
+    "name": "main-08-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 8,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "05f25676476b6939cc65ed2d70dd4cb59e9c5d94f7661f4131d61ac6ce51feef",
+    "stderr_sha256": "cb742c25a67f490aa5dd20aeb3f04d311fb5c68b17cf129912c09e6160c651da"
+  },
+  {
+    "name": "main-08-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 8,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "c379d2c73468bfe328be8d3b31333760a067299d1112faa900eb349f6bbc9118",
+    "stderr_sha256": "4e143f131a057aa22c12325d39e1ad64d19232a9f750828726af43b110a6eddc"
+  },
+  {
+    "name": "main-09-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 9,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "8c191af2d9991880b8c6fceee6e31610e1cbb4f9a47c7a41124f780b5738da22",
+    "stderr_sha256": "3b89b2393876b5dca922174a2fec4c0b47dbc418ede6441d022c7131ed59e79e"
+  },
+  {
+    "name": "main-09-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 9,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "1bd4ddd8b9da4d34e9c3bc6c1f0805028489a321cea4126809f5b2194900dd88",
+    "stderr_sha256": "1d9406a0cc1d7eda667761d9e0e4073a7088c4e801279bd47a824b348cc25d8c"
+  },
+  {
+    "name": "main-10-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 10,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "6fc002ceefe34b114b57685b4e708528a05bc3ffe57d31e3508547d6da3b5ea9",
+    "stderr_sha256": "fb8846da39640c13835b6e3a5520e1c48e7371f285a07f1597ec8933db8bee8d"
+  },
+  {
+    "name": "main-10-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 10,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "97b5d656ebb93235fa45d45f66841d90498b6fd78242aee503d178f9764829bd",
+    "stderr_sha256": "415fce1a888b373a32729f532d87599c4e23a1e76367d58cded38bdba8e447f3"
+  },
+  {
+    "name": "main-11-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 11,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "d9933dfda8051df9caff1a02df632ad625346de1fadb089faf3126faf4149a0f",
+    "stderr_sha256": "e2e0e3f3b0e36d739abf8f6b94d51b19cbbe8d12ff9a564e2999182e2935a937"
+  },
+  {
+    "name": "main-11-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 11,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "696e76dfd706bb577ad6bce343e48ed36e5edb68356aad3a17cf7a1c0b92a853",
+    "stderr_sha256": "f6274fd69450b0de9b05e3a6001ac43004b78bddbaaec0b5c69a7fcd232ca018"
+  },
+  {
+    "name": "main-12-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 12,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "678bbadf005990208728ebc98db648275c61527b428ac055513a14487e9c869a",
+    "stderr_sha256": "cc523fc82fdd13e3580ac2b391561f7c2de7b429e31afeb534c4f07862facaa5"
+  },
+  {
+    "name": "main-12-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 12,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "c54580a15faab4a1932e5808360d58d6d1c4878e283e4cf92872fd684506bc05",
+    "stderr_sha256": "5cf8909f690b607a8ad430213adb863574d0a8c59aa0da1261ad559323d8c034"
+  },
+  {
+    "name": "main-13-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 13,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "25ed1b7982cd79ad4f93c368fb2e9cdc3ca79b7e0501bdd37c356727e51149ca",
+    "stderr_sha256": "180454e3bdcffe3da9b2fbb8b6d88e0ad8a1105495ff32437c983e7a1b861fca"
+  },
+  {
+    "name": "main-13-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 13,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "6cd2d2fb8a2e3eb5d12479b04388b05988336fafd2ed30653a7159afc46f85c5",
+    "stderr_sha256": "7ba953e510c92d07ab56e91e6d5061c9c177f3fe0128f089ee0003b62fab1a61"
+  },
+  {
+    "name": "main-14-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 14,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "f219f513eea83766740aba9cba37bcba5d043b6596910b0100683ad777e38f50",
+    "stderr_sha256": "207ebdab9ef65bd5f6927a20ca42307d9865910c014f61983fb35aa66a0237b4"
+  },
+  {
+    "name": "main-14-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 14,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "4bd13aad11210d50d9b466199b16d8aafa95e8eaf74412815298a0b427f184ab",
+    "stderr_sha256": "137358079a631fe33e357ba961e514058e01cc85e85e1461e447c5f2daac27e4"
+  },
+  {
+    "name": "main-15-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 15,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "87a25efe9bcd9a58142e12555edbe802b75259867027b5142d234915f3e5e88e",
+    "stderr_sha256": "450e9692f38a6aa2c406dcd68e735c1f15ba28bbcc1c97cd0913f9710a6756ec"
+  },
+  {
+    "name": "main-15-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "main",
+    "pair": 15,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "6a5fa15ec62afcfd84628e6e22fbd4b4c64c8423b444a7c11dac19f55a2434d0",
+    "stderr_sha256": "e28340968eed6d33d25a2e095fd09ad455073a02aa2b8e835cc90fe6f83df161"
+  },
+  {
+    "name": "main-16-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 16,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "2b38b05967f07ed9018834060c526c7a1f02716d43cd8335427e8abc833ac0d0",
+    "stderr_sha256": "dab3c838c3a1a198154190be8f9f5d9dac3c19d2b501d3eb536da3187700771b"
+  },
+  {
+    "name": "main-16-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "main",
+    "pair": 16,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "46f072a166b47a88f458cf5d9fda1329ad61ea842f57d0556f2348164551531e",
+    "stderr_sha256": "725baf5b7622714963cd7c5a11afe7937b35943ae09ee792cfdaa0a2238f1b18"
+  },
+  {
+    "name": "control-01-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "9a67ff9b4acc3af3b0c7bd413337a6d20e9311f4d17e6797895098cda60a10a9",
+    "stderr_sha256": "5c945af6bb4ea9c12208b81e70668cd7018bcbb7761c129d38c0dba3e31c1139"
+  },
+  {
+    "name": "control-01-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "8b5fbf427ae011f933ed6130f948d9e50ee33d39ff7f8a603005b629c8eed213",
+    "stderr_sha256": "de5ba5f677a37683c1291ccf2b99f898df7cdc2493c36e2bc04fb921e66e339e"
+  },
+  {
+    "name": "control-01-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "309ed7cf63517274c3538ea75dd2b21424263e0511ac97ea73c2e05e2fcf3110",
+    "stderr_sha256": "20b0bd1323b6692ac224acca9b829ce4c606dfc65241c5b1b23beaf881a47286"
+  },
+  {
+    "name": "control-01-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 1,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "de080714135dd6484e608146a2575a1c957808609ff2adb856750e5209849aa0",
+    "stderr_sha256": "87f0ebd1f4ec7d7955492b23890f18e4850354fe8d9835c1b2183a236a02a52c"
+  },
+  {
+    "name": "control-02-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "1cccbe65e33d71fd035fdba4a2aef8af34f57996368f42e2f27f6f8e74642555",
+    "stderr_sha256": "cef1a3b440b096d69db4cfc3c6db13b514030fe94ebd040a9d031bce72592f43"
+  },
+  {
+    "name": "control-02-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "f486e0103dd72dd892e34e89f6dcb319e39d8cf076ea2ddb2e9d029d55d3680d",
+    "stderr_sha256": "ad295df79206ea5290f6f047fd0fe6056ac3ecb8b02fc63ad54fb0077d50d6d3"
+  },
+  {
+    "name": "control-02-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "479d41e48ad4c75fd11a42e844de7da8034dce696b4979901699fd56c6967e1f",
+    "stderr_sha256": "3a24ba884d51208ec12ac3ad304a51476adc5b32db8115b418842b152c786e00"
+  },
+  {
+    "name": "control-02-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 2,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "fc0ae25cf6e3bfd88f9207d27c2915fc6c7a60f2988760d949a2770b56235042",
+    "stderr_sha256": "1c5cd5f38e7e8a10cc6e04a1a8033aef1a93c10e7f69f413536f35bd55daf914"
+  },
+  {
+    "name": "control-03-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "69eff7d2ef5fb3fe834de04e0604f49f409de0d2db5d96ec713b12e7bcbad3ff",
+    "stderr_sha256": "534a41d0b2cfcfd16f2536686572b7a1215788495a1a3dccfba0f448d7107e6e"
+  },
+  {
+    "name": "control-03-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "bc75217eb1222609a6bfbba41215d2d8223eb3ae486a52f5378c4c3bef4df62f",
+    "stderr_sha256": "681ae5c2991032e7960f85c5139f7ff4ef7222015508e84b0f5342f269c33cee"
+  },
+  {
+    "name": "control-03-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "519249e9e934dcea0ac4ff7c6be37ecda00c5aecbf02b2c75436c01e406080de",
+    "stderr_sha256": "8e38c6a1a9e677a187b450bba0488eb585db21f972fc73911c2a447f3656b60e"
+  },
+  {
+    "name": "control-03-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 3,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "05ae1455feffaf9fcb36b3b9cd87838950400621b6eaaa35dca0561946853ad6",
+    "stderr_sha256": "4d5c3e3e932295e2278cb5088df6816799b6b80718c77a90f6077c3955614778"
+  },
+  {
+    "name": "control-04-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "7dce4ffa93fa6f07765b15413fa72faf5c2dff0f45f260bbc0aab020b92fd465",
+    "stderr_sha256": "660b8b54c2bd77ce4842ff96f632f84d1c9ff933830f1607f728d17578a66284"
+  },
+  {
+    "name": "control-04-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "9e296b78106f31ac3d8d92f907230590ef11a991c2efcb80301bcf0f180dcce5",
+    "stderr_sha256": "9b82e631338e3fab34d618430a42f9155b06fa5eb8bbefc87943c5c2c1b82fef"
+  },
+  {
+    "name": "control-04-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "ff6e05ebebd798f8f341f4ea8890e515b58dc9184aff8e23bddc723c036e5dc4",
+    "stderr_sha256": "825e9dbf1517553b48f787b6c5299c3c695d400268eea32f9eacdd0df5ce6876"
+  },
+  {
+    "name": "control-04-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 4,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "f58fb53bd2aef2ef8b80b7b2b21358d7c3084a30cb98d0802631ad9c2c1bc4c5",
+    "stderr_sha256": "fcb70709f8f079c3f11a024fa4aba83c278b09ff9d710792198eca61f0ac321e"
+  },
+  {
+    "name": "control-05-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "27da17c14764e6e725e0a8d4c361522d75fcdb18ebf0dd2eebb7ece7bb087f56",
+    "stderr_sha256": "ca6736d9c231476c161712d927bca74fa2ebf083160f98b57a24e06325e2268a"
+  },
+  {
+    "name": "control-05-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "6444eda7b2e96704e491aaf12fa7f8c9992876e75e83823130bdd40b77c963d5",
+    "stderr_sha256": "11705a88cc40c0917e1ee1eca25258b2cf1894735104f859ddb878446cfd90ec"
+  },
+  {
+    "name": "control-05-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "bbf4ce81540ba7f07971b4881856033dc2c003f565c59f38204cd60696846b09",
+    "stderr_sha256": "5841bec75efe204c674b4f49db7fac2d90eabd9abfa0cfab5d4afc40b510dc4a"
+  },
+  {
+    "name": "control-05-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 5,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "62b43749ccebd41a3152b33848179fd457affb5d75641f443b2c3b9ace94f894",
+    "stderr_sha256": "837f04454af86de5ec2f84df72d6fcb95dd1bddbbaa74ba0cd3a4302c7fbdcde"
+  },
+  {
+    "name": "control-06-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "13fc5e39a317af0194e72deb9509ef391ee4595de99ae8bdf098cace889b22a5",
+    "stderr_sha256": "ee9df2493282715510949648d9dc4476bd7075c0d69c6976fdca8d4de17596f5"
+  },
+  {
+    "name": "control-06-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "e01e0e6e91e50f60621ec4e88b3530eee18f430b6c383ceae64ba41902cc19ca",
+    "stderr_sha256": "1fd0f0b9a4239965941a24960c7707212c235da7cce0d2bfbbeb74b147740fb6"
+  },
+  {
+    "name": "control-06-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "33673fdcd29f095d1b16033ec45ea4c65dfb5f477af73f4873b3a2ec9e0be20f",
+    "stderr_sha256": "917d6af24abee195d7cfee37278de2f42980b897555ce1d7554d7ce7a49fe021"
+  },
+  {
+    "name": "control-06-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 6,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "46e1ed488759e23f76a63891b752fdf46df21ba81cd309d1d9112ea67d0ce5f8",
+    "stderr_sha256": "903f3a77679a0a0b6f412d57f307e9512ae43a8a9720815aa4ffe804ebed6e48"
+  },
+  {
+    "name": "control-07-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 0,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "871ff46aca9be0c5a7cdf6af92f6e0bc5138703cbd563a6745140139e9f6f410",
+    "stderr_sha256": "60c2077e3f38c81b4817ca9f97d9dd834579b6455a22ac2a8acb6c31a4804172"
+  },
+  {
+    "name": "control-07-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 1,
+    "variant": "before",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "8c60507d302cd0f473f611bb869f2d9361fa63da6c64e5559a26ea7834055df2",
+    "stderr_sha256": "0cad69d2b94e54ffbc23303e2db764f95c9759141413cec01a0b05bc66d05b63"
+  },
+  {
+    "name": "control-07-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 0,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "d81d2fb0267a61b48f1ece78ea6e3d0d9f2e92da611014e394f573863e52ce45",
+    "stderr_sha256": "ebc386e489b9b5b457950150008deeb56899f33ac3bf17e91e9f8ce44d8fc006"
+  },
+  {
+    "name": "control-07-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure"
+    ],
+    "group": "control",
+    "pair": 7,
+    "arm": 1,
+    "variant": "after",
+    "reverse": false,
+    "exit_code": 0,
+    "stdout_sha256": "0f8daedb6612baddf0b77697a75500a122c9c75e0b76816f08408fa74ad8f11f",
+    "stderr_sha256": "74130e035ec6b0720d4be8ea636a464a0d1994d017a9e70edcff4c630c5b447c"
+  },
+  {
+    "name": "control-08-0-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 0,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "14310205e736d406e2a5bbad3079b1539e7bc16f20ae0577433297690cea2088",
+    "stderr_sha256": "2c9616e30327cd54abc9f10a9cc4f1dd42fe61a9a48d9abe8e7d8d8deb60d0d5"
+  },
+  {
+    "name": "control-08-1-after",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-After-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 1,
+    "variant": "after",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "3c39bf008c4d7ef9c5338385aee0fcdcf21d60a0228af86c5d569a0d9128a0b0",
+    "stderr_sha256": "b8230e4a9ef77498195bdf2e491283df2d381861f3f453ee988862ad823c5707"
+  },
+  {
+    "name": "control-08-0-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 0,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "48f1832d3a355a3dc177560a538f150871b32f238cb01efe8edaaf53798c3823",
+    "stderr_sha256": "c67a9d7314b4da1d87a788ec733a1fd5a051d3a23f1158a13a0679297d903bb8"
+  },
+  {
+    "name": "control-08-1-before",
+    "args": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/ResidentSteps-Before-Release",
+      "--measure",
+      "--reverse"
+    ],
+    "group": "control",
+    "pair": 8,
+    "arm": 1,
+    "variant": "before",
+    "reverse": true,
+    "exit_code": 0,
+    "stdout_sha256": "60221e6fe45f4cd87ff945c37a024e0b03e3bbd939f41fcd298fd23cdaea2f75",
+    "stderr_sha256": "08af7a26f1de5464406d015cfb53301914da18cacc77fe71e55edad8998399b6"
+  }
+]

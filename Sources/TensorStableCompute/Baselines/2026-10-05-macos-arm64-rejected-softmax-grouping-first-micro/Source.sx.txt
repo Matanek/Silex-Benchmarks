@@ -1,0 +1,92 @@
+use GFX.GPU
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+use Tensor
+use Tensor.Profile
+
+func verify_values(result:Tensor, cpu:Tensor, axis:int) {
+    let expected = cpu.softmax(axis).values()
+    let observed = result.cpu().values()
+    assert(expected.count() == observed.count())
+    var index = 0
+    while index < observed.count() {
+        assert(Math.is_finite(observed[index]))
+        assert(Math.abs(observed[index] - expected[index]) <= 0.00002)
+        index++
+    }
+}
+
+func warm_softmax(input:Tensor, axis:int) { let temporary = input.softmax(axis) }
+
+func measure_softmax(device:GPU.Device, size:int, view:bool, report:bool) {
+    var cold = Stopwatch()
+    cold.start()
+    var values:float[] = []
+    var index = 0
+    while index < size { values.append((index % 13) as float / 3.0 - 2.0); index++ }
+    var cpu = Tensor.vector(values)
+    var input = cpu.to(device)
+    var axis = 0
+    var name = "vector"
+    if view {
+        cpu = cpu.reshape([7, 9]).transpose().narrow(0, 1, 7)
+        input = input.reshape([7, 9]).transpose().narrow(0, 1, 7)
+        axis = 1
+        name = "strided"
+    }
+    warm_softmax(input, axis)
+    device.wait_until_idle()
+    cold.stop()
+    var profile = Profile(device)
+    device.reset_command_stats()
+    var timer = Stopwatch()
+    timer.start()
+    var result = input
+    index = 0
+    while index < 64 { result = input.softmax(axis); index++ }
+    device.wait_until_idle()
+    timer.stop()
+    let stats = profile.snapshot()
+    let native = device.command_stats()
+    assert(stats.compute_passes == 320 && stats.pipeline_bindings == 320 && stats.dispatches == 320)
+    assert(native.compute_passes == 320 && stats.fence_creations == stats.submissions)
+    assert(stats.submissions == 64 || stats.submissions == 320)
+    assert(stats.uploads == 0 && stats.downloads == 0 && stats.pipeline_compilations == 0)
+    assert(stats.buffer_allocations + stats.buffer_reuses == 320)
+    assert(stats.cached_buffers <= 32 && stats.cached_bytes <= 1048576)
+    assert(stats.live_buffers == stats.in_use_buffers + stats.cached_buffers)
+    assert(stats.allocated_bytes == stats.active_bytes + stats.cached_bytes)
+    // Observe every output value after the synchronized timed region.
+    verify_values(result, cpu, axis)
+    let preserved = input.cpu().values()
+    let originals = cpu.values()
+    index = 0
+    while index < originals.count() { assert(preserved[index] == originals[index]); index++ }
+    if report {
+        print("SOFTMAX_GROUPING case=$(name) size=$(size) iterations=64 elapsed_ms=$(timer.get_elapsed_milliseconds()) cold_ms=$(cold.get_elapsed_milliseconds()) passes=$(stats.compute_passes) submissions=$(stats.submissions) allocations=$(stats.buffer_allocations) reuses=$(stats.buffer_reuses) peak_bytes=$(stats.peak_bytes) peak_allocated_bytes=$(stats.peak_allocated_bytes) cached_bytes=$(stats.cached_bytes) observations=$(originals.count()) uploads=0 downloads=0")
+    }
+}
+
+func main() {
+    assert(GPU.Device.is_supported())
+    var report = false
+    var reverse = false
+    match Process.arguments() {
+        failure(error) => { panic(error.detail) }
+        success(arguments) => { for argument in arguments {
+            if argument == "--measure" { report = true }
+            if argument == "--reverse" { reverse = true }
+        } }
+    }
+    var device = GPU.Device(GPU.DeviceSettings(debug:!report))
+    var sizes:int[] = [1, 7, 257, 4096, 65536, 63]
+    var index = 0
+    while index < sizes.count() {
+        var selected = index
+        if reverse { selected = sizes.count() - 1 - index }
+        measure_softmax(device, sizes[selected], selected == 5, report)
+        index++
+    }
+    print("SOFTMAX_GROUPING_VERIFY status=pass cases=6 full_values=pass")
+}

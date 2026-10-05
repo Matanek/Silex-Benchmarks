@@ -1,0 +1,311 @@
+use GFX.GPU
+
+// Counts Tensor work issued on one device during a caller-defined period.
+// Bytes describe requested Tensor buffer sizes, not physical GPU memory.
+public struct ProfileStatistics {
+    let uploads:int
+    let downloads:int
+    let uploaded_bytes:int
+    let downloaded_bytes:int
+    let buffer_allocations:int
+    let buffer_releases:int
+    let upload_staging_allocations:int
+    let download_staging_allocations:int
+    let fence_creations:int
+    let submissions:int
+    let pipeline_compilations:int
+    let compute_passes:int
+    let pipeline_bindings:int
+    let dispatches:int
+    let live_buffers:int
+    let peak_live_buffers:int
+    let active_bytes:int
+    let peak_bytes:int
+    let buffer_reuses:int = 0
+    let cache_evictions:int = 0
+    let cached_buffers:int = 0
+    let cached_bytes:int = 0
+    let in_use_buffers:int = 0
+    let peak_in_use_buffers:int = 0
+    let allocated_bytes:int = 0
+    let peak_allocated_bytes:int = 0
+    let cache_capacity_buffers:int = 0
+    let cache_capacity_bytes:int = 0
+}
+
+public nocopy class Profile {
+    private var state:GPUProfileState
+    private var period:GPUProfilePeriod
+
+    init(device:GPU.Device) {
+        self.state = GPUProfileRegistry.state(device)
+        self.period = self.state.begin()
+    }
+
+    // Observes host counters only; neither waits nor reads GPU data.
+    func snapshot() ProfileStatistics { return self.state.snapshot(self.period) }
+
+    func reset() {
+        self.state.end(self.period)
+        self.period = self.state.begin()
+    }
+
+    drop {
+        self.state.end(self.period)
+        GPUProfileRegistry.retire(self.state)
+    }
+}
+
+class GPUProfilePeriod {
+    var uploads:int = 0
+    var downloads:int = 0
+    var uploaded_bytes:int = 0
+    var downloaded_bytes:int = 0
+    var buffer_allocations:int = 0
+    var buffer_releases:int = 0
+    var upload_staging_allocations:int = 0
+    var download_staging_allocations:int = 0
+    var fence_creations:int = 0
+    var submissions:int = 0
+    var pipeline_compilations:int = 0
+    var compute_passes:int = 0
+    var pipeline_bindings:int = 0
+    var dispatches:int = 0
+    var peak_live_buffers:int = 0
+    var peak_bytes:int = 0
+    var buffer_reuses:int = 0
+    var cache_evictions:int = 0
+    var peak_in_use_buffers:int = 0
+    var peak_allocated_bytes:int = 0
+}
+
+nocopy class GPUReadyBuffer {
+    var buffer:GPU.Buffer
+    let dtype:DType
+    let bytes:int
+    init(buffer:GPU.Buffer, dtype:DType, bytes:int) {
+        self.buffer=buffer
+        self.dtype=dtype
+        self.bytes=bytes
+    }
+}
+
+nocopy class GPUProfileState {
+    private var device:GPU.Device
+    private var periods:GPUProfilePeriod[] = []
+    private var live_buffers:int = 0
+    private var active_bytes:int = 0
+    private var in_use_buffers:int = 0
+    private var allocated_bytes:int = 0
+    private var cached_bytes:int = 0
+    private var ready_buffers:GPUReadyBuffer[] = []
+    private let cache_capacity_buffers:int = 32
+    private let cache_capacity_bytes:int = 1048576
+
+    init(device:GPU.Device) { self.device = device }
+
+    func same_device(device:@GPU.Device) bool { return self.device == device }
+    func unused() bool { return self.live_buffers == 0 && self.periods.is_empty() }
+
+    func begin() GPUProfilePeriod {
+        var period = GPUProfilePeriod()
+        period.peak_live_buffers = self.live_buffers
+        period.peak_bytes = self.active_bytes
+        period.peak_in_use_buffers = self.in_use_buffers
+        period.peak_allocated_bytes = self.allocated_bytes
+        self.periods.append(period)
+        return period
+    }
+
+    func end(period:GPUProfilePeriod) {
+        var index = 0
+        while index < self.periods.count() {
+            if self.periods[index] == period {
+                var removed = self.periods.take(index)
+                return
+            }
+            index++
+        }
+    }
+
+    func snapshot(period:GPUProfilePeriod) ProfileStatistics {
+        return ProfileStatistics(
+            uploads:period.uploads,
+            downloads:period.downloads,
+            uploaded_bytes:period.uploaded_bytes,
+            downloaded_bytes:period.downloaded_bytes,
+            buffer_allocations:period.buffer_allocations,
+            buffer_releases:period.buffer_releases,
+            upload_staging_allocations:period.upload_staging_allocations,
+            download_staging_allocations:period.download_staging_allocations,
+            fence_creations:period.fence_creations,
+            submissions:period.submissions,
+            pipeline_compilations:period.pipeline_compilations,
+            compute_passes:period.compute_passes,
+            pipeline_bindings:period.pipeline_bindings,
+            dispatches:period.dispatches,
+            live_buffers:self.live_buffers,
+            peak_live_buffers:period.peak_live_buffers,
+            active_bytes:self.active_bytes,
+            peak_bytes:period.peak_bytes,
+            buffer_reuses:period.buffer_reuses,
+            cache_evictions:period.cache_evictions,
+            cached_buffers:self.ready_buffers.count(),
+            cached_bytes:self.cached_bytes,
+            in_use_buffers:self.in_use_buffers,
+            peak_in_use_buffers:period.peak_in_use_buffers,
+            allocated_bytes:self.allocated_bytes,
+            peak_allocated_bytes:period.peak_allocated_bytes,
+            cache_capacity_buffers:self.cache_capacity_buffers,
+            cache_capacity_bytes:self.cache_capacity_bytes
+        )
+    }
+
+    func allocate(bytes:int) {
+        self.live_buffers++
+        self.allocated_bytes += bytes
+        for period in self.periods {
+            period.buffer_allocations++
+            if self.live_buffers > period.peak_live_buffers { period.peak_live_buffers = self.live_buffers }
+            if self.allocated_bytes > period.peak_allocated_bytes { period.peak_allocated_bytes = self.allocated_bytes }
+        }
+    }
+
+    func release(bytes:int) {
+        self.live_buffers--
+        self.allocated_bytes -= bytes
+        for period in self.periods { period.buffer_releases++ }
+        GPUProfileRegistry.retire(self)
+    }
+
+    func acquire_buffer(bytes:int, dtype:DType, name:str) GPU.Buffer {
+        var index=0
+        while index<self.ready_buffers.count() {
+            var candidate=self.ready_buffers[index]
+            if candidate.bytes==bytes && candidate.dtype==dtype {
+                var reused=self.ready_buffers.take(index)
+                self.cached_bytes-=bytes
+                for period in self.periods {period.buffer_reuses++}
+                self.begin_use(bytes)
+                reused.buffer.name(name)
+                return reused.buffer
+            }
+            index++
+        }
+        var buffer=self.device.buffer(GPU.BufferSettings(size:bytes,usage:GPU.BufferUsage.storage(),name:name))
+        GPUPerformanceCounters.record_buffer()
+        self.allocate(bytes)
+        self.begin_use(bytes)
+        return buffer
+    }
+
+    private func begin_use(bytes:int) {
+        self.in_use_buffers++
+        self.active_bytes+=bytes
+        for period in self.periods {
+            if self.in_use_buffers>period.peak_in_use_buffers {period.peak_in_use_buffers=self.in_use_buffers}
+            if self.active_bytes>period.peak_bytes {period.peak_bytes=self.active_bytes}
+        }
+    }
+
+    // The caller has waited for the storage fence. No Tensor or parent is cached.
+    func recycle_buffer(buffer:GPU.Buffer, dtype:DType, bytes:int) {
+        self.in_use_buffers--
+        self.active_bytes-=bytes
+        if self.in_use_buffers==0 {
+            self.release_buffer(bytes)
+            self.clear_ready_buffers()
+            return
+        }
+        if bytes>self.cache_capacity_bytes {
+            self.release_buffer(bytes)
+            return
+        }
+        while self.ready_buffers.count()>=self.cache_capacity_buffers || self.cached_bytes>self.cache_capacity_bytes-bytes {
+            self.evict_ready_buffer()
+        }
+        self.ready_buffers.append(GPUReadyBuffer(buffer,dtype,bytes))
+        self.cached_bytes+=bytes
+    }
+
+    private func release_buffer(bytes:int) {
+        GPUPerformanceCounters.record_buffer_release()
+        self.release(bytes)
+    }
+
+    private func evict_ready_buffer() {
+        var removed=self.ready_buffers.take(0)
+        self.cached_bytes-=removed.bytes
+        for period in self.periods {period.cache_evictions++}
+        self.release_buffer(removed.bytes)
+    }
+
+    private func clear_ready_buffers() {
+        while !self.ready_buffers.is_empty() {self.evict_ready_buffer()}
+    }
+
+    func upload(bytes:int) {
+        for period in self.periods {
+            period.uploads++
+            period.uploaded_bytes += bytes
+            period.upload_staging_allocations++
+        }
+    }
+
+    func download(bytes:int) {
+        for period in self.periods {
+            period.downloads++
+            period.downloaded_bytes += bytes
+            period.download_staging_allocations++
+        }
+    }
+
+    func submit() {
+        for period in self.periods { period.submissions++; period.fence_creations++ }
+    }
+
+    func compile_pipeline() {
+        for period in self.periods { period.pipeline_compilations++ }
+    }
+
+    func compute_pass() {
+        for period in self.periods { period.compute_passes++ }
+    }
+
+    func bind_pipeline() {
+        for period in self.periods { period.pipeline_bindings++ }
+    }
+
+    func dispatch() {
+        for period in self.periods { period.dispatches++ }
+    }
+}
+
+class GPUProfileRegistry {
+    private static var states:GPUProfileState[] = []
+
+    static func state(device:GPU.Device) GPUProfileState {
+        for state in GPUProfileRegistry.states {
+            if state.same_device(device) { return state }
+        }
+        var state = GPUProfileState(device)
+        GPUProfileRegistry.states.append(state)
+        return state
+    }
+
+    static func retire(state:GPUProfileState) {
+        if !state.unused() { return }
+        var index = 0
+        while index < GPUProfileRegistry.states.count() {
+            if GPUProfileRegistry.states[index] == state {
+                var removed = GPUProfileRegistry.states.take(index)
+                return
+            }
+            index++
+        }
+    }
+
+    static func count() int { return GPUProfileRegistry.states.count() }
+}
+
+package func gpu_profile_device_count() int { return GPUProfileRegistry.count() }

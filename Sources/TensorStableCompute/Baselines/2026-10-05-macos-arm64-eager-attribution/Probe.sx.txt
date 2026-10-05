@@ -1,0 +1,75 @@
+// Internal diagnostic: isolates existing host metadata and empty GPU submissions.
+use GFX.GPU
+use STD.Process
+use STD.Time.Stopwatch
+
+func metadata_work(operations:int,reuse:bool,report:bool) {
+    let layout=Layout([256])
+    let existing=elementwise_metadata(7,layout)
+    assert(existing.count()==80 && existing[0]==7 as uint8 && existing[4]==0 as uint8 && existing[5]==1 as uint8 && existing[8]==1 as uint8)
+    var elapsed=Stopwatch();elapsed.start()
+    var checksum=0;var index=0
+    while index<operations {
+        var bytes=existing
+        if !reuse {bytes=elementwise_metadata(7,layout)}
+        assert(bytes.count()==80 && bytes[0]==7 as uint8 && bytes[5]==1 as uint8)
+        checksum+=bytes.count()+(bytes[0] as int)+(bytes[5] as int)
+        index++
+    }
+    elapsed.stop();assert(checksum==operations*88)
+    if report {
+        var mode="generate";if reuse {mode="existing"}
+        print("SILEX_TENSOR_ATTRIBUTION phase=metadata mode=$(mode) operations=$(operations) elapsed_ms=$(elapsed.get_elapsed_milliseconds()) checksum=$(checksum)")
+    }
+}
+func command_work(device:GPU.Device,operations:int,retain:bool,report:bool) {
+    device.wait_until_idle();device.reset_command_stats()
+    var fences:GPU.Fence[]=[]
+    var elapsed=Stopwatch();elapsed.start()
+    var index=0
+    while index<operations {
+        var commands=device.commands()
+        var fence=commands.submit_and_track()
+        if retain {fences.append(fence)} else {fence.wait()}
+        index++
+    }
+    device.wait_until_idle();fences=[];elapsed.stop()
+    let stats=device.command_stats()
+    assert(stats.uploads==0 && stats.downloads==0 && stats.compute_passes==0)
+    if report {
+        var mode="wait_each";if retain {mode="wait_final"}
+        print("SILEX_TENSOR_ATTRIBUTION phase=empty_commands mode=$(mode) operations=$(operations) elapsed_ms=$(elapsed.get_elapsed_milliseconds()) uploads=$(stats.uploads) downloads=$(stats.downloads) passes=$(stats.compute_passes)")
+    }
+}
+func verify() {
+    metadata_work(16,false,false);metadata_work(16,true,false)
+    var device=GPU.Device(GPU.DeviceSettings(debug:true))
+    command_work(device,8,false,false);command_work(device,8,true,false)
+    print("SILEX_TENSOR_ATTRIBUTION_VERIFY status=pass")
+}
+func measure(reverse:bool) {
+    var device=GPU.Device()
+    metadata_work(16,false,false);command_work(device,4,false,false)
+    if reverse {
+        metadata_work(1024,true,true);metadata_work(1024,false,true)
+        command_work(device,64,true,true);command_work(device,64,false,true)
+    } else {
+        metadata_work(1024,false,true);metadata_work(1024,true,true)
+        command_work(device,64,false,true);command_work(device,64,true,true)
+    }
+}
+func main() {
+    var measuring=false;var reverse=false
+    match Process.arguments() {
+        failure(error)=>{panic(error.detail)}
+        success(arguments)=>{
+            for argument in arguments {
+                if argument=="--verify" {verify();return}
+                if argument=="--measure" {measuring=true}
+                if argument=="--reverse" {reverse=true}
+            }
+        }
+    }
+    if !measuring {panic("expected --verify or --measure [--reverse]")}
+    measure(reverse)
+}

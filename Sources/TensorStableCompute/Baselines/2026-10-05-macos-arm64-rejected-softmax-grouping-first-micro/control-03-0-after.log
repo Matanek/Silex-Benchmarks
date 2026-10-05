@@ -1,0 +1,7 @@
+SOFTMAX_GROUPING case=vector size=1 iterations=64 elapsed_ms=6.709 cold_ms=2.3630002 passes=320 submissions=64 allocations=5 reuses=315 peak_bytes=44 peak_allocated_bytes=44 cached_bytes=20 observations=1 uploads=0 downloads=0
+SOFTMAX_GROUPING case=vector size=7 iterations=64 elapsed_ms=6.835 cold_ms=0.75 passes=320 submissions=64 allocations=5 reuses=315 peak_bytes=212 peak_allocated_bytes=212 cached_bytes=92 observations=7 uploads=0 downloads=0
+SOFTMAX_GROUPING case=vector size=257 iterations=64 elapsed_ms=23.5 cold_ms=1.307 passes=320 submissions=64 allocations=5 reuses=315 peak_bytes=7212 peak_allocated_bytes=7212 cached_bytes=3092 observations=257 uploads=0 downloads=0
+SOFTMAX_GROUPING case=vector size=4096 iterations=64 elapsed_ms=90.98 cold_ms=7.461 passes=320 submissions=64 allocations=5 reuses=315 peak_bytes=114704 peak_allocated_bytes=114704 cached_bytes=49160 observations=4096 uploads=0 downloads=0
+SOFTMAX_GROUPING case=vector size=65536 iterations=64 elapsed_ms=1254.589 cold_ms=40.010002 passes=320 submissions=64 allocations=5 reuses=315 peak_bytes=1835024 peak_allocated_bytes=1835024 cached_bytes=786440 observations=65536 uploads=0 downloads=0
+SOFTMAX_GROUPING case=strided size=63 iterations=64 elapsed_ms=5.612 cold_ms=0.894 passes=320 submissions=64 allocations=5 reuses=315 peak_bytes=1540 peak_allocated_bytes=1540 cached_bytes=644 observations=49 uploads=0 downloads=0
+SOFTMAX_GROUPING_VERIFY status=pass cases=6 full_values=pass
