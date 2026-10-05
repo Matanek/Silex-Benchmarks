@@ -1,28 +1,47 @@
 use GFX.Physics
 use STD.Math
 
-func main() {
+func run_case(translating:bool, subdivisions:int) {
     let blade = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(0.1, 2.0, 0.1)))
     let wall = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(0.1, 4.0, 4.0)))
-    let mid = Physics.Transform3D(
-        position:Math.Vec3(-0.4, 0.0, 0.0),
-        rotation:Math.Quat.angle_axis(3.141592653589793 / 2.0,
-            Math.Vec3(0.0, 0.0, 1.0)))
-    print("mid_overlap=$(Physics.Geometry3D.overlaps(
-        Physics.ShapePlacement3D(blade, mid),
-        Physics.ShapePlacement3D(wall)))")
+    var midpoint_z = 0.0
+    if translating { midpoint_z = 1.0 }
+    let midpoint = Physics.Transform3D(
+        Math.Vec3(-0.4, 0.0, midpoint_z),
+        Math.Quat.angle_axis(Math.half_pi(), Math.Vec3(0.0, 0.0, 1.0)))
+    assert(Physics.Geometry3D.overlaps(Physics.ShapePlacement3D(blade, midpoint),
+        Physics.ShapePlacement3D(wall)))
+    assert(!Physics.Geometry3D.overlaps(Physics.ShapePlacement3D(blade,
+        Physics.Transform3D(Math.Vec3(-0.4, 0.0, 0.0))), Physics.ShapePlacement3D(wall)))
     var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
     world.create_rigid_body(Physics.RigidBody3DSettings()
-        ..body_type = Physics.BodyType3D.fixed
-        ..shape = wall)
-    var rotating = world.create_rigid_body(Physics.RigidBody3DSettings()
-        ..shape = blade
-        ..transform = Physics.Transform3D(
-            position:Math.Vec3(-0.4, 0.0, 0.0))
-        ..angular_velocity = Math.Vec3(0.0, 0.0, 3.141592653589793 * 60.0)
-        ..continuous_collision = true
-        ..allow_sleep = false)
-    world.step(1.0 / 60.0)
-    print("contacts=$(world.contact_count())")
-    print("final_x=$(rotating.position().x)")
+        ..body_type = Physics.BodyType3D.fixed ..shape = wall ..friction = 0.0)
+    var speed = 0.0
+    if translating { speed = 120.0 }
+    var body = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = blade ..allow_sleep = false ..continuous_collision = true
+        ..transform = Physics.Transform3D(Math.Vec3(-0.4, 0.0, 0.0))
+        ..angular_velocity = Math.Vec3(0.0, 0.0, Math.pi() * 60.0)
+        ..linear_velocity = Math.Vec3(0.0, 0.0, speed) ..friction = 0.0)
+    var contacts = 0; var step = 0
+    while step < subdivisions {
+        world.step(1.0 / (60.0 * subdivisions as float)); step++
+        var begins:Physics.Contact3D[] = []
+        world.write_contact_begin_events(begins); contacts += begins.count()
+    }
+    let position = body.position()
+    let axis = body.transform().rotation.rotate(Math.Vec3.up())
+    print("rotation translating=$(translating) subdivisions=$(subdivisions) contacts=$(contacts) x=$(position.x) z=$(position.z) axis_y=$(axis.y)")
+    if subdivisions == 1 {
+        assert(contacts == 0 && Math.abs(position.x + 0.4) < 0.00001 && Math.abs(axis.y + 1.0) < 0.00001)
+        assert(Math.abs(position.z - 2.0 * midpoint_z) < 0.00001)
+        assert(!Physics.Geometry3D.overlaps(Physics.ShapePlacement3D(blade, body.transform()),
+            Physics.ShapePlacement3D(wall)))
+    } else { assert(contacts > 0 && position.x < -0.4 && position.x > -1.5) }
+}
+func main() {
+    for translating in [false, true] {
+        let divisions:int[] = [1, 36]
+        for count in divisions { run_case(translating, count) }
+    }
 }

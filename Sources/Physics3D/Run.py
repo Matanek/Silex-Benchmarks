@@ -32,7 +32,9 @@ FIELDS = (
 )
 HERE = Path(__file__).resolve().parent
 GROUP = HERE.parents[2]
-PROJECT = GROUP.parents[2]
+PROJECT = (GROUP.parents[2]
+           if GROUP.name == "Worktree" and GROUP.parent.parent.name == ".specs"
+           else GROUP)
 BUILD = GROUP / ".silex" / "physics3d-oracle"
 
 

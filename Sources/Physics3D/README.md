@@ -167,10 +167,22 @@ engines preserve `x=1` and velocity 120. Pinned Jolt emits no contact event;
 Silex intentionally emits a transient begin and end. The runner records this
 policy difference in both modes rather than claiming exact parity.
 
-`RotationLimit.sx` is a separate Silex diagnostic. A blade rotating 180° in
-one step overlaps a fixed wall halfway through the turn but has no contact at
-the endpoint. It demonstrates the documented translation-only limit; the
-current continuous sweep does not claim rotation-only impacts.
+`RotationLimit.sx` qualifies a blade turning 180° in 1/60 second, both with pure
+rotation and with parallel translation of 120 units/s. The wall is overlapped
+halfway through the turn while both endpoints are separated. With linear CCD,
+both engines miss contact in one step; 36 subdivisions find it in these fixtures.
+This is a demonstrated limitation and a mitigation, not exact rotational CCD.
+Post-impact trajectories are not required to match. Gravity, damping and
+friction are zero; Jolt's angular velocity limit is 1000 rad/s.
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/RotationRun.py \
+  --archive /absolute/path/to/JoltPhysics-e77f175.zip --mode both
+```
+
+`RotationRun.py --self-test` rejects missing, duplicate, non-finite and altered
+results. The runner records all four cases per mode, source hashes, Jolt's
+configuration and the pinned archive digest in `rotation-qualification.json`.
 
 ## 3D world scale and contact load
 
