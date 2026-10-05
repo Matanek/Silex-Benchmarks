@@ -1,0 +1,329 @@
+{
+  "tensor_commit": "d9a932e17a6fcd07538067ee3f8de67b08af48fa",
+  "compiler_commit": "a24a01d8c76e91e8fadc93f88d8c25504c3b3c7f",
+  "compiler_sha256": "2400fe01906ad2e49bbad32d8baefe449762e06b54b65ca2f4454bdb71776059",
+  "snapshots": {
+    "Module/@IndexedReductions.sx": {
+      "file": "Sources/Module/@IndexedReductions.sx.txt",
+      "sha256": "d4cf15a761960f0f2898816d7b8595f6a1db303ff152626677514269e012e85e"
+    },
+    "Module/@Autograd.sx": {
+      "file": "Sources/Module/@Autograd.sx.txt",
+      "sha256": "c2ef0cd22eaae9bc904453a6992ecd61d4d561f386dd5a499e618f41e85b4bb6"
+    },
+    "Module/@Spatial.sx": {
+      "file": "Sources/Module/@Spatial.sx.txt",
+      "sha256": "6bcaae87f422567d2397d0193ba8284c51f747f8845904cc02e7613d57b7d7e3"
+    },
+    "Module/@Profile.sx": {
+      "file": "Sources/Module/@Profile.sx.txt",
+      "sha256": "a7bb8fe1d301d9662e3505e576b945016a4d4ddc988e9dbb55b274f6cd60c8f3"
+    },
+    "Module/@Tensor.sx": {
+      "file": "Sources/Module/@Tensor.sx.txt",
+      "sha256": "17945ba644228b8192aee3d2b71512b4717881e9563051142a160aaf70bf6f2c"
+    },
+    "Module/@CustomAutograd.sx": {
+      "file": "Sources/Module/@CustomAutograd.sx.txt",
+      "sha256": "a672d3954eda430595dcd6e909f66be7d43175f121917e3d3438568e7d683c03"
+    },
+    "Module/@Sequences.sx": {
+      "file": "Sources/Module/@Sequences.sx.txt",
+      "sha256": "5193a8902289b1320af0566add6f6e6c71184d9893e209351894053fe4d6adc7"
+    },
+    "Module/@DType.sx": {
+      "file": "Sources/Module/@DType.sx.txt",
+      "sha256": "9dfa02b4fc0f51be90b761a1662cd9f19fe817e85c4868d0918b76f4ab0e3790"
+    },
+    "Module/@Embedding.sx": {
+      "file": "Sources/Module/@Embedding.sx.txt",
+      "sha256": "adecb1e67a879b185055c5b93d8ee4bd73ccf63a01ed0cf758b18395f5a92af9"
+    },
+    "Module/@Layout.sx": {
+      "file": "Sources/Module/@Layout.sx.txt",
+      "sha256": "28ae53d97ad383e7d3d05c768d8bd5c209d72e98ed0b622801f5ffa2704c7fc4"
+    },
+    "Module/@ForwardPlan.sx": {
+      "file": "Sources/Module/@ForwardPlan.sx.txt",
+      "sha256": "ec5070ea52f933d1007a0cddfabd9c5927a85132ebec33063ee487c6f54bce78"
+    },
+    "Module/@Masks.sx": {
+      "file": "Sources/Module/@Masks.sx.txt",
+      "sha256": "05315c15b5a9dd9e7fbae55986bb4e8a172d75352905740cb71b48666b9bf002"
+    },
+    "Module/@LinearAlgebra.sx": {
+      "file": "Sources/Module/@LinearAlgebra.sx.txt",
+      "sha256": "6d67c5f130962419533b4fdc263768357a48dc6100780edcd91358588570a95b"
+    },
+    "Module/@Dropout.sx": {
+      "file": "Sources/Module/@Dropout.sx.txt",
+      "sha256": "69c333c382d66af24b7deeb69efb7bd63334baa63581f188d659804d742cad2d"
+    },
+    "Module/@Initialization.sx": {
+      "file": "Sources/Module/@Initialization.sx.txt",
+      "sha256": "fd1e02ddc94e20e648e0b1b9e05959ce97dc3d7b5aeb0afaa820a84448ce33c2"
+    },
+    "Module/@Statistics.sx": {
+      "file": "Sources/Module/@Statistics.sx.txt",
+      "sha256": "dd51853d772d3bab637e0a8363eb04817164be875500ecbafa043c76d0bb4683"
+    },
+    "Module/@Composition.sx": {
+      "file": "Sources/Module/@Composition.sx.txt",
+      "sha256": "52ef36bde966a8e71e760285f7c74746883ad5c3faeb564738fa34391c9fb294"
+    },
+    "Module/@Reductions.sx": {
+      "file": "Sources/Module/@Reductions.sx.txt",
+      "sha256": "199fca97ab58e60d5121fe1eae51c5f27dd3aa2fe4eb39cffb1d358bccb7d911"
+    },
+    "Module/@Storage.sx": {
+      "file": "Sources/Module/@Storage.sx.txt",
+      "sha256": "4a4b4c5f7a6ae5869555f26c45882fff52c23907c12ff9a7038e0e517291d19f"
+    },
+    "Module/@Neural.sx": {
+      "file": "Sources/Module/@Neural.sx.txt",
+      "sha256": "1d7e15f207471b37599958e05faada3347e09bf84f031c7cafe4edc03d7aef1b"
+    },
+    "Module/@TopK.sx": {
+      "file": "Sources/Module/@TopK.sx.txt",
+      "sha256": "01ff88d109aa989608e7851c73cfe711fe1e43aef04980542f2fa8d9404ef2c0"
+    },
+    "Module/@Operations.sx": {
+      "file": "Sources/Module/@Operations.sx.txt",
+      "sha256": "98673457e593a153be113fa7615831172de11ed0c2138ae173feaa745a677e9c"
+    },
+    "Module/Autograd/@Variable.sx": {
+      "file": "Sources/Module/Autograd/@Variable.sx.txt",
+      "sha256": "82aa69e1b93861dba43254fa9f56e0e684d5adfb23b50e70f6293e96eecfa053"
+    },
+    "Module/Autograd/@Operation.sx": {
+      "file": "Sources/Module/Autograd/@Operation.sx.txt",
+      "sha256": "1579b0e447cdfaf6455f5696c674f95ad739b8007069721fd194430d73e2118f"
+    },
+    "Module/Autograd/@Gradcheck.sx": {
+      "file": "Sources/Module/Autograd/@Gradcheck.sx.txt",
+      "sha256": "6855f42ef45c169dc7833df45361a25a0c0a7faa21db9ee94d2c2c808f8ed3c5"
+    },
+    "Module/Autograd/@Grad.sx": {
+      "file": "Sources/Module/Autograd/@Grad.sx.txt",
+      "sha256": "dbb6731f8a8e1dc0350fe4943c6ca85b2f5173a48902faaf41edf723a5f46ff6"
+    },
+    "Module/Optim/@Clipping.sx": {
+      "file": "Sources/Module/Optim/@Clipping.sx.txt",
+      "sha256": "724fa01a7ec5c21204a9b4dee143c996b08f2a6996b9da6e64a9f562c324a717"
+    },
+    "Module/Optim/@Support.sx": {
+      "file": "Sources/Module/Optim/@Support.sx.txt",
+      "sha256": "13362710bf7729ddbf5c336800c7d2965ae1ecb8455da41e20889250ee9c9d41"
+    },
+    "Module/Optim/@Adam.sx": {
+      "file": "Sources/Module/Optim/@Adam.sx.txt",
+      "sha256": "70eca6e4a659fb8b030dea3be5fa7c875cd7d16f4533f65741dfe825037f7adc"
+    },
+    "Module/Optim/@AdamW.sx": {
+      "file": "Sources/Module/Optim/@AdamW.sx.txt",
+      "sha256": "7a69e2fd8db4617f749346af4c4348e24a8726e4d7d08e0a661329c2602678af"
+    },
+    "Module/Optim/@SGD.sx": {
+      "file": "Sources/Module/Optim/@SGD.sx.txt",
+      "sha256": "7641eb984aefb65fc73b72e081a3370f4f89954f81f3bdab3912d8d5a32b33e6"
+    },
+    "Module/Optim/@State.sx": {
+      "file": "Sources/Module/Optim/@State.sx.txt",
+      "sha256": "9d2a2fa89ab38512052021660a2e074883248de32b019d65a39fb0a20bb2fedf"
+    },
+    "Module/Optim/@LearningRateSchedule.sx": {
+      "file": "Sources/Module/Optim/@LearningRateSchedule.sx.txt",
+      "sha256": "918c1f943b15ff83fc26d4cd12aeed4f7f66810262eb4bda640462e9c0ec30b7"
+    },
+    "Module/Optim/@AdamEngine.sx": {
+      "file": "Sources/Module/Optim/@AdamEngine.sx.txt",
+      "sha256": "51a37fbb1e8db95e12af19f85f39971f3de12a54aaa587ad3274c01fcbdca2bf"
+    },
+    "Module/Shaders/Reduction.hlsl": {
+      "file": "Sources/Module/Shaders/Reduction.hlsl.txt",
+      "sha256": "10b4d7ab766ad6d8c22344d4742e6dd285e260714d7d8f9381348426842caf4a"
+    },
+    "Module/Shaders/Gather.hlsl": {
+      "file": "Sources/Module/Shaders/Gather.hlsl.txt",
+      "sha256": "25ca10506f229a9cc44470091cb119394311335c72acba5db3307caae7813f08"
+    },
+    "Module/Shaders/TopK.hlsl": {
+      "file": "Sources/Module/Shaders/TopK.hlsl.txt",
+      "sha256": "6665e35701713aa4223b71d320e38fd83037a074b7c1a05d1497d5832e7a8862"
+    },
+    "Module/Shaders/Dropout.hlsl": {
+      "file": "Sources/Module/Shaders/Dropout.hlsl.txt",
+      "sha256": "beef79ba02e4be90712ba72ae6ee9baeaee9180a588e006c8792615ef9d09136"
+    },
+    "Module/Shaders/GatherGradient.hlsl": {
+      "file": "Sources/Module/Shaders/GatherGradient.hlsl.txt",
+      "sha256": "f9f6529590bac434ac683ba6c6c7820f7e3137b8325d368d737af38510e5f4c8"
+    },
+    "Module/Shaders/IndexReduction.hlsl": {
+      "file": "Sources/Module/Shaders/IndexReduction.hlsl.txt",
+      "sha256": "e346997009d3e9c440b1a23dbedad22e3e30b3e2388a5fe18e9eed4a05ec415c"
+    },
+    "Module/Shaders/Linear.hlsl": {
+      "file": "Sources/Module/Shaders/Linear.hlsl.txt",
+      "sha256": "b5bbbc4813424b457b5285f8021a72bfca3da80672e1537cd6caa3ab40333bfd"
+    },
+    "Module/Shaders/Binary.hlsl": {
+      "file": "Sources/Module/Shaders/Binary.hlsl.txt",
+      "sha256": "a9774485705326e2d3b316e557baec5cc5a918e36a8d8581eb68d7473df50b8d"
+    },
+    "Module/Shaders/Elementwise.hlsl": {
+      "file": "Sources/Module/Shaders/Elementwise.hlsl.txt",
+      "sha256": "049c3fd5c9db20561ec876d79f80f4fecc0c11f99ab174a2941f8781f64f5ba3"
+    },
+    "Module/Shaders/PoolingGradient.hlsl": {
+      "file": "Sources/Module/Shaders/PoolingGradient.hlsl.txt",
+      "sha256": "eedae464e30ba5a084aaf03669396ac3c819c037124bdbf418e2b42740764e19"
+    },
+    "Module/Shaders/Convolution.hlsl": {
+      "file": "Sources/Module/Shaders/Convolution.hlsl.txt",
+      "sha256": "1de1e3164d4cb91ee2e8f12e329fddb657288b70aadc22d46c8579d980237e22"
+    },
+    "Module/Shaders/Pooling.hlsl": {
+      "file": "Sources/Module/Shaders/Pooling.hlsl.txt",
+      "sha256": "281c0ffd9d9504cc87412522c18a0d137a580b76778377cdfb90e8379f310e0f"
+    },
+    "Module/Shaders/ConvolutionGradient.hlsl": {
+      "file": "Sources/Module/Shaders/ConvolutionGradient.hlsl.txt",
+      "sha256": "ac733c629367021458551d3118e509a9043e2fd067f8b9806428d934a6227955"
+    },
+    "Module/Shaders/Masks.hlsl": {
+      "file": "Sources/Module/Shaders/Masks.hlsl.txt",
+      "sha256": "bfbf693cecca55e91c528c6d8792e714f1044484f18f370b07f0151df42d1b33"
+    },
+    "Module/Data/@BatchCursor.sx": {
+      "file": "Sources/Module/Data/@BatchCursor.sx.txt",
+      "sha256": "f71603d0964f6112517d42b55e9aead44ea6e8e6183fc7e32aa4dba98e5f2632"
+    },
+    "Module/Data/@Source.sx": {
+      "file": "Sources/Module/Data/@Source.sx.txt",
+      "sha256": "5745ba9360e9d06cf673dc551fbb17803d9e5c1b73c9423290de28bcc5d1389a"
+    },
+    "Module/Data/@BatchPrefetch.sx": {
+      "file": "Sources/Module/Data/@BatchPrefetch.sx.txt",
+      "sha256": "dbe75b3513698804bf68ea5aef9f3fe961945df48a22c26814168334b5351dbc"
+    },
+    "Module/Data/@BatchSampler.sx": {
+      "file": "Sources/Module/Data/@BatchSampler.sx.txt",
+      "sha256": "edcc69d78b040a64d694958ca420dc4f55b5858177b2161e1f62ef5b9910793e"
+    },
+    "Module/Neural/@Pooling.sx": {
+      "file": "Sources/Module/Neural/@Pooling.sx.txt",
+      "sha256": "087ac786004c34189fe748035a9c2c4d558f1d4216465fed36e3b60e02e26785"
+    },
+    "Module/Neural/@MultiHeadAttention.sx": {
+      "file": "Sources/Module/Neural/@MultiHeadAttention.sx.txt",
+      "sha256": "07d75fa92b20f90cef1781e33ec1123c96f7b16f0ad9f9624170d7d1b2e81736"
+    },
+    "Module/Neural/@TrainingFormat.sx": {
+      "file": "Sources/Module/Neural/@TrainingFormat.sx.txt",
+      "sha256": "a93655286dd5eaacdabeaad1a732eb2ead7e90217d0c691d2c32639969964112"
+    },
+    "Module/Neural/@SequenceMasks.sx": {
+      "file": "Sources/Module/Neural/@SequenceMasks.sx.txt",
+      "sha256": "b6ff5637baa7196daa9ff49fc17d2fa0ea2678d626ca8715f117b53132b419bf"
+    },
+    "Module/Neural/@GRU.sx": {
+      "file": "Sources/Module/Neural/@GRU.sx.txt",
+      "sha256": "98c9a98c4280d6e2ee7f81e4d3112966d34e9489065839b4cd335e91aa0302c9"
+    },
+    "Module/Neural/@Flatten.sx": {
+      "file": "Sources/Module/Neural/@Flatten.sx.txt",
+      "sha256": "481d2803554cea0cde2cd631c671bff6010c2b18353e8fd3060085b33ef31f17"
+    },
+    "Module/Neural/@Attention.sx": {
+      "file": "Sources/Module/Neural/@Attention.sx.txt",
+      "sha256": "c53d3c1370898ccf689a027804e67e897509f1b5f0d45a019b4e3168f5895456"
+    },
+    "Module/Neural/@Conv2D.sx": {
+      "file": "Sources/Module/Neural/@Conv2D.sx.txt",
+      "sha256": "6961c3c5c4630b9f9fa1a47ab880a451ac4b7cc00b4788ac1d8de839081794fa"
+    },
+    "Module/Neural/@Checkpoint.sx": {
+      "file": "Sources/Module/Neural/@Checkpoint.sx.txt",
+      "sha256": "f8631d9cbb70939cb9f92b605dc9a5f09541a8c1e14b261cf8755a9518f8c063"
+    },
+    "Module/Neural/@TrainingCheckpoint.sx": {
+      "file": "Sources/Module/Neural/@TrainingCheckpoint.sx.txt",
+      "sha256": "f27c77ab0395640846e3ed35c980ef7dceec8500e97468d50d89a6112d42adcd"
+    },
+    "Module/Neural/@Embedding.sx": {
+      "file": "Sources/Module/Neural/@Embedding.sx.txt",
+      "sha256": "7bae7a8f4ba90797b49a3a06a51ed5ed62f1231d3122148d8061ba10ab0a429f"
+    },
+    "Module/Neural/@SimpleRNN.sx": {
+      "file": "Sources/Module/Neural/@SimpleRNN.sx.txt",
+      "sha256": "46d8def4a4f9e4aa23e52deeb4ac61337b5ff44cb9c2a54dfd3c547238495866"
+    },
+    "Module/Neural/@Buffer.sx": {
+      "file": "Sources/Module/Neural/@Buffer.sx.txt",
+      "sha256": "2d399d8c0833e5305b9ffe2122436aafeb46a399567e3d5c7945265bba557a91"
+    },
+    "Module/Neural/@Dense.sx": {
+      "file": "Sources/Module/Neural/@Dense.sx.txt",
+      "sha256": "a8f711730f3722b8baf0c3e6b742ea240e041fd179f3997b270636eb87a8fc2f"
+    },
+    "Module/Neural/@BatchNorm.sx": {
+      "file": "Sources/Module/Neural/@BatchNorm.sx.txt",
+      "sha256": "4aa33d7c1b23d68680e6f0437267a4c26fede01b238b67ccd299e6b8ca41bcca"
+    },
+    "Module/Neural/@TrainingEncoding.sx": {
+      "file": "Sources/Module/Neural/@TrainingEncoding.sx.txt",
+      "sha256": "32ac4d81280b50d991fe1f370cbb41741d430145d72b91c1fff064efe7b88b1b"
+    },
+    "Module/Neural/@DropoutLayer.sx": {
+      "file": "Sources/Module/Neural/@DropoutLayer.sx.txt",
+      "sha256": "201d0a63faaaf1c66f880d2fc5d0a4399076c133df306a5a86d7645187c43f8d"
+    },
+    "Module/Neural/@LayerNorm.sx": {
+      "file": "Sources/Module/Neural/@LayerNorm.sx.txt",
+      "sha256": "f2a73d03623f2ce0a8d68102df1b78a5f327ba9d2b5d39ebf5df42972a2c71ae"
+    },
+    "Module/Neural/@TransformerBlock.sx": {
+      "file": "Sources/Module/Neural/@TransformerBlock.sx.txt",
+      "sha256": "a2f5a33504c49e22801deb5dbf446633d5426652370b241e5a76ebeede862ab4"
+    },
+    "Module/Neural/@Parameter.sx": {
+      "file": "Sources/Module/Neural/@Parameter.sx.txt",
+      "sha256": "d6d2538e745bbe96df649242d051b38447e7217659d2376ae243649731656756"
+    },
+    "Module/Neural/@ForwardPlan.sx": {
+      "file": "Sources/Module/Neural/@ForwardPlan.sx.txt",
+      "sha256": "4a69909bd0c3d13c1e4fa2540e7be47d44c72f8fda3a5793399dfdbc8271e86e"
+    },
+    "Module/Neural/@Layer.sx": {
+      "file": "Sources/Module/Neural/@Layer.sx.txt",
+      "sha256": "3bf925f942fe122f765f1d534072f76768b627897823d608f746e78c4a813003"
+    },
+    "Module/Neural/@Activation.sx": {
+      "file": "Sources/Module/Neural/@Activation.sx.txt",
+      "sha256": "e07779f021736766c76b377236b4d1fd2293f5a937a27415529315754282cf76"
+    },
+    "Module/Neural/@Sequential.sx": {
+      "file": "Sources/Module/Neural/@Sequential.sx.txt",
+      "sha256": "ecbfbb71aa664b559163f014ae9c3ebeaf59f40f622f93ef22caa0dcdd3330f0"
+    },
+    "Module/Neural/@TrainingState.sx": {
+      "file": "Sources/Module/Neural/@TrainingState.sx.txt",
+      "sha256": "8391398fdeef3db3384085c606b3d8d3eebe979f398b031395b7b65eabd414bf"
+    },
+    "Module/Neural/@LSTM.sx": {
+      "file": "Sources/Module/Neural/@LSTM.sx.txt",
+      "sha256": "54f23d0ba249b82d9be635521ac2376816ebcdf8581971a41bf61c20b0cda044"
+    },
+    "Tests/Consumer/Qualification/ForwardPlanMeasure.sx": {
+      "file": "Sources/Tests/Consumer/Qualification/ForwardPlanMeasure.sx.txt",
+      "sha256": "95ee49b61d895b6fd3b11d949b5808a487d198836363c520aaf11b66c5fafbfd"
+    },
+    "Tests/Consumer/Tests/ForwardPlans.sx": {
+      "file": "Sources/Tests/Consumer/Tests/ForwardPlans.sx.txt",
+      "sha256": "e7aaac6f833a8496549e74e169b2cca246d831810e5a3c017f842bd6d55697b7"
+    }
+  },
+  "canonical_source": "Silex-Benchmarks/Sources/TensorStableCompute/PreparedForward.sx",
+  "original_source": "Packages/Tensor/Tests/Consumer/Qualification/ForwardPlanMeasure.sx"
+}

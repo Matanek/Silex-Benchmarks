@@ -1,0 +1,2 @@
+2026-10-06 01:43:26.925 Task15-ForwardPlanActivations-Debug[75281:16250208] Metal API Validation Enabled
+PLAN_ACTIVATIONS status=pass kinds=relu_sigmoid_tanh layouts=scalar_vector_broadcast_rank5 gradients=source

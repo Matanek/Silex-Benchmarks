@@ -1,0 +1,32 @@
+{
+  "compiler_sha256": "2400fe01906ad2e49bbad32d8baefe449762e06b54b65ca2f4454bdb71776059",
+  "results": [
+    {
+      "label": "Example-Run",
+      "exit_code": 0,
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task15-ForwardPlanExample-Release"
+      ]
+    },
+    {
+      "label": "Canonical-Build",
+      "exit_code": 0,
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/PreparedForward.sx",
+        "--release",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task15-PreparedForward-Canonical-Release"
+      ]
+    },
+    {
+      "label": "Canonical-Run",
+      "exit_code": 0,
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task15-PreparedForward-Canonical-Release",
+        "--planned"
+      ]
+    }
+  ]
+}

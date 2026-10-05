@@ -1,0 +1,17 @@
+[
+  {
+    "source": "Packages/Tensor/Tests/Consumer/Diagnostics/ForwardBuilderPrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/ForwardBuilderPrivate.sx:1:1: error: structure 'ForwardBuilder' is package-visible and unavailable outside package 'Tensor'\n"
+  },
+  {
+    "source": "Packages/Tensor/Tests/Consumer/Diagnostics/PreparedForwardPrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/PreparedForwardPrivate.sx:1:1: error: structure 'PreparedForward' is package-visible and unavailable outside package 'Tensor'\n"
+  },
+  {
+    "source": "Packages/Tensor/Tests/Consumer/Diagnostics/ForwardDescriptionPrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/ForwardDescriptionPrivate.sx:5:24: error: type 'Tensor.Neural.Activation' has no member named 'describe_forward'\n"
+  }
+]

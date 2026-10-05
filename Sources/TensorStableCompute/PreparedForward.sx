@@ -1,0 +1,88 @@
+use Tensor
+use Tensor.Neural
+use Tensor.Profile
+use GFX.GPU
+use STD.Math
+use STD.Process
+use STD.Time.Stopwatch
+
+func source_values(count:int) float[] {
+    var values:float[]=[]
+    var i=0
+    while i<count {values.append((i%17-8) as float/32.0);i++}
+    return values
+}
+
+func build(features:int,hidden:int,outputs:int) Neural.Sequential {
+    var layers:Neural.Layer[]=[Neural.Dense("hidden",features,hidden,101),Neural.Activation.tanh(),Neural.Dense("output",hidden,outputs,102)]
+    return Neural.Sequential(layers)
+}
+
+func main() {
+    var planned=false
+    var profiled=false
+    var selected=0
+    match Process.arguments() {
+        failure(error)=>{panic(error.detail)}
+        success(arguments)=>{for argument in arguments {
+            if argument=="--planned" {planned=true}
+            if argument=="--profile" {profiled=true}
+            if argument=="--case-1" {selected=1}
+            if argument=="--case-2" {selected=2}
+            if argument=="--case-3" {selected=3}
+        }}
+    }
+    var rows=2
+    var features=2
+    var hidden=4
+    var outputs=2
+    var iterations=512
+    if selected==1 {rows=16;features=16;hidden=32;outputs=8;iterations=256}
+    elif selected==2 {rows=32;features=64;hidden=64;outputs=16;iterations=128}
+    assert(GPU.Device.is_supported())
+    var device=GPU.Device(GPU.DeviceSettings(debug:false))
+    var model=build(features,hidden,outputs)
+    var reference=build(features,hidden,outputs)
+    model.to(device)
+    let cpu_input=Tensor(source_values(rows*features),[rows,features])
+    let input=cpu_input.to(device)
+    device.wait_until_idle()
+    var capture=Stopwatch()
+    capture.start()
+    match model.prepare_forward(input) {failure(reason)=>{panic(reason)};success=>{}}
+    capture.stop()
+    if !planned {model.clear_forward_plan()}
+    var i=0
+    while i<16 {let value=model.forward(input);i++}
+    device.wait_until_idle()
+    var profile:Profile?=null
+    if profiled {profile=Profile(device)}
+    device.reset_command_stats()
+    var timer=Stopwatch()
+    timer.start()
+    var result=input
+    i=0
+    while i<iterations {result=model.forward(input);i++}
+    device.wait_until_idle()
+    timer.stop()
+    let native=device.command_stats()
+    assert(native.compute_passes==5*iterations)
+    if var active=profile {
+        let count=active.snapshot()
+        assert(count.compute_passes==5*iterations && count.submissions==iterations && count.fence_creations==iterations)
+        assert(count.uploads==0 && count.downloads==0 && count.pipeline_compilations==0)
+    }
+    let expected=reference.forward(cpu_input).detach().values()
+    let actual=result.detach().cpu().values()
+    assert(actual.count()==expected.count())
+    i=0
+    while i<actual.count() {assert(Math.is_finite(actual[i]) && Math.abs(actual[i]-expected[i])<=0.00002);i++}
+    let preserved=input.cpu().values()
+    let original=cpu_input.values()
+    i=0
+    while i<original.count() {assert(preserved[i]==original[i]);i++}
+    let statistics=model.forward_plan_statistics()
+    if planned {assert(statistics.captures==1 && statistics.executions==iterations+16 && statistics.fallbacks==0)}
+    else {assert(statistics.executions==0 && statistics.cached_plans==0)}
+    print("FORWARD_PLAN_MEASURE status=pass case=$(selected) planned=$(planned) profiled=$(profiled) iterations=$(iterations) elapsed_ms=$(timer.get_elapsed_milliseconds()) preparation_ms=$(capture.get_elapsed_milliseconds()) passes=$(native.compute_passes) observations=$(actual.count())")
+}

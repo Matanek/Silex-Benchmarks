@@ -1,0 +1,9 @@
+PLAN_CLOSED_REJECTIONS status=pass unknown_hooks=0 subclass_hooks=0 nested_hooks=0 cpu_state=unchanged
+2026-10-06 01:28:46.478 Task15-ForwardPlanQualification-Release[69079:16214876] Metal API Validation Enabled
+PLAN_CAPACITY status=pass layers=256 parameters=128 example_storage=not_retained
+PLAN_REPLAY status=pass gradients=5 steps=1024 retained=4 replacement=strided_offset captures=1 tracking=dynamic clear=eager
+PLAN_REPLAY status=pass gradients=5 steps=1024 retained=4 replacement=strided_offset captures=1 tracking=dynamic clear=eager
+PLAN_GUARDS status=pass failed_prepare=atomic fallback=shape_mode_device_cpu operations=bounded
+PLAN_SHARED_VIEW status=pass occurrences=preserved parameters=2 gradients=3 input=transposed_offset
+PLAN_NORMALIZATION status=pass ranks=2_3_5 dimensions=1_2_3 gradients=3 passes=8 submissions=1
+FORWARD_PLAN_RESOURCES status=pass devices=2 first_buffers=54 second_buffers=60 first_bytes=1312 second_bytes=1504 live=0

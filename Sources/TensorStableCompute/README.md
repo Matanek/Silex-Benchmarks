@@ -263,3 +263,35 @@ Both standalone `Verify.py` programs recompute the evidence. RSS is process
 memory, not physical VRAM. Six targets compile/link; runtime and gain claims
 are limited to macOS arm64 / Metal. The pre-existing constant-1000 centering
 bias is retained as a separate exact eager GPU witness, without relaxed tolerances.
+
+
+## Prepared public forward
+
+`PreparedForward.sx` compares the ordinary public forward of one closed
+Sequential/Dense/Activation family with its explicitly prepared plan. The three
+hot workloads retain five compute passes and admit paired decreases of 40.15%,
+33.42% and 19.58% on Apple M3 Pro / Metal. All 16 pairs favor preparation in each
+case and A/A controls pass the fixed admission rule. Cold preparation is recorded
+separately; optional Profile overhead remains indeterminate.
+
+The [sealed campaign](Baselines/2026-10-06-macos-arm64-prepared-forward/README.md)
+retains 256 raw process logs, 41,472 checked output scalars, source snapshots,
+464 passing tests over 110 sources, and six compile/link targets. Its standalone
+`Verify.py` reconstructs the results without GPU execution. These measurements
+do not qualify prepared training, six full model families, float16 or runtime
+gains on another platform.
+
+Build from the workspace root with the compiler containing package-private atom
+resolution, then exercise both modes:
+
+```sh
+ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/PreparedForward.sx \
+  --release --output /private/tmp/tensor-prepared-forward
+/private/tmp/tensor-prepared-forward --case-0
+/private/tmp/tensor-prepared-forward --planned --case-0
+```
+
+Use the sealed campaign's `Run.py` for a fresh balanced A/B and A/A series,
+after qualifying the new exact sources and compiler. Keep measurement separate
+from concurrent builds/tests; historical timings belong to their recorded pins.
