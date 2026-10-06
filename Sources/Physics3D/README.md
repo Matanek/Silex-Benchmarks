@@ -627,3 +627,24 @@ velocity may differ by 0.01 rad/s only if both poses are within 0.005 rad of
 the new stop and both speeds are below 0.02 rad/s. This bounds a recovery phase
 with different positional correction rates; it does not claim identical
 recovery chronology. The qualification JSON records these bounds and sources.
+
+
+`HingeFrictionRun.py` qualifies passive hinge friction at 60 Hz over six
+seconds: positive/negative braking, offset inertia, unequal free bodies,
+capacity mutations, motor precedence, zero-effort motor modes and static
+gravity load holding/release. It checks 192 samples per Native Debug/Release
+mode against pinned Jolt and independent braking/momentum/load invariants.
+Run from the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/HingeFrictionRun.py
+```
+
+The guard rejects missing, unknown, duplicate or nonfinite evidence, effort
+bound violations, friction with an installed motor and perturbed trajectories.
+Ordinary pose/angle/speed bounds are 0.003; offset/load cases allow 0.01
+pose/angle and 0.03 speed, with separate effort bounds in the qualification
+JSON. Jolt uses 64 velocity/eight position iterations to converge separate
+rows at an offset anchor; Silex uses 12 preparation/12 shared velocity/four
+position passes with coupled pivot inertia. These settings and bounds are
+declared before the first run; no cost or universal trajectory parity is claimed.

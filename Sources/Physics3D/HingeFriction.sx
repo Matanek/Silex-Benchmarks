@@ -1,0 +1,54 @@
+use GFX.Physics
+use STD.Math
+
+func run_friction_case(case_id:int) {
+    var gravity = Math.Vec3(); if case_id == 7 { gravity = Math.Vec3(0.0,-9.81,0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_type = Physics.BodyType3D.fixed; if case_id == 3 { first_type = Physics.BodyType3D.dynamic }
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = first_type
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id == 3 { first_settings.mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(0.1)) }
+    var first = world.create_rigid_body(first_settings)
+    var pose = Physics.Transform3D(); var anchor = Math.Vec3(); var inertia = 0.1; var speed = 1.0
+    var torque = 0.1
+    if case_id == 1 { speed = -1.0 }
+    if case_id == 2 { pose = Physics.Transform3D(Math.Vec3(0.0,-1.0,0.0)); anchor = Math.Vec3(0.0,1.0,0.0); speed = 0.8; torque = 0.3 }
+    if case_id == 3 { inertia = 0.4; torque = 0.02 }
+    if case_id == 4 { torque = 0.05 }
+    if case_id == 5 { torque = 0.4 }
+    if case_id == 6 { torque = 1.0 }
+    if case_id == 7 {
+        let rotation = Math.Quat.angle_axis(0.3,Math.Vec3(0.0,0.0,1.0))
+        pose = Physics.Transform3D(rotation.rotate(Math.Vec3(0.0,-1.0,0.0)),rotation)
+        anchor = Math.Vec3(0.0,1.0,0.0); speed = 0.0; torque = 4.0
+    }
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = pose
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(inertia))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    second.set_angular_velocity(Math.Vec3(0.0,0.0,speed))
+    if case_id == 2 { second.set_linear_velocity(Math.Vec3(speed,0.0,0.0)) }
+    var settings = Physics.HingeConstraint3DSettings() ..second_local_anchor = anchor ..maximum_friction_torque = torque
+    if case_id == 5 { settings.motor = Physics.HingeMotor3D(0.5,0.2) }
+    if case_id == 6 { settings.motor = Physics.HingeMotor3D(0.0,0.0) }
+    var hinge = world.create_hinge_constraint(first,second,settings)
+    var step = 1
+    while step <= 360 {
+        if case_id == 4 && step == 61 { hinge.set_maximum_friction_torque(0.2) }
+        if case_id == 4 && step == 181 { hinge.set_maximum_friction_torque(0.0); second.set_angular_velocity(Math.Vec3(0.0,0.0,-1.0)) }
+        if case_id == 4 && step == 241 { hinge.set_maximum_friction_torque(0.1) }
+        if case_id == 5 && step == 121 { hinge.set_motor(Physics.HingeMotor3D.position(-0.5,1.0,1.6,0.8)) }
+        if case_id == 5 && step == 301 { hinge.set_motor(null) }
+        if case_id == 6 && step == 121 { hinge.set_motor(null) }
+        if case_id == 6 && step == 181 { hinge.set_motor(Physics.HingeMotor3D(0.0,0.0)); second.set_angular_velocity(Math.Vec3(0.0,0.0,-1.0)) }
+        if case_id == 6 && step == 241 { hinge.set_motor(Physics.HingeMotor3D.position(0.0,0.0,1.6,0.8)) }
+        if case_id == 7 && step == 181 { hinge.set_maximum_friction_torque(1.0) }
+        world.step(1.0/60.0)
+        if step % 15 == 0 {
+            print("friction $(case_id) $(step) $(second.position().x) $(second.position().y) $(hinge.angle()) $(hinge.angular_speed()) $(first.angular_velocity().z) $(second.angular_velocity().z) $(hinge.friction_torque()) $(hinge.motor_torque()) $(hinge.anchor_error().length()) $(hinge.axis_error()) $(hinge.reaction_force().y)")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 8 { run_friction_case(i); i++ } }
