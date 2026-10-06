@@ -606,3 +606,24 @@ uses 12 velocity/4 position passes; Silex uses 12 preparation/12 shared velocity
 position passes and resumes the previous fixed impulse. Origin-local anchors
 equal COM-local anchors in these fixtures; consumer tests cover shifted centers.
 Raw rows and source hashes are saved with `fixed-qualification.json`.
+
+`HingePositionRun.py` qualifies eight position-motor cases against the pinned
+Jolt reference in Debug and Release: implicit damped/oscillating trajectories,
+saturation, target/mode changes, current hard limits, a loaded offset anchor,
+the short path across pi and unequal free inertias. There are 192 samples per
+mode over six seconds, including transients. Stiffness/damping are specified
+directly in torque units; the fixture does not claim identical solver cost.
+Run from the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/HingePositionRun.py
+```
+
+The guard self-test rejects missing, nonfinite, unknown or duplicate samples,
+invalid physical bounds and perturbed trajectories. Ordinary angular/speed
+comparison bounds are 0.003 rad/rad·s⁻¹; the loaded case has separate declared
+bounds. At the sole sample immediately after deep hard-limit narrowing,
+velocity may differ by 0.01 rad/s only if both poses are within 0.005 rad of
+the new stop and both speeds are below 0.02 rad/s. This bounds a recovery phase
+with different positional correction rates; it does not claim identical
+recovery chronology. The qualification JSON records these bounds and sources.

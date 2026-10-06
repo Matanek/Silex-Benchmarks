@@ -1,0 +1,48 @@
+use GFX.Physics
+use STD.Math
+
+func run_position_case(case_id:int) {
+    var gravity = Math.Vec3()
+    if case_id == 5 { gravity = Math.Vec3(0.0,-9.81,0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_type = Physics.BodyType3D.fixed
+    if case_id == 7 { first_type = Physics.BodyType3D.dynamic }
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = first_type
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id == 7 { first_settings.mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(0.1)) }
+    var first = world.create_rigid_body(first_settings)
+    var anchor = Math.Vec3(); var pose = Physics.Transform3D()
+    var inertia = 0.1
+    if case_id == 7 { inertia = 0.4 }
+    if case_id == 5 { anchor = Math.Vec3(0.0,1.0,0.0); pose = Physics.Transform3D(Math.Vec3(0.0,-1.0,0.0)) }
+    if case_id == 6 { pose = Physics.Transform3D(Math.Vec3(),Math.Quat.angle_axis(-3.0,Math.Vec3(0.0,0.0,1.0))) }
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = pose
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(inertia))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var target = 0.75; var torque = 10.0; var stiffness = 1.6; var damping = 0.8
+    if case_id == 1 { damping = 0.08 }
+    if case_id == 2 { target = 1.0; torque = 0.01; stiffness = 100.0; damping = 1.0 }
+    if case_id == 3 { target = 0.5; torque = 1.0 }
+    if case_id == 4 { target = 0.8; torque = 1.0 }
+    if case_id == 5 { target = 0.7; torque = 20.0; stiffness = 40.0; damping = 10.0 }
+    if case_id == 6 { target = 3.0 }
+    var settings = Physics.HingeConstraint3DSettings() ..second_local_anchor = anchor
+        ..motor = Physics.HingeMotor3D.position(target,torque,stiffness,damping)
+    if case_id == 4 { settings.minimum_angle = -0.2; settings.maximum_angle = 0.3 }
+    var hinge = world.create_hinge_constraint(first,second,settings)
+    var step = 1
+    while step <= 360 {
+        if case_id == 3 && step == 121 { hinge.set_motor(Physics.HingeMotor3D.position(-0.5,torque,stiffness,damping)) }
+        if case_id == 3 && step == 241 { hinge.set_motor(Physics.HingeMotor3D(0.5,torque)) }
+        if case_id == 3 && step == 301 { hinge.set_motor(null) }
+        if case_id == 4 && step == 181 { hinge.set_limits(-0.2,0.1) }
+        world.step(1.0 / 60.0)
+        if step % 15 == 0 {
+            print("position $(case_id) $(step) $(second.position().x) $(second.position().y) $(hinge.angle()) $(hinge.angular_speed()) $(first.angular_velocity().z) $(second.angular_velocity().z) $(hinge.motor_torque()) $(hinge.anchor_error().length()) $(hinge.axis_error()) $(hinge.reaction_force().y)")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 8 { run_position_case(i); i++ } }
