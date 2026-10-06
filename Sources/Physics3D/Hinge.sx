@@ -1,0 +1,39 @@
+use GFX.Physics
+use STD.Math
+
+func run_hinge_case(case_id:int) {
+    var gravity = Math.Vec3()
+    if case_id == 1 || case_id == 3 { gravity = Math.Vec3(0.0,-9.81,0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first = world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type = Physics.BodyType3D.fixed
+        ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var pose = Physics.Transform3D()
+    var local_anchor = Math.Vec3()
+    var speed = Math.Vec3(3.0,-2.0,1.0)
+    if case_id == 1 { local_anchor = Math.Vec3(0.0,1.0,0.0); pose = Physics.Transform3D(Math.Vec3(0.0,-1.0,0.0)); speed = Math.Vec3() }
+    if case_id == 2 { speed = Math.Vec3(0.0,0.0,2.0) }
+    if case_id == 3 {
+        local_anchor = Math.Vec3(0.0,2.0,0.0)
+        let rotation = Math.Quat.angle_axis(0.6,Math.Vec3(0.0,0.0,1.0))
+        pose = Physics.Transform3D(rotation.rotate(local_anchor.negated()),rotation)
+        speed = Math.Vec3()
+    }
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = pose
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(0.1))
+        ..angular_velocity = speed ..allow_sleep = false
+        ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var settings = Physics.HingeConstraint3DSettings() ..second_local_anchor = local_anchor
+    if case_id == 2 { settings.minimum_angle = -0.3; settings.maximum_angle = 0.4 }
+    var joint = world.create_hinge_constraint(first,second,settings)
+    var step = 1
+    while step <= 120 {
+        if case_id == 2 && step == 61 { joint.set_limits(-0.2,0.2); second.set_angular_velocity(Math.Vec3(0.0,0.0,-2.0)) }
+        world.step(1.0 / 60.0)
+        if step % 15 == 0 {
+            print("hinge $(case_id) $(step) $(second.position().x) $(second.position().y) $(joint.angle()) $(second.angular_velocity().z) $(joint.anchor_error().length()) $(joint.axis_error()) $(joint.reaction_force().y)")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 4 { run_hinge_case(i); i++ } }

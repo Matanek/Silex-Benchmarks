@@ -546,3 +546,21 @@ that dense-pile quality is already qualified.
 The [September 30 comparison](Baselines/2026-09-30-major-levers/README.md)
 records the frozen native baseline, the sphere solver and spatial grid
 candidate, raw measurements, the column control, and the rendered aquarium.
+
+## Hinge qualification
+
+`Hinge.sx` and `HingeOracle.cpp` compare free rotation with an off-axis
+perturbation, weight support, mutated hard stops and a pendulum. From the
+workspace or Spec group root, run:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/HingeRun.py --mode both
+```
+
+It uses the pinned Jolt revision, one worker and 120 steps at
+60 Hz, with eight samples per case and mode. Pendulum tolerances are 0.06 m
+per coordinate, 0.03 rad, 0.08 rad/s and 0.5 N over these two seconds.
+After stop mutation, angle comparison allows one step at 2 rad/s (0.034 rad);
+speed at the lower-stop impact sample can differ, and both implementations
+must be stopped at step 120. This is bounded behavioral qualification,
+without a performance or long-duration trajectory claim.
