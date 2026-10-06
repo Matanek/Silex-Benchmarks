@@ -564,3 +564,27 @@ After stop mutation, angle comparison allows one step at 2 rad/s (0.034 rad);
 speed at the lower-stop impact sample can differ, and both implementations
 must be stopped at step 120. This is bounded behavioral qualification,
 without a performance or long-duration trajectory claim.
+
+
+## Torque-limited hinge motor qualification
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/HingeMotorRun.py --mode both`
+from the workspace or Spec group root. `HingeMotor.sx` and
+`HingeMotorOracle.cpp` compare acceleration, target/reversal/motor off,
+unequal dynamic inertias, powered hard stops and a pendulum with pinned Jolt.
+One worker, 120 steps at 60 Hz, eight samples per case and mode: 80 samples.
+Jolt uses 12 velocity and 8 position iterations; Silex uses 12 preparatory
+joint sweeps for powered worlds, 12 joint/contact sweeps and 4 position sweeps.
+These are behavioral settings, not a claim of equal computational work.
+The motor and its anchor reaction are solved together; the torque limit
+bounds the accumulated effort over the entire step.
+
+The guard checks analytical torque/inertia acceleration, angular momentum,
+active stops and coasting after motor off. Central angle comparisons allow
+0.034 rad; pendulum comparisons allow 0.04 m, 0.04 rad, 0.08 rad/s, 0.8 N and
+0.2 N·m. An impact sample may differ in speed only when both angles are within
+0.034 rad of the same stop and speeds remain bounded by 2.001 rad/s; both must
+be arrested at steps 60 and 120. Missing, duplicate, unknown or non-finite
+samples and perturbed trajectories are rejected. This is a two-second
+behavioral qualification of velocity motors, without a performance, position
+servo, joint friction, soft stop or long-duration claim.

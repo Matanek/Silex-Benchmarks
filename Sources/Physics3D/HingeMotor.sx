@@ -1,0 +1,43 @@
+use GFX.Physics
+use STD.Math
+
+func run_motor_case(case_id:int) {
+    var gravity = Math.Vec3()
+    if case_id == 4 { gravity = Math.Vec3(0.0,-9.81,0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_type = Physics.BodyType3D.fixed
+    if case_id == 2 { first_type = Physics.BodyType3D.dynamic }
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = first_type
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id == 2 { first_settings.mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(0.1)) }
+    var first = world.create_rigid_body(first_settings)
+    var anchor = Math.Vec3(); var pose = Physics.Transform3D()
+    var inertia = 0.1
+    if case_id == 2 { inertia = 0.4 }
+    if case_id == 4 { anchor = Math.Vec3(0.0,1.0,0.0); pose = Physics.Transform3D(Math.Vec3(0.0,-1.0,0.0)) }
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = pose
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(inertia))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var speed = 10.0; var torque = 0.1
+    if case_id == 1 { speed = 1.0; torque = 1.0 }
+    if case_id == 2 { speed = 1.0 }
+    if case_id == 3 { speed = 2.0; torque = 0.4 }
+    if case_id == 4 { speed = 1.0; torque = 20.0 }
+    var settings = Physics.HingeConstraint3DSettings() ..second_local_anchor = anchor
+        ..motor = Physics.HingeMotor3D(speed,torque)
+    if case_id == 3 { settings.minimum_angle = -0.2; settings.maximum_angle = 0.3 }
+    var hinge = world.create_hinge_constraint(first,second,settings)
+    var step = 1
+    while step <= 120 {
+        if step == 61 && (case_id == 1 || case_id == 2 || case_id == 3) { hinge.set_motor(Physics.HingeMotor3D(-speed,torque)) }
+        if step == 91 && case_id == 1 { hinge.set_motor(null) }
+        world.step(1.0 / 60.0)
+        if step % 15 == 0 {
+            print("motor $(case_id) $(step) $(second.position().x) $(second.position().y) $(hinge.angle()) $(hinge.angular_speed()) $(first.angular_velocity().z) $(second.angular_velocity().z) $(hinge.motor_torque()) $(hinge.anchor_error().length()) $(hinge.axis_error()) $(hinge.reaction_force().y)")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 5 { run_motor_case(i); i++ } }
