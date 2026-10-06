@@ -1,0 +1,31 @@
+use GFX.GPU
+use Tensor
+use Package.ForwardBuilder
+
+enum ActivationKind { relu; sigmoid; tanh }
+
+public nocopy class Activation:Layer {
+    private let kind:ActivationKind
+
+    private init(kind:ActivationKind) { self.kind = kind }
+
+    static func relu() Activation { return Activation(ActivationKind.relu) }
+    static func sigmoid() Activation { return Activation(ActivationKind.sigmoid) }
+    static func tanh() Activation { return Activation(ActivationKind.tanh) }
+
+    override package func checkpoint_configuration() str {return match self.kind {relu=>"Activation:relu";sigmoid=>"Activation:sigmoid";tanh=>"Activation:tanh"}}
+
+    override func forward(input:Tensor) Tensor {
+        if let prepared=Layer.run_owned_forward(self,input) { return prepared }
+        return match self.kind {
+            relu => input.relu()
+            sigmoid => input.sigmoid()
+            tanh => input.tanh()
+        }
+    }
+
+    override package func describe_forward(builder:ForwardBuilder) Result<void,str> {
+        return match self.kind {relu=>builder.relu();sigmoid=>builder.sigmoid();tanh=>builder.tanh()}
+    }
+
+}

@@ -1,0 +1,146 @@
+use Tensor
+use Tensor.Neural
+use Tensor.Optim
+use GFX.GPU
+use STD.Math
+use STD.Time.Stopwatch
+use STD.Process
+
+struct Observation {var output:Tensor;var loss:Tensor}
+
+func near(left:Tensor,right:Tensor,tolerance:float) {
+    let a=left.detach().cpu().values()
+    let b=right.detach().cpu().values()
+    assert(a.count()==b.count() && left.dtype()==right.dtype())
+    assert(left.shape().count()==right.shape().count())
+    var i=0
+    while i<left.shape().count() {assert(left.shape()[i]==right.shape()[i]);i++}
+    i=0
+    while i<a.count() {
+        if !Math.is_finite(a[i]) || !Math.is_finite(b[i]) || Math.abs(a[i]-b[i])>tolerance {
+            print("ADAM_UPDATE_PROBE_MISMATCH index=$(i) left=$(a[i]) right=$(b[i]) tolerance=$(tolerance)")
+        }
+        assert(Math.is_finite(a[i]) && Math.is_finite(b[i]) && Math.abs(a[i]-b[i])<=tolerance)
+        i++
+    }
+}
+func optional_near(left:Tensor?,right:Tensor?,tolerance:float) {
+    if let a=left {
+        if let b=right {near(a,b,tolerance)} else {panic("missing training state")}
+    } else {assert(right==null)}
+}
+func state_near(left:Optim.AdamWState,right:Optim.AdamWState,tolerance:float) {
+    assert(left.learning_rate==right.learning_rate && left.beta1==right.beta1 && left.beta2==right.beta2)
+    assert(left.epsilon==right.epsilon && left.weight_decay==right.weight_decay)
+    assert(left.parameters.count()==right.parameters.count())
+    var i=0
+    while i<left.parameters.count() {
+        let a=left.parameters[i]
+        let b=right.parameters[i]
+        assert(a.name==b.name && a.step_count==b.step_count && a.shape.count()==b.shape.count())
+        var axis=0
+        while axis<a.shape.count() {assert(a.shape[axis]==b.shape[axis]);axis++}
+        optional_near(a.first_moment,b.first_moment,tolerance)
+        optional_near(a.second_moment,b.second_moment,tolerance)
+        i++
+    }
+}
+func model_near(left:Neural.Layer,right:Neural.Layer,tolerance:float) {
+    var a=left.parameters()
+    var b=right.parameters()
+    assert(a.count()==b.count() && left.is_training()==right.is_training())
+    assert(left.buffers().count()==right.buffers().count())
+    var i=0
+    while i<a.count() {
+        assert(a[i].name()==b[i].name() && a[i].is_trainable()==b[i].is_trainable())
+        near(a[i].value(),b[i].value(),tolerance)
+        optional_near(a[i].gradient(),b[i].gradient(),tolerance)
+        i++
+    }
+}
+func measure_values(count:int) float[] {
+    var values:float[]=[]
+    var i=0
+    while i<count {values.append((i%17-8) as float/32.0);i++}
+    return values
+}
+func measure_model(features:int,hidden:int,outputs:int,normalized:bool) Neural.Sequential {
+    var layers:Neural.Layer[]=[Neural.Dense("hidden",features,hidden,101)]
+    if normalized {layers.append(Neural.LayerNorm("norm",[hidden],epsilon:0.25))}
+    layers.append(Neural.Activation.tanh());layers.append(Neural.Dense("output",hidden,outputs,102))
+    return Neural.Sequential(layers)
+}
+func measure_eager(model:Neural.Layer,optimizer:Optim.AdamW,input:Tensor,target:Tensor) Observation {
+    optimizer.zero_grad()
+    let output=model.forward(input)
+    let loss=output.mse_loss(target)
+    loss.backward();optimizer.step()
+    return Observation(output:output.detach(),loss:loss.detach())
+}
+func measure_emit(label:str,value:Tensor) int {
+    let values=value.detach().cpu().values()
+    var i=0
+    while i<values.count() {assert(Math.is_finite(values[i]));print("TRAINING_VALUE label=$(label) index=$(i) value=$(values[i])");i++}
+    return values.count()
+}
+func main() {
+    var arguments=try Process.arguments() else error {panic(error.detail)}
+    var planned=false;var selected=0
+    for argument in arguments {
+        if argument=="--planned" {planned=true}
+        if argument=="--case-1" {selected=1}
+        if argument=="--case-2" {selected=2}
+    }
+    var rows=2;var features=2;var hidden=4;var outputs=2;var iterations=128
+    if selected==1 {rows=16;features=16;hidden=32;outputs=8;iterations=64}
+    if selected==2 {rows=4;iterations=64}
+    let normalized=selected==2
+    var device=GPU.Device(GPU.DeviceSettings(debug:false))
+    var model=measure_model(features,hidden,outputs,normalized)
+    var reference=measure_model(features,hidden,outputs,normalized)
+    model.to(device)
+    var optimizer=Optim.AdamW(model.parameters(),learning_rate:0.001,beta1:0.8,beta2:0.9,epsilon:0.01,weight_decay:0.07)
+    var cpu_optimizer=Optim.AdamW(reference.parameters(),learning_rate:0.001,beta1:0.8,beta2:0.9,epsilon:0.01,weight_decay:0.07)
+    let cpu_input=Tensor(measure_values(rows*features),[rows,features])
+    let cpu_target=Tensor(measure_values(rows*outputs),[rows,outputs])
+    let input=cpu_input.to(device);let target=cpu_target.to(device)
+    device.wait_until_idle()
+    var capture=Stopwatch();capture.start()
+    var plan=try Neural.TrainingStep.mse(model,optimizer,input,target) else error {panic(error)}
+    capture.stop()
+    var result=Observation(output:input,loss:Tensor.scalar(0.0))
+    var i=0
+    while i<16 {
+        if planned {var step=try plan.run(input,target) else error {panic(error)};result=Observation(output:step.output,loss:step.loss)}
+        else {result=measure_eager(model,optimizer,input,target)}
+        i++
+    }
+    device.wait_until_idle();device.reset_command_stats()
+    var timer=Stopwatch();timer.start();i=0
+    while i<iterations {
+        if planned {var step=try plan.run(input,target) else error {panic(error)};result=Observation(output:step.output,loss:step.loss)}
+        else {result=measure_eager(model,optimizer,input,target)}
+        i++
+    }
+    device.wait_until_idle();timer.stop()
+    let native=device.command_stats()
+    var passes=84;if normalized {passes=147}
+    assert(native.compute_passes==passes*iterations)
+    var expected=Observation(output:cpu_input,loss:Tensor.scalar(0.0));i=0
+    while i<iterations+16 {expected=measure_eager(reference,cpu_optimizer,cpu_input,cpu_target);i++}
+    near(result.output,expected.output,0.00002);near(result.loss,expected.loss,0.00002)
+    model_near(model,reference,0.00002);state_near(optimizer.state(),cpu_optimizer.state(),0.00002)
+    near(input,cpu_input,0.0);near(target,cpu_target,0.0)
+    var observations=measure_emit("output",result.output)+measure_emit("loss",result.loss)
+    var parameters=model.parameters();var state=optimizer.state();i=0
+    for var parameter in parameters {
+        observations+=measure_emit("weight$(i)",parameter.value())
+        if let gradient=parameter.gradient() {observations+=measure_emit("gradient$(i)",gradient)} else {panic("missing measured gradient")}
+        if let first=state.parameters[i].first_moment {observations+=measure_emit("first$(i)",first)} else {panic("missing measured first moment")}
+        if let second=state.parameters[i].second_moment {observations+=measure_emit("second$(i)",second)} else {panic("missing measured second moment")}
+        assert(state.parameters[i].step_count==iterations+16)
+        i++
+    }
+    if planned {assert(plan.statistics().executions==iterations+16)} else {assert(plan.statistics().executions==0)}
+    print("TRAINING_PLAN_MEASURE status=pass case=$(selected) planned=$(planned) iterations=$(iterations) elapsed_ms=$(timer.get_elapsed_milliseconds()) preparation_ms=$(capture.get_elapsed_milliseconds()) passes=$(native.compute_passes) observations=$(observations)")
+}

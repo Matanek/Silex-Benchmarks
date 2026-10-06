@@ -295,3 +295,50 @@ ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
 Use the sealed campaign's `Run.py` for a fresh balanced A/B and A/A series,
 after qualifying the new exact sources and compiler. Keep measurement separate
 from concurrent builds/tests; historical timings belong to their recorded pins.
+
+
+## Prepared public MSE/AdamW training
+
+`TrainingStep.sx` compares one complete eager training loop with the public
+`Neural.TrainingStep.mse` program on identical sources and one Release compiler.
+The timed region includes zero-grad, forward, scalar MSE, reference backward,
+AdamW update and final device completion. Preparation is recorded separately;
+Profile is disabled during timing. Both arms retain a prepared plan to keep
+its ownership cost identical. Every process checks final output, loss,
+gradients, weights, moments, counters and current hyperparameters against an
+independent CPU eager model at unchanged absolute tolerance 2e-5.
+
+On Apple M3 Pro / macOS arm64 / Metal, October 6, 2026, sixteen balanced pairs
+and eight A/A controls per arm admit whole-step gains of **6.21%** for
+MLP(2,2,4,2) and **20.66%** for Dense–LayerNorm–tanh–Dense(4,2,4,2).
+All sixteen pairs favor the prepared program. The larger MLP(16,16,32,8)
+**regresses by 6.49%**, with zero favorable pairs; use eager on this workload.
+All A/A controls pass the unchanged 5% / 3 MAD / 14-of-16 admission rule.
+This is an explicit choice for qualified workloads, with no general gain claim.
+
+The [sealed campaign](Baselines/2026-10-06-macos-arm64-training-step/README.md)
+retains 192 process logs and 229,312 exactly matching GPU scalar observations,
+raw time/RSS, CSV/JSON, the frozen protocol, complete module snapshots and a
+standalone `Verify.py` that reconstructs the evidence without a GPU.
+Debug and Release proofs include warm restoration, freeze/unfreeze, rejected
+signatures and incoming custom/consumed graphs before mutation, nonfinite
+propagation and 2,048 strided replay steps across two devices with complete
+resource destruction. Six targets compile and link; only macOS arm64 runtime
+and performance are qualified. RSS is process memory, not physical VRAM.
+
+Build from the workspace root with the compiler containing the provider-module
+visibility and indexed-class-field ownership fixes:
+
+```sh
+ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/TrainingStep.sx \
+  --release --output /private/tmp/tensor-training-step
+/private/tmp/tensor-training-step --case-0
+/private/tmp/tensor-training-step --planned --case-0
+```
+
+Cases 0–2 select the small MLP, larger MLP and normalized model. For a fresh
+campaign, qualify the exact sources and compiler first, then use the recorded
+driver with isolated balanced A/B and A/A processes. Keep timing separate from
+builds/tests. Float16, mixed precision and the final six-family confrontation
+remain separate qualifications.

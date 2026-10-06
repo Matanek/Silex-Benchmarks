@@ -1,0 +1,27 @@
+2026-10-06 03:45:31.515 Task16Training-Public-Release[97158:16420126] Metal API Validation Enabled
+ADAM_UPDATE_PROBE_REGION arm=eager step=0 part=forward passes=5 submissions=5 fences=5 pipelines=0 allocations=5 reuses=0
+ADAM_UPDATE_PROBE_REGION arm=eager step=0 part=loss-backward passes=19 submissions=19 fences=19 pipelines=0 allocations=18 reuses=1
+ADAM_UPDATE_PROBE_REGION arm=eager step=0 part=update passes=68 submissions=68 fences=68 pipelines=8 allocations=64 reuses=4
+TRAINING_PLAN_PROBE_REGION step=0 normalized=false passes=92 submissions=19 fences=19 allocations=77 reuses=15
+ADAM_UPDATE_PROBE_REGION arm=eager step=9 part=forward passes=5 submissions=5 fences=5 pipelines=0 allocations=3 reuses=2
+ADAM_UPDATE_PROBE_REGION arm=eager step=9 part=loss-backward passes=19 submissions=19 fences=19 pipelines=0 allocations=5 reuses=14
+ADAM_UPDATE_PROBE_REGION arm=eager step=9 part=update passes=60 submissions=60 fences=60 pipelines=0 allocations=30 reuses=30
+TRAINING_PLAN_PROBE_REGION step=9 normalized=false passes=84 submissions=19 fences=19 allocations=62 reuses=22
+TRAINING_PLAN_PROBE_REGION step=9 normalized=false passes=84 submissions=19 fences=19 allocations=47 reuses=37
+TRAINING_PLAN_PROBE_STATE status=pass normalized=false steps=12 restore_boundary=6 eager_gpu=exact cpu_tolerance=0.00002 capture=closed
+ADAM_UPDATE_PROBE_REGION arm=eager step=0 part=forward passes=13 submissions=13 fences=13 pipelines=0 allocations=13 reuses=0
+ADAM_UPDATE_PROBE_REGION arm=eager step=0 part=loss-backward passes=44 submissions=44 fences=44 pipelines=0 allocations=34 reuses=10
+ADAM_UPDATE_PROBE_REGION arm=eager step=0 part=update passes=102 submissions=102 fences=102 pipelines=12 allocations=70 reuses=32
+TRAINING_PLAN_PROBE_REGION step=0 normalized=true passes=159 submissions=44 fences=44 allocations=112 reuses=47
+ADAM_UPDATE_PROBE_REGION arm=eager step=9 part=forward passes=13 submissions=13 fences=13 pipelines=0 allocations=8 reuses=5
+ADAM_UPDATE_PROBE_REGION arm=eager step=9 part=loss-backward passes=44 submissions=44 fences=44 pipelines=0 allocations=17 reuses=27
+ADAM_UPDATE_PROBE_REGION arm=eager step=9 part=update passes=90 submissions=90 fences=90 pipelines=0 allocations=61 reuses=29
+TRAINING_PLAN_PROBE_REGION step=9 normalized=true passes=147 submissions=44 fences=44 allocations=96 reuses=51
+TRAINING_PLAN_PROBE_REGION step=9 normalized=true passes=147 submissions=44 fences=44 allocations=98 reuses=49
+TRAINING_PLAN_PROBE_STATE status=pass normalized=true steps=12 restore_boundary=6 eager_gpu=exact cpu_tolerance=0.00002 capture=closed
+TRAINING_PLAN_GUARDS status=pass hooks=0 rejection=before_zero_grad device_mode_layout_shape_dtype=checked examples=not_retained owners=independent operations=bounded
+TRAINING_STEP_GRAPH_GUARDS status=pass callbacks=0 consumed=before_zero_grad incoming_nodes=4096 hot_state=preserved
+TRAINING_STEP_NONFINITE status=pass nan_infinity_negative_infinity=true cold_warm=preserved
+TRAINING_PLAN_REPLAY status=pass steps=1024 normalized=false eager_gpu=exact retained=4 strided_input_target_parameter=true peak_buffers=180 peak_bytes=4996
+TRAINING_PLAN_REPLAY status=pass steps=1024 normalized=true eager_gpu=exact retained=4 strided_input_target_parameter=true peak_buffers=251 peak_bytes=7240
+TRAINING_STEP_RESOURCES status=pass devices=2 live=0 peak_buffers=235 peak_bytes=6384

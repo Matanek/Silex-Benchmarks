@@ -1,0 +1,33 @@
+[
+  {
+    "label": "Task16-Documentation-Example-Build",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+      "compile",
+      "Packages/Tensor/Tests/Consumer/Qualification/TrainingStepExample.sx",
+      "--release",
+      "--output",
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task16-Documentation-Example"
+    ],
+    "exit_code": 0,
+    "status": "pass"
+  },
+  {
+    "label": "Task16-Documentation-Example-Run",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task16-Documentation-Example"
+    ],
+    "exit_code": 0,
+    "status": "pass"
+  },
+  {
+    "label": "Task16-Package-Check",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+      "check",
+      "Packages/Tensor"
+    ],
+    "exit_code": 0,
+    "status": "pass"
+  }
+]

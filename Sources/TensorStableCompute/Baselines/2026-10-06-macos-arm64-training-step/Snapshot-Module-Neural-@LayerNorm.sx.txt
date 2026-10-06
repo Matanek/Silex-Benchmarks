@@ -1,0 +1,53 @@
+use GFX.GPU
+use STD.Math
+use Tensor
+use Package.ForwardBuilder
+
+public nocopy class LayerNorm:Layer {
+    private let normalized_shape:int[]
+    private let epsilon:float
+    private var scale:Parameter
+    private var offset:Parameter
+
+    init(name:str, normalized_shape:int[], epsilon:float = 0.00001) {
+        if normalized_shape.is_empty() {
+            panic("Tensor.Neural.LayerNorm requires a non-empty normalized shape")
+        }
+        for dimension in normalized_shape {
+            if dimension <= 0 { panic("Tensor.Neural.LayerNorm normalized dimensions must be positive") }
+        }
+        if !Math.is_finite(epsilon) || epsilon <= 0.0 {
+            panic("Tensor.Neural.LayerNorm requires finite epsilon > 0")
+        }
+        self.normalized_shape = normalized_shape
+        self.epsilon = epsilon
+        self.scale = Parameter(name + ".weight", Tensor.ones(normalized_shape))
+        self.offset = Parameter(name + ".bias", Tensor.zeros(normalized_shape))
+        self.register_parameter(self.scale)
+        self.register_parameter(self.offset)
+    }
+
+    override package func checkpoint_configuration() str {return "LayerNorm:"+checkpoint_ints(self.normalized_shape)+":"+training_checkpoint_float_text(self.epsilon)}
+
+    override func forward(input:Tensor) Tensor {
+        if let prepared=Layer.run_owned_forward(self,input) { return prepared }
+        if input.rank() < self.normalized_shape.count() {
+            panic("Tensor.Neural.LayerNorm.forward requires its normalized trailing shape")
+        }
+        var axis = 0
+        while axis < self.normalized_shape.count() {
+            let input_axis = input.rank() - self.normalized_shape.count() + axis
+            if input.shape()[input_axis] != self.normalized_shape[axis] {
+                panic("Tensor.Neural.LayerNorm.forward requires its normalized trailing shape")
+            }
+            axis++
+        }
+        return input.layer_norm(self.normalized_shape.count(), self.epsilon)
+            .multiply(self.scale.value()).add(self.offset.value())
+    }
+
+    override package func describe_forward(builder:ForwardBuilder) Result<void,str> {
+        return builder.layer_norm(self.normalized_shape,self.epsilon,self.scale,self.offset)
+    }
+
+}

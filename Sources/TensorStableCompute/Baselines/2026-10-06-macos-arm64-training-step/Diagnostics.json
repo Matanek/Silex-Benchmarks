@@ -1,0 +1,483 @@
+[
+  {
+    "fixture": "AdamBeta.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:39:9: runtime error: Tensor.Optim.Adam requires finite 0 <= beta1 < 1\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "5ca02e5acae99dd4131d023ead8822d1ccdeb4ba1f39b49a7c6ec7808645ed0a"
+  },
+  {
+    "fixture": "AdamCounterOverflow.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@AdamEngine.sx:126:17: runtime error: Tensor.Optim.Adam.step counter overflows int\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "6a402d21201f90384fe6b4791465cde782afb5d5ae647c416495e0754788ba8f"
+  },
+  {
+    "fixture": "AdamLearningRateInfinity.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:27:9: runtime error: Tensor.Optim.Adam.set_learning_rate requires finite learning_rate > 0\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "701a3e6137dcd05cba1a9ec06c7bd90e90a390e9c7c4ec3aeed6f25eae7c463d"
+  },
+  {
+    "fixture": "AdamLearningRateNaN.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:27:9: runtime error: Tensor.Optim.Adam.set_learning_rate requires finite learning_rate > 0\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "7dc47eed9699b7658372d6a4b195e4429faabce18be7010e08a0adeaca50968d"
+  },
+  {
+    "fixture": "AdamLearningRateZero.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:27:9: runtime error: Tensor.Optim.Adam.set_learning_rate requires finite learning_rate > 0\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "65f56bde31f6215eca9bc97f8c04e6d1b0f175ea11c9dc8021f4f8e93c7acf96"
+  },
+  {
+    "fixture": "AdamWCounterOverflow.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@AdamEngine.sx:126:17: runtime error: Tensor.Optim.AdamW.step counter overflows int\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "a4c3b32c08b235450d791fa7a6d91c691e8e3de42bdeacd56caaee5d31a84bad"
+  },
+  {
+    "fixture": "AdamWInvalidBeta.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:39:9: runtime error: Tensor.Optim.AdamW requires finite 0 <= beta1 < 1\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "6ce7520154359d1f8be3ff5a8c024d122947f12a63dcefc7f899900dcc112052"
+  },
+  {
+    "fixture": "AdamWLearningRateInfinity.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:27:9: runtime error: Tensor.Optim.AdamW.set_learning_rate requires finite learning_rate > 0\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "1f6c4aebd0b1849b2cd3c87faa4c84fffe065b07236f033b6b767022e908cfb3"
+  },
+  {
+    "fixture": "AdamWLearningRateNaN.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:27:9: runtime error: Tensor.Optim.AdamW.set_learning_rate requires finite learning_rate > 0\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "999200e57013b2d88be571667fad0f9dc2852cc8484d605d26c66571fe022c27"
+  },
+  {
+    "fixture": "AdamWLearningRateZero.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:27:9: runtime error: Tensor.Optim.AdamW.set_learning_rate requires finite learning_rate > 0\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "98e60ab6a61ecf1daa5585fe4e8d25827fbd50fa3476b9f32aebf5130754b0ea"
+  },
+  {
+    "fixture": "AdamWPrivateEngine.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/AdamWPrivateEngine.sx:2:26: error: structure 'AdamEngine' is module-visible and unavailable outside its module\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "e28ca0abf617c2884c5aedf5115362d9f4a7ab1d950d732d252ef792bb64773c"
+  },
+  {
+    "fixture": "AutogradCast.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:793:13: runtime error: Tensor.cast cannot change placement or dtype inside a tracked graph; call detach() first\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "a3d3896fd9c103610c6a300dd1238acc780adcb75473c3039b43eeb2ca853ef1"
+  },
+  {
+    "fixture": "AutogradConsumed.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:136:28: runtime error: Tensor.backward cannot reuse a consumed graph\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "093becb18d231e82931cf93e1cea04f23bfb66cb348bce0c9bf23dfc54b20f47"
+  },
+  {
+    "fixture": "AutogradInteger.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Autograd/@Variable.sx:11:13: runtime error: Tensor.Autograd.Variable supports only dtype float32\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "6ca83371043ff777be4bb9f0fad97fcf0da50e44bbdd28ad4f483a233f6a844b"
+  },
+  {
+    "fixture": "AutogradNonScalar.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:505:29: runtime error: Tensor.backward without a seed requires a scalar output\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "36608dfe94993e044a0320853c4fffcfbd4586a2f11a95cbc14bd6f1b6fafdd2"
+  },
+  {
+    "fixture": "AutogradSeed.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:491:13: runtime error: Tensor.backward seed must be float32 with the output shape\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "fc9a3ee83e4f1aec498e3eed9996a70224043e325940bf11d2bd33d915296c3f"
+  },
+  {
+    "fixture": "AutogradSeedDType.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:491:13: runtime error: Tensor.backward seed must be float32 with the output shape\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "3b83dadd799ef7ac25b87724164a2159462971ea77987459fc6a4d7b99b963a5"
+  },
+  {
+    "fixture": "AutogradSeedPlacement.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:494:13: runtime error: Tensor.backward seed must use the output placement\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "78d06bbceb111b2256e0ac3c52d910161db3276709fb8295ed9799c6ff28cd25"
+  },
+  {
+    "fixture": "AutogradTransfer.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:793:13: runtime error: Tensor.to cannot change placement or dtype inside a tracked graph; call detach() first\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "83534b145b48d54778d3193007c5f1a5da128b8bd96995346e70f92bbbe4e937"
+  },
+  {
+    "fixture": "AutogradUntracked.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:485:5: runtime error: Tensor.backward requires a result connected to a tracked Variable\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "c5350c799fe36ba57cf8f2e0926d5f46dd595aab6de6a7c38fee0588e48db484"
+  },
+  {
+    "fixture": "CheckpointAdditional.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:74:17: runtime error: Tensor.Neural.Checkpoint.load contains additional parameter 'extra'\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "f4fd2124e7407352727128cdd6fc28910813fa89d1efaee679c013ac5a978747"
+  },
+  {
+    "fixture": "CheckpointDType.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:158:13: runtime error: Tensor.Neural.Checkpoint.load supports dtype float32 only\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "67e73d17bae8eb9ab97280dc4cb2aafd5a8e549d8be9c07f762c8294fed87db2"
+  },
+  {
+    "fixture": "CheckpointMissing.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:56:17: runtime error: Tensor.Neural.Checkpoint.load is missing parameter 'dense.bias'\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "6925cb6d477d421924e0a1bc3f091c7ad5dfe1fed4d24988274c2a025cded792"
+  },
+  {
+    "fixture": "CheckpointSchema.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:143:9: runtime error: Tensor.Neural.Checkpoint.load requires schema version 1\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "55efdec4117696a818be0144b54ef1c7a41eb456f494925dc4921d5a31e35631"
+  },
+  {
+    "fixture": "CheckpointShape.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Checkpoint.sx:59:17: runtime error: Tensor.Neural.Checkpoint.load shape mismatch for parameter 'dense.weight'\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "0cac4e4da49f890d4c12da1b524286845ad7a4f310bb655e7b961f82c1a747a6"
+  },
+  {
+    "fixture": "CustomConsumedInput.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:63:32: runtime error: Tensor.Autograd.apply cannot use a consumed graph\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "d47e394fbaaaf264493688bf206c82238fc96603276cdbe12fcc3424744c38d0"
+  },
+  {
+    "fixture": "CustomConsumedOutput.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Autograd.sx:136:28: runtime error: Tensor.backward cannot reuse a consumed graph\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "d09e72152c74943ef27fb6d58dd9fe6ebd548225afbe7bad8df741446cea762d"
+  },
+  {
+    "fixture": "CustomEmptyInputs.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:55:28: runtime error: Tensor.Autograd.apply requires at least one input\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "cfa9dd1ec455db5ae8d7f5a81ccf9c151a6c5887f2dc15fd3c35301a0148c6ed"
+  },
+  {
+    "fixture": "CustomGradientCount.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:27:13: runtime error: Tensor.Autograd.apply backward requires one gradient per input\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "00da3e6ed1b87a889ffa8b605584330fa6e176a2a604e2ea925a779d990fb7d2"
+  },
+  {
+    "fixture": "CustomGradientDType.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:34:17: runtime error: Tensor.Autograd.apply backward requires float32 gradients with each input shape\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "af31ad5d2b63d9702d0ee16c634ac2375490c095ba1b11039e7b343bb2a9cf8f"
+  },
+  {
+    "fixture": "CustomGradientPlacement.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "2026-10-06 04:02:18.385 CustomGradientPlacement-native-macos-arm64-debug-8b13c696854323f8[8993:16470179] Metal API Validation Enabled\n/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:37:17: runtime error: Tensor.Autograd.apply backward requires each input placement and GPU device\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "11c2f0e47fd71e482c4e9bcfaa3f2ca20488ef2c3cfa60e70d336d43c534b366"
+  },
+  {
+    "fixture": "CustomGradientShape.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:34:17: runtime error: Tensor.Autograd.apply backward requires float32 gradients with each input shape\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "a18ca6a7b5ad6c4f277adebb7d3afbc9d39ece28cc68f22b9c67a1074b64112c"
+  },
+  {
+    "fixture": "CustomInputDType.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:60:47: runtime error: Tensor.Autograd.apply inputs must use dtype float32\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "3227f79f9eb3775e8c5810686daa9f954b270acb432f2cd2f999dd586127dfc4"
+  },
+  {
+    "fixture": "CustomInputDevices.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "2026-10-06 04:02:23.431 CustomInputDevices-native-macos-arm64-debug-2b035c97fbb91b06[9092:16470528] Metal API Validation Enabled\n/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:61:51: runtime error: Tensor.Autograd.apply inputs must share placement and GPU device\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "a767892f8f9d0af68fd42697cbd3278c6d396e4129be284ea6679678ac52ed2d"
+  },
+  {
+    "fixture": "CustomLateRejection.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "Unchanged gradients before rejection\n/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:27:13: runtime error: Tensor.Autograd.apply backward requires one gradient per input\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "97714ed7885b3a0a291971b6b9975182ad5131fd8e00d202ca2b3d25a7652a2c"
+  },
+  {
+    "fixture": "CustomMixedPlacement.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "2026-10-06 04:02:26.853 CustomMixedPlacement-native-macos-arm64-debug-ca0b7ac67ec97f5a[9158:16470742] Metal API Validation Enabled\n/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:61:51: runtime error: Tensor.Autograd.apply inputs must share placement and GPU device\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "8f3c0cb33a7d0257087973c590e432e2b4a897e3e1293de13cb3cd95096a26c9"
+  },
+  {
+    "fixture": "CustomOutputDType.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:71:44: runtime error: Tensor.Autograd.apply output must use dtype float32\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "d44c487c6cbe2e246493d91e9f3fe48cd67285f76a2fc5b87f51a0445cc5c50e"
+  },
+  {
+    "fixture": "CustomOutputPlacement.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "2026-10-06 04:02:30.250 CustomOutputPlacement-native-macos-arm64-debug-18cee6d0c6548547[9255:16471244] Metal API Validation Enabled\n/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:72:48: runtime error: Tensor.Autograd.apply output must use the input placement and GPU device\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "f0c139cbf16100fba0adc97e67384a6f43ba531f0aad6fdd1d3c02dd0f73f242"
+  },
+  {
+    "fixture": "CustomTrackedGradient.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:40:17: runtime error: Tensor.Autograd.apply backward requires detached gradients\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "06ecd0b3c572a2c9f4b89f57ec803722589ecc13caa4caddf09abd4f025c68d5"
+  },
+  {
+    "fixture": "CustomTrackedOutput.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:73:32: runtime error: Tensor.Autograd.apply forward requires a detached output\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "2038f302307211ff00b6e90f0dd23c8b5bb3e5891d1d1a25c298540eca7597f7"
+  },
+  {
+    "fixture": "CustomUntrackedGradientShape.sx",
+    "exit_code": null,
+    "exit_class": "positive",
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@CustomAutograd.sx:34:17: runtime error: Tensor.Autograd.apply backward requires float32 gradients with each input shape\n",
+    "rejection_observed": true,
+    "provenance": "completed partial qualification; positive exit confirmed by runner",
+    "source_sha256": "6e4802dfc815342087687c28f83b8337aaea298128d24f99cbde3792e85abc30"
+  },
+  {
+    "fixture": "ForwardBuilderPrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/ForwardBuilderPrivate.sx:1:1: error: structure 'ForwardBuilder' is package-visible and unavailable outside package 'Tensor'\n",
+    "rejection_observed": true,
+    "source_sha256": "278251345773032631b6d82c5f90c561e8000d62193af8858baca20464e84424"
+  },
+  {
+    "fixture": "ForwardDescriptionPrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/ForwardDescriptionPrivate.sx:5:24: error: type 'Tensor.Neural.Activation' has no member named 'describe_forward'\n",
+    "rejection_observed": true,
+    "source_sha256": "1a64921973a2ae867bc8818190e100ab3d1bd52cad3be4fab07c70ad998cbac8"
+  },
+  {
+    "fixture": "LayerCPUGradient.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Layer.sx:299:47: runtime error: Tensor.Neural.Layer.cpu requires zero_grad before changing placement\n",
+    "rejection_observed": true,
+    "source_sha256": "9baba167894d7ac14438fd7142e08f180e429ee8e8542dad46a7870247900826"
+  },
+  {
+    "fixture": "LayerConstruction.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/LayerConstruction.sx:2:34: error: constructor of 'Tensor.Neural.Layer' is unavailable here\n",
+    "rejection_observed": true,
+    "source_sha256": "e9d2a2cb8d01a33f22e6b8e6e4efd6d24bb6065c1064cf86eec3082ee2e01cc6"
+  },
+  {
+    "fixture": "LayerCrossDeviceBuffer.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:230:49: runtime error: Tensor.to cannot migrate between GPU devices; call cpu().to(other_device)\n",
+    "rejection_observed": true,
+    "source_sha256": "3c53f58394dab49b8839500d8fb83e277469472febd9c3b7153e7989bc45986f"
+  },
+  {
+    "fixture": "LayerCrossDeviceParameter.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/@Tensor.sx:230:49: runtime error: Tensor.to cannot migrate between GPU devices; call cpu().to(other_device)\n",
+    "rejection_observed": true,
+    "source_sha256": "81d8c33bd4b216a0c57ca909134c5567d12d32d95cc772d0b1f6866069fe4d1e"
+  },
+  {
+    "fixture": "LayerFreezeGradient.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Layer.sx:290:17: runtime error: Tensor.Neural.Layer requires zero_grad before changing trainability\n",
+    "rejection_observed": true,
+    "source_sha256": "3e40aa781ae6f1bd08833d9d681f9c8a4ffa176d20790c7a01053ce5f96ee887"
+  },
+  {
+    "fixture": "LayerModeCollision.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Layer.sx:16:54: runtime error: Tensor.Neural.Layer duplicate state name 'collision'\n",
+    "rejection_observed": true,
+    "source_sha256": "8abe70b3f3b497cd90a80c1d4703432e2721726acf0f4ca82e740f05b2f17c13"
+  },
+  {
+    "fixture": "LayerToGradient.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Layer.sx:299:47: runtime error: Tensor.Neural.Layer.to requires zero_grad before changing placement\n",
+    "rejection_observed": true,
+    "source_sha256": "f8bd500ece3aa8faaa689c3162a4ba4f0b1cf572e1ddee4dc5bb7b976db8e1d9"
+  },
+  {
+    "fixture": "LayerUnfreezeGradient.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Neural/@Layer.sx:290:17: runtime error: Tensor.Neural.Layer requires zero_grad before changing trainability\n",
+    "rejection_observed": true,
+    "source_sha256": "c879aaf2cf265663432c9f0d78cf15ee1f6de835b4c92e0af309982904e67229"
+  },
+  {
+    "fixture": "OptimizerDuplicateName.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:15:17: runtime error: Tensor.Optim.SGD requires unique parameter names; duplicate 'weight'\n",
+    "rejection_observed": true,
+    "source_sha256": "15904d5dcb5edaed077cd117ee95a5f4d00bf3d907c6dd0457644af8952b3188"
+  },
+  {
+    "fixture": "OptimizerStatePlacement.sx",
+    "exit_code": 1,
+    "diagnostic": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Packages/Tensor/Module/Optim/@Support.sx:61:9: runtime error: Tensor.Optim.Adam.step requires first-moment state on parameter 'second' placement\n",
+    "rejection_observed": true,
+    "source_sha256": "13c42567b7c346d98cb6f76c41310a439c6170f62d6585553f19f50d569f82c5"
+  },
+  {
+    "fixture": "PreparedAdamUpdatePrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/PreparedAdamUpdatePrivate.sx:1:1: error: structure 'PreparedAdamUpdate' is package-visible and unavailable outside package 'Tensor'\n",
+    "rejection_observed": true,
+    "source_sha256": "9e7d5485eb619cdf5751b2095b63b7843ff4227231f2f32ac96f421e5e5c7815"
+  },
+  {
+    "fixture": "PreparedAdamWRecipePrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/PreparedAdamWRecipePrivate.sx:7:28: error: type 'Tensor.Optim.AdamW' has no member named 'build_prepared_updates'\n",
+    "rejection_observed": true,
+    "source_sha256": "e6ac1e808ed18ab6b8fc8f22baf34b5ca51e40738768688f348ae3d66740cf47"
+  },
+  {
+    "fixture": "PreparedForwardPrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/PreparedForwardPrivate.sx:1:1: error: structure 'PreparedForward' is package-visible and unavailable outside package 'Tensor'\n",
+    "rejection_observed": true,
+    "source_sha256": "3b36dd8344d026d9647845ef6e8eda02f6f961a9a396ca2591ed7571b59fe06a"
+  },
+  {
+    "fixture": "PreparedMSEPrivate.sx",
+    "exit_code": 1,
+    "diagnostic": "Packages/Tensor/Tests/Consumer/Diagnostics/PreparedMSEPrivate.sx:1:1: error: structure 'PreparedMSE' is package-visible and unavailable outside package 'Tensor'\n",
+    "rejection_observed": true,
+    "source_sha256": "f377a128037c3ede2f23a6743bf0ed2f0cf4bd18ee6e78c1a7506f7f4b54b3cc"
+  }
+]

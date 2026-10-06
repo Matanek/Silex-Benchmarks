@@ -1,0 +1,984 @@
+{
+  "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+  "fingerprints": {
+    "Packages/Tensor/Module/@IndexedReductions.sx": "d4cf15a761960f0f2898816d7b8595f6a1db303ff152626677514269e012e85e",
+    "Packages/Tensor/Module/@Autograd.sx": "c2ef0cd22eaae9bc904453a6992ecd61d4d561f386dd5a499e618f41e85b4bb6",
+    "Packages/Tensor/Module/@Spatial.sx": "6bcaae87f422567d2397d0193ba8284c51f747f8845904cc02e7613d57b7d7e3",
+    "Packages/Tensor/Module/@Profile.sx": "a7bb8fe1d301d9662e3505e576b945016a4d4ddc988e9dbb55b274f6cd60c8f3",
+    "Packages/Tensor/Module/@Tensor.sx": "17945ba644228b8192aee3d2b71512b4717881e9563051142a160aaf70bf6f2c",
+    "Packages/Tensor/Module/@CustomAutograd.sx": "a672d3954eda430595dcd6e909f66be7d43175f121917e3d3438568e7d683c03",
+    "Packages/Tensor/Module/@PreparedMSE.sx": "58bb4fb3b80c60826ae70f92cb0c9b954be33c13bb7d4d8a93a9d8db771e0201",
+    "Packages/Tensor/Module/@Sequences.sx": "5193a8902289b1320af0566add6f6e6c71184d9893e209351894053fe4d6adc7",
+    "Packages/Tensor/Module/@DType.sx": "9dfa02b4fc0f51be90b761a1662cd9f19fe817e85c4868d0918b76f4ab0e3790",
+    "Packages/Tensor/Module/@Embedding.sx": "adecb1e67a879b185055c5b93d8ee4bd73ccf63a01ed0cf758b18395f5a92af9",
+    "Packages/Tensor/Module/@AdamUpdate.sx": "4252b6f0afb352552f024bcd7e06205abc9dacdcd40e571ce19139f58169e750",
+    "Packages/Tensor/Module/@Layout.sx": "28ae53d97ad383e7d3d05c768d8bd5c209d72e98ed0b622801f5ffa2704c7fc4",
+    "Packages/Tensor/Module/@ForwardPlan.sx": "61a842fdb95a91b0d1808d89b9d854b19b2aebd32af60166266ed68d04d25cdd",
+    "Packages/Tensor/Module/@Masks.sx": "05315c15b5a9dd9e7fbae55986bb4e8a172d75352905740cb71b48666b9bf002",
+    "Packages/Tensor/Module/@LinearAlgebra.sx": "6d67c5f130962419533b4fdc263768357a48dc6100780edcd91358588570a95b",
+    "Packages/Tensor/Module/@Dropout.sx": "69c333c382d66af24b7deeb69efb7bd63334baa63581f188d659804d742cad2d",
+    "Packages/Tensor/Module/@Initialization.sx": "fd1e02ddc94e20e648e0b1b9e05959ce97dc3d7b5aeb0afaa820a84448ce33c2",
+    "Packages/Tensor/Module/@Statistics.sx": "dd51853d772d3bab637e0a8363eb04817164be875500ecbafa043c76d0bb4683",
+    "Packages/Tensor/Module/@Composition.sx": "52ef36bde966a8e71e760285f7c74746883ad5c3faeb564738fa34391c9fb294",
+    "Packages/Tensor/Module/@Reductions.sx": "199fca97ab58e60d5121fe1eae51c5f27dd3aa2fe4eb39cffb1d358bccb7d911",
+    "Packages/Tensor/Module/@Storage.sx": "faadfef6ef4035c494f6ae9b08261223d0c76b05d0e0435d4fcb9cb495e7cc26",
+    "Packages/Tensor/Module/@Neural.sx": "1d7e15f207471b37599958e05faada3347e09bf84f031c7cafe4edc03d7aef1b",
+    "Packages/Tensor/Module/@TopK.sx": "01ff88d109aa989608e7851c73cfe711fe1e43aef04980542f2fa8d9404ef2c0",
+    "Packages/Tensor/Module/@Operations.sx": "98673457e593a153be113fa7615831172de11ed0c2138ae173feaa745a677e9c",
+    "Packages/Tensor/Module/Autograd/@Variable.sx": "82aa69e1b93861dba43254fa9f56e0e684d5adfb23b50e70f6293e96eecfa053",
+    "Packages/Tensor/Module/Autograd/@Operation.sx": "1579b0e447cdfaf6455f5696c674f95ad739b8007069721fd194430d73e2118f",
+    "Packages/Tensor/Module/Autograd/@Gradcheck.sx": "6855f42ef45c169dc7833df45361a25a0c0a7faa21db9ee94d2c2c808f8ed3c5",
+    "Packages/Tensor/Module/Autograd/@Grad.sx": "dbb6731f8a8e1dc0350fe4943c6ca85b2f5173a48902faaf41edf723a5f46ff6",
+    "Packages/Tensor/Module/Optim/@Clipping.sx": "724fa01a7ec5c21204a9b4dee143c996b08f2a6996b9da6e64a9f562c324a717",
+    "Packages/Tensor/Module/Optim/@Support.sx": "13362710bf7729ddbf5c336800c7d2965ae1ecb8455da41e20889250ee9c9d41",
+    "Packages/Tensor/Module/Optim/@Adam.sx": "70eca6e4a659fb8b030dea3be5fa7c875cd7d16f4533f65741dfe825037f7adc",
+    "Packages/Tensor/Module/Optim/@AdamW.sx": "63b35cb5d9f949a07ae6b664591ea1a5beab0c29aa3bb23b0736d9e8840370b3",
+    "Packages/Tensor/Module/Optim/@SGD.sx": "7641eb984aefb65fc73b72e081a3370f4f89954f81f3bdab3912d8d5a32b33e6",
+    "Packages/Tensor/Module/Optim/@State.sx": "9d2a2fa89ab38512052021660a2e074883248de32b019d65a39fb0a20bb2fedf",
+    "Packages/Tensor/Module/Optim/@LearningRateSchedule.sx": "918c1f943b15ff83fc26d4cd12aeed4f7f66810262eb4bda640462e9c0ec30b7",
+    "Packages/Tensor/Module/Optim/@AdamEngine.sx": "1138569dd9084242d051a71469b625e498b10eb6753f72fc68bd82c0b2e1bcd6",
+    "Packages/Tensor/Module/Shaders/Reduction.hlsl": "10b4d7ab766ad6d8c22344d4742e6dd285e260714d7d8f9381348426842caf4a",
+    "Packages/Tensor/Module/Shaders/Gather.hlsl": "25ca10506f229a9cc44470091cb119394311335c72acba5db3307caae7813f08",
+    "Packages/Tensor/Module/Shaders/TopK.hlsl": "6665e35701713aa4223b71d320e38fd83037a074b7c1a05d1497d5832e7a8862",
+    "Packages/Tensor/Module/Shaders/Dropout.hlsl": "beef79ba02e4be90712ba72ae6ee9baeaee9180a588e006c8792615ef9d09136",
+    "Packages/Tensor/Module/Shaders/GatherGradient.hlsl": "f9f6529590bac434ac683ba6c6c7820f7e3137b8325d368d737af38510e5f4c8",
+    "Packages/Tensor/Module/Shaders/IndexReduction.hlsl": "e346997009d3e9c440b1a23dbedad22e3e30b3e2388a5fe18e9eed4a05ec415c",
+    "Packages/Tensor/Module/Shaders/Linear.hlsl": "b5bbbc4813424b457b5285f8021a72bfca3da80672e1537cd6caa3ab40333bfd",
+    "Packages/Tensor/Module/Shaders/Binary.hlsl": "a9774485705326e2d3b316e557baec5cc5a918e36a8d8581eb68d7473df50b8d",
+    "Packages/Tensor/Module/Shaders/Elementwise.hlsl": "049c3fd5c9db20561ec876d79f80f4fecc0c11f99ab174a2941f8781f64f5ba3",
+    "Packages/Tensor/Module/Shaders/PoolingGradient.hlsl": "eedae464e30ba5a084aaf03669396ac3c819c037124bdbf418e2b42740764e19",
+    "Packages/Tensor/Module/Shaders/Convolution.hlsl": "1de1e3164d4cb91ee2e8f12e329fddb657288b70aadc22d46c8579d980237e22",
+    "Packages/Tensor/Module/Shaders/Pooling.hlsl": "281c0ffd9d9504cc87412522c18a0d137a580b76778377cdfb90e8379f310e0f",
+    "Packages/Tensor/Module/Shaders/ConvolutionGradient.hlsl": "ac733c629367021458551d3118e509a9043e2fd067f8b9806428d934a6227955",
+    "Packages/Tensor/Module/Shaders/Masks.hlsl": "bfbf693cecca55e91c528c6d8792e714f1044484f18f370b07f0151df42d1b33",
+    "Packages/Tensor/Module/Data/@BatchCursor.sx": "f71603d0964f6112517d42b55e9aead44ea6e8e6183fc7e32aa4dba98e5f2632",
+    "Packages/Tensor/Module/Data/@Source.sx": "5745ba9360e9d06cf673dc551fbb17803d9e5c1b73c9423290de28bcc5d1389a",
+    "Packages/Tensor/Module/Data/@BatchPrefetch.sx": "dbe75b3513698804bf68ea5aef9f3fe961945df48a22c26814168334b5351dbc",
+    "Packages/Tensor/Module/Data/@BatchSampler.sx": "edcc69d78b040a64d694958ca420dc4f55b5858177b2161e1f62ef5b9910793e",
+    "Packages/Tensor/Module/Neural/@Pooling.sx": "087ac786004c34189fe748035a9c2c4d558f1d4216465fed36e3b60e02e26785",
+    "Packages/Tensor/Module/Neural/@MultiHeadAttention.sx": "07d75fa92b20f90cef1781e33ec1123c96f7b16f0ad9f9624170d7d1b2e81736",
+    "Packages/Tensor/Module/Neural/@TrainingFormat.sx": "a93655286dd5eaacdabeaad1a732eb2ead7e90217d0c691d2c32639969964112",
+    "Packages/Tensor/Module/Neural/@SequenceMasks.sx": "b6ff5637baa7196daa9ff49fc17d2fa0ea2678d626ca8715f117b53132b419bf",
+    "Packages/Tensor/Module/Neural/@GRU.sx": "98c9a98c4280d6e2ee7f81e4d3112966d34e9489065839b4cd335e91aa0302c9",
+    "Packages/Tensor/Module/Neural/@Flatten.sx": "481d2803554cea0cde2cd631c671bff6010c2b18353e8fd3060085b33ef31f17",
+    "Packages/Tensor/Module/Neural/@Attention.sx": "c53d3c1370898ccf689a027804e67e897509f1b5f0d45a019b4e3168f5895456",
+    "Packages/Tensor/Module/Neural/@Conv2D.sx": "6961c3c5c4630b9f9fa1a47ab880a451ac4b7cc00b4788ac1d8de839081794fa",
+    "Packages/Tensor/Module/Neural/@Checkpoint.sx": "f8631d9cbb70939cb9f92b605dc9a5f09541a8c1e14b261cf8755a9518f8c063",
+    "Packages/Tensor/Module/Neural/@TrainingCheckpoint.sx": "f27c77ab0395640846e3ed35c980ef7dceec8500e97468d50d89a6112d42adcd",
+    "Packages/Tensor/Module/Neural/@Embedding.sx": "7bae7a8f4ba90797b49a3a06a51ed5ed62f1231d3122148d8061ba10ab0a429f",
+    "Packages/Tensor/Module/Neural/@SimpleRNN.sx": "46d8def4a4f9e4aa23e52deeb4ac61337b5ff44cb9c2a54dfd3c547238495866",
+    "Packages/Tensor/Module/Neural/@Buffer.sx": "2d399d8c0833e5305b9ffe2122436aafeb46a399567e3d5c7945265bba557a91",
+    "Packages/Tensor/Module/Neural/@Dense.sx": "a8f711730f3722b8baf0c3e6b742ea240e041fd179f3997b270636eb87a8fc2f",
+    "Packages/Tensor/Module/Neural/@BatchNorm.sx": "4aa33d7c1b23d68680e6f0437267a4c26fede01b238b67ccd299e6b8ca41bcca",
+    "Packages/Tensor/Module/Neural/@TrainingEncoding.sx": "32ac4d81280b50d991fe1f370cbb41741d430145d72b91c1fff064efe7b88b1b",
+    "Packages/Tensor/Module/Neural/@DropoutLayer.sx": "201d0a63faaaf1c66f880d2fc5d0a4399076c133df306a5a86d7645187c43f8d",
+    "Packages/Tensor/Module/Neural/@LayerNorm.sx": "f2a73d03623f2ce0a8d68102df1b78a5f327ba9d2b5d39ebf5df42972a2c71ae",
+    "Packages/Tensor/Module/Neural/@TransformerBlock.sx": "a2f5a33504c49e22801deb5dbf446633d5426652370b241e5a76ebeede862ab4",
+    "Packages/Tensor/Module/Neural/@Parameter.sx": "d6d2538e745bbe96df649242d051b38447e7217659d2376ae243649731656756",
+    "Packages/Tensor/Module/Neural/@ForwardPlan.sx": "4a69909bd0c3d13c1e4fa2540e7be47d44c72f8fda3a5793399dfdbc8271e86e",
+    "Packages/Tensor/Module/Neural/@Layer.sx": "5da0979c5fa9277f5bda24c88ce9fac6290e0758d7585cada39d96eb98153253",
+    "Packages/Tensor/Module/Neural/@TrainingStep.sx": "955e227ae94161339d6e5db8f61a4b146f4d40c55e84ceb2e0086a15890c2ea3",
+    "Packages/Tensor/Module/Neural/@Activation.sx": "e07779f021736766c76b377236b4d1fd2293f5a937a27415529315754282cf76",
+    "Packages/Tensor/Module/Neural/@Sequential.sx": "ecbfbb71aa664b559163f014ae9c3ebeaf59f40f622f93ef22caa0dcdd3330f0",
+    "Packages/Tensor/Module/Neural/@TrainingState.sx": "8391398fdeef3db3384085c606b3d8d3eebe979f398b031395b7b65eabd414bf",
+    "Packages/Tensor/Module/Neural/@LSTM.sx": "54f23d0ba249b82d9be635521ac2376816ebcdf8581971a41bf61c20b0cda044",
+    "Packages/Tensor/Tests/AdamWLifetime.sx": "707e58d40acdf5d4fbd2dc0e7595dbe890dd7fcda014897cbf2cd64975a67faa",
+    "Packages/Tensor/Tests/AdamWarmState.sx": "1c59df9013fae69fcfb2a41bf5df9dbd26e9fe43ef8d905edde5394786985f0c",
+    "Packages/Tensor/Tests/AttentionLifetime.sx": "b15de811ad8653faf2ad2272207ad91a72f4932bd76c0e7376ce9e49ef47f309",
+    "Packages/Tensor/Tests/AutogradLifetime.sx": "da660a8019ca0fa7c00d11eec99082047dc351e92c2a215b585806ebbafc5b11",
+    "Packages/Tensor/Tests/BatchCursorLifetime.sx": "771a58cdb66125fad9925b0f4c791fdaf91fec0ca3089ddfdbaf2d62e0ba557b",
+    "Packages/Tensor/Tests/BatchNormLifetime.sx": "4b0144c27ae13dc92dff0a97f0d263788b80806388dcceaf4008af89501654ff",
+    "Packages/Tensor/Tests/BatchPrefetchLifetime.sx": "a74bfb260c8f451fcb7a94ee6fdcc204687012655291d2745c1c3fcb8bf9dbf1",
+    "Packages/Tensor/Tests/Consumer/Tests/AdamW.sx": "edb9d66937004f786cbf5b4efa79e9acb1ea1ecc636e80d918ca004d26522616",
+    "Packages/Tensor/Tests/Consumer/Tests/AdamWOracle.sx": "d1a4901d2a4d6c6da057202e96ca5f55baddcefe45d4ab7b43efc5c6f1fe5a09",
+    "Packages/Tensor/Tests/Consumer/Tests/Attention.sx": "dd4e84533eddea85c88c70ca6b9625b0879fa928070c7fc3d73fca995f31fcee",
+    "Packages/Tensor/Tests/Consumer/Tests/AttentionOracle.sx": "318e814ae344fcf6d6595a410d5e5551150b28bb0304e80fd510788dbc93c202",
+    "Packages/Tensor/Tests/Consumer/Tests/Autograd.sx": "fe31fdb817139dcee79639d33817baecc18327a34b26f1c8077da7f219349009",
+    "Packages/Tensor/Tests/Consumer/Tests/AutogradGPU.sx": "cd85bda06e6ee15999195c1555a94fcd515475e35fbb1d537ad65728d140d241",
+    "Packages/Tensor/Tests/Consumer/Tests/BatchCursor.sx": "50cae58d7b89a5327655a51b6cd96f3cf31bf98894742457102c54ec7659990c",
+    "Packages/Tensor/Tests/Consumer/Tests/BatchNorm.sx": "ab182a704845ed18cce880fee52d95a97b8e42a3dcf38c3dbc3d3ccf964cdd55",
+    "Packages/Tensor/Tests/Consumer/Tests/BatchNormModes.sx": "4412eff3260c9134f273e9e3fa6adeccf3a2437bc3fdbb236fec235c72261cd9",
+    "Packages/Tensor/Tests/Consumer/Tests/BatchNormOracle.sx": "376ebb9051d97dc635a3f962edbd499d28facacd5f735b4c3b8bd2624146ef23",
+    "Packages/Tensor/Tests/Consumer/Tests/BatchPrefetch.sx": "aa68847e391d363a84481642e1a913dcfb71c51a1199be49114d021f538b427f",
+    "Packages/Tensor/Tests/Consumer/Tests/BatchPrefetchState.sx": "0e35dc153ab8d28f0ef4072bdcd512cc2c7dc01f0cfb1cc993c3c4a6660b8b27",
+    "Packages/Tensor/Tests/Consumer/Tests/BatchSampler.sx": "494f8e63bf7cb60cb2c825f30f1271dfe70fb47983c1ca5ec03beeb9a6344b0c",
+    "Packages/Tensor/Tests/Consumer/Tests/BufferPool.sx": "332bfbe6f226599cb34ce422bc0776624c46a23ab2a2cb0d06ac5ac0ca0f4d19",
+    "Packages/Tensor/Tests/Consumer/Tests/Checkpoint.sx": "4d328d554fae25ba14924fe21c581dd166d03f223c80412877b89b9f50db00c1",
+    "Packages/Tensor/Tests/Consumer/Tests/Composition.sx": "a82bc9fb569268e8e777aff5097fe781f9789e9f94e379048b76e098feeae65f",
+    "Packages/Tensor/Tests/Consumer/Tests/Core.sx": "14eb60be0b4e46113b152365ab9ae790bb83201170f1c440bca5946a0dce52d4",
+    "Packages/Tensor/Tests/Consumer/Tests/CustomOperations.sx": "f9e6d141bb8db4e7c65530a044b2a59a75998dd7924703f9615e9332b306eef2",
+    "Packages/Tensor/Tests/Consumer/Tests/DTypeImport.sx": "a953e5c6a37c9a101d02acbcff33bd6aa811150622479e9e4e9b749d31cf568d",
+    "Packages/Tensor/Tests/Consumer/Tests/Elementwise.sx": "d5781ce02b172bb410717a6b55323ddb0eff3e1dcdc2175e037f235c70a9b6c5",
+    "Packages/Tensor/Tests/Consumer/Tests/ElementwiseFusion.sx": "4e399b2b1369cde002184d7ae3b7e823a37675cc396c06bdb438fc7e2952fd46",
+    "Packages/Tensor/Tests/Consumer/Tests/Embedding.sx": "d05504ea4e6b00777b849cd8fa55637733fd9d9b4e0bb9598d927c73fcd42b41",
+    "Packages/Tensor/Tests/Consumer/Tests/EmbeddingCheckpoint.sx": "6348ecb2c721cf914851721eed27fe1b4182d07589731f0dcc2e9d8b6538ed11",
+    "Packages/Tensor/Tests/Consumer/Tests/EmbeddingOracle.sx": "cc46657ea45164fcaab501036ce2fbc5fae2138e30121a19fd71fa61a171abc5",
+    "Packages/Tensor/Tests/Consumer/Tests/ForwardPlanActivations.sx": "9580e5674c8317c506e87d4e1ff8fdf7a829389cc544cc77dbe6b29a7af9f7e3",
+    "Packages/Tensor/Tests/Consumer/Tests/ForwardPlans.sx": "e7aaac6f833a8496549e74e169b2cca246d831810e5a3c017f842bd6d55697b7",
+    "Packages/Tensor/Tests/Consumer/Tests/FunctionalGrad.sx": "715a39da31ad2c0846775ddc8037a9920311b1e2ed532c84ee4bce04763440aa",
+    "Packages/Tensor/Tests/Consumer/Tests/GPU.sx": "9f689ccf7e24713bcf761a211706c21028f6fbc79fe171d57556a83e46e98808",
+    "Packages/Tensor/Tests/Consumer/Tests/GPUCompute.sx": "5356b6e36cbc216eee548526470700a839e788beed3f3147d710d62d541e939f",
+    "Packages/Tensor/Tests/Consumer/Tests/GPULinearReduction.sx": "e1d238d116b3e302eb83d583b16c457fc5cc2dcf10635288bf24a897159c1601",
+    "Packages/Tensor/Tests/Consumer/Tests/GPUStress.sx": "743325c7ffc9d6cb77be3726bf1f344f0a59cf853607403c8f92632cde322d99",
+    "Packages/Tensor/Tests/Consumer/Tests/GPUViews.sx": "94d6bfa736aca0a275547b8cc07356a421db96ea0926f837bf85f1135023db9c",
+    "Packages/Tensor/Tests/Consumer/Tests/GRU.sx": "f95146b476ceff82c1b7621c614ecadd4fb535e425b06c23b2eaf7c30cb37468",
+    "Packages/Tensor/Tests/Consumer/Tests/GRUOracle.sx": "2e57abb03d78730add3a7e9bdfbee03e89e0d16a6adb16e0701c7b9f5e246d72",
+    "Packages/Tensor/Tests/Consumer/Tests/GRUTraining.sx": "f2df6389842e4f13d76230b1fac112583d08d04769cdc488759ede633216acc9",
+    "Packages/Tensor/Tests/Consumer/Tests/HostBuffers.sx": "2868a0eae3283cd9f8af2be0975071bbe302f2abeb53b24a0cf0eeafc2a038ca",
+    "Packages/Tensor/Tests/Consumer/Tests/IndexedReductions.sx": "a6de81d6dfaa550fe970314fc38008c0bb82eae92b1c9f2809363da22d2fa1e3",
+    "Packages/Tensor/Tests/Consumer/Tests/LSTM.sx": "8042327b2c5831e68ce923e6a4a26d785e2e88cba4332f5af4b3c49f31a53868",
+    "Packages/Tensor/Tests/Consumer/Tests/LSTMOracle.sx": "e31350adacd44cac12327e3edeb8159ae708d3ee3dcfc4aa6ff8e1e4203fb45f",
+    "Packages/Tensor/Tests/Consumer/Tests/LSTMTraining.sx": "18cf5aa324b2a26f2cacd8fabd696ff54286099f3d5aea6bb2044204b5ccca8f",
+    "Packages/Tensor/Tests/Consumer/Tests/LayersCore.sx": "a0d38b90fae6ebc7f3aebe976a694034ea14fced85e481bcfa09a9ff5f6e48f9",
+    "Packages/Tensor/Tests/Consumer/Tests/LearningRateSchedules.sx": "0077fe098c4e9e75b9a15a8860b7d6f48080dd4257c0010cb4f41acf800b9970",
+    "Packages/Tensor/Tests/Consumer/Tests/LinearAlgebra.sx": "ad59c2c373d8cce8ea09fdc778dcf40bc7260ea695b1d0b5cf2c69017d60b6bb",
+    "Packages/Tensor/Tests/Consumer/Tests/MaskedSoftmax.sx": "b6b5eb56e65d465c2a414bcf00f21ff2435f8eb2a509eb84adb25b24268aed6d",
+    "Packages/Tensor/Tests/Consumer/Tests/MaskedSoftmaxOracle.sx": "2cd37ff218043eb362f046f212799193c3de2458a251709ff0d5fbc1e5ce891d",
+    "Packages/Tensor/Tests/Consumer/Tests/Masks.sx": "87b0829393dcca3ca1572e667f2508556741e66d2b588820e3942a2da3fcbef6",
+    "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttention.sx": "6df2403601c68eec51f09f63541d304a1543da888322b382e37f09efc8b1db77",
+    "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttentionCheckpoint.sx": "a59d268d0e7698e39e0708bf8353ee418333e6c1b325868dadd84b0e1a22fd93",
+    "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttentionOracle.sx": "ffbf4e39ea1ce91446bf2bd0dce823635ab03952e13e20f538b2f7d358c626bb",
+    "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttentionState.sx": "fdbc021ae85632fc5bd630daab229190866704701250a8070e1e1f79af35eacd",
+    "Packages/Tensor/Tests/Consumer/Tests/Neural.sx": "06cac493d5b4bf55ecac0a7da093588d0953d5245b42566552376561aecc0b51",
+    "Packages/Tensor/Tests/Consumer/Tests/NeuralGPU.sx": "d7b4c7215d0f6212f787c30aeaf6f685590777e4ae23f28aa79b86fbdb52069e",
+    "Packages/Tensor/Tests/Consumer/Tests/NeuralOracleDifferential.sx": "c12a0381fbb537eaa478d9f0e719826149e20dd1ed2564699bab50f4694bb461",
+    "Packages/Tensor/Tests/Consumer/Tests/OptimizerRestoration.sx": "0370de95ff6156640113c53ebc36b6b837353928e8817bb45bed2c39f23d19e4",
+    "Packages/Tensor/Tests/Consumer/Tests/Optimizers.sx": "8a928abb57ba61533e9abb94d0707a9390bd5cf236c2a2a40eefdb51e211f862",
+    "Packages/Tensor/Tests/Consumer/Tests/OptimizersGPU.sx": "d89f0b7170d1f5a4ac7aa7ec7973b916777f4cb1faf2bd298ee69bce19f670ff",
+    "Packages/Tensor/Tests/Consumer/Tests/OracleDifferential.sx": "5a21e7b0872fc74f542235b335be0aa7d8a292a18090b0d98682b3168c9e57cb",
+    "Packages/Tensor/Tests/Consumer/Tests/Profiling.sx": "5267f7dc5f32ea32f9249dd981a61de64d83629de60af21fb9392dd374695214",
+    "Packages/Tensor/Tests/Consumer/Tests/RecursiveState.sx": "97f8567eff3d23d7699ef642291b266785d9f62db9d4adc58d41722ca442eca0",
+    "Packages/Tensor/Tests/Consumer/Tests/Reductions.sx": "87721b2cf3efec822224d616350b17b9c1801c380d2a8ba412baf731366e9887",
+    "Packages/Tensor/Tests/Consumer/Tests/RegisteredState.sx": "8af41913742091693ff4b292ec6ce767c159d8b65225d30ec9041fe0a3c4c298",
+    "Packages/Tensor/Tests/Consumer/Tests/SequenceMasks.sx": "ecd89b3c976b13784c02c05b2133d45573e61f7bbfc0e2cd504c312de207b9b2",
+    "Packages/Tensor/Tests/Consumer/Tests/Sequences.sx": "15564f47167bce5fa23217136fe0490f510a37699b7b22345c7eb9fcb8ea9075",
+    "Packages/Tensor/Tests/Consumer/Tests/ShapeAdaptation.sx": "992a83c1a365b9289fe143c9c2e337444ff57f223c0d68a2b65112069c28866e",
+    "Packages/Tensor/Tests/Consumer/Tests/StatePrimitives.sx": "f5712bea92441139e10c8d25154833ed59477c2affb5bf5d4dac3679a79f03b4",
+    "Packages/Tensor/Tests/Consumer/Tests/Statistics.sx": "4247cc0964f3a0f49a45917f20168b377e7b5801d0f7fe3050f2d5e97c5b641c",
+    "Packages/Tensor/Tests/Consumer/Tests/TopK.sx": "c7cdf03400d71d5f691941c661647adec76ff098ebe8a0611dd5445718b16e08",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingCNNGPU.sx": "34b3a5ef6b624e5da17e114e79402ec968e1e33cef9d2c4e8adc14c84fcb7310",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingCheckpoint.sx": "b31ca362c0bdd6a03487842d8cab40bb4b82654da011a81d65ab01763b35b2de",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingCheckpointState.sx": "0b8000a59e56467081df208bb10e1059640cf390baf0a71c3b1e108b64ccd179",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingMLPGPU.sx": "f3fb80aae640f5f0498f29b9e65d485b99d6f160fe7466d6ef7463e1580a1e2d",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingNetworks.sx": "0d5a7f6585c747dd3c665ab10c057b2a11e266b95a6d1d6711b1ac9182941f4d",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingPlanBaseline.sx": "f828dff9874a5052a85cd4537440a8d53f5deccbb6af364959312d8f6ada3ff5",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingRNNGPU.sx": "c29a79e11b2e207fdd0af617a9f5900703192d7ab182455747ec39a58499e8f0",
+    "Packages/Tensor/Tests/Consumer/Tests/TrainingSteps.sx": "af19b72435c949ef33dad3803816b54c2fe70ec7d89c51a132f6c2812931af5e",
+    "Packages/Tensor/Tests/Consumer/Tests/TransformerBlock.sx": "26098f91bfabc0f72bc76bf34abd65f65c19d1e9f5b20273bb9c0439729096ba",
+    "Packages/Tensor/Tests/Consumer/Tests/TransformerOracle.sx": "4fcf5ff839826832eb57ddd12ed3d5706f4a896353022017adf788748bb160db",
+    "Packages/Tensor/Tests/Consumer/Tests/TransformerTraining.sx": "9f67b07a526dd8618f667e0414bd02025dfc23a4ab91d6daa7a22c58748d6496",
+    "Packages/Tensor/Tests/Consumer/Tests/Views.sx": "df88503159e4a4c7ebc3229fe0c8f7453b5967d43ad5f3e1a4a203e225bc8d9f",
+    "Packages/Tensor/Tests/CustomOperationLifetime.sx": "1e6f2a891b76f1116fd348d5e2ab3830b9c8bf95d58aab4fe873fb69f3829215",
+    "Packages/Tensor/Tests/EmbeddingLifetime.sx": "327069f7b7c1549e996b4b4a5cfe0450042b10edd7f7c6cfcb4453dc187b4342",
+    "Packages/Tensor/Tests/FunctionalGradLifetime.sx": "6a4ad7c948cca91ce2b55f7d582ae7682b5b6e05a1eada88df7ece307f66e84f",
+    "Packages/Tensor/Tests/GRULifetime.sx": "08360750c5220129b9c2aef1ccb15f3e3f3b262e0ad25f54ab37f260f0843bb6",
+    "Packages/Tensor/Tests/HostBufferLifetime.sx": "405d39c17c7984345522a695a911a0a0b77ae6389c5f28d8b78c66b10e3707d1",
+    "Packages/Tensor/Tests/IndexedReductionLifetime.sx": "aeb9810f13a9eb12daaf644c80fa764fe0aa2da48eb0e7bfa5d86f84cee66f3c",
+    "Packages/Tensor/Tests/LSTMLifetime.sx": "8373881dd8e6ee09a7ca1dcd0e344283820460049f8692e4d8be91eae50d9f6e",
+    "Packages/Tensor/Tests/MaskLifetime.sx": "5de58909f5a9c819989d7e9d6f077c60b559add06f67ba6b74e38558281ccedf",
+    "Packages/Tensor/Tests/MaskedSoftmaxLifetime.sx": "5d12faf4de1fae6b131181e3235900f7b352eaf1f72ddbfff3be74ad2f5c9195",
+    "Packages/Tensor/Tests/MultiHeadAttentionLifetime.sx": "8c15987df63082643a934d25c92aa5c7c67ae4224de50117469c67c6c8fdb700",
+    "Packages/Tensor/Tests/NeuralPerformanceGuards.sx": "4f4e702fe86dd7f8b6d8233208d0f23ca59c3847ec8cf5f5a7ae0ec7a2982b58",
+    "Packages/Tensor/Tests/OptimizerRestorationLifetime.sx": "b5cdcfdfe674395fb347315b22dd932e933cbe39b24dc34b5393064d19d374de",
+    "Packages/Tensor/Tests/OptimizerState.sx": "95e6f7a036a229bde6fea7f93e1d38100b4ae70e0294263c44eede99e3cb2856",
+    "Packages/Tensor/Tests/PerformanceGuards.sx": "cf9f5cab3b4e44f80b3bc276f395807bb2cdb342a7a66db5cd57787e2007c3bf",
+    "Packages/Tensor/Tests/PipelineCache.sx": "f445ebce29f490eacb37d6a4183f92c5fafd097a51c338c623244e702442ac60",
+    "Packages/Tensor/Tests/ProfileLifetime.sx": "ea9ecaacd7dd076860a22f5ba71980c573bf07146ce2c0d771019c24a81992bf",
+    "Packages/Tensor/Tests/RecursiveStateLifetime.sx": "c1291032160d2c3a054a8073f1f67b0bc424bf04e73683c860383daf01a28ab2",
+    "Packages/Tensor/Tests/RegisteredStateLifetime.sx": "4babd5f426e2db04633b1433dca215ed9c1efb073694cf269ae142fa3e94e517",
+    "Packages/Tensor/Tests/SequenceMaskLifetime.sx": "871cfd5befc55c43f13dc6f5b3674e0faaf156a10450a384a1cadaee81f201c8",
+    "Packages/Tensor/Tests/ShapeLifetime.sx": "9bdf4798c9bbb4d0c5908c55dd232e8ef5faa7ffd61f8be12b12780ff8ccc9c6",
+    "Packages/Tensor/Tests/StatePrimitiveGuards.sx": "2837822b7c02a1cadeab37948a8526c45753adf136f6f8c2f93884b74c9bc252",
+    "Packages/Tensor/Tests/StatisticsLifetime.sx": "4fe843ff4e75b88cfadb524755699ab5935b6009ce43771feb2af9a1c09cfed0",
+    "Packages/Tensor/Tests/TopKLifetime.sx": "31a1b98f09724be26aea6e244a3c3b3817afe7aaa1bec9d594c7e74453a7008e",
+    "Packages/Tensor/Tests/TrainingCheckpointEncoding.sx": "13887260effb9b35e910e713d61b1aa3c0963340313c2b03f19a94784cf3bdb3",
+    "Packages/Tensor/Tests/TrainingCheckpointLifetime.sx": "d61f8e7734118160ec3bbb327389bea34996c5495164673c18426ee800b7e756",
+    "Packages/Tensor/Tests/TransformerLifetime.sx": "8bff30b6ca2a3a492a1d1106306fc8b4ffb0448ea86153b13b57744be6b50e3c"
+  },
+  "results": [
+    {
+      "source": "Packages/Tensor/Tests/AdamWLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/AdamWarmState.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/AttentionLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/AutogradLifetime.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/BatchCursorLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/BatchNormLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/BatchPrefetchLifetime.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/AdamW.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/AdamWOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Attention.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/AttentionOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Autograd.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/AutogradGPU.sx",
+      "exit_code": 0,
+      "tests": 4,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BatchCursor.sx",
+      "exit_code": 0,
+      "tests": 13,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BatchNorm.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BatchNormModes.sx",
+      "exit_code": 0,
+      "tests": 10,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BatchNormOracle.sx",
+      "exit_code": 0,
+      "tests": 4,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BatchPrefetch.sx",
+      "exit_code": 0,
+      "tests": 9,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BatchPrefetchState.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BatchSampler.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/BufferPool.sx",
+      "exit_code": 0,
+      "tests": 4,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Checkpoint.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Composition.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Core.sx",
+      "exit_code": 0,
+      "tests": 8,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/CustomOperations.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/DTypeImport.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Elementwise.sx",
+      "exit_code": 0,
+      "tests": 5,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/ElementwiseFusion.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Embedding.sx",
+      "exit_code": 0,
+      "tests": 8,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/EmbeddingCheckpoint.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/EmbeddingOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/ForwardPlanActivations.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/ForwardPlans.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/FunctionalGrad.sx",
+      "exit_code": 0,
+      "tests": 14,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GPU.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GPUCompute.sx",
+      "exit_code": 0,
+      "tests": 5,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GPULinearReduction.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GPUStress.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GPUViews.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GRU.sx",
+      "exit_code": 0,
+      "tests": 8,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GRUOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/GRUTraining.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/HostBuffers.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/IndexedReductions.sx",
+      "exit_code": 0,
+      "tests": 8,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/LSTM.sx",
+      "exit_code": 0,
+      "tests": 8,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/LSTMOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/LSTMTraining.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/LayersCore.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/LearningRateSchedules.sx",
+      "exit_code": 0,
+      "tests": 5,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/LinearAlgebra.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/MaskedSoftmax.sx",
+      "exit_code": 0,
+      "tests": 5,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/MaskedSoftmaxOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Masks.sx",
+      "exit_code": 0,
+      "tests": 20,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttention.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttentionCheckpoint.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttentionOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/MultiHeadAttentionState.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Neural.sx",
+      "exit_code": 0,
+      "tests": 4,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/NeuralGPU.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/NeuralOracleDifferential.sx",
+      "exit_code": 0,
+      "tests": 4,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/OptimizerRestoration.sx",
+      "exit_code": 0,
+      "tests": 15,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Optimizers.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/OptimizersGPU.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/OracleDifferential.sx",
+      "exit_code": 0,
+      "tests": 10,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Profiling.sx",
+      "exit_code": 0,
+      "tests": 9,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/RecursiveState.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Reductions.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/RegisteredState.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/SequenceMasks.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Sequences.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/ShapeAdaptation.sx",
+      "exit_code": 0,
+      "tests": 14,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/StatePrimitives.sx",
+      "exit_code": 0,
+      "tests": 8,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Statistics.sx",
+      "exit_code": 0,
+      "tests": 12,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TopK.sx",
+      "exit_code": 0,
+      "tests": 11,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingCNNGPU.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingCheckpoint.sx",
+      "exit_code": 0,
+      "tests": 4,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingCheckpointState.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingMLPGPU.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingNetworks.sx",
+      "exit_code": 0,
+      "tests": 4,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingPlanBaseline.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingRNNGPU.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TrainingSteps.sx",
+      "exit_code": 0,
+      "tests": 5,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TransformerBlock.sx",
+      "exit_code": 0,
+      "tests": 7,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TransformerOracle.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/TransformerTraining.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/Consumer/Tests/Views.sx",
+      "exit_code": 0,
+      "tests": 5,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/CustomOperationLifetime.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/EmbeddingLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/FunctionalGradLifetime.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/GRULifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/HostBufferLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/IndexedReductionLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/LSTMLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/MaskLifetime.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/MaskedSoftmaxLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/MultiHeadAttentionLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/NeuralPerformanceGuards.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/OptimizerRestorationLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/OptimizerState.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/PerformanceGuards.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/PipelineCache.sx",
+      "exit_code": 0,
+      "tests": 5,
+      "status": "pass",
+      "metal_executed": false
+    },
+    {
+      "source": "Packages/Tensor/Tests/ProfileLifetime.sx",
+      "exit_code": 0,
+      "tests": 2,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/RecursiveStateLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/RegisteredStateLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/SequenceMaskLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/ShapeLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/StatePrimitiveGuards.sx",
+      "exit_code": 0,
+      "tests": 3,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/StatisticsLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/TopKLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/TrainingCheckpointEncoding.sx",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/TrainingCheckpointLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    },
+    {
+      "source": "Packages/Tensor/Tests/TransformerLifetime.sx",
+      "exit_code": 0,
+      "tests": 1,
+      "status": "pass",
+      "metal_executed": true
+    }
+  ]
+}
