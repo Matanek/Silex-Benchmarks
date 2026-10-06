@@ -1,0 +1,181 @@
+use GFX.GPU
+use STD.Math
+use STD.Process
+use Tensor
+use Tensor.Profile
+use Tensor.Neural
+use Tensor.Optim
+
+struct Observation {var output:Tensor;var loss:Tensor}
+struct CompleteState {let values:float[];let counters:int[]}
+struct RunState {let values:float[];let passes:int;let submissions:int;let prepared:bool}
+
+func resident_model(family:str) Neural.Sequential {
+    var layers:Neural.Layer[]=[]
+    if family=="mlp" {layers=[Neural.Dense("hidden",2,4,481),Neural.Activation.tanh(),Neural.Dense("classifier",4,2,482)]}
+    else if family=="cnn" {layers=[Neural.Conv2D("features",1,2,2,481),Neural.Activation.tanh(),Neural.AveragePool2D(2,stride:1),Neural.Flatten(),Neural.Dense("classifier",8,2,482)]}
+    else if family=="rnn" {layers=[Neural.SimpleRNN("memory",2,3,481),Neural.Dense("classifier",3,2,482)]}
+    else if family=="gru" {layers=[Neural.GRU("memory",2,3,481),Neural.Dense("classifier",3,2,482)]}
+    else if family=="lstm" {layers=[Neural.LSTM("memory",2,3,481),Neural.Dense("classifier",3,2,482)]}
+    else if family=="transformer" {layers=[Neural.TransformerBlock("block",4,2,6,481),Neural.Flatten(),Neural.Dense("classifier",12,2,482)]}
+    else {panic("unknown resident model family")}
+    return Neural.Sequential(layers)
+}
+func resident_input(family:str) Tensor {
+    var shape:int[]=[2,3,2]
+    if family=="mlp" {shape=[2,2]}
+    else if family=="cnn" {shape=[2,1,4,4]}
+    else if family=="transformer" {shape=[2,3,4]}
+    var count=1;for dimension in shape {count*=dimension}
+    var values:float[]=[];var index=0
+    while index<count {values.append((index%7) as float/10.0-0.3);index++}
+    return Tensor(values,shape)
+}
+
+func append_values(tensor:Tensor,values:&float[]) {
+    for value in tensor.detach().cpu().values() {assert(Math.is_finite(value));values.append(value)}
+}
+func snapshot(model:Neural.Layer,optimizer:Optim.AdamW) CompleteState {
+    var values:float[]=[];var counters:int[]=[]
+    let state=optimizer.state()
+    assert(state.learning_rate==0.01 && state.beta1==0.9 && state.beta2==0.999)
+    assert(state.epsilon==0.01 && state.weight_decay==0.01)
+    assert(model.is_training() && model.buffers().count()==0)
+    var parameters=model.parameters()
+    assert(parameters.count()==state.parameters.count())
+    var i=0
+    for parameter in parameters {
+        let entry=state.parameters[i]
+        assert(parameter.is_trainable() && parameter.name()==entry.name)
+        assert(parameter.value().shape().count()==entry.shape.count())
+        var axis=0
+        for dimension in entry.shape {assert(parameter.value().shape()[axis]==dimension);axis++}
+        append_values(parameter.value(),values)
+        if let gradient=parameter.gradient() {append_values(gradient,values)} else {panic("expected hot gradient")}
+        if let first=entry.first_moment {append_values(first,values)} else {panic("expected first moment")}
+        if let second=entry.second_moment {append_values(second,values)} else {panic("expected second moment")}
+        counters.append(entry.step_count);i++
+    }
+    return CompleteState(values:values,counters:counters)
+}
+func compare_values(left:float[],right:float[],tolerance:float) {
+    assert(left.count()==right.count())
+    var i=0
+    while i<left.count() {
+        if Math.abs(left[i]-right[i])>tolerance {print("MODEL_MISMATCH index=$(i) left=$(left[i]) right=$(right[i]) tolerance=$(tolerance)")}
+        assert(Math.abs(left[i]-right[i])<=tolerance);i++
+    }
+}
+func unchanged(before:CompleteState,after:CompleteState) {
+    compare_values(before.values,after.values,0.0)
+    assert(before.counters.count()==after.counters.count())
+    var i=0
+    while i<before.counters.count() {assert(before.counters[i]==after.counters[i]);i++}
+}
+func eager(model:Neural.Layer,optimizer:Optim.AdamW,input:Tensor,target:Tensor) Observation {
+    optimizer.zero_grad()
+    let output=model.forward(input);let loss=output.mse_loss(target)
+    loss.backward();optimizer.step()
+    return Observation(output:output.detach(),loss:loss.detach())
+}
+func observe(family:str,arm:str,device:GPU.Device?) RunState {
+    var model=resident_model(family)
+    let cpu_input=resident_input(family)
+    let target_values:float[]=[0.2,-0.1,-0.2,0.3]
+    let cpu_target=Tensor(target_values,[2,2])
+    var input=cpu_input;var target=cpu_target
+    if let gpu=device {model.to(gpu);input=input.to(gpu);target=target.to(gpu)}
+    var optimizer=Optim.AdamW(model.parameters(),learning_rate:0.01,epsilon:0.01)
+    var plan:Neural.TrainingStep?=null
+    var prepared=false;var passes=0;var submissions=0
+    var all_values:float[]=[]
+    var observer:Profile?=null
+    if let gpu=device {observer=Profile(gpu)}
+    for iteration in 0...5 {
+        if iteration==2 && (arm=="forward" || arm=="training") {
+            let before=snapshot(model,optimizer)
+            if arm=="forward" {
+                match model.prepare_forward(input) {
+                    success=>{prepared=true}
+                    failure(reason)=>{assert(reason!="")}
+                }
+            } else {
+                match Neural.TrainingStep.mse(model,optimizer,input,target) {
+                    success(value)=>{plan=value;prepared=true}
+                    failure(reason)=>{assert(reason!="")}
+                }
+            }
+            assert(prepared==(family=="mlp"))
+            unchanged(before,snapshot(model,optimizer))
+            print("MODEL_PREPARATION family=$(family) arm=$(arm) prepared=$(prepared) state_preserved=true")
+        }
+        if let gpu=device {gpu.wait_until_idle();gpu.reset_command_stats()}
+        if let profile=observer {profile.reset()}
+        var result=Observation(output:input,loss:Tensor.scalar(0.0))
+        if let step=plan {
+            let value=try step.run(input,target) else error {panic(error)}
+            result=Observation(output:value.output,loss:value.loss)
+        } else {result=eager(model,optimizer,input,target)}
+        if let gpu=device {
+            gpu.wait_until_idle()
+            if let profile=observer {
+                let stats=profile.snapshot();let native=gpu.command_stats()
+                assert(stats.uploads==0 && stats.downloads==0)
+                assert(native.uploads==0 && native.downloads==0 && native.compute_passes==stats.compute_passes)
+                assert(stats.fence_creations==stats.submissions)
+                if iteration>=2 {assert(stats.pipeline_compilations==0);passes+=stats.compute_passes;submissions+=stats.submissions}
+            }
+        }
+        assert(result.output.rank()==2 && result.output.shape()[0]==2 && result.output.shape()[1]==2)
+        assert(result.loss.rank()==0)
+        append_values(result.output,all_values);append_values(result.loss,all_values)
+        let state=snapshot(model,optimizer)
+        for count in state.counters {assert(count==iteration+1)}
+        for value in state.values {all_values.append(value)}
+        print("MODEL_STEP family=$(family) arm=$(arm) iteration=$(iteration) parameters=$(state.counters.count()) state_values=$(state.values.count()) training=true trainable=true hyperparameters=pass")
+    }
+    let forward=model.forward_plan_statistics()
+    if arm=="forward" {
+        if prepared {assert(forward.captures==1 && forward.executions==3 && forward.rejections==0 && forward.fallbacks==0)}
+        else {assert(forward.captures==0 && forward.executions==0 && forward.rejections==1 && forward.fallbacks==0)}
+    } else {assert(forward.captures==0 && forward.executions==0)}
+    if let step=plan {assert(step.statistics().captures==1 && step.statistics().executions==3 && step.statistics().rejections==0)}
+    compare_values(input.cpu().values(),cpu_input.values(),0.0)
+    compare_values(target.cpu().values(),cpu_target.values(),0.0)
+    var index=0
+    for value in all_values {print("MODEL_VALUE family=$(family) arm=$(arm) index=$(index) value=$(value)");index++}
+    print("MODEL_RUN family=$(family) arm=$(arm) prepared=$(prepared) passes=$(passes) submissions=$(submissions) observations=$(all_values.count()) status=pass")
+    return RunState(values:all_values,passes:passes,submissions:submissions,prepared:prepared)
+}
+func released(profile:Profile) {
+    let stats=profile.snapshot()
+    assert(stats.live_buffers==0 && stats.active_bytes==0 && stats.cached_bytes==0 && stats.allocated_bytes==0)
+}
+func main() {
+    let arguments=try Process.arguments() else error {panic(error.detail)}
+    var eager_only=false
+    for argument in arguments {if argument=="--eager-only" {eager_only=true}}
+    assert(GPU.Device.is_supported())
+    var device=GPU.Device(GPU.DeviceSettings(debug:true));var profile=Profile(device)
+    var families:str[]=["mlp","cnn","rnn","gru","lstm","transformer"]
+    for family in families {
+        print("MODEL_BEGIN family=$(family)")
+        let cpu=observe(family,"cpu",null)
+        let reference=observe(family,"eager",device);released(profile)
+        compare_values(cpu.values,reference.values,0.00002)
+        if !eager_only {
+            let repeat=observe(family,"repeat",device);released(profile)
+            compare_values(reference.values,repeat.values,0.0)
+            assert(reference.passes==repeat.passes && reference.submissions==repeat.submissions)
+            for arm in ["forward","training"] {
+                let current=observe(family,arm,device);released(profile)
+                compare_values(reference.values,current.values,0.0)
+                assert(reference.passes==current.passes)
+                if current.prepared {assert(current.submissions<reference.submissions)}
+                else {assert(current.submissions==reference.submissions)}
+            }
+        }
+        print("MODEL_VERIFY family=$(family) cpu_tolerance=0.00002 gpu_exact=true resources_released=true status=pass")
+    }
+    print("MODEL_QUALIFICATION status=pass families=6 eager_only=$(eager_only)")
+}

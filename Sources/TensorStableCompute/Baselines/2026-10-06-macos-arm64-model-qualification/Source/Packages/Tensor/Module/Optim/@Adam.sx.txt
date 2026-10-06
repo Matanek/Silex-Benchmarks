@@ -1,0 +1,32 @@
+use Tensor
+use Tensor.Neural.Parameter
+
+public nocopy class Adam {
+    private var engine:AdamEngine
+
+    init(
+        parameters:Parameter[], learning_rate:float = 0.001,
+        beta1:float = 0.9, beta2:float = 0.999,
+        epsilon:float = 0.00000001, weight_decay:float = 0.0
+    ) {
+        self.engine = AdamEngine(parameters, learning_rate, beta1, beta2, epsilon, weight_decay)
+    }
+
+    func learning_rate() float { return self.engine.learning_rate() }
+    func set_learning_rate(value:float) { self.engine.set_learning_rate(value) }
+    func zero_grad() { self.engine.zero_grad() }
+    func step() { self.engine.step() }
+    func state() AdamState { return self.engine.state() }
+    package func checkpoint_parameters(expected:Parameter[]) Result<void,str> {return self.engine.checkpoint_parameters(expected)}
+    func restore(snapshot:AdamState) Result<void,str> { return self.engine.restore(snapshot) }
+    package func validate_restore(snapshot:AdamState) Result<void,str> { return self.engine.validate_restore(snapshot) }
+
+    func clip_grad_norm(
+        maximum_norm:float,
+        nonfinite:NonFiniteGradientPolicy = NonFiniteGradientPolicy.propagate
+    ) Tensor { return self.engine.clip_grad_norm(maximum_norm, nonfinite) }
+
+    package func first_moment_state(name:str) Tensor? { return self.engine.first_moment_state(name) }
+    package func second_moment_state(name:str) Tensor? { return self.engine.second_moment_state(name) }
+    package func state_step(name:str) int { return self.engine.state_step(name) }
+}

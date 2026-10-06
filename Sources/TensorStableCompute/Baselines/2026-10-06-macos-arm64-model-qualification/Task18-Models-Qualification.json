@@ -1,0 +1,99 @@
+{
+  "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+  "rows": [
+    {
+      "label": "Task18-Models-debug-Build",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/ModelQualification.sx",
+        "--debug",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Models-debug"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Models-debug-Build.log"
+    },
+    {
+      "label": "Task18-Models-debug-Run",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Models-debug"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Models-debug-Run.log"
+    },
+    {
+      "label": "Task18-Resident-debug-Build",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/ResidentSteps.sx",
+        "--debug",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Resident-debug"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Resident-debug-Build.log"
+    },
+    {
+      "label": "Task18-Resident-debug-Run",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Resident-debug",
+        "--verify"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Resident-debug-Run.log"
+    },
+    {
+      "label": "Task18-Models-release-Build",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/ModelQualification.sx",
+        "--release",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Models-release"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Models-release-Build.log"
+    },
+    {
+      "label": "Task18-Models-release-Run",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Models-release"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Models-release-Run.log"
+    },
+    {
+      "label": "Task18-Resident-release-Build",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/ResidentSteps.sx",
+        "--release",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Resident-release"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Resident-release-Build.log"
+    },
+    {
+      "label": "Task18-Resident-release-Run",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task18-Resident-release",
+        "--verify"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "log": "Task18-Resident-release-Run.log"
+    }
+  ]
+}

@@ -381,3 +381,30 @@ silex compile Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx \
 
 Run the Metal control only on a Metal device. These checks contain no timing
 admission, no convergence claim and no conclusion about runtime on another GPU.
+
+## Final confrontation of six families
+
+`ModelQualification.sx` compares complete MSE/AdamW state at every step across
+CPU eager, GPU eager, deterministic repetition, prepared forward and TrainingStep.
+The two preparations succeed on MLP and reject CNN, SimpleRNN, GRU, LSTM and
+Transformer without changing hot weights, gradients or optimizer state. The
+caller then explicitly uses eager. Five steps per arm use seeds481/482,
+asymmetric inputs, fixed epsilon0.01, absolute CPU tolerance2e-5 and exact GPU
+comparisons; every arm releases all resources. Profiled hot steps contain no
+CPU/GPU transfers or new pipelines. This verifier does not measure elapsed time.
+
+From the workspace root:
+
+```sh
+ZIG_GLOBAL_CACHE_DIR="$PWD/.silex/zig-global" silex compile \
+  Silex-Benchmarks/Sources/TensorStableCompute/ModelQualification.sx \
+  --release --output /private/tmp/tensor-model-qualification
+/private/tmp/tensor-model-qualification
+```
+
+The [sealed final qualification](Baselines/2026-10-06-macos-arm64-model-qualification/README.md)
+retains Debug/Release observations, the diagnostic unfused source, command counts
+and a standalone verifier. It qualifies119420 scalar observations and reuses
+unchanged module/test and six-target proofs. The original ResidentSteps
+cross-entropy witness passes both modes with its original epsilon and tolerance.
+Timing gains remain limited to the separately admitted campaigns.
