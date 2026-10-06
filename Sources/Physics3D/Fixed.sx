@@ -1,0 +1,58 @@
+use GFX.Physics
+use STD.Math
+
+func run_fixed_case(case_id:int) {
+    var gravity = Math.Vec3()
+    if case_id == 0 || case_id == 3 || case_id == 4 { gravity = Math.Vec3(0.0,-9.81,0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_type = Physics.BodyType3D.fixed
+    if case_id == 2 { first_type = Physics.BodyType3D.dynamic }
+    if case_id == 5 { first_type = Physics.BodyType3D.kinematic }
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = first_type
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id == 2 { first_settings.mass_properties = Physics.MassProperties3D(2.0,Math.Vec3(0.2)) }
+    var first = world.create_rigid_body(first_settings)
+    var pose = Physics.Transform3D(Math.Vec3(2.0,0.0,0.0))
+    var mass = 2.0
+    if case_id == 2 { pose = Physics.Transform3D(); mass = 8.0 }
+    if case_id == 1 { pose = Physics.Transform3D(Math.Vec3(2.0,0.0,0.0),Math.Quat.angle_axis(3.13,Math.Vec3(0.0,1.0,0.0))) }
+    if case_id == 4 { pose = Physics.Transform3D(Math.Vec3(1.0,0.0,0.0)) }
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = pose
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(mass,Math.Vec3(mass*0.1))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var frames = Physics.FixedConstraint3DSettings()
+        ..second_local_frame = Physics.Transform3D(pose.position.negated())
+    if case_id == 1 {
+        frames.first_local_frame = Physics.Transform3D(Math.Vec3(1.0,2.0,0.0),Math.Quat.angle_axis(0.4,Math.Vec3(1.0,0.0,0.0)))
+        frames.second_local_frame = Physics.Transform3D(Math.Vec3(0.0,1.0,0.0),Math.Quat.angle_axis(-0.3,Math.Vec3(0.0,0.0,1.0)))
+    }
+    var joint = world.create_fixed_constraint(first,second,frames)
+    if case_id == 2 { first.set_linear_velocity(Math.Vec3(1.0,0.0,0.0)); first.set_angular_velocity(Math.Vec3(0.0,0.0,1.0)) }
+    if case_id == 4 {
+        var third = world.create_rigid_body(Physics.RigidBody3DSettings()
+            ..transform = Physics.Transform3D(Math.Vec3(2.0,0.0,0.0))
+            ..mass_properties = Physics.MassProperties3D(8.0,Math.Vec3(0.8))
+            ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+        world.create_fixed_constraint(second,third)
+    }
+    if case_id == 5 { first.move_kinematic(Physics.Transform3D(Math.Vec3(0.0,4.0,0.0),Math.Quat.angle_axis(0.8,Math.Vec3(0.0,0.0,1.0))),4.0) }
+    var step = 1
+    while step <= 1620 {
+        if case_id == 3 && step == 361 { joint.set_enabled(false) }
+        if case_id == 3 && step == 391 { joint.set_enabled(true) }
+        world.step(1.0 / 60.0)
+        let sampled = (case_id == 0 && step >= 90 && step <= 300) ||
+            (case_id == 1 && step >= 150 && step <= 360) ||
+            (case_id == 2 && step <= 240) ||
+            (case_id == 3 && (step == 90 || step == 120 || step == 390 || (step >= 1500 && step <= 1620))) ||
+            (case_id == 4 && step >= 900 && step <= 1110) || (case_id == 5 && step <= 240)
+        if step % 30 == 0 && sampled {
+            let axis = second.rotation().rotate(Math.Vec3(1.0,0.0,0.0))
+            print("fixed $(case_id) $(step) $(second.position().x) $(second.position().y) $(second.position().z) $(axis.x) $(axis.y) $(axis.z) $(joint.anchor_error().length()) $(joint.angular_error().length()) $(joint.reaction_force().y) $(joint.reaction_torque().z) $(second.linear_velocity().x) $(second.angular_velocity().z) $(first.linear_velocity().x) $(first.angular_velocity().z)")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 6 { run_fixed_case(i); i++ } }

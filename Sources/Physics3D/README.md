@@ -588,3 +588,21 @@ be arrested at steps 60 and 120. Missing, duplicate, unknown or non-finite
 samples and perturbed trajectories are rejected. This is a two-second
 behavioral qualification of velocity motors, without a performance, position
 servo, joint friction, soft stop or long-duration claim.
+
+## Fixed attachments
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/FixedRun.py` from the workspace
+or Spec group root. Six fixtures check a static lever, explicit rotated frames
+near pi, free unequal masses, disable/enable, a loaded chain and a translating
+and rotating kinematic support. Both modes qualify 48 samples with independent
+force/moment and momentum guards; `--self-test` corrupts evidence to check the
+guards. The pinned Jolt revision and archive checksum are shared with `Run.py`.
+
+The v2 fixture measures equilibrium and established free/kinematic motion,
+with unchanged final bounds after the initial four-second fixture exposed slow
+Jolt position convergence. Sampling runs up to 27 seconds at 60 Hz. It makes no
+claim of equivalent large-error correction paths or convergence times. Jolt
+uses 12 velocity/4 position passes; Silex uses 12 preparation/12 shared velocity/4
+position passes and resumes the previous fixed impulse. Origin-local anchors
+equal COM-local anchors in these fixtures; consumer tests cover shifted centers.
+Raw rows and source hashes are saved with `fixed-qualification.json`.
