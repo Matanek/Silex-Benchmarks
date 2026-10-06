@@ -1,0 +1,27 @@
+StructuredBuffer<uint> inputBits : register(t0, space0);
+RWStructuredBuffer<uint> outputBits : register(u0, space1);
+[numthreads(1, 1, 1)]
+void compute_main(uint3 id : SV_DispatchThreadID) {
+    uint count = 15;
+    if (id.x >= count) return;
+    float value = asfloat(inputBits[id.x]);
+    uint packed = f32tof16(value);
+    half ordinary = (half)value;
+    min16float minimum = (min16float)value;
+    outputBits[id.x * 4] = packed;
+    outputBits[id.x * 4 + 1] = asuint(f16tof32(packed));
+    outputBits[id.x * 4 + 2] = asuint((float)ordinary);
+    outputBits[id.x * 4 + 3] = asuint((float)minimum);
+    if (id.x == 0) {
+        half ordinary_sum = (half)asfloat(inputBits[0]);
+        ordinary_sum += (half)1000.0;
+        ordinary_sum += (half)0.25;
+        min16float minimum_sum = (min16float)asfloat(inputBits[0]);
+        minimum_sum += (min16float)1000.0;
+        minimum_sum += (min16float)0.25;
+        float reference = asfloat(inputBits[0]) + 1000.0 + 0.25;
+        outputBits[count * 4] = asuint((float)ordinary_sum);
+        outputBits[count * 4 + 1] = asuint((float)minimum_sum);
+        outputBits[count * 4 + 2] = asuint(reference);
+    }
+}

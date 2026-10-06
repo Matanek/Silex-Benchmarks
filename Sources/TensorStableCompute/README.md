@@ -342,3 +342,42 @@ campaign, qualify the exact sources and compiler first, then use the recorded
 driver with isolated balanced A/B and A/A processes. Keep timing separate from
 builds/tests. Float16, mixed precision and the final six-family confrontation
 remain separate qualifications.
+
+
+## Float16 gate: conversions qualify, the HLSL path remains float32
+
+`Float16Gate.sx` runs 15 bit-level conversion cases and a dynamic arithmetic
+witness through the current HLSL pipeline. On Apple M3 Pro / Metal in Debug and
+Release, `f32tof16` / `f16tof32` match the independent half oracle, including
+signed zero, subnormals, ties, overflow, infinities and NaN classification.
+Legacy `half` and `min16float` casts/additions retain float32 precision in the
+actual generated MSL. Explicit `float16_t` is rejected by the installed
+Shadercross configuration. A successful HLSL build is therefore not admission
+of half arithmetic or half Tensor storage.
+
+`Float16MetalControl.sx` uses explicit native Metal half as a diagnostic control
+on macOS only. The same conversions and dynamic 1000 + 0.25 addition produce
+half results in Debug and Release. The hardware supports these operations;
+the observed limitation belongs to the current HLSL compilation path.
+This native control is not a Tensor implementation or a portable workaround.
+
+The [recorded gate](Baselines/2026-10-06-macos-arm64-float16-gate/README.md)
+preserves the oracle, source/shader snapshots, actual MSL, raw observations,
+SDK/compiler pins, explicit-type rejection and a standalone verifier.
+The Tensor float16/mixed-precision gate is **indeterminate** on this configuration:
+no qualified HLSL half matmul/reduction, convergence or time/memory benefit is
+established. Tensor remains float32 by default and exposes no float16 dtype API.
+Reopen the full gate only after a genuine 16-bit HLSL path is available; master
+weights and sensitive states must remain float32, and overflow handling must
+be qualified before any training API.
+
+From the workspace root:
+
+```sh
+silex compile Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx \
+  --release --output /private/tmp/tensor-float16-gate
+/private/tmp/tensor-float16-gate
+```
+
+Run the Metal control only on a Metal device. These checks contain no timing
+admission, no convergence claim and no conclusion about runtime on another GPU.

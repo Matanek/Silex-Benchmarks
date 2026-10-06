@@ -1,0 +1,128 @@
+{
+  "results": [
+    {
+      "target": "macos-arm64",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+        "--release",
+        "--target",
+        "macos-arm64",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-macos-arm64"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+      "source_sha256": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f",
+      "binary_sha256": "49d1eed10ff328b5528d257fa811af815519835ff072aab2aab98000875f1af2",
+      "format": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-macos-arm64: Mach-O 64-bit executable arm64",
+      "executed": false
+    },
+    {
+      "target": "macos-x64",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+        "--release",
+        "--target",
+        "macos-x64",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-macos-x64"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+      "source_sha256": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f",
+      "binary_sha256": "ae1b443105d7f5f45e8aa3a547eb548d42344cea07a028147d9116ad6aef3b2a",
+      "format": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-macos-x64: Mach-O 64-bit executable x86_64",
+      "executed": false
+    },
+    {
+      "target": "linux-arm64",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+        "--release",
+        "--target",
+        "linux-arm64",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-linux-arm64"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+      "source_sha256": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f",
+      "binary_sha256": "19765c423c0cf8a297581333335b6fc99b8f1ede9f24a41c363246c73f23731a",
+      "format": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-linux-arm64: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 2.0.0, with debug_info, not stripped",
+      "executed": false
+    },
+    {
+      "target": "linux-x64",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+        "--release",
+        "--target",
+        "linux-x64",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-linux-x64"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+      "source_sha256": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f",
+      "binary_sha256": "4584d0ee523ba52bda492a47359c3a84ccfb85ef0d90e034d8547cdf42caf9b1",
+      "format": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-linux-x64: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.0.0, with debug_info, not stripped",
+      "executed": false
+    },
+    {
+      "target": "windows-arm64",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+        "--release",
+        "--target",
+        "windows-arm64",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-windows-arm64.exe"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+      "source_sha256": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f",
+      "binary_sha256": "575b448cbc812cb3043f7753cef7c3330c3d86d3704b3df02aebbabbb12104ef",
+      "format": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-windows-arm64.exe: PE32+ executable (console) Aarch64, for MS Windows",
+      "executed": false
+    },
+    {
+      "target": "windows-x64",
+      "command": [
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+        "compile",
+        "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+        "--release",
+        "--target",
+        "windows-x64",
+        "--output",
+        "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-windows-x64.exe"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+      "source_sha256": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f",
+      "binary_sha256": "afbf1a0cfbfb9e54bbd1722fa7af5bec528b5f453499ee5f9d7bd73684d874c3",
+      "format": "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Float16-Composition-windows-x64.exe: PE32+ executable (console) x86-64, for MS Windows",
+      "executed": false
+    }
+  ],
+  "fingerprints": {
+    "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f",
+    "Silex-Benchmarks/Sources/TensorStableCompute/Shaders/Float16Gate.hlsl": "051cb4e3b9bb81264937cd77da6c6ee3369dcdd89dc8144b8ddd74ab2bb9e0da"
+  }
+}

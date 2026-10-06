@@ -1,0 +1,18 @@
+2026-10-06 04:22:45.353 Task17-Canonical-Float16MetalControl-release[15761:16520456] Metal API Validation Enabled
+FLOAT16_METAL_CONTROL_VALUE index=0 input_bits=0 packed=0 roundtrip_bits=0 half_bits=0 control_bits=0 expected_half=0 expected_roundtrip=0
+FLOAT16_METAL_CONTROL_VALUE index=1 input_bits=2147483648 packed=32768 roundtrip_bits=2147483648 half_bits=2147483648 control_bits=2147483648 expected_half=32768 expected_roundtrip=2147483648
+FLOAT16_METAL_CONTROL_VALUE index=2 input_bits=1065353216 packed=15360 roundtrip_bits=1065353216 half_bits=1065353216 control_bits=1065353216 expected_half=15360 expected_roundtrip=1065353216
+FLOAT16_METAL_CONTROL_VALUE index=3 input_bits=3221225472 packed=49152 roundtrip_bits=3221225472 half_bits=3221225472 control_bits=3221225472 expected_half=49152 expected_roundtrip=3221225472
+FLOAT16_METAL_CONTROL_VALUE index=4 input_bits=947912704 packed=1024 roundtrip_bits=947912704 half_bits=947912704 control_bits=947912704 expected_half=1024 expected_roundtrip=947912704
+FLOAT16_METAL_CONTROL_VALUE index=5 input_bits=864026624 packed=1 roundtrip_bits=864026624 half_bits=864026624 control_bits=864026624 expected_half=1 expected_roundtrip=864026624
+FLOAT16_METAL_CONTROL_VALUE index=6 input_bits=855638016 packed=0 roundtrip_bits=0 half_bits=0 control_bits=0 expected_half=0 expected_roundtrip=0
+FLOAT16_METAL_CONTROL_VALUE index=7 input_bits=1199562752 packed=31743 roundtrip_bits=1199562752 half_bits=1199562752 control_bits=1199562752 expected_half=31743 expected_roundtrip=1199562752
+FLOAT16_METAL_CONTROL_VALUE index=8 input_bits=1199566848 packed=31744 roundtrip_bits=2139095040 half_bits=2139095040 control_bits=2139095040 expected_half=31744 expected_roundtrip=2139095040
+FLOAT16_METAL_CONTROL_VALUE index=9 input_bits=1148850176 packed=25552 roundtrip_bits=1148846080 half_bits=1148846080 control_bits=1148846080 expected_half=25552 expected_roundtrip=1148846080
+FLOAT16_METAL_CONTROL_VALUE index=10 input_bits=1065357312 packed=15360 roundtrip_bits=1065353216 half_bits=1065353216 control_bits=1065353216 expected_half=15360 expected_roundtrip=1065353216
+FLOAT16_METAL_CONTROL_VALUE index=11 input_bits=1065361408 packed=15361 roundtrip_bits=1065361408 half_bits=1065361408 control_bits=1065361408 expected_half=15361 expected_roundtrip=1065361408
+FLOAT16_METAL_CONTROL_VALUE index=12 input_bits=2139095040 packed=31744 roundtrip_bits=2139095040 half_bits=2139095040 control_bits=2139095040 expected_half=31744 expected_roundtrip=2139095040
+FLOAT16_METAL_CONTROL_VALUE index=13 input_bits=4286578688 packed=64512 roundtrip_bits=4286578688 half_bits=4286578688 control_bits=4286578688 expected_half=64512 expected_roundtrip=4286578688
+FLOAT16_METAL_CONTROL_VALUE index=14 input_bits=2143289344 packed=32256 roundtrip_bits=2143289344 half_bits=2143289344 control_bits=2143289344 expected_half=32256 expected_roundtrip=2143289344
+FLOAT16_METAL_CONTROL_ARITHMETIC half_bits=1148846080 control_bits=1148846080 float_bits=1148850176 expected_half_bits=1148846080
+FLOAT16_METAL_CONTROL_SMOKE observed=true conversions=true half_cast=true control_cast=true half_arithmetic=true control_arithmetic=true inputs=15

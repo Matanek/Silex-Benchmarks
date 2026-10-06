@@ -1,0 +1,15 @@
+2026-10-06 04:24:58.443 shadercross[15912:16522876] Usage: shadercross <input> [options]
+2026-10-06 04:24:58.443 shadercross[15912:16522876] Required options:
+2026-10-06 04:24:58.443 shadercross[15912:16522876]   -s | --source <value>            Source language format. May be inferred from the filename. Values: [SPIRV, HLSL]
+2026-10-06 04:24:58.443 shadercross[15912:16522876]   -d | --dest <value>              Destination format. May be inferred from the filename. Values: [DXBC, DXIL, MSL, SPIRV, HLSL, JSON]
+2026-10-06 04:24:58.443 shadercross[15912:16522876]   -t | --stage <value>             Shader stage. May be inferred from the filename. Values: [vertex, fragment, compute]
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   -e | --entrypoint <value>        Entrypoint function name. Default: "main".
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   -o | --output <value>            Output file.
+2026-10-06 04:24:58.444 shadercross[15912:16522876] Optional options:
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   -I | --include <value>           HLSL include directory. Only used with HLSL source.
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   -D<name>[=<value>]               HLSL define. Only used with HLSL source. Can be repeated.
+2026-10-06 04:24:58.444 shadercross[15912:16522876]                                    If =<value> is omitted the define will be treated as equal to 1.
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   --msl-version <value>            Target MSL version. Only used when transpiling to MSL. The default is 1.2.0.
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   -c | --cull                      Allow the compiler to cull unused resource bindings. This may lead to surprising binding behavior so be careful when enabling this!
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   -g | --debug                     Generate debug information when possible. Shaders are valid only when graphics debuggers are attached.
+2026-10-06 04:24:58.444 shadercross[15912:16522876]   -p | --pssl                      Generate PSSL-compatible shader. Destination format should be HLSL.

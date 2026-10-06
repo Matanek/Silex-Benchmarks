@@ -1,0 +1,77 @@
+[
+  {
+    "input_bits": 0,
+    "half_bits": 0,
+    "roundtrip_bits": 0
+  },
+  {
+    "input_bits": 2147483648,
+    "half_bits": 32768,
+    "roundtrip_bits": 2147483648
+  },
+  {
+    "input_bits": 1065353216,
+    "half_bits": 15360,
+    "roundtrip_bits": 1065353216
+  },
+  {
+    "input_bits": 3221225472,
+    "half_bits": 49152,
+    "roundtrip_bits": 3221225472
+  },
+  {
+    "input_bits": 947912704,
+    "half_bits": 1024,
+    "roundtrip_bits": 947912704
+  },
+  {
+    "input_bits": 864026624,
+    "half_bits": 1,
+    "roundtrip_bits": 864026624
+  },
+  {
+    "input_bits": 855638016,
+    "half_bits": 0,
+    "roundtrip_bits": 0
+  },
+  {
+    "input_bits": 1199562752,
+    "half_bits": 31743,
+    "roundtrip_bits": 1199562752
+  },
+  {
+    "input_bits": 1199566848,
+    "half_bits": 31744,
+    "roundtrip_bits": 2139095040
+  },
+  {
+    "input_bits": 1148850176,
+    "half_bits": 25552,
+    "roundtrip_bits": 1148846080
+  },
+  {
+    "input_bits": 1065357312,
+    "half_bits": 15360,
+    "roundtrip_bits": 1065353216
+  },
+  {
+    "input_bits": 1065361408,
+    "half_bits": 15361,
+    "roundtrip_bits": 1065361408
+  },
+  {
+    "input_bits": 2139095040,
+    "half_bits": 31744,
+    "roundtrip_bits": 2139095040
+  },
+  {
+    "input_bits": 4286578688,
+    "half_bits": 64512,
+    "roundtrip_bits": 4286578688
+  },
+  {
+    "input_bits": 2143289344,
+    "half_bits": 32256,
+    "roundtrip_bits": 2143289344
+  }
+]

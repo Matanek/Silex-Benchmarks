@@ -1,0 +1,52 @@
+use GFX.GPU
+
+func main() {
+    assert(GPU.Device.is_supported())
+    var device=GPU.Device(GPU.DeviceSettings(debug:true))
+    var inputs:uint32[]=[0x0,0x80000000,0x3f800000,0xc0000000,0x38800000,0x33800000,0x33000000,0x477fe000,0x477ff000,0x447a1000,0x3f801000,0x3f802000,0x7f800000,0xff800000,0x7fc00000]
+    var expected_half:uint32[]=[0x0,0x8000,0x3c00,0xc000,0x400,0x1,0x0,0x7bff,0x7c00,0x63d0,0x3c00,0x3c01,0x7c00,0xfc00,0x7e00]
+    var expected_roundtrip:uint32[]=[0x0,0x80000000,0x3f800000,0xc0000000,0x38800000,0x33800000,0x0,0x477fe000,0x7f800000,0x447a0000,0x3f800000,0x3f802000,0x7f800000,0xff800000,0x7fc00000]
+    let count=inputs.count()
+    let result_count=count*4+3
+    var input=device.buffer(GPU.BufferSettings(size:count*4,usage:GPU.BufferUsage.storage()))
+    var output=device.buffer(GPU.BufferSettings(size:result_count*4,usage:GPU.BufferUsage.storage()))
+    var upload=device.upload_buffer(count*4)
+    upload.write_uint32s(@inputs[0:count])
+    var initial=device.commands()
+    var transfer=initial.copy();transfer.upload(upload,input,count*4);transfer.finish()
+    var loaded=initial.submit_and_track();loaded.wait()
+    var pipeline=device.compute_pipeline(GPU.ShaderFormat.msl,"#include <metal_stdlib>\nusing namespace metal;\nkernel void compute_main(const device uint* inputBits [[buffer(0)]], device uint* outputBits [[buffer(1)]], uint3 id [[thread_position_in_grid]]) {\n    if (id.x>=15) return;\n    float value=as_type<float>(inputBits[id.x]);\n    half ordinary=half(value);\n    uint packed=uint(as_type<ushort>(ordinary));\n    outputBits[id.x*4]=packed;\n    outputBits[id.x*4+1]=as_type<uint>(float(as_type<half>(ushort(packed))));\n    outputBits[id.x*4+2]=as_type<uint>(float(ordinary));\n    outputBits[id.x*4+3]=as_type<uint>(float(half(value)));\n    if (id.x==0) {\n        half ordinary_sum=half(as_type<float>(inputBits[0]));\n        ordinary_sum+=half(1000.0);\n        ordinary_sum+=half(0.25);\n        outputBits[60]=as_type<uint>(float(ordinary_sum));\n        outputBits[61]=as_type<uint>(float(ordinary_sum));\n        outputBits[62]=as_type<uint>(as_type<float>(inputBits[0])+1000.0+0.25);\n    }\n}\n",GPU.ComputePipelineSettings(entry:"compute_main",read_only_storage_buffers:1,read_write_storage_buffers:1))
+    var commands=device.commands()
+    var compute_pass=commands.compute(buffers:[GPU.WritableBuffer(buffer:output)])
+    compute_pass.bind(pipeline);compute_pass.storage_buffer(0,input);compute_pass.dispatch(count);compute_pass.finish()
+    var complete=commands.submit_and_track();complete.wait()
+    var download=device.download_buffer(result_count*4)
+    var read_commands=device.commands()
+    var readback=read_commands.copy();readback.download(output,download,result_count*4);readback.finish()
+    var copied=read_commands.submit_and_track();copied.wait()
+    let values=download.read_uint32s(count:result_count)
+    var conversions=true
+    var half_cast=true
+    var minimum_cast=true
+    var index=0
+    while index<count {
+        let packed=values[index*4]
+        let roundtrip=values[index*4+1]
+        if index==14 {
+            assert(packed/1024%32==31 && packed%1024!=0)
+            assert(roundtrip/8388608%256==255 && roundtrip%8388608!=0)
+        } else {
+            if packed!=expected_half[index] || roundtrip!=expected_roundtrip[index] {conversions=false}
+            if values[index*4+2]!=expected_roundtrip[index] {half_cast=false}
+            if values[index*4+3]!=expected_roundtrip[index] {minimum_cast=false}
+        }
+        print("FLOAT16_METAL_CONTROL_VALUE index=$(index) input_bits=$(inputs[index]) packed=$(packed) roundtrip_bits=$(roundtrip) half_bits=$(values[index*4+2]) control_bits=$(values[index*4+3]) expected_half=$(expected_half[index]) expected_roundtrip=$(expected_roundtrip[index])")
+        index++
+    }
+    let half_sum=values[count*4];let minimum_sum=values[count*4+1];let float_sum=values[count*4+2]
+    assert(float_sum==0x447a1000)
+    print("FLOAT16_METAL_CONTROL_ARITHMETIC half_bits=$(half_sum) control_bits=$(minimum_sum) float_bits=$(float_sum) expected_half_bits=1148846080")
+    let half_arithmetic=half_sum==0x447a0000
+    let minimum_arithmetic=minimum_sum==0x447a0000
+    print("FLOAT16_METAL_CONTROL_SMOKE observed=true conversions=$(conversions) half_cast=$(half_cast) control_cast=$(minimum_cast) half_arithmetic=$(half_arithmetic) control_arithmetic=$(minimum_arithmetic) inputs=15")
+}

@@ -1,0 +1,20 @@
+#include <metal_stdlib>
+using namespace metal;
+kernel void compute_main(const device uint* inputBits [[buffer(0)]], device uint* outputBits [[buffer(1)]], uint3 id [[thread_position_in_grid]]) {
+    if (id.x>=15) return;
+    float value=as_type<float>(inputBits[id.x]);
+    half ordinary=half(value);
+    uint packed=uint(as_type<ushort>(ordinary));
+    outputBits[id.x*4]=packed;
+    outputBits[id.x*4+1]=as_type<uint>(float(as_type<half>(ushort(packed))));
+    outputBits[id.x*4+2]=as_type<uint>(float(ordinary));
+    outputBits[id.x*4+3]=as_type<uint>(float(half(value)));
+    if (id.x==0) {
+        half ordinary_sum=half(as_type<float>(inputBits[0]));
+        ordinary_sum+=half(1000.0);
+        ordinary_sum+=half(0.25);
+        outputBits[60]=as_type<uint>(float(ordinary_sum));
+        outputBits[61]=as_type<uint>(float(ordinary_sum));
+        outputBits[62]=as_type<uint>(as_type<float>(inputBits[0])+1000.0+0.25);
+    }
+}

@@ -1,0 +1,44 @@
+{
+  "status": "indeterminate",
+  "hardware": "Apple M3 Pro",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+  "architecture": "arm64",
+  "api_added": false,
+  "conversion_cases": 15,
+  "hlsl_arithmetic": "promoted to float32",
+  "native_metal_control": "half conversions and dynamic addition qualified",
+  "compiler_sha256": "fb51966ecd2635f3155fa651fd4f6e0920a454505d787305eb1983d707aab2ba",
+  "shadercross_sha256": "a63748fd6b75fff01ac80bd15bbc33f97e92498d99c633efd842d6ce008281a1",
+  "shadercross_header_sha256": "939355dd5c781b8746853035dafbbec459afed0ace708ada9ef8f26a4de37432",
+  "sources": {
+    "Float16Gate.sx": {
+      "file": "Source-Float16Gate.sx.txt",
+      "sha256": "3975873b0f7fbea4ecdd56bad59c70809264e8662730898e49a780f200e8329f"
+    },
+    "Float16MetalControl.sx": {
+      "file": "Source-Float16MetalControl.sx.txt",
+      "sha256": "8472166188c47971622739aee21a6ea73bc07e97dee42d21bc14501b88717cd5"
+    },
+    "Shaders/Float16Gate.hlsl": {
+      "file": "Source-Shaders-Float16Gate.hlsl.txt",
+      "sha256": "051cb4e3b9bb81264937cd77da6c6ee3369dcdd89dc8144b8ddd74ab2bb9e0da"
+    },
+    "Shaders/Float16MetalControl.msl": {
+      "file": "Source-Shaders-Float16MetalControl.msl.txt",
+      "sha256": "b8371ebcaeafd0be8383fb4e1c04bbba2bc700a285ba4942cf966af0b913598a"
+    }
+  },
+  "heads": {
+    "Silex": "a41bf8b269e0f31e2664a77c4c58b029d260115b",
+    "Packages/Tensor": "0ceb199959b6341396cbabfebffa120e44c0042b",
+    "Packages/GFX.GPU": "fb17a0c5ae08545f8e4aa07f42988c49607e0743",
+    "Packages/STD": "4112bb54390c55d39e85a5414991359abdff15dc",
+    "Silex-Benchmarks": "7f95495d53638841d38ab7f48ef8774285a1c227"
+  },
+  "unqualified": [
+    "HLSL native16",
+    "half matmul/reduction",
+    "mixed training convergence",
+    "time/memory benefit"
+  ]
+}

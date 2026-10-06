@@ -1,0 +1,12 @@
+2026-10-06 04:19:21.073 shadercross[15503:16516408] ERROR: Failed to transpile MSL from HLSL: HLSL compilation failed: hlsl.hlsl:9:5: error: unknown type name 'float16_t'
+    float16_t ordinary = (float16_t)value;
+    ^
+hlsl.hlsl:16:9: error: unknown type name 'float16_t'
+        float16_t ordinary_sum = (float16_t)asfloat(inputBits[0]);
+        ^
+hlsl.hlsl:17:26: error: use of undeclared identifier 'float16_t'
+        ordinary_sum += (float16_t)1000.0;
+                         ^
+hlsl.hlsl:18:26: error: use of undeclared identifier 'float16_t'
+        ordinary_sum += (float16_t)0.25;
+                         ^

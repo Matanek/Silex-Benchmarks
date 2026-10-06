@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Float16Gate",
+    "mode": "debug",
+    "phase": "Build",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+      "--debug",
+      "--output",
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16Gate-debug"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16Gate-debug-Build.log",
+    "status": "pass"
+  },
+  {
+    "name": "Float16Gate",
+    "mode": "debug",
+    "phase": "Run",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16Gate-debug"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16Gate-debug-Run.log",
+    "status": "pass"
+  },
+  {
+    "name": "Float16Gate",
+    "mode": "release",
+    "phase": "Build",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/TensorStableCompute/Float16Gate.sx",
+      "--release",
+      "--output",
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16Gate-release"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16Gate-release-Build.log",
+    "status": "pass"
+  },
+  {
+    "name": "Float16Gate",
+    "mode": "release",
+    "phase": "Run",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16Gate-release"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16Gate-release-Run.log",
+    "status": "pass"
+  },
+  {
+    "name": "Float16MetalControl",
+    "mode": "debug",
+    "phase": "Build",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/TensorStableCompute/Float16MetalControl.sx",
+      "--debug",
+      "--output",
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16MetalControl-debug"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16MetalControl-debug-Build.log",
+    "status": "pass"
+  },
+  {
+    "name": "Float16MetalControl",
+    "mode": "debug",
+    "phase": "Run",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16MetalControl-debug"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16MetalControl-debug-Run.log",
+    "status": "pass"
+  },
+  {
+    "name": "Float16MetalControl",
+    "mode": "release",
+    "phase": "Build",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Worktree/Silex/Toolchain/zig-out/bin/silex",
+      "compile",
+      "Silex-Benchmarks/Sources/TensorStableCompute/Float16MetalControl.sx",
+      "--release",
+      "--output",
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16MetalControl-release"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16MetalControl-release-Build.log",
+    "status": "pass"
+  },
+  {
+    "name": "Float16MetalControl",
+    "mode": "release",
+    "phase": "Run",
+    "command": [
+      "/Users/nekmata/Projects/SilexProject/.specs/Tensor-Training-Models-Acceleration/Memory/Artifacts/Task17-Canonical-Float16MetalControl-release"
+    ],
+    "exit_code": 0,
+    "log": "Task17-Canonical-Float16MetalControl-release-Run.log",
+    "status": "pass"
+  }
+]
