@@ -1,0 +1,28 @@
+use GFX.Physics
+use STD.Math
+func run_rack(case_id:int) {
+    let ratios:float[]=[1.0,2.0,-2.0,0.5,2.0,2.0,2.0]
+    let ratio=ratios[case_id]
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    var rotation=Math.Quat.identity();if case_id==5 { rotation=Math.Quat.angle_axis(0.7,Math.Vec3(0.0,1.0,0.0)) }
+    var mass=2.0;if case_id==4 { mass=8.0 }
+    var pinion=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2)) ..transform=Physics.Transform3D(rotation:rotation)
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var rack=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(0.2)) ..transform=Physics.Transform3D(rotation:rotation)
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var joint=world.create_rack_and_pinion_constraint(pinion,rack,Physics.RackAndPinionConstraint3DSettings() ..ratio=ratio)
+    let a=rotation.rotate(Math.Vec3(0.0,0.0,1.0));let b=rotation.rotate(Math.Vec3(1.0,0.0,0.0))
+    rack.set_linear_velocity(b)
+    var step=1;while step<=360 {
+        if case_id==6 { rack.apply_force(b.multiply(0.1)) }
+        world.step(1.0/60.0)
+        if step==1 || step%15==0 {
+            let phase=joint.pinion_angle();let angle=phase-2.0*Math.pi()*Math.floor((phase+Math.pi())/(2.0*Math.pi()))
+            print("rack $(case_id) $(step) $(angle) $(joint.travel()) $(pinion.angular_velocity().dot(a)) $(rack.linear_velocity().dot(b)) $(joint.pinion_reaction_torque().dot(a)) $(joint.reaction_force().dot(b))")
+        }
+        step++
+    }
+}
+func main() { var case_id=0;while case_id<7 { run_rack(case_id);case_id++ } }
