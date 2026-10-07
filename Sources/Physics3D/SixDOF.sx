@@ -1,0 +1,65 @@
+use GFX.Physics
+use STD.Math
+func run_six(case_id:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    if case_id==8 || case_id==10 { world.set_gravity(Math.Vec3(0.0,-9.81,0.0)) }
+    var rotation=Math.Quat.identity()
+    if case_id==11 { rotation=Math.Quat.angle_axis(0.7,Math.Vec3(0.0,1.0,0.0)) }
+    var first_settings=Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..transform=Physics.Transform3D(rotation:rotation) ..allow_sleep=false
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0)
+    if case_id==9 { first_settings.body_type=Physics.BodyType3D.dynamic;first_settings.mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2)) }
+    var first=world.create_rigid_body(first_settings)
+    var mass=2.0;if case_id==9 { mass=8.0 }
+    var position=Math.Vec3();var anchor=Math.Vec3()
+    if case_id==10 { position=Math.Vec3(0.0,-1.0,0.0);anchor=Math.Vec3(0.0,1.0,0.0) }
+    if case_id==8 { position=Math.Vec3(0.0,-0.8,0.0) }
+    var second=world.create_rigid_body(Physics.RigidBody3DSettings() ..transform=Physics.Transform3D(position,rotation)
+        ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(mass*0.1)) ..allow_sleep=false
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    if case_id==15 { second.set_transform(Physics.Transform3D(rotation:Math.Quat.angle_axis(0.3,Math.Vec3(0.0,1.0,0.0)))) }
+    var settings=Physics.SixDOFConstraint3DSettings() ..second_local_frame=Physics.Transform3D(anchor)
+    let locked=Physics.LinearAxis3DSettings() ..limit=Physics.LinearLimit3D.locked
+    if case_id==1 || case_id==9 { settings.translation_x=locked }
+    if case_id==2 || case_id==11 || case_id==12 { settings.translation_x=Physics.LinearAxis3DSettings() ..limit=Physics.LinearLimit3D.bounded(-0.4,0.5) }
+    if case_id==3 || case_id==8 { settings.translation_y=Physics.LinearAxis3DSettings() ..limit=Physics.LinearLimit3D.bounded(-0.4,0.4) }
+    if case_id==10 { settings.translation_x=locked;settings.translation_y=locked;settings.translation_z=locked }
+    if case_id==13 { settings.swing_limits=Physics.SwingLimits3D.cone(Math.Vec2(0.3,0.6)) }
+    if case_id==15 { settings.swing_limits=Physics.SwingLimits3D.pyramid(Math.Vec2(0.2,-Math.pi()),Math.Vec2(0.4,Math.pi())) }
+    if case_id==6 { settings.translation_z=Physics.LinearAxis3DSettings() ..maximum_friction_force=2.0 }
+    if case_id==7 { settings.maximum_rotation_friction_torque=Math.Vec3(0.2,0.0,0.0) }
+    if case_id==8 { settings.translation_y.limit_spring=Physics.LinearLimitSpring3D(200.0,14.0) }
+    if case_id==4 { settings.translation_x.motor=Physics.LinearMotor3D.position_and_velocity(0.6,0.1,100.0,20.0,8.0) }
+    if case_id==5 { settings.rotation_z_motor=Physics.AngularMotor3D.position_and_velocity(0.6,0.1,10.0,2.0,0.8) }
+    if case_id==14 { settings.translation_x.motor=Physics.LinearMotor3D(-0.5,0.1,0.2) }
+    var joint=world.create_six_dof_constraint(first,second,settings)
+    var speed=Math.Vec3();var angular=Math.Vec3()
+    if case_id==0 { speed=Math.Vec3(0.5,0.0,0.0);angular=Math.Vec3(0.5,0.0,0.0) }
+    if case_id==1 { speed=Math.Vec3(1.0,0.5,0.0);angular=Math.Vec3(0.5,0.0,0.0) }
+    if case_id==2 || case_id==11 || case_id==12 { speed=Math.Vec3(1.7,0.0,0.0) }
+    if case_id==3 { speed=Math.Vec3(0.0,-2.0,0.0) }
+    if case_id==6 { speed=Math.Vec3(0.0,0.0,1.0) }
+    if case_id==7 { angular=Math.Vec3(1.0,0.0,0.0) }
+    if case_id==9 { speed=Math.Vec3(1.0,0.0,0.0) }
+    if case_id==15 { angular=Math.Vec3(0.0,-2.0,0.0) }
+    if case_id==13 { angular=Math.Vec3(0.0,1.7,0.0) }
+    second.set_linear_velocity(rotation.rotate(speed));second.set_angular_velocity(rotation.rotate(angular))
+    var step=1;while step<=360 {
+        if case_id==8 && step==181 { joint.set_translation_y(Physics.LinearAxis3DSettings()
+            ..limit=Physics.LinearLimit3D.bounded(-0.4,0.4) ..limit_spring=Physics.LinearLimitSpring3D(400.0,20.0)) }
+        if case_id==12 && step==181 { joint.set_translation_x(Physics.LinearAxis3DSettings() ..limit=Physics.LinearLimit3D.bounded(-0.4,0.2)) }
+        world.step(1.0/60.0)
+        if step%15==0 {
+            let p=joint.translation();let swing=joint.swing_angles()
+            let v=rotation.conjugated().rotate(second.linear_velocity())
+            let a=rotation.conjugated().rotate(second.angular_velocity())
+            let first_v=rotation.conjugated().rotate(first.linear_velocity())
+            let f=rotation.conjugated().rotate(joint.reaction_force())
+            var mf=joint.motor_force();if case_id==6 { mf=joint.friction_force() }
+            var mt=joint.motor_torque();if case_id==7 { mt=joint.friction_torque() }
+            print("six $(case_id) $(step) $(p.x) $(p.y) $(p.z) $(joint.twist_angle()) $(swing.x) $(swing.y) $(v.x) $(v.y) $(v.z) $(a.x) $(a.y) $(a.z) $(first_v.x) $(f.x) $(f.y) $(f.z) $(mf.x) $(mf.y) $(mf.z) $(mt.x) $(mt.y) $(mt.z)")
+        }
+        step++
+    }
+}
+func main() { var c=0;while c<16 { run_six(c);c++ } }
