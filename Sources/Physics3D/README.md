@@ -742,3 +742,27 @@ crossing both stops, one-sided bounds, mutations, mass/COM, sleep, destruction
 and real contacts. Impact-transient and general spatial-chain parity remain
 unclaimed. No cost parity: Jolt uses 12 velocity/eight position passes; Silex
 uses up to 12 preparation/12 velocity/four position passes.
+
+## Slider velocity motor
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/SliderMotorRun.py` from the
+workspace or Spec group root, with the local CLI on PATH. The pinned Jolt
+oracle and Silex execute six 240-step cases at 120 Hz in Native Debug/Release:
+force-bounded acceleration, reversal and braking, two free unequal masses,
+an offset anchor with compensating couple, steady constant relative speed on
+a rotating kinematic rail, opposing rigid stops with explicit pose reset,
+and a motor below the axial load. All 288 scheduled samples are compared;
+independent mechanics guards qualify both traces before comparison.
+
+Declared bounds: 0.003 m for positions, 0.003 m/s for speeds, 0.003 rad/s
+for angular speeds, 0.001 m/rad for alignment, 0.1 N for world forces,
+0.05 N for motor/limit forces and 0.1 N·m for the free couple. Jolt uses
+24 velocity/eight position passes; Silex uses up to 12 preparation/12 velocity
+and four position passes. The extra Jolt passes reduce offset-row convergence
+residuals after braking. No cost parity is asserted.
+
+Rotating-rail force transitions, rigid-stop impacts and general spatial
+chains are not claimed equivalent by these steady/loaded witnesses.
+`--self-test` rejects corrupted evidence, perturbed positions and invalid
+independent trajectories. Sources, outputs, hashes and maximum errors are
+saved under `.silex/physics3d-oracle/slider-motor-*`.
