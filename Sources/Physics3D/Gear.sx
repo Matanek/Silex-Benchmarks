@@ -1,0 +1,29 @@
+use GFX.Physics
+use STD.Math
+func run_gear(case_id:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    var rotation=Math.Quat.identity()
+    if case_id==2 { rotation=Math.Quat.angle_axis(0.7,Math.Vec3(0.0,1.0,0.0)) }
+    var second_rotation=rotation
+    if case_id==3 { second_rotation=Math.Quat.angle_axis(Math.pi()/2.0,Math.Vec3(0.0,1.0,0.0)) }
+    var inertia=0.2;if case_id==1 { inertia=0.8 }
+    var first=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2))
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0) ..transform=Physics.Transform3D(rotation:rotation))
+    var second=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(inertia))
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0) ..transform=Physics.Transform3D(rotation:second_rotation))
+    var joint=world.create_gear_constraint(first,second)
+    let a=rotation.rotate(Math.Vec3(0.0,0.0,1.0));let b=second_rotation.rotate(Math.Vec3(0.0,0.0,1.0))
+    second.set_angular_velocity(b)
+    if case_id==4 { first.set_angular_velocity(a.multiply(0.25)) }
+    var step=1;while step<=360 {
+        if case_id==5 { second.apply_torque(b.multiply(0.1)) }
+        world.step(1.0/60.0)
+        if step==1 || step%15==0 {
+            print("gear $(case_id) $(step) $(first.angular_velocity().dot(a)) $(second.angular_velocity().dot(b)) $(joint.first_reaction_torque().dot(a))")
+        }
+        step++
+    }
+}
+func main() { var case_id=0;while case_id<6 { run_gear(case_id);case_id++ } }
