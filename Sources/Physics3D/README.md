@@ -836,3 +836,13 @@ From the workspace or isolated Spec group root:
 ```sh
 python3 Silex-Benchmarks/Sources/Physics3D/SliderSoftLimitsRun.py
 ```
+
+### Combined slider position and velocity
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/SliderCombinedRun.py` from the
+workspace or Spec group root. Eight cases compare fixed/moving targets, signed
+saturation, mode mutations, equal soft stops, load, unequal free masses and
+offset anchors against pinned Jolt and an independent recurrence. Native
+Debug/Release each retain all 192 samples. Bounds are fixed before execution;
+`--self-test` rejects malformed, missing, duplicated, nonfinite and perturbed
+evidence. No hard-impact, rotating-rail or spatial-chain parity or cost claim.

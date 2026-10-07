@@ -1,0 +1,56 @@
+use GFX.Physics
+use STD.Math
+
+func run_slider_combined_case(case_id:int) {
+    var gravity = Math.Vec3(0.0, -9.81, 0.0)
+    if case_id == 6 { gravity = Math.Vec3() }
+    if case_id == 5 { gravity = Math.Vec3(-2.0, -9.81, 0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_type = Physics.BodyType3D.fixed
+    if case_id == 6 { first_type = Physics.BodyType3D.dynamic }
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = first_type
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id == 6 { first_settings.mass_properties = Physics.MassProperties3D(2.0, Math.Vec3(0.2)) }
+    var first = world.create_rigid_body(first_settings)
+    var anchor = Math.Vec3()
+    var position = Math.Vec3()
+    if case_id == 7 { anchor = Math.Vec3(0.0, 0.5, 0.0); position = Math.Vec3(0.0, -0.5, 0.0) }
+    var mass = 2.0
+    var stiffness = 8.0
+    var damping = 8.0
+    var capacity = 100.0
+    var speed = 0.3
+    if case_id == 7 { speed = -0.2 }
+    var target = 0.75
+    if case_id == 1 { damping = 4.0 }
+    if case_id == 2 { capacity = 0.4; target = 5.0 }
+    if case_id == 4 { position = Math.Vec3(0.4,0.0,0.0) }
+    if case_id == 5 { capacity = 10.0 }
+    if case_id == 6 { mass = 8.0; stiffness = 6.4; damping = 6.4; capacity = 10.0 }
+    var body = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = Physics.Transform3D(position)
+        ..mass_properties = Physics.MassProperties3D(mass, Math.Vec3(mass * 0.1))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var settings = Physics.SliderConstraint3DSettings() ..second_local_frame = Physics.Transform3D(anchor)
+        ..motor = Physics.SliderMotor3D.position_and_velocity(target,speed,-capacity,capacity,stiffness,damping)
+    if case_id == 2 { settings.motor = Physics.SliderMotor3D.position_and_velocity(target,speed,-0.2,0.4,stiffness,damping) }
+    if case_id == 4 { settings.minimum_position = 0.0;settings.maximum_position = 0.0;settings.limit_spring = Physics.SliderLimitSpring3D(16.0,4.0) }
+    var joint = world.create_slider_constraint(first, body, settings)
+    var step = 1
+    while step <= 360 {
+        if case_id == 1 {
+            let time = (step-1) as float/60.0
+            joint.set_motor(Physics.SliderMotor3D.position_and_velocity(0.75*Math.sin(time*0.8),0.6*Math.cos(time*0.8),capacity,stiffness,damping))
+        }
+        if case_id == 3 {
+            if step == 121 { joint.set_motor(Physics.SliderMotor3D.position_and_velocity(-0.4,-0.2,capacity,stiffness,damping)) }
+            if step == 241 { joint.set_motor(Physics.SliderMotor3D(0.4, capacity)) }
+            if step == 301 { joint.set_motor(null) }
+        }
+        world.step(1.0 / 60.0)
+        if step % 15 == 0 {
+            print("slider-combined $(case_id) $(step) $(joint.position()) $(joint.speed()) $(first.linear_velocity().x) $(body.linear_velocity().x) $(body.position().x) $(body.position().y) $(first.angular_velocity().z) $(body.angular_velocity().z) $(joint.anchor_error().length()) $(joint.angular_error().length()) $(joint.reaction_force().x) $(joint.reaction_force().y) $(joint.limit_force()) $(joint.motor_force()) $(joint.reaction_torque().z)")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 8 { run_slider_combined_case(i); i++ } }
