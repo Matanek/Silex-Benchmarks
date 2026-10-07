@@ -1,0 +1,46 @@
+use GFX.Physics
+use STD.Math
+
+func run_bounds_case(case_id:int) {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id==6 { first_settings.body_type = Physics.BodyType3D.dynamic;first_settings.mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(0.1)) }
+    var first = world.create_rigid_body(first_settings)
+    var anchor = Math.Vec3();var pose = Physics.Transform3D();var inertia = 0.1
+    if case_id==4 { anchor = Math.Vec3(0.0,1.0,0.0);pose = Physics.Transform3D(Math.Vec3(0.0,-1.0,0.0)) }
+    if case_id==6 { inertia = 0.4 }
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = pose
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(inertia))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var motor = Physics.HingeMotor3D(10.0,-0.025,0.1)
+    if case_id==1 { motor = Physics.HingeMotor3D(-10.0,-0.025,0.1) }
+    if case_id==2 { motor = Physics.HingeMotor3D(-1.0,-0.1,0.0) }
+    if case_id==3 { motor = Physics.HingeMotor3D(0.0,0.03,0.03) }
+    if case_id==4 { motor = Physics.HingeMotor3D(0.6,-0.055,0.22) }
+    if case_id==5 { motor = Physics.HingeMotor3D.position(0.75,-0.08,0.32,1.6,0.8) }
+    if case_id==6 { motor = Physics.HingeMotor3D(0.8,-0.02,0.08) }
+    if case_id==7 { motor = Physics.HingeMotor3D(1.0,-0.1,0.2) }
+    var settings = Physics.HingeConstraint3DSettings() ..second_local_anchor = anchor
+        ..motor = motor ..maximum_friction_torque = 3.0
+    if case_id==7 { settings.minimum_angle = -0.3;settings.maximum_angle = 0.3 }
+    var hinge = world.create_hinge_constraint(first,second,settings)
+    var step = 1
+    while step<=360 {
+        if case_id==2 && step==121 { hinge.set_motor(Physics.HingeMotor3D(1.0,-0.1,0.0)) }
+        if case_id==2 && step==241 { hinge.set_motor(Physics.HingeMotor3D(1.0,0.0,0.1)) }
+        if case_id==3 && step==181 { hinge.set_motor(Physics.HingeMotor3D(0.0,-0.02,-0.02)) }
+        if case_id==4 && step==121 { hinge.set_motor(Physics.HingeMotor3D(-0.6,-0.055,0.22)) }
+        if case_id==5 && step==181 { hinge.set_motor(Physics.HingeMotor3D.position(-0.75,-0.08,0.32,1.6,0.8)) }
+        if case_id==6 && step==181 { hinge.set_motor(Physics.HingeMotor3D(-0.8,-0.02,0.08)) }
+        if case_id==7 && step==181 { hinge.set_motor(Physics.HingeMotor3D(-1.0,-0.1,0.2)) }
+        world.step(1.0/60.0)
+        if step%15==0 {
+            print("bounds $(case_id) $(step) $(second.position().x) $(second.position().y) $(hinge.angle()) $(hinge.angular_speed()) $(first.angular_velocity().z) $(second.angular_velocity().z) $(hinge.motor_torque()) $(hinge.friction_torque()) $(hinge.anchor_error().length()) $(hinge.axis_error()) $(hinge.reaction_force().y)")
+        }
+        step++
+    }
+}
+func main() { var i = 0;while i<8 { run_bounds_case(i);i++ } }

@@ -648,3 +648,27 @@ JSON. Jolt uses 64 velocity/eight position iterations to converge separate
 rows at an offset anchor; Silex uses 12 preparation/12 shared velocity/four
 position passes with coupled pivot inertia. These settings and bounds are
 declared before the first run; no cost or universal trajectory parity is claimed.
+
+## Signed hinge motor torque
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/HingeTorqueBoundsRun.py
+```
+
+Eight cases run 360 steps at 60 Hz in Native Debug/Release, with 192 samples
+per mode: positive/negative acceleration, one-sided effort and replacement,
+same-sign equal bounds, offset inertia, asymmetric position control, unequal
+free inertias and hard stops. Each row checks the signed effort interval and
+motor priority over configured passive friction. Central trajectories and
+angular momentum are also checked independently of engine comparison.
+
+The pinned Jolt witness uses 64 velocity/eight position iterations; Silex uses
+12 preparation/12 velocity/four position passes. Bounds are fixed before the
+run: pose/angle/speed 0.005, motor torque 0.03 and force 0.1; the offset case
+uses pose/angle 0.01, speed 0.03, torque 0.1 and force 0.2. Anchor and axis
+errors stay below 0.003 and 0.002 independently. There is no phase exception
+or cost parity claim. The comparator rejects missing, duplicate, unknown and
+non-finite rows as well as perturbed trajectories and out-of-range effort.
+Soft stops and combined position/velocity control are outside this fixture.
