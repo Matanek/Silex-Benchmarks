@@ -691,3 +691,28 @@ motion toward the opposite stop. Jolt uses 64 velocity/eight position passes;
 Silex uses up to 12 preparation/12 velocity/four position passes. This is a physical
 response comparison on macOS ARM64, without a cost parity claim. The oracle stays
 private to benchmarks; no Jolt provider is distributed with GFX.Physics.
+
+## Combined hinge targets
+
+Run from the Spec group or workspace root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/HingeCombinedRun.py
+```
+
+Eight cases over six seconds at 60 Hz, 192 observations per Debug/Release mode:
+fixed angle with velocity bias, updated sinusoidal trajectory, signed saturated
+effort and reversal, position/velocity/off switches, loads on both rigid stops
+with explicit pose reset, offset pivot, pi seam and two free unequal inertias.
+Independent implicit recurrences and angular momentum; every sample compared.
+Central bounds: .003 rad and rad/s, .03 N·m, .05 N; offset pivot: .01 rad,
+.03 rad/s, .1 N·m and .2 N. Anchors .003 m, axes .002 rad. Corrupt trace and
+perturbation guards are included.
+
+The initial rigid crossing fixture exposed stop activation after integration
+in Silex and before integration in Jolt. Its transient parity is not claimed;
+the final oracle qualifies loads on stops, while package tests check crossing
+in both directions. Soft stops, contacts, frame mutations and sleep are covered
+by Physics consumers. The JSON records reference/archive and source hashes.
+No cost parity: Jolt uses 12 velocity/eight position passes; Silex uses up to
+12 preparation/12 velocity/four position passes.
