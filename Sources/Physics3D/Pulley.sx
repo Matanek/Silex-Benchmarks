@@ -1,0 +1,43 @@
+use GFX.Physics
+use STD.Math
+func run_pulley(case_id:int) {
+    let ratios:float[]=[1.0,2.0,0.5,1.0,2.0,1.0,1.0,1.0,1.0,1.0]
+    let ratio=ratios[case_id]
+    var mass=2.0;if case_id==1 || case_id==8 { mass=8.0 }
+    if case_id==4 { mass=4.0 }
+    var height=10.0;if case_id==8 { height=200.0 }
+    var rotation=Math.Quat.identity();if case_id==9 { rotation=Math.Quat.angle_axis(0.7,Math.Vec3(0.0,0.0,1.0)) }
+    var anchor=Math.Vec3();if case_id==7 { anchor=Math.Vec3(0.5,0.0,0.0) }
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    if case_id==3 || case_id==4 || case_id==8 { world.set_gravity(Math.Vec3(0.0,-9.81,0.0)) }
+    var first=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2))
+        ..transform=Physics.Transform3D(rotation.rotate(Math.Vec3(-1.0,0.0,0.0)),rotation)
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var second=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(0.2))
+        ..transform=Physics.Transform3D(rotation.rotate(Math.Vec3(1.0,0.0,0.0)),rotation)
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var settings=Physics.PulleyConstraint3DSettings(rotation.rotate(Math.Vec3(-1.0,height,0.0).add(anchor)),rotation.rotate(Math.Vec3(1.0,height,0.0).add(anchor)))
+        ..first_local_anchor=anchor ..second_local_anchor=anchor ..ratio=ratio
+    if case_id==5 { settings.maximum_length=40.0 }
+    if case_id==8 { settings.minimum_length=400.0;settings.maximum_length=400.0 }
+    var joint=world.create_pulley_constraint(first,second,settings)
+    if case_id==0 || case_id==1 || case_id==2 || case_id==5 || case_id==7 || case_id==9 { second.set_linear_velocity(rotation.rotate(Math.Vec3(0.0,-1.0,0.0))) }
+    var step=1;while step<=360 {
+        if case_id==6 && step==181 { joint.set_limits(0.0,18.0) }
+        world.step(1.0/60.0)
+        if step==1 || step%15==0 {
+            let inv=rotation.conjugated();let a=inv.rotate(first.position()).y;let b=inv.rotate(second.position()).y
+            let va=first.linear_velocity();let vb=second.linear_velocity();let wa=first.angular_velocity();let wb=second.angular_velocity()
+            let qa=inv.multiply(first.transform().rotation);let qb=inv.multiply(second.transform().rotation)
+            let aa=2.0*Math.atan2(qa.z,qa.w);let ab=2.0*Math.atan2(qb.z,qb.w)
+            let fa=inv.rotate(joint.first_reaction_force());let fb=inv.rotate(joint.reaction_force())
+            let ta=inv.rotate(joint.first_reaction_torque());let tb=inv.rotate(joint.reaction_torque())
+            let energy=va.length_squared()+0.5*mass*vb.length_squared()+0.1*(wa.length_squared()+wb.length_squared())
+            print("pulley $(case_id) $(step) $(a) $(b) $(inv.rotate(va).y) $(inv.rotate(vb).y) $(wa.z) $(wb.z) $(aa) $(ab) $(joint.length()) $(fa.x) $(fa.y) $(fb.x) $(fb.y) $(ta.z) $(tb.z) $(energy)")
+        }
+        step++
+    }
+}
+func main() { var case_id=0;while case_id<10 { run_pulley(case_id);case_id++ } }
