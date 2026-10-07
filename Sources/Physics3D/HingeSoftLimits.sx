@@ -1,0 +1,50 @@
+use GFX.Physics
+use STD.Math
+
+func run_soft_case(case_id:int) {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id==4 { first_settings.body_type = Physics.BodyType3D.dynamic;first_settings.mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(0.1)) }
+    var first = world.create_rigid_body(first_settings)
+    var anchor = Math.Vec3();var angle = 0.4;var inertia = 0.1;var stiffness = 1.6;var damping = 0.8
+    var minimum = 0.1;var maximum = 0.1;var speed = 0.0
+    if case_id==1 { minimum = 0.0;maximum = 0.0;damping = 0.0 }
+    if case_id==2 || case_id==3 { angle = 0.0;minimum = -0.205;maximum = 0.205;speed = 1.0;if case_id==3 { speed = -1.0 } }
+    if case_id==4 { minimum = 0.0;maximum = 0.0;inertia = 0.4;damping = 0.4 }
+    if case_id==5 { anchor = Math.Vec3(0.0,1.0,0.0);minimum = 0.2;maximum = 0.2;stiffness = 17.6;damping = 8.8 }
+    if case_id==6 { angle = 0.0;minimum = -0.3;maximum = 0.3 }
+    if case_id==7 { minimum = 0.0;maximum = 0.0 }
+    let rotation = Math.Quat.angle_axis(angle,Math.Vec3(0.0,0.0,1.0))
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform = Physics.Transform3D(rotation.rotate(anchor).negated(),rotation)
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(inertia))
+        ..angular_velocity = Math.Vec3(0.0,0.0,speed)
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var settings = Physics.HingeConstraint3DSettings() ..second_local_anchor = anchor
+        ..minimum_angle = minimum ..maximum_angle = maximum ..limit_spring = Physics.HingeLimitSpring3D(stiffness,damping)
+    if case_id==6 { settings.motor = Physics.HingeMotor3D(1.0,-0.1,0.2) }
+    var joint = world.create_hinge_constraint(first,second,settings)
+    var step = 1
+    while step<=360 {
+        if case_id==6 && step==181 { joint.set_motor(Physics.HingeMotor3D(-1.0,-0.1,0.2)) }
+        if case_id==7 && step==121 {
+            joint.set_limit_spring(Physics.HingeLimitSpring3D(3.2,0.4));joint.set_limits(0.0,0.0)
+            second.set_transform(Physics.Transform3D(Math.Vec3(),Math.Quat.angle_axis(-0.3,Math.Vec3(0.0,0.0,1.0))))
+            second.set_angular_velocity(Math.Vec3(0.0,0.0,0.2))
+        }
+        if case_id==7 && step==241 {
+            joint.set_limit_spring(null);joint.set_limits(-0.2,0.2)
+            second.set_transform(Physics.Transform3D(Math.Vec3(),Math.Quat.angle_axis(0.4,Math.Vec3(0.0,0.0,1.0))))
+            second.set_angular_velocity(Math.Vec3())
+        }
+        world.step(1.0/60.0)
+        if step%15==0 {
+            print("soft $(case_id) $(step) $(second.position().x) $(second.position().y) $(joint.angle()) $(joint.angular_speed()) $(first.angular_velocity().z) $(second.angular_velocity().z) $(joint.limit_torque()) $(joint.motor_torque()) $(joint.anchor_error().length()) $(joint.axis_error()) $(joint.reaction_force().y)")
+        }
+        step++
+    }
+}
+func main() { var i = 0;while i<8 { run_soft_case(i);i++ } }

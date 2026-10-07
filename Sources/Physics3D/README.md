@@ -672,3 +672,22 @@ errors stay below 0.003 and 0.002 independently. There is no phase exception
 or cost parity claim. The comparator rejects missing, duplicate, unknown and
 non-finite rows as well as perturbed trajectories and out-of-range effort.
 Soft stops and combined position/velocity control are outside this fixture.
+
+## Soft hinge stops
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/HingeSoftLimitsRun.py` from the
+workspace or Spec group root. The pinned Jolt oracle compares eight cases over
+360 steps at 60 Hz in Native Debug/Release: damped and undamped equal bounds,
+upper/lower impacts, two inertias, offset pivot, signed motor equilibrium and
+spring/limit mutation with return to rigid stops. All 384 samples are compared;
+implicit trajectories, unilateral effort and momentum are checked independently.
+Bounds are fixed before the run; `--self-test` rejects corrupt traces.
+
+Jolt requires angular limits to include zero. Equal positive limits are expressed
+through its local normal frame and measurements are converted back to physical
+angles. Impact bounds use +/-0.205 rad to avoid a floating-point equality exactly
+after twelve steps. Geometry and effort bounds cover the whole trajectory, including
+motion toward the opposite stop. Jolt uses 64 velocity/eight position passes;
+Silex uses up to 12 preparation/12 velocity/four position passes. This is a physical
+response comparison on macOS ARM64, without a cost parity claim. The oracle stays
+private to benchmarks; no Jolt provider is distributed with GFX.Physics.
