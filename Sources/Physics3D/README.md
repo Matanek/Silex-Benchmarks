@@ -818,3 +818,21 @@ position passes. No cost, impact, rotating-transient or general-chain parity
 is claimed. `--self-test` rejects corrupted/missing/duplicate/nonfinite rows,
 perturbed positions and mechanically invalid traces. Sources, hashes and
 qualification are stored under `.silex/physics3d-oracle/slider-force-bounds-*`.
+
+## Slider soft stops
+
+`SliderSoftLimitsRun.py` qualifies eight six-second trajectories at 60 Hz:
+damped and undamped bilateral springs, unilateral overshoot both ways,
+unequal free masses, an offset anchor, signed motor compression and spring/
+limit mutations under load. Both traces pass independent mechanics before
+comparison: 384 observations across Debug/Release, all at the declared bounds.
+Maximum difference: 2.35e-7 m, 8.95e-7 m/s, 6.68e-6 N limit/world force and
+1.08e-6 N m free couple. Pinned Jolt uses 24 velocity/eight position passes;
+Silex uses 12 preparation/12 velocity/four position passes. No hard-impact,
+rotating-phase, general-chain or cost parity claim.
+
+From the workspace or isolated Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/SliderSoftLimitsRun.py
+```

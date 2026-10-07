@@ -1,0 +1,46 @@
+use GFX.Physics
+use STD.Math
+
+func run_slider_soft_case(case_id:int) {
+    var gravity = Math.Vec3(0.0,-9.81,0.0)
+    if case_id==4 { gravity = Math.Vec3() }
+    if case_id==7 { gravity = Math.Vec3(-0.3,-9.81,0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = Physics.BodyType3D.fixed ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id==4 { first_settings.body_type = Physics.BodyType3D.dynamic;first_settings.mass_properties = Physics.MassProperties3D(2.0,Math.Vec3(0.2)) }
+    var first = world.create_rigid_body(first_settings)
+    var x = 0.4;if case_id==2 || case_id==3 || case_id==6 { x = 0.0 }
+    var anchor = Math.Vec3();var position = Math.Vec3(x,0.0,0.0)
+    if case_id==5 { anchor = Math.Vec3(0.0,0.5,0.0);position.y = -0.5 }
+    var mass = 2.0;if case_id==4 { mass = 8.0 }
+    var body = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = Physics.Transform3D(position)
+        ..mass_properties = Physics.MassProperties3D(mass,Math.Vec3(mass*0.1)) ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var damping = 8.0;if case_id==1 { damping = 0.0 }
+    if case_id==4 { damping = 4.0 }
+    var stiffness = 32.0;if case_id==6 { stiffness = 8.0 }
+    var settings = Physics.SliderConstraint3DSettings() ..second_local_frame = Physics.Transform3D(anchor)
+        ..minimum_position = 0.0 ..maximum_position = 0.0 ..limit_spring = Physics.SliderLimitSpring3D(stiffness,damping)
+    if case_id==2 || case_id==3 { settings.minimum_position = -0.205;settings.maximum_position = 0.205 }
+    if case_id==6 { settings.minimum_position = -0.3;settings.maximum_position = 0.3;settings.motor = Physics.SliderMotor3D(1.0,-0.5,2.0) }
+    var joint = world.create_slider_constraint(first,body,settings)
+    if case_id==2 { body.set_linear_velocity(Math.Vec3(1.0,0.0,0.0)) }
+    if case_id==3 { body.set_linear_velocity(Math.Vec3(-1.0,0.0,0.0)) }
+    var step = 1
+    while step<=360 {
+        if case_id==6 && step==181 { joint.set_motor(Physics.SliderMotor3D(-1.0,-0.5,2.0)) }
+        if case_id==7 && step==121 {
+            body.set_transform(Physics.Transform3D(Math.Vec3(-0.3,0.0,0.0)));body.set_linear_velocity(Math.Vec3(0.2,0.0,0.0))
+            joint.set_limit_spring(Physics.SliderLimitSpring3D(64.0,4.0))
+        }
+        if case_id==7 && step==241 {
+            body.set_transform(Physics.Transform3D());body.set_linear_velocity(Math.Vec3(0.4,0.0,0.0))
+            joint.set_limits(null,null);joint.set_limit_spring(null)
+        }
+        world.step(1.0/60.0)
+        if step%15==0 {
+            print("slider-soft $(case_id) $(step) $(joint.position()) $(joint.speed()) $(first.linear_velocity().x) $(body.linear_velocity().x) $(body.position().x) $(body.position().y) $(first.angular_velocity().z) $(body.angular_velocity().z) $(joint.anchor_error().length()) $(joint.angular_error().length()) $(joint.reaction_force().x) $(joint.reaction_force().y) $(joint.limit_force()) $(joint.motor_force()) $(joint.friction_force()) $(joint.reaction_torque().z)")
+        }
+        step++
+    }
+}
+func main() { var i = 0;while i<8 { run_slider_soft_case(i);i++ } }
