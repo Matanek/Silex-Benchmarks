@@ -716,3 +716,29 @@ in both directions. Soft stops, contacts, frame mutations and sleep are covered
 by Physics consumers. The JSON records reference/archive and source hashes.
 No cost parity: Jolt uses 12 velocity/eight position passes; Silex uses up to
 12 preparation/12 velocity/four position passes.
+
+
+## Free sliders and rigid stops
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/SliderRun.py
+```
+
+Six cases, 240 steps at 120 Hz, every tenth step compared: 288 Debug/Release
+observations. Free axial acceleration, signed loaded stops with an explicit
+pose reset, unequal free bodies, a rotating kinematic rail, an offset anchor
+and equal limits. Pinned Jolt rejects equal rigid slider bounds and recommends
+FixedConstraint; the equal-limits witness explicitly uses that equivalent
+attachment and maps its axial reaction. This does not claim that Jolt's slider
+accepts equal rigid bounds.
+
+Independent semi-implicit trajectories, initial momentum projection and
+centrifugal motion guard both implementations. Predeclared comparison bounds:
+.003 m/m·s⁻¹, .003 rad/s, .001 m/rad alignment, .1 N total force and .05 N stop
+force. No widened bound or removed sample. Package tests separately qualify
+crossing both stops, one-sided bounds, mutations, mass/COM, sleep, destruction
+and real contacts. Impact-transient and general spatial-chain parity remain
+unclaimed. No cost parity: Jolt uses 12 velocity/eight position passes; Silex
+uses up to 12 preparation/12 velocity/four position passes.

@@ -1,0 +1,49 @@
+use GFX.Physics
+use STD.Math
+
+func run_slider_case(case_id:int) {
+    var gravity = Math.Vec3(0.3, -9.81, 0.0)
+    if case_id == 1 { gravity = Math.Vec3(2.0, 0.0, 0.0) }
+    if case_id == 2 || case_id == 3 { gravity = Math.Vec3() }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_type = Physics.BodyType3D.fixed
+    if case_id == 2 { first_type = Physics.BodyType3D.dynamic }
+    if case_id == 3 { first_type = Physics.BodyType3D.kinematic }
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = first_type
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id == 2 { first_settings.mass_properties = Physics.MassProperties3D(2.0, Math.Vec3(0.2)) }
+    var first = world.create_rigid_body(first_settings)
+    var position = Math.Vec3()
+    if case_id == 1 { position = Math.Vec3(0.5, 0.0, 0.0) }
+    if case_id == 2 || case_id == 3 { position = Math.Vec3(2.0, 0.0, 0.0) }
+    var anchor = Math.Vec3()
+    if case_id == 4 { anchor = Math.Vec3(0.0, 0.5, 0.0); position = Math.Vec3(0.0, -0.5, 0.0) }
+    var mass = 2.0
+    if case_id == 2 { mass = 8.0 }
+    var body = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = Physics.Transform3D(position)
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..mass_properties = Physics.MassProperties3D(mass, Math.Vec3(mass * 0.1))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var settings = Physics.SliderConstraint3DSettings() ..second_local_frame = Physics.Transform3D(anchor)
+    if case_id == 1 { settings.minimum_position = -0.5; settings.maximum_position = 0.5 }
+    if case_id == 5 { settings.minimum_position = 0.0; settings.maximum_position = 0.0 }
+    var joint = world.create_slider_constraint(first, body, settings)
+    if case_id == 0 { body.set_linear_velocity(Math.Vec3(-0.5, 2.0, -3.0)); body.set_angular_velocity(Math.Vec3(1.0, -2.0, 3.0)) }
+    if case_id == 2 { first.set_angular_velocity(Math.Vec3(0.0, 0.0, 1.0)) }
+    if case_id == 3 { first.set_angular_velocity(Math.Vec3(0.0, 0.0, 0.2)); body.set_linear_velocity(Math.Vec3(0.0, 0.4, 0.0)) }
+    var step = 1
+    while step <= 240 {
+        if case_id == 1 && step == 121 {
+            body.set_transform(Physics.Transform3D(Math.Vec3(-0.5, 0.0, 0.0)))
+            body.set_linear_velocity(Math.Vec3())
+            world.set_gravity(Math.Vec3(-2.0, 0.0, 0.0))
+        }
+        world.step(1.0 / 120.0)
+        if step % 10 == 0 {
+            print("slider $(case_id) $(step) $(joint.position()) $(joint.speed()) $(body.position().x) $(body.position().y) $(first.angular_velocity().z) $(body.angular_velocity().z) $(joint.anchor_error().length()) $(joint.angular_error().length()) $(joint.reaction_force().x) $(joint.reaction_force().y) $(joint.limit_force())")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 6 { run_slider_case(i); i++ } }
