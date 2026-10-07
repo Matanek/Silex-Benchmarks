@@ -766,3 +766,21 @@ chains are not claimed equivalent by these steady/loaded witnesses.
 `--self-test` rejects corrupted evidence, perturbed positions and invalid
 independent trajectories. Sources, outputs, hashes and maximum errors are
 saved under `.silex/physics3d-oracle/slider-motor-*`.
+
+### Slider position servo
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/SliderPositionRun.py` from the
+workspace or Spec group root with the active `silex` on PATH. The pinned Jolt
+oracle covers eight six-second 60 Hz fixtures: critical/weak damping,
+saturation, target/velocity/off transitions, target projection onto limits,
+axial/transverse load, unequal free masses and an offset anchor/free couple.
+All 384 Debug/Release observations pass the independent implicit-Euler
+recurrence and the unchanged slider-motor bounds: 0.003 m for positions,
+0.003 m/s for linear speed, 0.003 rad/s for angular speed,
+0.001 m/rad for alignment, 0.1 N world force, 0.05 N motor
+and limit force, 0.1 N·m free couple. Jolt uses 24 velocity/eight position
+passes; Silex uses up to 12 preparation/12 velocity/four position passes.
+No cost, hard-impact, rotating-phase or general spatial-chain parity is claimed.
+`--self-test` rejects incomplete/nonfinite/duplicate/unknown rows, perturbed
+positions and mechanically invalid traces. Sources, hashes and outputs are
+retained in `.silex/physics3d-oracle/slider-position-*`.
