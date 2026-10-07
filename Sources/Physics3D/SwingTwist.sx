@@ -1,0 +1,50 @@
+use GFX.Physics
+use STD.Math
+func run_swing(case_id:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    if case_id==8 { world.set_gravity(Math.Vec3(0.0,-9.81,0.0)) }
+    var rotation=Math.Quat.identity()
+    if case_id==9 { rotation=Math.Quat.angle_axis(0.7,Math.Vec3(0.0,1.0,0.0)) }
+    var first_settings=Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..transform=Physics.Transform3D(rotation:rotation) ..allow_sleep=false
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0)
+    if case_id==7 { first_settings.body_type=Physics.BodyType3D.dynamic;first_settings.mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2)) }
+    var first=world.create_rigid_body(first_settings)
+    var mass=2.0;if case_id==7 { mass=8.0 }
+    var position=Math.Vec3();var anchor=Math.Vec3()
+    if case_id==8 { position=Math.Vec3(0.0,-1.0,0.0);anchor=Math.Vec3(0.0,1.0,0.0) }
+    var second=world.create_rigid_body(Physics.RigidBody3DSettings() ..transform=Physics.Transform3D(position,rotation)
+        ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(mass*0.1)) ..allow_sleep=false
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var settings=Physics.SwingTwistConstraint3DSettings() ..swing_limits=Physics.SwingLimits3D.cone(Math.Vec2(0.3,0.6))
+        ..minimum_twist=-0.4 ..maximum_twist=0.5 ..second_local_frame=Physics.Transform3D(anchor)
+    if case_id==0 || case_id==4 || case_id==5 || case_id==6 || case_id==8 {
+        settings.minimum_twist=-Math.pi();settings.maximum_twist=Math.pi()
+    }
+    if case_id==7 { settings.minimum_twist=0.0;settings.maximum_twist=0.0;settings.swing_limits=Physics.SwingLimits3D.cone(Math.Vec2()) }
+    if case_id==6 { settings.maximum_friction_torque=0.2 }
+    if case_id==10 { settings.swing_limits=Physics.SwingLimits3D.pyramid(Math.Vec2(-0.3,-0.6),Math.Vec2(0.3,0.6)) }
+    if case_id==4 { settings.twist_motor=Physics.TwistMotor3D.position_and_velocity(0.25,0.05,10.0,2.0,0.8) }
+    if case_id==5 { settings.swing_motor=Physics.SwingMotor3D.position_and_velocity(Math.Vec2(0.2,0.0),Math.Vec2(0.05,0.0),10.0,2.0,0.8) }
+    var joint=world.create_swing_twist_constraint(first,second,settings)
+    var speed=Math.Vec3()
+    if case_id==0 { speed=Math.Vec3(0.5,0.0,0.0) }
+    if case_id==1 { speed=Math.Vec3(-2.0,0.0,0.0) }
+    if case_id==2 || case_id==9 || case_id==10 { speed=Math.Vec3(0.0,2.0,0.0) }
+    if case_id==3 { speed=Math.Vec3(0.0,0.0,-2.0) }
+    if case_id==6 || case_id==7 { speed=Math.Vec3(1.0,0.0,0.0) }
+    if case_id==11 { speed=Math.Vec3(1.7,0.0,0.0) }
+    second.set_angular_velocity(rotation.rotate(speed))
+    var step=1;while step<=360 {
+        if case_id==11 && step==181 { joint.set_twist_limits(-0.4,0.2) }
+        world.step(1.0/60.0)
+        if step%15==0 {
+            let swing=joint.swing_angles();let v=rotation.conjugated().rotate(second.angular_velocity())
+            let first_v=rotation.conjugated().rotate(first.angular_velocity());let f=joint.reaction_force()
+            var m=joint.motor_torque();if case_id==6 { m=joint.friction_torque() }
+            print("swing $(case_id) $(step) $(joint.twist_angle()) $(swing.x) $(swing.y) $(v.x) $(v.y) $(v.z) $(first_v.x) $(joint.anchor_error().length()) $(f.x) $(f.y) $(f.z) $(m.x) $(m.y) $(m.z)")
+        }
+        step++
+    }
+}
+func main() { var c=0;while c<12 { run_swing(c);c++ } }
