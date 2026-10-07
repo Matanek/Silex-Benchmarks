@@ -846,3 +846,15 @@ offset anchors against pinned Jolt and an independent recurrence. Native
 Debug/Release each retain all 192 samples. Bounds are fixed before execution;
 `--self-test` rejects malformed, missing, duplicated, nonfinite and perturbed
 evidence. No hard-impact, rotating-rail or spatial-chain parity or cost claim.
+
+## Path guidance
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/PathRun.py` from the Spec
+group (or use `--self-test` for evidence guards). Fourteen cases run for
+120 steps in Debug and Release: 108 sampled observations per mode compare
+line guidance, drives, friction, orientations, a rotated frame and a free
+loop; 18 observations retain two measured reference boundaries. On a 2m
+segment the pinned position servo scales its error by segment fraction.
+Curved follow mode omits angular frame transport from velocity. Independent
+metric-servo recurrence and curvature/inertia witnesses qualify those Silex
+behaviors. They are not included in a false all-case parity claim.

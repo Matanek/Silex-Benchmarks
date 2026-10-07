@@ -1,0 +1,47 @@
+use GFX.Physics
+use STD.Math
+func circle_path() Physics.Path3D {
+    let h=1.6568542495;let n=Math.Vec3(0.0,0.0,1.0)
+    let knots:Physics.PathKnot3D[]=[Physics.PathKnot3D(Math.Vec3(1.0,0.0,0.0),Math.Vec3(0.0,h,0.0),n),
+        Physics.PathKnot3D(Math.Vec3(0.0,1.0,0.0),Math.Vec3(-h,0.0,0.0),n),
+        Physics.PathKnot3D(Math.Vec3(-1.0,0.0,0.0),Math.Vec3(0.0,-h,0.0),n),Physics.PathKnot3D(Math.Vec3(0.0,-1.0,0.0),Math.Vec3(h,0.0,0.0),n)]
+    return Physics.Path3D(knots,true)
+}
+func run_path(case_id:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    var length=20.0;if case_id==2 || case_id==3 { length=1.0 }if case_id==12 { length=2.0 }
+    var rotation=Math.Quat.identity();if case_id==10 { rotation=Math.Quat.angle_axis(0.7,Math.Vec3(0.0,0.0,1.0)) }
+    var start=Math.Vec3(2.0,0.0,0.0);if case_id==2 || case_id==3 || case_id==12 { start=Math.Vec3() }
+    var path=Physics.Path3D.line(Math.Vec3(),Math.Vec3(length,0.0,0.0),Math.Vec3(0.0,1.0,0.0))
+    if case_id==11 || case_id==13 { path=circle_path();start=Math.Vec3(1.0,0.0,0.0) }
+    var first=world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed ..transform=Physics.Transform3D(rotation:rotation) ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var second=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2)) ..transform=Physics.Transform3D(rotation.rotate(start),rotation) ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var settings=Physics.PathConstraint3DSettings(path)
+    if case_id==1 || case_id==10 { settings.motor=Physics.LinearMotor3D(1.0,12.0) }
+    if case_id==2 || case_id==12 { settings.motor=Physics.LinearMotor3D.position(0.5,12.0,40.0,12.0) }
+    if case_id==3 { settings.motor=Physics.LinearMotor3D.position_and_velocity(0.5,0.1,12.0,40.0,12.0) }
+    if case_id==4 { settings.maximum_friction_force=6.0 }
+    let modes:Physics.PathOrientation3D[]=[Physics.PathOrientation3D.around_tangent,Physics.PathOrientation3D.around_normal,
+        Physics.PathOrientation3D.around_binormal,Physics.PathOrientation3D.follow_path,Physics.PathOrientation3D.relative_to_body]
+    if case_id>=5 && case_id<=9 { settings.orientation=modes[case_id-5] }
+    if case_id==13 { settings.orientation=Physics.PathOrientation3D.follow_path }
+    var joint=world.create_path_constraint(first,second,settings)
+    if case_id==0 { second.set_linear_velocity(rotation.rotate(Math.Vec3(1.0,2.0,3.0))) }
+    if case_id==4 { second.set_linear_velocity(Math.Vec3(1.0,0.0,0.0)) }
+    if case_id>=5 && case_id<=9 { second.set_angular_velocity(Math.Vec3(1.0,2.0,3.0)) }
+    if case_id==11 || case_id==13 { second.set_linear_velocity(Math.Vec3(0.0,1.0,0.0)) }
+    var step=1;while step<=120 {
+        world.step(1.0/60.0)
+        if step==1 || step%15==0 {
+            let p=rotation.conjugated().rotate(second.position());let v=rotation.conjugated().rotate(second.linear_velocity());let w=rotation.conjugated().rotate(second.angular_velocity())
+            let q=rotation.conjugated().multiply(second.rotation());let angle=2.0*Math.atan2(q.z,q.w)
+            // Jolt's normal/binormal basis is (Y,-Z) on this line and (Z,+radial) on the planar loop.
+            let frame=path.frame(joint.position());let normal=rotation.rotate(frame.vector(Math.Vec3(0.0,1.0,0.0)))
+            let binormal=rotation.rotate(frame.vector(Math.Vec3(0.0,0.0,-1.0)))
+            print("path $(case_id) $(step) $(p.x) $(p.y) $(p.z) $(v.x) $(v.y) $(v.z) $(w.x) $(w.y) $(w.z) $(angle) $(joint.motor_force()+joint.friction_force()) $(joint.reaction_force().dot(normal)) $(joint.reaction_force().dot(binormal))")
+        }
+        step++
+    }
+}
+func main() { var case_id=0;while case_id<14 { run_path(case_id);case_id++ } }
