@@ -1,0 +1,42 @@
+use GFX.Physics
+use STD.Math
+
+func run_cone(case_id:int) {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    if case_id==6 { world.set_gravity(Math.Vec3(0.0,-9.81,0.0)) }
+    var rotation = Math.Quat.identity()
+    if case_id==7 { rotation = Math.Quat.angle_axis(0.7,Math.Vec3(0.0,1.0,0.0)) }
+    var first_type = Physics.BodyType3D.fixed
+    if case_id==5 { first_type = Physics.BodyType3D.dynamic }
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = first_type
+        ..transform = Physics.Transform3D(rotation:rotation)
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id==5 { first_settings.mass_properties = Physics.MassProperties3D(2.0,Math.Vec3(0.2)) }
+    var first = world.create_rigid_body(first_settings)
+    var mass = 2.0;if case_id==5 { mass = 8.0 }
+    var position = Math.Vec3();var anchor = Math.Vec3()
+    if case_id==6 { position = Math.Vec3(0.0,-1.0,0.0);anchor = Math.Vec3(0.0,1.0,0.0) }
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform = Physics.Transform3D(position,rotation)
+        ..mass_properties = Physics.MassProperties3D(mass,Math.Vec3(mass*0.1))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var joint = world.create_cone_constraint(first,second,Physics.ConeConstraint3DSettings()
+        ..second_local_anchor = anchor ..half_angle = 0.4)
+    var speed = Math.Vec3(2.0,0.0,0.0)
+    if case_id==0 { speed = Math.Vec3(0.0,0.0,0.5) }
+    if case_id==2 { speed = Math.Vec3(-2.0,0.0,0.0) }
+    if case_id==3 || case_id==6 { speed = Math.Vec3() }
+    second.set_angular_velocity(rotation.rotate(speed))
+    var step = 1
+    while step<=360 {
+        if case_id==3 { second.apply_torque(Math.Vec3(0.2,0.0,0.0)) }
+        if case_id==4 && step==181 { joint.set_half_angle(0.2) }
+        world.step(1.0/60.0)
+        if step%15==0 {
+            let v = second.angular_velocity();let f = joint.reaction_force();let t = joint.reaction_torque()
+            print("cone $(case_id) $(step) $(joint.angle()) $(v.x) $(v.y) $(v.z) $(first.angular_velocity().x) $(joint.anchor_error().length()) $(f.x) $(f.y) $(f.z) $(t.x) $(t.y) $(t.z)")
+        }
+        step++
+    }
+}
+func main() { var case_id = 0;while case_id<8 { run_cone(case_id);case_id++ } }

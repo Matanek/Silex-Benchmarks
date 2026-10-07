@@ -177,7 +177,17 @@ def verified_source(archive_override):
     with zipfile.ZipFile(archive) as package:
         if any(not name.startswith(f"JoltPhysics-{REFERENCE}/") for name in package.namelist()):
             fail("Jolt archive contains an unexpected source root")
-        package.extractall(BUILD)
+        # Validate existing content against the pinned archive without touching
+        # unchanged timestamps: repeated witnesses must not rebuild all of Jolt.
+        for member in package.infolist():
+            destination = BUILD / member.filename
+            if member.is_dir():
+                destination.mkdir(parents=True, exist_ok=True)
+                continue
+            content = package.read(member)
+            if not destination.is_file() or destination.read_bytes() != content:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                destination.write_bytes(content)
     if "project(JoltPhysics VERSION 5.6.0" not in (source / "Build/CMakeLists.txt").read_text():
         fail("Jolt source version differs from v5.6.0")
     return source, digest
@@ -187,7 +197,7 @@ def build_oracle(source, mode, oracle_source=HERE / "Oracle.cpp", stem="oracle")
     directory = BUILD / f"jolt-{mode}"
     checked(["cmake", "-S", str(source / "Build"), "-B", str(directory),
              "-G", "Unix Makefiles", f"-DCMAKE_BUILD_TYPE={mode}", *CMAKE_OPTIONS])
-    checked(["cmake", "--build", str(directory), "--target", "Jolt", "-j", "8"])
+    checked(["cmake", "--build", str(directory), "--target", "Jolt", "-j", "1"])
     binary = BUILD / f"{stem}-{mode.lower()}"
     definitions = ["-DJPH_OBJECT_STREAM", "-DJPH_USE_CPU_COMPUTE"]
     if mode in ("Debug", "Release"):
