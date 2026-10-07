@@ -1,0 +1,63 @@
+use GFX.Physics
+use STD.Math
+
+func run_slider_force_bounds_case(case_id:int) {
+    var gravity = Math.Vec3(0.0, -9.81, 0.0)
+    if case_id == 6 { gravity = Math.Vec3() }
+    if case_id == 7 { gravity = Math.Vec3(-0.3, -9.81, 0.0) }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = gravity)
+    var first_settings = Physics.RigidBody3DSettings() ..body_type = Physics.BodyType3D.fixed
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0)
+    if case_id == 6 { first_settings.body_type = Physics.BodyType3D.dynamic;first_settings.mass_properties = Physics.MassProperties3D(2.0,Math.Vec3(0.2)) }
+    var first = world.create_rigid_body(first_settings)
+    var anchor = Math.Vec3()
+    var position = Math.Vec3()
+    if case_id == 4 { anchor = Math.Vec3(0.0,0.5,0.0);position = Math.Vec3(0.0,-0.5,0.0) }
+    var mass = 2.0
+    if case_id == 6 { mass = 8.0 }
+    var body = world.create_rigid_body(Physics.RigidBody3DSettings() ..transform = Physics.Transform3D(position)
+        ..mass_properties = Physics.MassProperties3D(mass,Math.Vec3(mass*0.1))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var settings = Physics.SliderConstraint3DSettings() ..second_local_frame = Physics.Transform3D(anchor)
+    if case_id == 7 { settings.maximum_friction_force = 1.0 }
+    var joint = world.create_slider_constraint(first,body,settings)
+    var step = 1
+    while step <= 360 {
+        if step == 1 || step == 121 || step == 181 || step == 301 {
+            var motor = Physics.SliderMotor3D(0.6,-0.5,2.0)
+            if step > 180 { motor = Physics.SliderMotor3D(-0.6,-0.5,2.0) }
+            if case_id == 1 {
+                motor = Physics.SliderMotor3D(-0.6,-2.0,0.0)
+                if step > 180 { motor = Physics.SliderMotor3D(0.6,0.0,2.0) }
+            }
+            if case_id == 2 {
+                motor = Physics.SliderMotor3D(0.0,-0.5,-0.5)
+                if step > 180 { motor = Physics.SliderMotor3D(0.0,0.5,0.5) }
+            }
+            if case_id == 3 {
+                motor = Physics.SliderMotor3D(0.0,-0.8,-0.3)
+                if step > 120 { motor = Physics.SliderMotor3D(0.0,0.3,0.8) }
+            }
+            if case_id == 5 {
+                var target = 0.75;if step > 180 { target = -0.4 }
+                motor = Physics.SliderMotor3D.position(target,-2.0,8.0,8.0,8.0)
+            }
+            if case_id == 6 {
+                var target = 0.6;if step > 180 { target = -0.6 }
+                motor = Physics.SliderMotor3D(target,-0.2,0.8)
+            }
+            if case_id == 7 {
+                motor = Physics.SliderMotor3D(-0.4,-0.2,1.0)
+                if step > 120 { motor = Physics.SliderMotor3D.position(0.3,-0.2,1.0,8.0,8.0) }
+            }
+            joint.set_motor(motor)
+            if case_id == 7 && step > 300 { joint.set_motor(null) }
+        }
+        world.step(1.0 / 60.0)
+        if step % 15 == 0 {
+            print("slider-force-bounds $(case_id) $(step) $(joint.position()) $(joint.speed()) $(first.linear_velocity().x) $(body.linear_velocity().x) $(body.position().x) $(body.position().y) $(first.angular_velocity().z) $(body.angular_velocity().z) $(joint.anchor_error().length()) $(joint.angular_error().length()) $(joint.reaction_force().x) $(joint.reaction_force().y) $(joint.limit_force()) $(joint.motor_force()) $(joint.friction_force()) $(joint.reaction_torque().z)")
+        }
+        step++
+    }
+}
+func main() { var i = 0; while i < 8 { run_slider_force_bounds_case(i); i++ } }

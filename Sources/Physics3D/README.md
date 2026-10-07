@@ -801,3 +801,20 @@ position passes. No cost, hard-impact, rotating-phase or general-chain parity
 is claimed. `--self-test` rejects corrupted/missing/duplicate/nonfinite rows,
 perturbed positions and mechanically invalid traces. Hashes, outputs and
 qualification are stored under `.silex/physics3d-oracle/slider-friction-*`.
+
+### Signed slider motor force bounds
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/SliderForceBoundsRun.py` from
+the workspace or Spec group root with active `silex` on PATH. Eight six-second
+60 Hz fixtures compare asymmetric/one-sided reversal, equal and same-sign
+imposed effort, offset anchor/free couple, signed clamped spring, unequal free
+masses, load and velocity/position/off mutation restoring friction. All 384
+Debug/Release observations pass independent mechanics before comparison.
+Bounds declared before execution: 0.003 m position, 0.003 m/s linear speed,
+0.003 rad/s angular speed, 0.001 m/rad alignment, 0.1 N world force,
+0.05 N motor/friction/limit force, 0.1 N·m free couple. Jolt uses 24 velocity
+and eight position passes; Silex uses up to 12 preparation/12 velocity/four
+position passes. No cost, impact, rotating-transient or general-chain parity
+is claimed. `--self-test` rejects corrupted/missing/duplicate/nonfinite rows,
+perturbed positions and mechanically invalid traces. Sources, hashes and
+qualification are stored under `.silex/physics3d-oracle/slider-force-bounds-*`.
