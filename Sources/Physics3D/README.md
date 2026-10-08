@@ -858,3 +858,21 @@ segment the pinned position servo scales its error by segment fraction.
 Curved follow mode omits angular frame transport from velocity. Independent
 metric-servo recurrence and curvature/inertia witnesses qualify those Silex
 behaviors. They are not included in a false all-case parity claim.
+
+## Loaded spatial hinge
+
+From the workspace or Spec worktree group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/LoadedHingeRun.py --mode both
+```
+
+Seven cases retain every step at 60/120 Hz: gravity/free motion, floor
+present/absent, offsets ±1 m and centered, speed reversal at 1.5 s.
+The sphere mass is automatic (density 1, radius 0.5), with a 2 kg payload
+and isotropic inertia 0.2. The whole run checks anchors, angular attachment
+error and the per-step motor budget. Comparison with pinned Jolt is limited
+to 2.5–3 s with the original numeric bounds, and the final free-motion
+sample checks complete pivot inertia analytically. The report retains the
+rejected full-trajectory comparison and its maximum errors; initial
+correction and contact phase parity are not claimed.

@@ -1,0 +1,44 @@
+use GFX.Physics
+use STD.Math
+
+func loaded_hinge_case(case_id:int) {
+    var frequency=60.0
+    if case_id==4 { frequency=120.0 }
+    var offset=1.0
+    if case_id==5 { offset=-1.0 }
+    if case_id==6 { offset=0.0 }
+    var settings=Physics.World3DSettings()
+    if case_id==2 || case_id==3 { settings.gravity=Math.Vec3() }
+    var world=Physics.World3D(settings)
+    if case_id!=1 && case_id!=3 {
+        world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+            ..shape=Physics.Shape3D.plane(Physics.Plane3D(offset:-1.5)))
+    }
+    var pivot=world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var body=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..transform=Physics.Transform3D(Math.Vec3(0.0,-1.0,0.0)) ..allow_sleep=false)
+    var payload=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform=Physics.Transform3D(Math.Vec3(0.0,-1.0,offset))
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2))
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0) ..allow_sleep=false)
+    var attachment=world.create_fixed_constraint(body,payload,Physics.FixedConstraint3DSettings()
+        ..first_local_frame=Physics.Transform3D(Math.Vec3(0.0,0.0,offset)))
+    var joint=world.create_hinge_constraint(pivot,body,Physics.HingeConstraint3DSettings()
+        ..second_local_anchor=Math.Vec3(0.0,1.0,0.0) ..motor=Physics.HingeMotor3D(0.25,0.2))
+    let count=(frequency*3.0) as int
+    var step=1
+    while step<=count {
+        if step==count/2+1 { joint.set_motor(Physics.HingeMotor3D(-0.25,0.2)) }
+        world.step(1.0/frequency)
+        let p=body.position();let q=payload.position()
+        let anchor=joint.anchor_error().length();let fixed=attachment.anchor_error().length()
+        let fixed_angle=attachment.angular_error().length()
+        let force=joint.reaction_force().y;let moment=joint.reaction_torque().x
+        let payload_force=attachment.reaction_force().y
+        print("loaded $(case_id) $(step) $(p.x) $(p.y) $(p.z) $(q.x) $(q.y) $(q.z) $(joint.angle()) $(joint.angular_speed()) $(joint.motor_torque()) $(joint.axis_error()) $(anchor) $(fixed) $(fixed_angle) $(force) $(moment) $(payload_force)")
+        step++
+    }
+}
+func main() { var case_id=0;while case_id<7 { loaded_hinge_case(case_id);case_id++ } }
