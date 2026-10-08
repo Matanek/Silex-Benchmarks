@@ -897,3 +897,28 @@ failures for those cases; all settled samples after 2.5 s per command pass the
 same comparison bounds. Other cases have full trajectory parity within the
 recorded bounds. The manual rail-stop recipe uses 120 Hz. No general spatial
 chain or exact contact-phase claim follows from this qualification.
+
+## Hinge stop impulse and activation
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/HingeImpactRun.py
+```
+
+Run from the workspace or Spec group root. Seven recipes at 60/120 Hz and both
+signs retain 6120 observations per engine and Native Debug/Release mode:
+center approach, off-grid near-stop approach, initially active stop, release,
+free-axis control, motor-only control and driven stop reversal at three seconds.
+The fixed-pivot rotor has mass 1 kg, axial inertia 0.1 kg·m², no gravity,
+damping, sleep or collisions. Stops are ±0.3 rad; the position motor requests
+±0.8 rad with 10 N·m, stiffness 1.6 and damping 0.08.
+
+Every step checks `I Δω = λ_motor + λ_limit`, dissipative stop work, motor
+budget, frame errors and a bound based on free advance. The passive cases
+also verify immediate active-stop braking, release and final rest. Motor-only
+angles and speeds are compared within 0.0001; 11 corrupt witnesses must fail.
+All output, first stop impulses and before/after states are retained. Phase
+parity is not claimed: Silex anticipates stops and reevaluates after movement;
+Jolt activates from the beginning-of-step angle. Driven rest below 1e-5 rad/s
+after three seconds is reported separately and remains unqualified; Jolt can
+retain about 7.28e-5 rad/s at 120 Hz. Original rigid-impact comparison failures
+and tolerances remain unchanged.

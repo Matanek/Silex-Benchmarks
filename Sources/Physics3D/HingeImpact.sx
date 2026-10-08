@@ -1,0 +1,47 @@
+use GFX.Physics
+use STD.Math
+
+func run_case(recipe:int, rate:int, sign:float) {
+    let delta = 1.0 / rate as float
+    var angle = 0.0
+    var speed = sign
+    if recipe == 1 { angle = sign * 0.283 }
+    if recipe == 2 || recipe == 3 { angle = sign * 0.3 }
+    if recipe == 3 { speed = -sign }
+    if recipe >= 5 { speed = 0.0 }
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var first = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var second = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..mass_properties = Physics.MassProperties3D(1.0,Math.Vec3(0.1))
+        ..transform = Physics.Transform3D(rotation:Math.Quat.angle_axis(angle,Math.Vec3(0.0,0.0,1.0)))
+        ..angular_velocity = Math.Vec3(0.0,0.0,speed)
+        ..allow_sleep = false ..collision_filter = Physics.CollisionFilter3D(mask_bits:0))
+    var settings = Physics.HingeConstraint3DSettings()
+    if recipe != 4 && recipe != 5 { settings.minimum_angle = -0.3; settings.maximum_angle = 0.3 }
+    if recipe >= 5 { settings.motor = Physics.HingeMotor3D.position(sign*0.8,10.0,1.6,0.08) }
+    var hinge = world.create_hinge_constraint(first,second,settings)
+    var step = 1
+    var duration = 1
+    if recipe >= 5 { duration = 6 }
+    while step <= rate*duration {
+        if recipe >= 5 && step == rate*3+1 { hinge.set_motor(Physics.HingeMotor3D.position(-sign*0.8,10.0,1.6,0.08)) }
+        let before_angle = hinge.angle()
+        let before_speed = hinge.angular_speed()
+        world.step(delta)
+        print("impact $(recipe) $(rate) $(sign) $(step) $(before_angle) $(before_speed) $(hinge.angle()) $(hinge.angular_speed()) $(hinge.limit_torque()*delta) $(hinge.motor_torque()*delta) $(hinge.anchor_error().length()) $(hinge.axis_error())")
+        step++
+    }
+}
+
+func main() {
+    var recipe = 0
+    while recipe < 7 {
+        run_case(recipe,60,1.0); run_case(recipe,60,-1.0)
+        run_case(recipe,120,1.0); run_case(recipe,120,-1.0)
+        recipe++
+    }
+}
