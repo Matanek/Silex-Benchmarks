@@ -1,0 +1,46 @@
+use GFX.Physics
+use STD.Math
+
+func fixed(world:Physics.World3D,position:Math.Vec3) Physics.RigidBody3D {
+    return world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..transform=Physics.Transform3D(position) ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+}
+func moving(world:Physics.World3D,position:Math.Vec3,size:Math.Vec3) Physics.RigidBody3D {
+    return world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..shape=Physics.Shape3D.box(Physics.Box3D(size)) ..transform=Physics.Transform3D(position)
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.4))
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+}
+func main() {
+    for rate in [60,120] {
+        for case in [0,1,2] {
+            var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+            var pinion=moving(world,Math.Vec3(0.0,2.4,0.0),Math.Vec3(1.1,0.2,0.3))
+            var pivot=fixed(world,pinion.position())
+            var rack=moving(world,Math.Vec3(0.0,1.8,0.0),Math.Vec3(3.0,0.2,0.35))
+            var rail=fixed(world,rack.position())
+            var hinge_settings=Physics.HingeConstraint3DSettings()
+            var driver=world.create_hinge_constraint(pivot,pinion,hinge_settings)
+            var settings=Physics.SliderConstraint3DSettings()
+            var extent=1.1
+            if case==2 { extent=0.6 }
+            settings.minimum_position=-extent;settings.maximum_position=extent
+            var guide=world.create_slider_constraint(rail,rack,settings)
+            var transmission=world.create_rack_and_pinion_constraint(pinion,rack,Physics.RackAndPinionConstraint3DSettings() ..ratio=2.0)
+            var amplitude=2.0
+            if case!=0 { amplitude=1.5 }
+            for phase in [0,1] {
+                var target=amplitude
+                if phase==1 { target=-amplitude }
+                driver.set_motor(Physics.HingeMotor3D.position(target,12.0,15.0,8.0))
+
+                var step=0
+                while step<rate*3 {
+                    world.step(1.0/(rate as float))
+                    print("servo $(rate) $(case) $(phase) $(step) $(target) $(driver.angle()) $(transmission.pinion_angle()) $(transmission.travel()) $(transmission.phase_error()) $(transmission.speed_error()) $(pinion.angular_velocity().z) $(driver.motor_torque()) $(transmission.pinion_reaction_torque().z) $(transmission.reaction_force().x)")
+                    step++
+                }
+            }
+        }
+    }
+}

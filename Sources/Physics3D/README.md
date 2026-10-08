@@ -876,3 +876,24 @@ to 2.5–3 s with the original numeric bounds, and the final free-motion
 sample checks complete pivot inertia analytically. The report retains the
 rejected full-trajectory comparison and its maximum errors; initial
 correction and contact phase parity are not claimed.
+
+## Rack servo with finite stroke
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/RackServoRun.py
+```
+
+Run from the workspace or Spec group root. Three fixtures at 60/120 Hz use a
+hinge, slider and rack transmission with 12 N·m, stiffness 15 and damping 8:
+historical ±2 rad against rail ±1.1 m, reachable free ±1.5 rad, and ±1.5 rad
+against rail ±0.6 m. Jolt explicitly binds its rack position correction to the
+hinge and slider. Bodies do not collide; mass is 2 kg and inertia 0.4 kg·m².
+
+Debug/Release retain every step, fixed comparison tolerances and independent
+finite-step advance, torque/speed and static reaction checks. The original
+all-step phase limit 0.002 rad remains rejected for historical 120 Hz and
+rail-stop 60 Hz in both engines. Full trajectory comparisons retain their
+failures for those cases; all settled samples after 2.5 s per command pass the
+same comparison bounds. Other cases have full trajectory parity within the
+recorded bounds. The manual rail-stop recipe uses 120 Hz. No general spatial
+chain or exact contact-phase claim follows from this qualification.
