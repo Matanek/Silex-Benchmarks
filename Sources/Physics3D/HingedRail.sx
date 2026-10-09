@@ -1,0 +1,53 @@
+use GFX.Physics
+use STD.Math
+
+func run_assembly(kind:int,mass_id:int,rate:int,direction:int) {
+    let delta=1.0/rate as float
+    let omega=0.2*direction as float
+    let mass=(mass_id+1) as float
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    let filter=Physics.CollisionFilter3D(mask_bits:0)
+    var pivot=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type=Physics.BodyType3D.fixed ..collision_filter=filter)
+    var rail=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.4))
+        ..angular_velocity=Math.Vec3(0.0,0.0,omega) ..allow_sleep=false ..collision_filter=filter)
+    var cart=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform=Physics.Transform3D(Math.Vec3(1.0,0.0,0.0))
+        ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(0.2))
+        ..linear_velocity=Math.Vec3(0.0,omega,0.0) ..angular_velocity=Math.Vec3(0.0,0.0,omega)
+        ..allow_sleep=false ..collision_filter=filter)
+    var hinge_settings=Physics.HingeConstraint3DSettings()
+    if kind==1 { hinge_settings.motor=Physics.HingeMotor3D(omega,0.4) }
+    var hinge=world.create_hinge_constraint(pivot,rail,hinge_settings)
+    var slider=world.create_slider_constraint(rail,cart,Physics.SliderConstraint3DSettings()
+        ..motor=Physics.SliderMotor3D(0.6,2.0))
+    var step=1
+    while step<=rate*2 {
+        if step==rate*2/3+1 { slider.set_motor(Physics.SliderMotor3D(-0.6,2.0)) }
+        if step==rate*4/3+1 { slider.set_motor(Physics.SliderMotor3D(0.0,2.0)) }
+        let before_cart=copy cart.linear_velocity()
+        let before_rail=copy rail.linear_velocity()
+        let before_spin=cart.angular_velocity().z
+        let before_L=0.4*rail.angular_velocity().z+0.2*before_spin+
+            mass*cart.position().cross(cart.linear_velocity()).z+2.0*rail.position().cross(rail.linear_velocity()).z
+        world.step(delta)
+        let rp=rail.position();let rv=rail.linear_velocity();let cp=cart.position();let cv=cart.linear_velocity()
+        let after_L=0.4*rail.angular_velocity().z+0.2*cart.angular_velocity().z+
+            mass*cp.cross(cv).z+2.0*rp.cross(rv).z
+        let axis=rail.transform().vector(Math.Vec3(1.0,0.0,0.0))
+        let hf=hinge.reaction_force();let sf=slider.reaction_force()
+        print("assembly $(kind) $(mass_id) $(rate) $(direction) $(step) $(slider.position()) $(slider.speed()) $(rp.x) $(rp.y) $(rv.x) $(rv.y) $(rail.angular_velocity().z) $(cp.x) $(cp.y) $(cv.x) $(cv.y) $(cart.angular_velocity().z) $(before_L) $(after_L) $(hinge.motor_torque()) $(hf.x) $(hf.y) $(sf.x) $(sf.y) $(slider.motor_force()) $(slider.reaction_torque().z) $(hinge.anchor_error().length()) $(hinge.axis_error()) $(slider.anchor_error().length()) $(slider.angular_error().length()) $(axis.x) $(axis.y) $(before_cart.x) $(before_cart.y) $(before_rail.x) $(before_rail.y) $(before_spin)")
+        step++
+    }
+}
+func main() {
+    var kind=0;while kind<2 {
+        var mass_id=0;while mass_id<2 {
+            run_assembly(kind,mass_id,60,1);run_assembly(kind,mass_id,60,-1)
+            run_assembly(kind,mass_id,120,1);run_assembly(kind,mass_id,120,-1)
+            mass_id++
+        }
+        kind++
+    }
+}

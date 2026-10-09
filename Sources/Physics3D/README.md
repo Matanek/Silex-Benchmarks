@@ -951,3 +951,35 @@ fixed mechanical tolerances are preserved. The original 0.05 N effort parity
 gap at 120 Hz step 70 remains rejected; the report includes every additional
 phase gap in the expanded matrix. Neither a solver change nor phase parity is
 claimed.
+
+## A hinged dynamic rail carrying a moving carriage
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/HingedRailRun.py
+```
+
+Run from the workspace or Spec group root. The rail is dynamic, fixed at its
+center by a Z hinge: mass 2 kg, isotropic inertia 0.4 kg·m². A radial carriage
+starts at 1 m with mass 1 or 2 kg and isotropic inertia 0.2 kg·m². Both start
+at ±0.2 rad/s with consistent tangential velocity. The slider requests 0.6,
+−0.6 and 0 m/s, switching after 2/3 and 4/3 s, with capacity 2 N. The hinge
+is free or requests its initial speed with capacity 0.4 N·m. Sixteen recipes
+at 60/120 Hz over two seconds produce 2880 observations per engine and
+Native Debug/Release mode. Gravity, damping, sleep, friction, stops and
+collisions are disabled. Jolt uses 24 velocity and 8 position passes;
+Silex uses its existing preparation, contact sweep and position passes.
+
+Each step checks carriage and total world linear impulses, carriage spin
+impulse, both motor budgets, frame geometry and state continuity. Total angular
+momentum includes spin and orbital terms for both dynamic bodies. Its change
+matches external hinge motor torque within 0.0001 N·m·s per step and
+0.002 N·m·s cumulatively; integration, anchor errors and pose corrections affect orbital momentum.
+The free rail slows as radius grows; the driven rail recovers its target.
+Radial reversal and final stopping must occur. Twenty corrupt witnesses per
+engine must fail. World and spin impulse tolerances are 2e−6 N·s or N·m·s.
+
+Jolt's slider force uses the frame in which impulses were applied, captured
+before the step. Both engines independently satisfy the same mechanical
+bounds. Transient scalar torques and forces differ: all raw outputs and measured
+phase differences are retained, without phase or cost parity claims. This
+planar witness does not replace qualification of spatial chains or contacts.
