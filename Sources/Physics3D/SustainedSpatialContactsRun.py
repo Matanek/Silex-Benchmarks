@@ -1,0 +1,172 @@
+#!/usr/bin/env python3
+"""Qualify sustained motor pressure against a floor through a spatial hinge chain."""
+import argparse
+import hashlib
+import json
+import math
+import platform
+from pathlib import Path
+from Run import BUILD, GROUP, HERE, REFERENCE, build_oracle, build_silex, checked, fail, verified_source
+from SpatialHingesRun import FIELDS as BASE_FIELDS, add, sub, mul, dot, norm, cross, vector, rotation, rotate, angle, momentum
+
+CASES={(floor,mass,rate,side,step) for floor in (0,1) for mass in (0,1) for rate in (60,120) for side in (-1,1) for step in range(1,3*rate+1)}
+
+FIELDS=BASE_FIELDS+['ix','iy','iz','contacts','penetration','measured','cp_x','cp_y','cp_z','cr_x','cr_y','cr_z','points']
+BOUNDS=dict(linear_impulse=0.00001,spin_impulse=0.001,angular_impulse=0.003,
+            cumulative_angular_impulse=0.03,geometry=0.005,root_angle=0.02,
+            final_speed=0.005,final_force=0.05,final_torque=0.05,motor_projection=0.02,penetration=0.003)
+
+
+def parse(raw,engine):
+    rows={}
+    for line in raw.splitlines():
+        parts=line.split()
+        if len(parts)!=93 or parts[0]!='spatialcontacts':fail('invalid spatial contact row')
+        try:
+            key_values=list(map(float,parts[1:6]));values=list(map(float,parts[6:]))
+            if not all(math.isfinite(v) and v.is_integer() for v in key_values):fail('invalid spatial contact key')
+            key=tuple(map(int,key_values))
+        except ValueError:fail('invalid spatial contact number')
+        if key not in CASES or key in rows or not all(map(math.isfinite,values)):fail('invalid spatial contact observation')
+        row=dict(zip(FIELDS,values))
+        if row['contacts'] not in (0,1) or row['measured']!=int(engine=='silex') or row['points']!=row['contacts']:fail('spatial contact provenance differs')
+        rows[key]=row
+    if set(rows)!=CASES:fail('missing spatial contact observations')
+    return rows
+
+
+def mechanics(rows,engine):
+    worst={name:0.0 for name in BOUNDS};recipes={};cumulative={}
+    for key,row in sorted(rows.items()):
+        floor,mass_id,rate,side,step=key;mass=mass_id+1;recipe=key[:4];delta=1/rate
+        previous=rows.get((*recipe,step-1))
+        for name in ('p1','v1','w1','q1','p2','v2','w2','q2'):
+            components='xyzw' if 'q' in name else 'xyz'
+            initial={'p1':(.5,0,0),'p2':(1,0,.8*side),'q1':(0,0,0,1),'q2':(0,0,0,1)}.get(name,(0,0,0))
+            expected=tuple(previous[name+'_'+c] for c in components) if previous else initial
+            actual=tuple(row['b'+name+'_'+c] for c in components)
+            if norm(sub(actual,expected))>0.000003:fail('spatial contact state discontinuity')
+        for name in ('q1','q2','bq1','bq2'):
+            if abs(norm(rotation(row,name))-1)>0.00002:fail('spatial contact quaternion is not unit')
+        p1,v1,w1,p2,v2,w2=(vector(row,n) for n in ('p1','v1','w1','p2','v2','w2'))
+        bp1,bv1,bw1,bp2,bv2,bw2=(vector(row,n) for n in ('bp1','bv1','bw1','bp2','bv2','bw2'))
+        q1,q2,bq1,bq2=(rotation(row,n) for n in ('q1','q2','bq1','bq2'))
+        f1,t1,f2,t2=(vector(row,n) for n in ('f1','t1','f2','t2'));contact=(row['ix'],row['iy'],row['iz'])
+        gravity1=(0,-2*9.81,0);gravity2=(0,-mass*9.81,0)
+        point=vector(row,'cp');contact_lever=vector(row,'cr');spin_contact=cross(contact_lever,contact)
+        if row['contacts']==0 and (norm(point)>0 or norm(contact_lever)>0):fail('spatial point without contact')
+        if row['contacts']:
+            if engine=='jolt' and norm(sub(sub(point,bp2),contact_lever))>0.000003:fail('Jolt contact lever observable differs')
+            if engine=='silex' and (math.hypot(contact_lever[0],contact_lever[2])>0.000001 or abs(contact_lever[1]+point[1]+.37)>0.000003):fail('Silex sphere-plane contact lever differs')
+        r1=rotate(bq1,(-.5,0,0));r12=rotate(bq1,(.5,0,0));r2=rotate(bq2,(0,0,-.8*side))
+        arm_change=sub(mul(sub(v1,bv1),2),mul(add(sub(f1,f2),gravity1),delta))
+        payload_change=sub(mul(sub(v2,bv2),mass),mul(add(f2,gravity2),delta))
+        linear=max(norm(arm_change),math.hypot(payload_change[0],payload_change[2]))
+        if engine=='silex' or row['contacts']==0:linear=max(linear,norm(sub(payload_change,contact)))
+        elif abs(payload_change[1]-row['iy'])>0.000002:fail('Jolt inferred contact observable differs')
+        if math.hypot(row['ix'],row['iz'])>BOUNDS['linear_impulse'] or row['iy']< -BOUNDS['linear_impulse']:fail('spatial contact direction differs')
+        if row['contacts']==0 and norm(contact)>BOUNDS['linear_impulse']:fail('spatial impulse without contact')
+        if floor==0 and row['contacts']!=0:fail('unexpected spatial contact')
+        spin=max(norm(sub(mul(sub(w1,bw1),.4),mul(add(sub(t1,t2),sub(cross(r1,f1),cross(r12,f2))),delta))),
+                 norm(sub(sub(mul(sub(w2,bw2),.2),mul(add(t2,cross(r2,f2)),delta)),spin_contact)))
+        before=add(momentum(bp1,bv1,bw1,2,.4),momentum(bp2,bv2,bw2,mass,.2))
+        after=add(momentum(p1,v1,w1,2,.4),momentum(p2,v2,w2,mass,.2))
+        external=add(t1,add(cross(bp1,gravity1),cross(bp2,gravity2)))
+        residual=sub(sub(sub(after,before),mul(external,delta)),cross(point,contact))
+        cumulative[recipe]=add(cumulative.get(recipe,(0,0,0)),residual)
+        axis1=rotate(q1,(0,0,1));axis2=rotate(q1,(1,0,0));payload_axis=rotate(q2,(1,0,0))
+        anchors=(norm(add(p1,rotate(q1,(-.5,0,0)))),norm(sub(add(p2,rotate(q2,(0,0,-.8*side))),add(p1,rotate(q1,(.5,0,0))))))
+        axes=(angle((0,0,1),axis1),angle(axis2,payload_axis))
+        for joint,anchor,axis in zip(('first','second'),anchors,axes):
+            if row[joint+'_anchor']<0 or row[joint+'_axis']<0:fail('negative spatial contact geometry')
+            if abs(anchor-row[joint+'_anchor'])>0.000003 or abs(axis-row[joint+'_axis'])>0.000003:fail('spatial contact geometry observable differs')
+        normals=(rotate(q1,(1,0,0)),rotate(q1,(0,1,0)),rotate(q2,(0,1,0)))
+        angles=(math.atan2(normals[0][1],normals[0][0]),math.atan2(dot(axis2,cross(normals[1],normals[2])),dot(normals[1],normals[2])))
+        if abs(angles[0]-row['first_angle'])>0.00001 or abs(angles[1]-row['second_angle'])>0.00001:fail('spatial contact angle observable differs')
+        if abs(w1[2]-row['first_speed'])>0.00001 or abs(dot(sub(w2,w1),axis2)-row['second_speed'])>0.00001:fail('spatial contact speed observable differs')
+        if abs(row['first_motor'])>60.0001 or abs(row['second_motor'])>40.0001:fail('spatial contact motor budget')
+        if row['penetration']<0 or abs(row['penetration']-max(0,-.07-p2[1]))>0.000003:fail('spatial contact penetration observable differs')
+        errors=dict(linear_impulse=linear,spin_impulse=spin,angular_impulse=norm(residual),cumulative_angular_impulse=norm(cumulative[recipe]),
+                    geometry=max(*anchors,*axes),root_angle=abs(row['first_angle']),
+                    motor_projection=max(abs(t1[2]-row['first_motor']),abs(dot(t2,rotate(bq1,(1,0,0)))-row['second_motor'])))
+        if floor:errors['penetration']=row['penetration']
+        if step==rate*3:
+            normal_force=mul(contact,1/delta)
+            if bool(row['contacts'])!=bool(floor):fail('sustained floor provenance at rest')
+            expected1=mul(add(add(cross(p1,gravity1),cross(p2,gravity2)),cross(point,normal_force)),-1)
+            expected2=mul(add(cross(rotate(q2,(0,0,-.8*side)),mul(add(gravity2,normal_force),-1)),mul(spin_contact,1/delta)),-1)
+            target=side*math.asin(.07/.8) if floor else .2*side
+            if abs(row['second_angle']-target)>(.005 if floor else .007):fail('sustained final angle differs from geometric block or free target')
+            errors.update(final_speed=max(norm(v1),norm(v2),norm(w1),norm(w2)),
+                          final_force=max(norm(add(f1,add(add(gravity1,gravity2),normal_force))),norm(add(f2,add(gravity2,normal_force)))),
+                          final_torque=max(norm(sub(t1,expected1)),norm(sub(t2,expected2))))
+        for name,error in errors.items():
+            worst[name]=max(worst[name],error)
+            if error>BOUNDS[name]:fail(f'spatial contact {name} exceeds bound at {key}: {error}')
+        recipes.setdefault(recipe,[]).append(row)
+    summaries=[]
+    for key,data in sorted(recipes.items()):
+        if max(abs(r['second_angle']) for r in data)<.07 or max(key[3]*r['second_speed'] for r in data)<.15:fail('spatial contact motion or reversal lost')
+        if key[0] and (not any(r['contacts'] for r in data) or max(r['iy'] for r in data)<.1):fail('spatial floor never produced a contact')
+        summaries.append(dict(key=key,final_angle=data[-1]['second_angle'],peak_angle=max(abs(r['second_angle']) for r in data),
+                              contact_steps=sum(r['contacts'] for r in data),peak_contact_impulse=max(r['iy'] for r in data)))
+    return dict(worst=worst,recipes=summaries,normal_impulse='measured' if engine=='silex' else 'inferred; no independent normal or contact angular balance claim')
+
+
+def rejected(action):
+    try:action()
+    except ValueError:return
+    fail('spatial contact guard accepted corrupt witness')
+
+
+def self_test(raw,rows,engine):
+    rejected(lambda:parse(raw.rstrip()+'\n'+raw.splitlines()[0],engine))
+    rejected(lambda:parse('\n'.join(raw.splitlines()[1:]),engine))
+    for index,value in ((1,'9'),(6,'nan'),(1,'0.5'),(85,str(1-int(engine=='silex'))),(83,'2')):
+        lines=raw.splitlines();parts=lines[0].split();parts[index]=value;lines[0]=' '.join(parts)
+        rejected(lambda:parse('\n'.join(lines),engine))
+    witnesses=[('f1_y',100),('f2_y',100),('t1_x',50),('t2_x',50),('first_motor',65),('second_motor',45),
+               ('first_anchor',1),('second_axis',1),('p2_z',0),('q2_w',0),('bv2_y',1),('second_speed',1),('first_angle',1),
+               ('penetration',1),('iy',-1),('ix',1)]
+    for field,value in witnesses:
+        altered={key:row.copy() for key,row in rows.items()};altered[0,0,60,1,1][field]=value
+        rejected(lambda:mechanics(altered,engine))
+    contact_key=next(key for key,row in rows.items() if row['contacts'] and row['iy']>.1)
+    for field in ('cp_z','cr_z','points'):
+        altered={key:row.copy() for key,row in rows.items()};altered[contact_key][field]+=1
+        rejected(lambda:mechanics(altered,engine) if field!='points' else parse('\n'.join('spatialcontacts '+' '.join(map(str,(*key,*(row[f] for f in FIELDS)))) for key,row in altered.items()),engine))
+    altered={key:row.copy() for key,row in rows.items()}
+    for row in altered.values():
+        for field in ('contacts','ix','iy','iz','cp_x','cp_y','cp_z','cr_x','cr_y','cr_z','points'):row[field]=0
+    rejected(lambda:mechanics(altered,engine))
+    held={}
+    for key in CASES:
+        mass=key[1]+1;side=key[3];row={field:0.0 for field in FIELDS}
+        for prefix in ('','b'):
+            row[prefix+'p1_x']=.5;row[prefix+'p2_x']=1;row[prefix+'p2_z']=.8*side
+            row[prefix+'q1_w']=row[prefix+'q2_w']=1
+        row.update(f1_y=(mass+2)*9.81,f2_y=mass*9.81,t1_x=-mass*9.81*.8*side,t1_z=(mass+1)*9.81,
+                   t2_x=-mass*9.81*.8*side,first_motor=(mass+1)*9.81,second_motor=-mass*9.81*.8*side,measured=int(engine=='silex'))
+        held[key]=row
+    rejected(lambda:mechanics(held,engine))
+    return 12+len(witnesses)
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--archive',type=Path);options=parser.parse_args()
+    if Path.cwd().resolve()!=GROUP:fail(f'run from workspace or Spec group root: {GROUP}')
+    source,digest=verified_source(options.archive)
+    record=dict(schema=1,fixture='sustained-spatial-hinge-contact-v1',oracle_revision=REFERENCE,archive_sha256=digest,host=platform.platform(),bounds=BOUNDS,phase_parity=False,modes={})
+    for mode in ('Debug','Release'):
+        oracle=build_oracle(source,mode,HERE/'SustainedSpatialContactsOracle.cpp','sustained-spatial-contact-oracle')
+        binary=build_silex(mode,'SustainedSpatialContacts.sx','sustained-spatial-contact',True)
+        evidence={};rows={}
+        for engine,exe in [('silex',binary),('jolt',oracle)]:
+            raw=checked([str(exe)]);(BUILD/f'sustained-spatial-contact-{engine}-{mode.lower()}.txt').write_text(raw)
+            rows[engine]=parse(raw,engine);evidence[engine]=dict(mechanics=mechanics(rows[engine],engine),corrupt_witnesses_rejected=self_test(raw,rows[engine],engine),observations=len(rows[engine]),output_sha256=hashlib.sha256(raw.encode()).hexdigest())
+        evidence['measured_phase_differences']={field:max(abs(rows['silex'][key][field]-rows['jolt'][key][field]) for key in CASES) for field in ('second_angle','second_speed','first_motor','second_motor','t1_x','t2_x','iy')}
+        record['modes'][mode]=evidence;(BUILD/'sustained-spatial-contact-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
+        print(f'{mode}: 4320 observations per engine; sustained spatial pressure and geometric blockage green; 28 corrupt witnesses rejected per engine',flush=True)
+
+
+if __name__=='__main__':main()

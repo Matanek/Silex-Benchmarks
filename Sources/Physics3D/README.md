@@ -1092,3 +1092,18 @@ rad/s and released contact at final rest. Reaction budgets remain 60/40 N·m.
 Raw traces and phase differences are retained; no threshold is widened to
 fit output. These bounds include integration and pose corrections without
 claiming exact discrete conservation, phase/cost parity or arbitrary chains.
+
+## Sustained spatial contact pressure
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/SustainedSpatialContactsRun.py`
+from the workspace root or the owning Spec group. Two perpendicular hinges carry
+a sphere against a horizontal floor for three seconds: 16 recipes with/without
+the floor, masses 1/2 kg, offsets ±0.8 m, steps 60/120 Hz, zero friction and
+restitution. Root velocity is zero with 60 N·m capacity; secondary velocity is
+±0.2 rad/s with 40 N·m capacity, braking only near the free target ±0.2 rad.
+The floor must stall motion near ±asin(0.07/0.8); no floor must reach the target.
+Native Debug/Release Silex and pinned Jolt retain the previous impulse, spin,
+angular momentum, geometry and penetration bounds. Final force and torque
+balances include the floor; 28 corrupted witnesses are rejected per engine/mode.
+Jolt normal impulse remains inferred and is not an independent contact-force
+proof. This does not claim arbitrary-chain, phase or cost parity.

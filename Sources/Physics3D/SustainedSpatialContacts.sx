@@ -1,0 +1,65 @@
+use GFX.Physics
+use STD.Math
+
+func run_spatial_contact(mode:int,mass_id:int,rate:int,side:int) {
+    let mass=(mass_id+1) as float;let sign=side as float;let delta=1.0/rate as float
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3(0.0,-9.81,0.0))
+    let disabled=Physics.CollisionFilter3D(mask_bits:0)
+    var pivot=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type=Physics.BodyType3D.fixed ..collision_filter=disabled)
+    var arm=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform=Physics.Transform3D(Math.Vec3(0.5,0.0,0.0))
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.4))
+        ..allow_sleep=false ..collision_filter=disabled)
+    if mode==1 {
+        world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+            ..shape=Physics.Shape3D.plane(Physics.Plane3D(Math.Vec3(0.0,1.0,0.0),-0.22))
+            ..friction=0.0 ..restitution=0.0)
+    }
+    var payload=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.15))
+        ..transform=Physics.Transform3D(Math.Vec3(1.0,0.0,0.8*sign))
+        ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(0.2))
+        ..allow_sleep=false ..friction=0.0 ..restitution=0.0)
+    var first=world.create_hinge_constraint(pivot,arm,Physics.HingeConstraint3DSettings()
+        ..second_local_anchor=Math.Vec3(-0.5,0.0,0.0) ..motor=Physics.HingeMotor3D(0.0,60.0))
+    let target=0.2*sign
+    var second=world.create_hinge_constraint(arm,payload,Physics.HingeConstraint3DSettings()
+        ..first_local_anchor=Math.Vec3(0.5,0.0,0.0) ..second_local_anchor=Math.Vec3(0.0,0.0,-0.8*sign)
+        ..first_local_axis=Math.Vec3(1.0,0.0,0.0) ..second_local_axis=Math.Vec3(1.0,0.0,0.0)
+        ..first_local_normal=Math.Vec3(0.0,1.0,0.0) ..second_local_normal=Math.Vec3(0.0,1.0,0.0)
+        ..motor=Physics.HingeMotor3D(target,40.0))
+    var contacts:Physics.Contact3D[]=[]
+    var points:Physics.ContactPoint3D[]=[]
+    var step=1;var stopped=false
+    while step<=rate*3 {
+        if !stopped && Math.abs(0.2*sign-second.angle())<0.006 {
+            second.set_motor(Physics.HingeMotor3D(0.0,40.0));stopped=true
+        }
+        let bp1=copy arm.position();let bv1=copy arm.linear_velocity();let bw1=copy arm.angular_velocity();let bq1=copy arm.transform().rotation
+        let bp2=copy payload.position();let bv2=copy payload.linear_velocity();let bw2=copy payload.angular_velocity();let bq2=copy payload.transform().rotation
+        world.step(delta);world.write_contacts(contacts)
+        var impulse=Math.Vec3();var point=Math.Vec3();var lever=Math.Vec3()
+        for contact in contacts {
+            assert(contact.first_body().same_body(payload) || contact.second_body().same_body(payload))
+            contact.write_points(points);assert(points.count()==1 && contacts.count()==1)
+            point=points[0].position
+            lever=Math.Vec3(0.0,-0.15-0.5*contact.separation(),0.0)
+            var applied=contact.normal().multiply(contact.normal_impulse()).add(contact.tangent_impulse())
+            if contact.first_body().same_body(payload) { applied=applied.negated() }
+            impulse=impulse.add(applied)
+        }
+        let p1=arm.position();let v1=arm.linear_velocity();let w1=arm.angular_velocity();let q1=arm.transform().rotation
+        let p2=payload.position();let v2=payload.linear_velocity();let w2=payload.angular_velocity();let q2=payload.transform().rotation
+        let f1=first.reaction_force();let t1=first.reaction_torque();let f2=second.reaction_force();let t2=second.reaction_torque()
+        let penetration=Math.max(0.0,-0.07-p2.y)
+        print("spatialcontacts $(mode) $(mass_id) $(rate) $(side) $(step) $(p1.x) $(p1.y) $(p1.z) $(v1.x) $(v1.y) $(v1.z) $(w1.x) $(w1.y) $(w1.z) $(q1.x) $(q1.y) $(q1.z) $(q1.w) $(p2.x) $(p2.y) $(p2.z) $(v2.x) $(v2.y) $(v2.z) $(w2.x) $(w2.y) $(w2.z) $(q2.x) $(q2.y) $(q2.z) $(q2.w) $(bp1.x) $(bp1.y) $(bp1.z) $(bv1.x) $(bv1.y) $(bv1.z) $(bw1.x) $(bw1.y) $(bw1.z) $(bq1.x) $(bq1.y) $(bq1.z) $(bq1.w) $(bp2.x) $(bp2.y) $(bp2.z) $(bv2.x) $(bv2.y) $(bv2.z) $(bw2.x) $(bw2.y) $(bw2.z) $(bq2.x) $(bq2.y) $(bq2.z) $(bq2.w) $(f1.x) $(f1.y) $(f1.z) $(t1.x) $(t1.y) $(t1.z) $(f2.x) $(f2.y) $(f2.z) $(t2.x) $(t2.y) $(t2.z) $(first.angle()) $(first.angular_speed()) $(first.motor_torque()) $(first.anchor_error().length()) $(first.axis_error()) $(second.angle()) $(second.angular_speed()) $(second.motor_torque()) $(second.anchor_error().length()) $(second.axis_error()) $(impulse.x) $(impulse.y) $(impulse.z) $(contacts.count()) $(penetration) 1 $(point.x) $(point.y) $(point.z) $(lever.x) $(lever.y) $(lever.z) $(contacts.count())")
+        step++
+    }
+}
+func main() {
+    let modes:int[]=[0,1];let masses:int[]=[0,1];let rates:int[]=[60,120];let sides:int[]=[-1,1]
+    for mode in modes { for mass in masses { for rate in rates { for side in sides {
+        run_spatial_contact(mode,mass,rate,side)
+    } } } }
+}
