@@ -1143,3 +1143,24 @@ Jolt, and the full world angular momentum balance in both engines. An additional
 split-phase Silex diagnostic confirmed the original 0.001 local-spin bound with
 unchanged normal outputs; it is preserved in the Spec evidence. Applying the
 entire averaged force at one initial lever is an invalid local-spin witness.
+
+## Articulated shoulder and elbow pose
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/ArticulatedPoseRun.py` from
+the workspace or Spec group root. Eight twelve-second recipes combine a
+three-axis swing/twist shoulder with a position-driven Z hinge elbow, upper
+mass 2 kg, lower mass 1/2 kg, isotropic inertias 0.4/0.2 kg·m², offset anchors,
+rotated frames and gravity −9.81 Y. Targets reverse at four seconds and recenter
+at eight seconds, at 60/120 Hz. Budgets are 60 N·m per shoulder axis and 40 N·m
+at the elbow. No contacts participate.
+
+The runner checks continuity, geometry, per-body linear momentum, per-step
+world angular momentum residual, motor projection and budgets, reversal and
+finite-spring equilibria. Each engine/mode rejects 28 corrupted witnesses.
+Steady states are compared with pinned Jolt; transient differences are measured.
+Jolt additionally checks per-body spin with its single pre-pose lever. Silex
+requires the separate split-phase spin diagnostic retained in the Spec.
+The raw cumulative world residual is measured, with no exact-conservation claim:
+the initial 0.03 bound was disproved by Jolt too and remains preserved. No
+threshold was enlarged to hide the moving-hinge torque defect. Public motor
+projection and steady parity bounds remain those defined before the correction.

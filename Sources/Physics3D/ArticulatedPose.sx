@@ -1,0 +1,62 @@
+use GFX.Physics
+use STD.Math
+
+func run_articulated_pose(mass:int, rate:int, side:int) {
+    var world=Physics.World3D()
+    let base=Math.Quat.angle_axis(0.7,Math.Vec3(1.0,2.0,-1.0).normalized())
+    let frame=Math.Quat.angle_axis(0.35,Math.Vec3(0.0,0.0,1.0))
+    let upper_lever=Math.Vec3(0.5,0.2,0.4*side as float)
+    let elbow_anchor=Math.Vec3(0.5,-0.2,0.15*side as float)
+    let lower_lever=Math.Vec3(0.35,0.1,-0.3*side as float)
+    var support=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type=Physics.BodyType3D.fixed ..transform=Physics.Transform3D(rotation:base)
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var upper=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform=Physics.Transform3D(base.rotate(upper_lever),base)
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.4))
+        ..allow_sleep=false ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var lower=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform=Physics.Transform3D(base.rotate(upper_lever.add(elbow_anchor).add(lower_lever)),base)
+        ..mass_properties=Physics.MassProperties3D(mass as float,Math.Vec3(0.2))
+        ..allow_sleep=false ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var shoulder=world.create_swing_twist_constraint(support,upper,Physics.SwingTwistConstraint3DSettings()
+        ..first_local_frame=Physics.Transform3D(rotation:frame)
+        ..second_local_frame=Physics.Transform3D(upper_lever.negated(),frame)
+        ..swing_limits=Physics.SwingLimits3D.cone(Math.Vec2(0.8))
+        ..minimum_twist=-0.8 ..maximum_twist=0.8)
+    var elbow=world.create_hinge_constraint(upper,lower,Physics.HingeConstraint3DSettings()
+        ..first_local_anchor=elbow_anchor ..second_local_anchor=lower_lever.negated()
+        ..minimum_angle=-0.8 ..maximum_angle=0.8)
+    let dt=1.0/rate as float
+    var step=1
+    while step<=rate*12 {
+        if step==1 || step==rate*4+1 || step==rate*8+1 {
+            var direction=side as float
+            if step>rate*4 { direction=-direction }
+            if step>rate*8 { direction=0.0 }
+            shoulder.set_twist_motor(Physics.TwistMotor3D.position(0.25*direction,60.0,120.0,20.0))
+            shoulder.set_swing_motor(Physics.SwingMotor3D.position(Math.Vec2(0.2*direction,-0.15*direction),60.0,120.0,20.0))
+            elbow.set_motor(Physics.HingeMotor3D.position(0.35*direction,40.0,80.0,15.0))
+        }
+        let bp1=upper.transform().position;let bq1=upper.transform().rotation
+        let bv1=upper.linear_velocity();let bw1=upper.angular_velocity()
+        let bp2=lower.transform().position;let bq2=lower.transform().rotation
+        let bv2=lower.linear_velocity();let bw2=lower.angular_velocity()
+        world.step(dt)
+        let p1=upper.transform().position;let q1=upper.transform().rotation
+        let v1=upper.linear_velocity();let w1=upper.angular_velocity()
+        let p2=lower.transform().position;let q2=lower.transform().rotation
+        let v2=lower.linear_velocity();let w2=lower.angular_velocity()
+        let f1=shoulder.reaction_force();let t1=shoulder.reaction_torque()
+        let f2=elbow.reaction_force();let t2=elbow.reaction_torque()
+        let motor=shoulder.motor_torque();let orientation=shoulder.orientation();let speed=shoulder.angular_speed()
+        let e1=shoulder.anchor_error();let e2=elbow.anchor_error()
+        let angle=elbow.angle();let angular=elbow.angular_speed();let torque=elbow.motor_torque()
+        print("articulatedpose $(mass) $(rate) $(side) $(step) $(bp1.x) $(bp1.y) $(bp1.z) $(bq1.x) $(bq1.y) $(bq1.z) $(bq1.w) $(bv1.x) $(bv1.y) $(bv1.z) $(bw1.x) $(bw1.y) $(bw1.z) $(bp2.x) $(bp2.y) $(bp2.z) $(bq2.x) $(bq2.y) $(bq2.z) $(bq2.w) $(bv2.x) $(bv2.y) $(bv2.z) $(bw2.x) $(bw2.y) $(bw2.z) $(p1.x) $(p1.y) $(p1.z) $(q1.x) $(q1.y) $(q1.z) $(q1.w) $(v1.x) $(v1.y) $(v1.z) $(w1.x) $(w1.y) $(w1.z) $(p2.x) $(p2.y) $(p2.z) $(q2.x) $(q2.y) $(q2.z) $(q2.w) $(v2.x) $(v2.y) $(v2.z) $(w2.x) $(w2.y) $(w2.z) $(f1.x) $(f1.y) $(f1.z) $(t1.x) $(t1.y) $(t1.z) $(f2.x) $(f2.y) $(f2.z) $(t2.x) $(t2.y) $(t2.z) $(motor.x) $(motor.y) $(motor.z) $(orientation.x) $(orientation.y) $(orientation.z) $(orientation.w) $(speed.x) $(speed.y) $(speed.z) $(e1.x) $(e1.y) $(e1.z) $(e2.x) $(e2.y) $(e2.z) $(angle) $(angular) $(torque)")
+        step++
+    }
+}
+func main() {
+    let masses:int[]=[1,2];let rates:int[]=[60,120];let sides:int[]=[-1,1]
+    for mass in masses { for rate in rates { for side in sides { run_articulated_pose(mass,rate,side) } } }
+}
