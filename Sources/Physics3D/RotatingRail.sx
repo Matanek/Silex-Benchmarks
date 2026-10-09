@@ -1,0 +1,39 @@
+use GFX.Physics
+use STD.Math
+
+func run_rail(kind:int,rate:int,rotation:int) {
+    let delta=1.0/rate as float
+    var omega=0.0
+    if rotation==1 { omega=0.2 }
+    if rotation==2 { omega=-0.2 }
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    var first=world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.kinematic
+        ..angular_velocity=Math.Vec3(0.0,0.0,omega) ..allow_sleep=false
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var body=world.create_rigid_body(Physics.RigidBody3DSettings() ..allow_sleep=false
+        ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..transform=Physics.Transform3D(Math.Vec3(1.0,0.0,0.0))
+        ..linear_velocity=Math.Vec3(0.0,omega,0.0) ..angular_velocity=Math.Vec3(0.0,0.0,omega)
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2))
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var settings=Physics.SliderConstraint3DSettings()
+    if kind==1 { settings.motor=Physics.SliderMotor3D(0.6,2.0) }
+    var joint=world.create_slider_constraint(first,body,settings)
+    var step=1
+    while step<=rate*2 {
+        if kind==1 && step==rate*2/3+1 { joint.set_motor(Physics.SliderMotor3D(-0.6,2.0)) }
+        if kind==1 && step==rate*4/3+1 { joint.set_motor(Physics.SliderMotor3D(0.0,2.0)) }
+        let before=copy body.linear_velocity()
+        world.step(delta)
+        let axis=first.transform().vector(Math.Vec3(1.0,0.0,0.0))
+        let force=joint.reaction_force()
+        print("rail $(kind) $(rate) $(rotation) $(step) $(joint.position()) $(joint.speed()) $(body.position().x) $(body.position().y) $(body.linear_velocity().x) $(body.linear_velocity().y) $(before.x) $(before.y) $(force.x) $(force.y) $(force.x) $(force.y) $(joint.motor_force()) $(body.angular_velocity().z) $(joint.anchor_error().length()) $(joint.angular_error().length()) $(axis.x) $(axis.y)")
+        step++
+    }
+}
+func main() {
+    var kind=0;while kind<2 {
+        var rotation=0;while rotation<3 { run_rail(kind,60,rotation);run_rail(kind,120,rotation);rotation++ }
+        kind++
+    }
+}

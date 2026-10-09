@@ -922,3 +922,32 @@ Jolt activates from the beginning-of-step angle. Driven rest below 1e-5 rad/s
 after three seconds is reported separately and remains unqualified; Jolt can
 retain about 7.28e-5 rad/s at 120 Hz. Original rigid-impact comparison failures
 and tolerances remain unchanged.
+
+## World impulses on a rotating rail
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/RotatingRailRun.py
+```
+
+Run from the workspace or Spec group root. A 2 kg carriage starts 1 m from
+the origin, on a kinematic rail rotating at 0 or ±0.2 rad/s. At 60/120 Hz,
+free and force-bounded motor recipes retain 2160 observations per engine and
+Native Debug/Release mode. The motor requests 0.6, -0.6 and 0 m/s, with 2 N
+capacity, over two seconds. There is no gravity, damping, friction or collision.
+Jolt uses 24 velocity and 8 position passes for the oracle; no iteration-cost
+parity is claimed.
+
+Every step checks world impulse against `mass * velocity_change`, motor
+capacity and frame geometry. The fixed driven case follows a bounded velocity
+recurrence; the free rotating case follows `r=cosh(omega*t)` and
+`radial_speed=omega*sinh(omega*t)`. A kinematic rotating support supplies work,
+so carriage energy alone is not conserved. Thirteen corrupt witnesses must fail.
+
+Jolt's local multipliers are converted with the beginning-of-step frame in
+which its rows applied impulses. A separate final-frame projection is retained
+as a negative witness: it does not reproduce the applied world impulse.
+Silex directly accumulates world impulses across its passes. All raw rows and
+fixed mechanical tolerances are preserved. The original 0.05 N effort parity
+gap at 120 Hz step 70 remains rejected; the report includes every additional
+phase gap in the expanded matrix. Neither a solver change nor phase parity is
+claimed.
