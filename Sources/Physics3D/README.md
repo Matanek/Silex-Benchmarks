@@ -1120,3 +1120,26 @@ measured contact points and inferred Jolt normal impulse. Minimum descent is
 0.07 m with the floor or 2/15 m without it, within 0.005 m. Contact must release,
 final reactions support weight, and 28 corrupted witnesses are rejected per
 engine/mode. No arbitrary-chain, phase or cost parity claim.
+
+
+## Simultaneous loaded swing/twist servos
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/LoadedSwingTwistRun.py` from the
+workspace or Spec group root. The offset body has mass 1/2 kg, isotropic
+inertia 0.4 kg·m², gravity −9.81 Y, rotated body and constraint frames, and
+30 N·m motor budgets. Three position targets reverse after three seconds and
+recenter after six; eight recipes run for nine seconds at 60/120 Hz.
+
+The runner checks full state coverage and continuity, quaternion geometry,
+world force and angular momentum balances, anchors, motor budgets and projection,
+reversal and finite-spring equilibria. Steady states are compared against the
+pinned Jolt witness at the end of each phase; transient differences are measured
+without claiming equality. Each engine/mode rejects 15 corrupted witnesses.
+No contact, mixed dynamic chain or performance result is claimed.
+
+Jolt resolves its point lever before pose advancement. Silex resolves before
+and after it. The runner qualifies a single-lever local spin balance only in
+Jolt, and the full world angular momentum balance in both engines. An additional
+split-phase Silex diagnostic confirmed the original 0.001 local-spin bound with
+unchanged normal outputs; it is preserved in the Spec evidence. Applying the
+entire averaged force at one initial lever is an invalid local-spin witness.

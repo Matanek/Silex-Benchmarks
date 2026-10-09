@@ -1,0 +1,45 @@
+use GFX.Physics
+use STD.Math
+
+func run_loaded_swing(mass:int, rate:int, side:int) {
+    var world=Physics.World3D()
+    let base=Math.Quat.angle_axis(0.7,Math.Vec3(1.0,2.0,-1.0).normalized())
+    let frame=Math.Quat.angle_axis(0.35,Math.Vec3(0.0,0.0,1.0))
+    let lever=Math.Vec3(0.5,0.2,0.4*side as float)
+    var support=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type=Physics.BodyType3D.fixed ..transform=Physics.Transform3D(rotation:base)
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var body=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..transform=Physics.Transform3D(base.rotate(lever),base)
+        ..mass_properties=Physics.MassProperties3D(mass as float,Math.Vec3(0.4))
+        ..allow_sleep=false ..collision_filter=Physics.CollisionFilter3D(mask_bits:0))
+    var joint=world.create_swing_twist_constraint(support,body,Physics.SwingTwistConstraint3DSettings()
+        ..first_local_frame=Physics.Transform3D(rotation:frame)
+        ..second_local_frame=Physics.Transform3D(lever.negated(),frame)
+        ..swing_limits=Physics.SwingLimits3D.cone(Math.Vec2(0.8))
+        ..minimum_twist=-0.8 ..maximum_twist=0.8)
+    let dt=1.0/rate as float
+    var step=1
+    while step<=rate*9 {
+        if step==1 || step==rate*3+1 || step==rate*6+1 {
+            var direction=side as float
+            if step>rate*3 { direction=-direction }
+            if step>rate*6 { direction=0.0 }
+            joint.set_twist_motor(Physics.TwistMotor3D.position(0.25*direction,30.0,80.0,15.0))
+            joint.set_swing_motor(Physics.SwingMotor3D.position(Math.Vec2(0.2*direction,-0.15*direction),30.0,80.0,15.0))
+        }
+        let bp=body.transform().position;let bq=body.transform().rotation
+        let bv=body.linear_velocity();let bw=body.angular_velocity()
+        world.step(dt)
+        let p=body.transform().position;let q=body.transform().rotation
+        let v=body.linear_velocity();let w=body.angular_velocity()
+        let f=joint.reaction_force();let t=joint.reaction_torque();let m=joint.motor_torque()
+        let o=joint.orientation();let a=joint.angular_speed();let e=joint.anchor_error()
+        print("loadedswing $(mass) $(rate) $(side) $(step) $(bp.x) $(bp.y) $(bp.z) $(bq.x) $(bq.y) $(bq.z) $(bq.w) $(bv.x) $(bv.y) $(bv.z) $(bw.x) $(bw.y) $(bw.z) $(p.x) $(p.y) $(p.z) $(q.x) $(q.y) $(q.z) $(q.w) $(v.x) $(v.y) $(v.z) $(w.x) $(w.y) $(w.z) $(f.x) $(f.y) $(f.z) $(t.x) $(t.y) $(t.z) $(m.x) $(m.y) $(m.z) $(o.x) $(o.y) $(o.z) $(o.w) $(a.x) $(a.y) $(a.z) $(e.x) $(e.y) $(e.z)")
+        step++
+    }
+}
+func main() {
+    let masses:int[]=[1,2];let rates:int[]=[60,120];let sides:int[]=[-1,1]
+    for mass in masses { for rate in rates { for side in sides { run_loaded_swing(mass,rate,side) } } }
+}
