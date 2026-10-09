@@ -1057,3 +1057,38 @@ Driving must exceed 0.08 rad and reverse beyond ±0.15 rad/s. Nineteen corrupt
 witnesses per engine/mode must fail. Raw traces and transient differences
 are retained. Both engines satisfy the same mechanical bounds independently;
 no phase/cost parity, exact discrete conservation or spatial-contact claim.
+
+## Spatial hinge chain contacting and releasing a floor
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/SpatialContactsRun.py
+```
+
+Run from the workspace or Spec group root. The perpendicular Z/X chain above
+uses a payload sphere of radius 0.15 m and an optional infinite floor at
+Y=−0.22 m. Only payload-floor collisions are enabled; friction, restitution,
+damping, sleep and stops are absent. Both modes drive the second motor,
+reverse at 2/3 s and brake at 4/3 s. Two masses, signed offsets, rates 60/120
+and floor/no-floor yield 16 recipes, 2880 rows per engine/mode. Native
+Debug/Release checks 11 520 observations and rejects 28 corrupt witnesses
+per engine/mode, including erased contacts, motion, points and lever arms.
+
+Silex contact snapshots provide solved impulses and the fresh midpoint.
+The sphere-plane lever is vertical `(0,-radius-separation/2,0)` at the
+contact solve; end poses may already include corrections. Jolt's listener
+captures the pre-solve midpoint of its two surface witnesses and its lever
+to the payload center, matching pinned ContactConstraintManager. Cached
+contacts may produce a small noncentral lever. Its normal impulse is inferred
+from payload momentum and hinge impulse: no independent normal or contact
+angular balance claim. Both spin and total angular balances include the actual
+contact moment; Jolt's inference remains labeled in the qualification file.
+
+Frozen bounds: linear impulse 1e−5 N·s; spin 0.001 N·m·s; total angular
+impulse 0.003 per step, 0.03 cumulatively; geometry 0.005 m/rad; root angle
+0.02 rad; penetration 0.003 m; final speed 0.005 m/s/rad/s; final weight and
+torque errors 0.05 N/N·m; motor projection 0.02 N·m. Contact paths require
+peak impulse >0.1 N·s, excursion >0.07 rad, both speed signs beyond 0.15
+rad/s and released contact at final rest. Reaction budgets remain 60/40 N·m.
+Raw traces and phase differences are retained; no threshold is widened to
+fit output. These bounds include integration and pose corrections without
+claiming exact discrete conservation, phase/cost parity or arbitrary chains.
