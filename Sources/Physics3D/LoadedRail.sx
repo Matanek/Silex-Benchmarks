@@ -1,0 +1,54 @@
+use GFX.Physics
+use STD.Math
+
+func run_loaded(kind:int,mass_id:int,rate:int,direction:int) {
+    let delta=1.0/rate as float;let sign=direction as float;let mass=(mass_id+1) as float
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3(0.0,-9.81,0.0))
+    let disabled=Physics.CollisionFilter3D(mask_bits:0)
+    var pivot=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..body_type=Physics.BodyType3D.fixed ..collision_filter=disabled)
+    var rail=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.4))
+        ..allow_sleep=false ..collision_filter=disabled)
+    if kind==1 {
+        world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+            ..shape=Physics.Shape3D.plane(Physics.Plane3D(Math.Vec3(-sign,0.0,0.0),-1.4))
+            ..friction=0.0 ..restitution=0.0)
+    }
+    var cart=world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..transform=Physics.Transform3D(Math.Vec3(sign,0.0,0.0))
+        ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(0.2))
+        ..allow_sleep=false ..friction=0.0 ..restitution=0.0)
+    var hinge=world.create_hinge_constraint(pivot,rail,Physics.HingeConstraint3DSettings()
+        ..motor=Physics.HingeMotor3D(0.0,30.0))
+    var slider=world.create_slider_constraint(rail,cart,Physics.SliderConstraint3DSettings()
+        ..motor=Physics.SliderMotor3D(0.6*sign,2.0))
+    var contacts:Physics.Contact3D[]=[]
+    var step=1
+    while step<=rate*2 {
+        if step==rate*2/3+1 { slider.set_motor(Physics.SliderMotor3D(-0.6*sign,2.0)) }
+        if step==rate*4/3+1 { slider.set_motor(Physics.SliderMotor3D(0.0,2.0)) }
+        let bv=copy cart.linear_velocity();let brv=copy rail.linear_velocity();let bw=cart.angular_velocity().z
+        world.step(delta)
+        var impulse=Math.Vec3();world.write_contacts(contacts)
+        for contact in contacts {
+            var applied=contact.normal().multiply(contact.normal_impulse()).add(contact.tangent_impulse())
+            if contact.first_body().same_body(cart) { applied=applied.negated() }
+            impulse=impulse.add(applied)
+        }
+        let rp=rail.position();let rv=rail.linear_velocity();let cp=cart.position();let cv=cart.linear_velocity()
+        let hf=hinge.reaction_force();let sf=slider.reaction_force()
+        let axis=rail.transform().vector(Math.Vec3(1.0,0.0,0.0))
+        let penetration=Math.max(0.0,sign*cp.x+0.25-1.4)
+        print("loadedrail $(kind) $(mass_id) $(rate) $(direction) $(step) $(slider.position()) $(slider.speed()) $(rp.x) $(rp.y) $(rv.x) $(rv.y) $(rail.angular_velocity().z) $(cp.x) $(cp.y) $(cv.x) $(cv.y) $(cart.angular_velocity().z) $(hinge.motor_torque()) $(hf.x) $(hf.y) $(sf.x) $(sf.y) $(slider.motor_force()) $(slider.reaction_torque().z) $(hinge.anchor_error().length()) $(hinge.axis_error()) $(slider.anchor_error().length()) $(slider.angular_error().length()) $(axis.x) $(axis.y) $(bv.x) $(bv.y) $(brv.x) $(brv.y) $(bw) $(impulse.x) $(impulse.y) $(contacts.count()) $(penetration) $(hinge.angle()) 1")
+        step++
+    }
+}
+func main() {
+    var kind=0;while kind<2 { var mass=0;while mass<2 {
+        run_loaded(kind,mass,60,1);run_loaded(kind,mass,60,-1)
+        run_loaded(kind,mass,120,1);run_loaded(kind,mass,120,-1);mass++
+    }
+    kind++ }
+}

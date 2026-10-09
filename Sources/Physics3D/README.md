@@ -983,3 +983,40 @@ before the step. Both engines independently satisfy the same mechanical
 bounds. Transient scalar torques and forces differ: all raw outputs and measured
 phase differences are retained, without phase or cost parity claims. This
 planar witness does not replace qualification of spatial chains or contacts.
+
+## A held rail under gravity with axial contact and release
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/LoadedRailRun.py
+```
+
+Run from the workspace or Spec group root. A dynamic rail (2 kg, isotropic
+inertia 0.4 kg·m²) is held at its center by a Z hinge requesting zero rad/s
+with capacity 30 N·m. The spherical carriage (radius 0.25 m, mass 1 or 2 kg,
+inertia 0.2 kg·m²) starts at rest at X=±1 m. Gravity is −9.81 Y. Its slider
+requests ±0.6 m/s outwards, reverses after 2/3 s, and brakes at zero after
+4/3 s, with capacity 2 N. An optional inward-facing plane at signed X=1.4 m
+stops the carriage near signed X=1.15 m. Only carriage–wall collisions are
+enabled. Friction, restitution, damping and sleep are disabled; there are no
+joint stops. Two masses, two sides, 60/120 Hz and wall/no-wall give 16 recipes,
+2880 observations per engine and Native Debug/Release mode. Jolt uses 24
+velocity and 8 position passes; Silex's existing passes remain unchanged.
+
+Each step checks rail impulse, carriage spin, geometry, motor capacities,
+horizontal holding and continuity. Vertical carriage impulse is checked in
+both engines. Silex also independently checks full carriage impulse against
+measured contacts. Jolt does not publicly expose post-solve contact impulses:
+the normal impulse is inferred, labelled with `measured=0`, and is not used
+to validate its own normal balance. `WereBodiesInContact` independently
+confirms contact. A wall recipe must produce contact with an impulse over
+0.1 N·s, reverse and release it; erasing contacts must reject the witness.
+At final rest, reactions must carry the weights and hinge torque must balance
+their signed moment arms, including the rail's small positional error.
+
+Frozen bounds: linear/spin impulse 1e−5 N·s/N·m·s; geometry 0.003 m/rad;
+angle 0.02 rad; final linear/angular speed 0.005 m/s/rad/s; final gravity
+force/torque error 0.05 N/N·m; penetration 0.003 m. Twenty-one corrupt
+witnesses per engine and mode must fail. Raw traces, provenance flags and
+transient differences are retained. Contact timing and inferred/measured
+normal impulses are not claimed identical. This planar qualification does
+not establish phase parity, equal solver cost or general spatial chains.
