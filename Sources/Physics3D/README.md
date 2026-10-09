@@ -1020,3 +1020,40 @@ witnesses per engine and mode must fail. Raw traces, provenance flags and
 transient differences are retained. Contact timing and inferred/measured
 normal impulses are not claimed identical. This planar qualification does
 not establish phase parity, equal solver cost or general spatial chains.
+
+## Loaded spatial chain with perpendicular hinges
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/SpatialHingesRun.py
+```
+
+Run from the workspace or Spec group root. A fixed pivot holds an arm of
+mass 2 kg and isotropic inertia 0.4 kg·m², centered at (0.5,0,0), through
+a Z hinge at the origin. An X hinge at (1,0,0) attaches a payload centered
+at (1,0,±0.8), mass 1 or 2 kg and isotropic inertia 0.2 kg·m². Initial
+rotations are identity and velocities zero; gravity is −9.81 Y. Both motors
+hold zero speed with capacities 60/40 N·m, or the second requests ±0.2 rad/s,
+reverses after 2/3 s and brakes after 4/3 s. Two masses, offsets, rates
+60/120 Hz and modes give 16 two-second recipes, 2880 observations per engine
+and Native Debug/Release mode. Collisions, damping, sleep and stops are
+disabled. Jolt uses 24 velocity/8 position passes; Silex passes are unchanged.
+
+Every step checks each body's linear impulse and spin impulse including
+anchor-force moments. Total world angular momentum includes spin and orbital
+terms for both bodies and integrates pivot torque and gravity moments. The
+pivot torque includes locked X reaction as well as Z motor effort. Jolt's
+rotation multipliers use the basis from pinned HingeRotationConstraintPart:
+`b = axis2.GetNormalizedPerpendicular()`, `c = axis2.Cross(b)`, applied torque
+`(b.Cross(axis1)*lambda[0] + c.Cross(axis1)*lambda[1] + axis1*motor)/dt`.
+Axes come from pre-step poses, where velocity impulses were applied, rather
+than the end pose after position correction. End-pose angles, axes, anchors
+and relative speed are independently reconstructed and checked.
+
+Frozen bounds: linear impulse 1e−5 N·s; spin and total angular impulse
+0.001 N·m·s per step; total angular residual 0.01 N·m·s cumulatively;
+geometry 0.005 m/rad; root/held angles 0.02 rad; final speed 0.005 m/s/rad/s;
+final weight/torque error 0.05 N/N·m; motor projection error 0.01 N·m.
+Driving must exceed 0.08 rad and reverse beyond ±0.15 rad/s. Nineteen corrupt
+witnesses per engine/mode must fail. Raw traces and transient differences
+are retained. Both engines satisfy the same mechanical bounds independently;
+no phase/cost parity, exact discrete conservation or spatial-contact claim.
