@@ -1107,3 +1107,16 @@ angular momentum, geometry and penetration bounds. Final force and torque
 balances include the floor; 28 corrupted witnesses are rejected per engine/mode.
 Jolt normal impulse remains inferred and is not an independent contact-force
 proof. This does not claim arbitrary-chain, phase or cost parity.
+
+## Spatial hinge with a vertical slider
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/SpatialRailRun.py` from the
+workspace root or owning Spec group. Sixteen two-second recipes combine a held
+Z hinge with a vertical Y slider, payload masses 1/2 kg, lateral offsets ±0.8 m,
+steps 60/120 Hz and with/without a frictionless floor. Root capacity is 60 N·m;
+slider capacity is 40 N, speed −0.2 m/s, reversal at 2/3 s and braking at 4/3 s.
+Vector balances retain the spatial-contact bounds, moving-point slider lever,
+measured contact points and inferred Jolt normal impulse. Minimum descent is
+0.07 m with the floor or 2/15 m without it, within 0.005 m. Contact must release,
+final reactions support weight, and 28 corrupted witnesses are rejected per
+engine/mode. No arbitrary-chain, phase or cost parity claim.
