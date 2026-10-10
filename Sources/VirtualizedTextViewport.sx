@@ -74,7 +74,7 @@ func line_prefix(number:int) str {
 }
 
 func has_argument(expected:str) bool {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             for argument in arguments {
@@ -115,7 +115,7 @@ func viewer_text_mode() Viewer.CanvasTextMode {
 func scalar_text(scalar:uint32) str {
     var values:uint32[] = [scalar]
     let view = @values[0:values.count()]
-    match UTF8.from_scalars(view) {
+    match (try UTF8.from_scalars(view)) {
         failure(error) => { panic("invalid glyph corpus scalar $(scalar)") }
         success(value) => { return value }
     }
@@ -132,10 +132,10 @@ func required_instance(
 
 func has_vector_outline(instance:VectorFont.Instance, value:str) bool {
     var retained = instance
-    match retained.shape(value) {
+    match (try retained.shape(value)) {
         failure(error) => { return false }
         success(run) => {
-            match run.outlines() {
+            match (try run.outlines()) {
                 failure(error) => { return false }
                 success(placements) => {
                     if placements.is_empty() { return false }
@@ -151,7 +151,7 @@ func has_vector_outline(instance:VectorFont.Instance, value:str) bool {
 
 func glyph_corpus(font:Canvas.Font, require_outlines:bool = false) GlyphCorpus {
     var face = font.face()
-    var vector_instance = required_instance(VectorFont.Instance.create(face, size:14.0))
+    var vector_instance = required_instance((try VectorFont.Instance.create(face, size:14.0)))
     var glyphs:str[] = []
     var scalar:uint32 = 33
     while scalar <= 1_327 as uint32 {
@@ -968,7 +968,7 @@ func interface(
 }
 
 func required_vector_glyphs(layer:Canvas.TextLayer) int {
-    match layer.vector_outlines() {
+    match (try layer.vector_outlines()) {
         failure(error) => { panic(error.detail) }
         success(placements) => { return placements.count() }
     }

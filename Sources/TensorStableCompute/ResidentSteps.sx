@@ -125,7 +125,7 @@ func verify_resident() {
 }
 func main() {
     var measuring=false;var cpu=false;var reverse=false
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error)=>{panic(error.detail)}
         success(arguments)=>{for argument in arguments {
             if argument=="--verify" {verify_resident();return}

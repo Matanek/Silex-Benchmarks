@@ -354,7 +354,7 @@ func measure_family(family:str, profiled:bool = false) {
 }
 
 func main() {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             for argument in arguments {

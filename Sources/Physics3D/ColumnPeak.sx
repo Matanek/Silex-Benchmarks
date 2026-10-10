@@ -6,7 +6,7 @@ use STD.Time.Clock
 // Match StressScene column 256, including its default sleep settings.
 func main() {
     var allow_sleep = true
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             if arguments.count() == 2 && arguments[1] == "awake" {

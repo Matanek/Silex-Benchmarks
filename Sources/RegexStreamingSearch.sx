@@ -3,7 +3,7 @@ use STD.Text.UTF8
 use STD.Time.Stopwatch
 
 func compiled(pattern:str) Regex {
-    match Regex.compile(pattern) {
+    match (try Regex.compile(pattern)) {
         success(value) => { return value }
         failure(error) => { panic("benchmark pattern is invalid") }
     }
@@ -20,7 +20,7 @@ func large_text(count:int, suffix:uint32) str {
         if remaining > 0 { block = block + block }
     }
     var trailing:uint32[] = [suffix]
-    match UTF8.from_scalars(@trailing[0:trailing.count()]) {
+    match (try UTF8.from_scalars(@trailing[0:trailing.count()])) {
         success(text) => { return prefix + text }
         failure(error) => { panic("benchmark text is invalid") }
     }

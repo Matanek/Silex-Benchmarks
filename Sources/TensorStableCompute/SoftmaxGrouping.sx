@@ -76,7 +76,7 @@ func main() {
     var report = false
     var reverse = false
     var selected_case = -1
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => { for argument in arguments {
             if argument == "--measure" { report = true }

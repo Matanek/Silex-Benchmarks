@@ -95,12 +95,12 @@ func observe(family:str,arm:str,device:GPU.Device?) RunState {
         if iteration==2 && (arm=="forward" || arm=="training") {
             let before=snapshot(model,optimizer)
             if arm=="forward" {
-                match model.prepare_forward(input) {
+                match (try model.prepare_forward(input)) {
                     success=>{prepared=true}
                     failure(reason)=>{assert(reason!="")}
                 }
             } else {
-                match Neural.TrainingStep.mse(model,optimizer,input,target) {
+                match (try Neural.TrainingStep.mse(model,optimizer,input,target)) {
                     success(value)=>{plan=value;prepared=true}
                     failure(reason)=>{assert(reason!="")}
                 }

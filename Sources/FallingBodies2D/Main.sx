@@ -625,7 +625,7 @@ func requested_smoke_frames() int {
 }
 
 func option_requested(expected:str) bool {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             for argument in arguments {

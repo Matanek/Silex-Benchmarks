@@ -4,6 +4,11 @@
 packages. The repository keeps each scenario together with its protocol,
 external reference implementations, and raw results when available.
 
+This development revision requires the compiler and packages using the single
+`Result` API: ordinary calls return the success value or panic, and `try call()`
+keeps the `Result` for explicit error handling. Update the toolchain and
+packages together before running these sources.
+
 ## Organization
 
 All Silex benchmarks live under [`Sources/`](Sources/). They are not grouped

@@ -36,14 +36,14 @@ func benchmark_comparison(observations:int, repetitions:int) {
 }
 
 func benchmark_tracker(observations:int, repetitions:int) Result<void, Sync.Error> {
-    var tracker = try Freshness.tracker(64)
+    var tracker = try Freshness.tracker(64) else error { return Result<void,Sync.Error>.failure(error) }
     var endpoints:Network.Endpoint[] = []
     var sequences:uint32[] = []
     var stream = 0
     while stream < 64 {
         endpoints.append(endpoint((stream + 1) as uint8))
         sequences.append(0 as uint32)
-        let first = try tracker.observe_sequence(endpoints[stream], 1, sequences[stream])
+        let first = try tracker.observe_sequence(endpoints[stream], 1, sequences[stream]) else error { return Result<void,Sync.Error>.failure(error) }
         assert(first.kind == Freshness.Kind.first)
         sequences[stream]++
         stream++
@@ -61,7 +61,7 @@ func benchmark_tracker(observations:int, repetitions:int) Result<void, Sync.Erro
                 endpoints[stream],
                 1,
                 sequences[stream]
-            )
+            ) else error { return Result<void,Sync.Error>.failure(error) }
             if decision.should_apply() { checksum++ }
             sequences[stream]++
             index++
@@ -81,7 +81,7 @@ func benchmark_tracker_with_statistics(
     observations:int,
     repetitions:int
 ) Result<void, Sync.Error> {
-    var freshness = try Freshness.tracker(64)
+    var freshness = try Freshness.tracker(64) else error { return Result<void,Sync.Error>.failure(error) }
     var statistics = Statistics.tracker()
     var endpoints:Network.Endpoint[] = []
     var sequences:uint32[] = []
@@ -89,7 +89,7 @@ func benchmark_tracker_with_statistics(
     while stream < 64 {
         endpoints.append(endpoint((stream + 1) as uint8))
         sequences.append(0 as uint32)
-        let first = try freshness.observe_sequence(endpoints[stream], 1, sequences[stream])
+        let first = try freshness.observe_sequence(endpoints[stream], 1, sequences[stream]) else error { return Result<void,Sync.Error>.failure(error) }
         assert(first.kind == Freshness.Kind.first)
         sequences[stream]++
         stream++
@@ -107,7 +107,7 @@ func benchmark_tracker_with_statistics(
                 endpoints[stream],
                 1,
                 sequences[stream]
-            )
+            ) else error { return Result<void,Sync.Error>.failure(error) }
             statistics.observe(decision)
             if decision.should_apply() { checksum++ }
             sequences[stream]++
@@ -129,11 +129,11 @@ func main() {
     let observations = 1_000_000
     let repetitions = 5
     benchmark_comparison(observations, repetitions)
-    match benchmark_tracker(observations, repetitions) {
+    match (try benchmark_tracker(observations, repetitions)) {
         success => {}
         failure(error) => { panic(error.operation + ": " + error.detail) }
     }
-    match benchmark_tracker_with_statistics(observations, repetitions) {
+    match (try benchmark_tracker_with_statistics(observations, repetitions)) {
         success => {}
         failure(error) => { panic(error.operation + ": " + error.detail) }
     }

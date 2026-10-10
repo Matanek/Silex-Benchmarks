@@ -562,7 +562,7 @@ func run_measurements() {
 }
 
 func main() {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             for argument in arguments {

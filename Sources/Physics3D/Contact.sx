@@ -30,7 +30,7 @@ func positive(value:str, allow_zero:bool = false) int {
 }
 
 func fixture() Fixture {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             if arguments.count() != 6 {

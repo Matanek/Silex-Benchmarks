@@ -99,7 +99,7 @@ func run(arguments:str[]) {
 }
 
 func main() {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => { run(arguments) }
     }

@@ -101,7 +101,7 @@ func definition() BehaviourTree.Definition<Agent> {
     builder.end()
     builder.end()
 
-    match builder.build() {
+    match (try builder.build()) {
         success(value) => { return value }
         failure(_) => { panic("benchmark behaviour tree must be valid") }
     }
@@ -435,7 +435,7 @@ func parse_wake_percent(text:str) int {
 }
 
 func configuration() Configuration? {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             if arguments.count() == 2 && arguments[1] == "verify" { return null }

@@ -40,17 +40,17 @@ func main() {
 
     var face_clock = Stopwatch()
     face_clock.start()
-    var face = require_face(Font.Face.monospace())
+    var face = require_face((try Font.Face.monospace()))
     face_clock.stop()
 
     var instance_clock = Stopwatch()
     instance_clock.start()
-    var instance = require_instance(Font.Instance.create(face, size:14.0))
+    var instance = require_instance((try Font.Instance.create(face, size:14.0)))
     instance_clock.stop()
 
     var shape_clock = Stopwatch()
     shape_clock.start()
-    var run = require_run(instance.shape("office AVATAR café e\u{301} — first UI label"))
+    var run = require_run((try instance.shape("office AVATAR café e\u{301} — first UI label")))
     shape_clock.stop()
 
     var raster_clock = Stopwatch()
@@ -58,10 +58,10 @@ func main() {
     var alpha_sum = 0
     raster_clock.start()
     for glyph in run.glyphs() {
-        if coverage = require_glyph(instance.rasterize_glyph(
+        if coverage = require_glyph((try instance.rasterize_glyph(
             glyph.id,
             Font.GlyphRasterOptions(density:2.0)
-        )) {
+        ))) {
             let alpha = coverage.alpha()
             alpha_count += alpha.count()
             for value in alpha { alpha_sum += value as int }

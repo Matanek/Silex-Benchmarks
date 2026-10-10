@@ -178,7 +178,7 @@ func run_scale(mode:str, body_count:int, step_count:int) {
 }
 
 func main() {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             if arguments.count() == 4 {

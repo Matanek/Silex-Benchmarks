@@ -125,7 +125,7 @@ func script_labels() str[] {
 }
 
 func selected_case() str {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             if arguments.count() > 1 { return arguments[1] }

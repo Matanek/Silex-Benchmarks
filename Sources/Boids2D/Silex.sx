@@ -157,7 +157,7 @@ func parse_positive(text:str, fallback:int) int {
 func requested_settings() Settings {
     var count = 4000
     var frames = 480
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error) => { panic(error.detail) }
         success(arguments) => {
             if arguments.count() > 1 { count = parse_positive(arguments[1], count) }

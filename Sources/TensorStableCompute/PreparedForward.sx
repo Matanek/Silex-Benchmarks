@@ -22,7 +22,7 @@ func main() {
     var planned=false
     var profiled=false
     var selected=0
-    match Process.arguments() {
+    match (try Process.arguments()) {
         failure(error)=>{panic(error.detail)}
         success(arguments)=>{for argument in arguments {
             if argument=="--planned" {planned=true}
@@ -49,7 +49,7 @@ func main() {
     device.wait_until_idle()
     var capture=Stopwatch()
     capture.start()
-    match model.prepare_forward(input) {failure(reason)=>{panic(reason)};success=>{}}
+    match (try model.prepare_forward(input)) {failure(reason)=>{panic(reason)};success=>{}}
     capture.stop()
     if !planned {model.clear_forward_plan()}
     var i=0

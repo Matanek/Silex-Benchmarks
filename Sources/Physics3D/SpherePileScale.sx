@@ -65,7 +65,7 @@ func run_pile(count:int, width:int, depth:int) {
 }
 
 func main() {
-    match Process.arguments() {
+    match (try Process.arguments()) {
         success(args) => {
             if args.count() == 2 {
                 if args[1] == "1024" { run_pile(1024, 16, 8); return }
