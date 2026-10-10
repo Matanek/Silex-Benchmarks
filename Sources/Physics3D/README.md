@@ -1164,3 +1164,20 @@ The raw cumulative world residual is measured, with no exact-conservation claim:
 the initial 0.03 bound was disproved by Jolt too and remains preserved. No
 threshold was enlarged to hide the moving-hinge torque defect. Public motor
 projection and steady parity bounds remain those defined before the correction.
+
+## Ragdoll hierarchy and poses
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/RagdollHierarchyRun.py` from
+the workspace or Spec group root. A three-part hierarchy with noncommuting
+quarter turns and rotated body offsets is instantiated twice, then moved to
+a second root pose. Both engines check twelve joint/body pose rows against
+closed-form positions and quaternion compositions. Jolt uses its native
+`RagdollSettings`, skeleton and `Ragdoll.GetPose/SetPose`; its shape origins
+are converted to joint frames using the known offsets.
+
+Two overlapping Silex sensor assemblies expose one permitted internal pair
+and nine pairs across instances. These counts are compared with the actual
+Jolt ragdoll collision-group permissions. This is a filtering witness, not
+a contact-dynamics parity claim. Both native modes also exercise Silex world
+lifetime, repeated destruction and analytical free fall at 60/120 Hz.
+Each engine/mode rejects twenty corrupted pose or filter witnesses.

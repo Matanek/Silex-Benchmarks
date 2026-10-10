@@ -1,0 +1,78 @@
+use GFX.Physics
+use STD.Math
+
+func transform_text(transform:Physics.Transform3D) str {
+    let p = transform.position; let q = transform.rotation
+    return "$(p.x) $(p.y) $(p.z) $(q.x) $(q.y) $(q.z) $(q.w)"
+}
+func settings() Physics.Ragdoll3DSettings {
+    let body = Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.3))
+        ..allow_sleep = false
+    return Physics.Ragdoll3DSettings([
+        Physics.RagdollPart3D(-1, body, body_offset:Physics.Transform3D(Math.Vec3(0.2, 0.0, 0.0), Math.Quat.angle_axis(0.3, Math.Vec3(1.0, 0.0, 0.0)))),
+        Physics.RagdollPart3D(0, body, local_transform:Physics.Transform3D(Math.Vec3(1.0, 0.0, 0.0), Math.Quat.angle_axis(Math.pi() / 2.0, Math.Vec3(0.0, 0.0, 1.0))),
+            body_offset:Physics.Transform3D(Math.Vec3(0.0, 0.3, 0.0), Math.Quat.angle_axis(0.2, Math.Vec3(0.0, 1.0, 0.0)))),
+        Physics.RagdollPart3D(1, body, local_transform:Physics.Transform3D(Math.Vec3(0.0, 2.0, 0.0), Math.Quat.angle_axis(Math.pi() / 2.0, Math.Vec3(1.0, 0.0, 0.0))),
+            body_offset:Physics.Transform3D(Math.Vec3(0.0, 0.0, 0.4)))
+    ])
+}
+func orphan() Physics.Ragdoll3D {
+    var world = Physics.World3D()
+    return world.create_ragdoll(settings())
+}
+func main() {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var asset = settings()
+    for instance in [0, 1] {
+        var root = Physics.Transform3D(Math.Vec3(3.0 + instance as float * 10.0, 4.0, 5.0), Math.Quat.angle_axis(Math.pi() / 2.0, Math.Vec3(0.0, 1.0, 0.0)))
+        var ragdoll = world.create_ragdoll(asset, root)
+        for stage in [0, 1] {
+            if stage == 1 {
+                var local_pose:Physics.Transform3D[] = []
+                ragdoll.write_local_pose(local_pose)
+                local_pose[0] = Physics.Transform3D(Math.Vec3(-2.0 + instance as float * 10.0, 3.0, 1.0), Math.Quat.angle_axis(0.8, Math.Vec3(1.0, 0.0, 0.0)))
+                ragdoll.set_local_pose(local_pose)
+            }
+            var pose:Physics.Transform3D[] = []
+            ragdoll.write_pose(pose)
+            var index = 0
+            while index < 3 {
+                print("pose $(instance) $(stage) $(index) $(transform_text(pose[index])) $(transform_text(ragdoll.body(index).transform()))")
+                index++
+            }
+        }
+        world.destroy_ragdoll(ragdoll)
+    }
+    let sensor = Physics.RigidBody3DSettings() ..is_sensor = true ..allow_sleep = false
+    var overlap = Physics.Ragdoll3DSettings([
+        Physics.RagdollPart3D(-1, sensor), Physics.RagdollPart3D(0, sensor), Physics.RagdollPart3D(1, sensor)
+    ])
+    var first = world.create_ragdoll(overlap)
+    world.step(0.01)
+    let own = world.contact_count()
+    var second = world.create_ragdoll(overlap)
+    world.step(0.01)
+    print("filter own $(own)")
+    print("filter cross $(world.contact_count() - 2 * own)")
+    world.destroy_ragdoll(first); world.destroy_ragdoll(second)
+    assert(!first.is_valid() && !second.is_valid() && !orphan().is_valid())
+    var cycle = 0
+    while cycle < 32 {
+        var repeated = world.create_ragdoll(asset)
+        world.destroy_ragdoll(repeated)
+        assert(!repeated.is_valid() && world.body_count() == 0 && world.swing_twist_constraint_count() == 0)
+        cycle++
+    }
+    for rate in [60, 120] {
+        var falling_world = Physics.World3D()
+        var falling = falling_world.create_ragdoll(asset, Physics.Transform3D(Math.Vec3(0.0, 10.0, 0.0)))
+        var step = 0
+        while step < rate { falling_world.step(1.0 / rate as float); step++ }
+        var pose:Physics.Transform3D[] = []
+        falling.write_pose(pose)
+        assert(Math.abs(pose[0].position.y - (10.0 - 4.905 * (1.0 + 1.0 / rate as float))) < 0.0001)
+        assert(falling.body(2).linear_velocity().subtract(Math.Vec3(0.0, -9.81, 0.0)).length() < 0.0001)
+        assert(falling.joint(1)!.anchor_error().length() < 0.0001 && falling.joint(2)!.anchor_error().length() < 0.0001)
+    }
+}
