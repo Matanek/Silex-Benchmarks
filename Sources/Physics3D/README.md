@@ -1181,3 +1181,22 @@ Jolt ragdoll collision-group permissions. This is a filtering witness, not
 a contact-dynamics parity claim. Both native modes also exercise Silex world
 lifetime, repeated destruction and analytical free fall at 60/120 Hz.
 Each engine/mode rejects twenty corrupted pose or filter witnesses.
+
+## Ragdoll impulse and symmetric floor impact
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/RagdollDynamicsRun.py` from
+the workspace or Spec group root. Three spheres (radius 0.25 m, mass 2 kg,
+isotropic inertia 0.2 kg·m²) are joined at their midpoints with free swing/twist
+constraints; internal collisions and damping are disabled. An off-center
+±3 N·s Z impulse acts on the last member in a gravity-free world for 0.5 s.
+A separate symmetric fall starts at 3 m and runs for two seconds on a
+frictionless floor. Jolt uses its native Ragdoll and a box whose top is at zero;
+Silex uses an infinite plane. Rates are 60/120 Hz in Native Debug/Release.
+
+Both engines independently check the initial impulse, linear momentum, bounded
+angular momentum drift, transmission to the root, anchors and floor rest.
+The impact envelope allows one step of travel at 7.5 m/s plus Jolt's default
+2 cm penetration slop; the final height remains 0.22–0.28 m with speed below
+0.05 m/s. Each engine/mode rejects 24 corrupted observations. This qualifies
+these two passive recipes, without claiming identical contact trajectories,
+general ragdoll impacts, active limits or motorized pose tracking.
