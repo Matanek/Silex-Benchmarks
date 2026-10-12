@@ -1221,3 +1221,26 @@ after release; the passive chain must move again. Each engine/mode rejects
 with native Jolt `Ragdoll.DriveToPoseUsingMotors` (orientation 0.03 rad,
 position 5 cm, relative angular speed 0.05 rad/s). This qualifies these settled
 poses, without claiming contact or full transient trajectory parity.
+
+## Passive ragdoll twist stops
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/RagdollLimitsRun.py` from the
+workspace or Spec group root. The controller verifies the pinned Jolt archive,
+compiles both native engines in Debug/Release and checks every observation of
+a free three-sphere chain. Each body has mass 2 kg and isotropic inertia
+0.2 kg·m²; swing is locked, twist lies in −0.2/+0.35 rad. A ±0.6 kg·m²/s angular
+impulse on the last member is reversed after two seconds. There is no gravity
+or contact. The cases run at 60/120 Hz, in two world orientations and both signs.
+
+The native Jolt witness uses `RagdollSettings` and `Ragdoll`, with parent frames
+derived from the same rest geometry. Every output contains 8,712 rows, including
+poses and velocities immediately before/after both impulses. Independent checks
+cover angular momentum (0.0001 kg·m²/s), stepwise kinetic energy increase
+(0.0001 J), anchor/axis geometry (0.001 m/rad), both reached stops (0.02 rad),
+and settled velocity (0.01 rad/s). Transient twist crossing is bounded by one
+step at the initial relative speed of 3 rad/s plus 0.005 rad. Settled twist
+angles and world angular velocity components are compared within 0.02 rad/rad/s.
+Parser, mechanics, event timing and parity guards reject corrupted witnesses.
+The controller also supports `--check-only` to recheck retained outputs.
+This qualifies an axial passive stop composition, without claiming identical
+transient impact trajectories, combined swing or floor contacts.

@@ -1,0 +1,44 @@
+use GFX.Physics
+use STD.Math
+
+func observe(label:str,ragdoll:Physics.Ragdoll3D,rate:int,side:int,frame:int,step:int) {
+    for part in [0,1,2] {
+        var member=ragdoll.body(part)
+        let p=member.position();let q=member.rotation();let v=member.linear_velocity();let w=member.angular_velocity()
+        var twist=0.0;var swing=Math.Vec2();var anchor=0.0
+        if part>0 { var constraint=ragdoll.joint(part)!
+            twist=constraint.twist_angle();swing=constraint.swing_angles();anchor=constraint.anchor_error().length() }
+        print("$(label) $(rate) $(side) $(frame) $(step) $(part) $(p.x) $(p.y) $(p.z) $(q.x) $(q.y) $(q.z) $(q.w) $(v.x) $(v.y) $(v.z) $(w.x) $(w.y) $(w.z) $(twist) $(swing.x) $(swing.y) $(anchor)")
+    }
+}
+func run_limits(rate:int,side:int,frame:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3() ..position_iterations=8)
+    let body=Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2)) ..allow_sleep=false
+    let joint=Physics.SwingTwistConstraint3DSettings() ..swing_limits=Physics.SwingLimits3D.cone(Math.Vec2())
+        ..minimum_twist=-0.2 ..maximum_twist=0.35
+    var settings=Physics.Ragdoll3DSettings([
+        Physics.RagdollPart3D(-1,body),
+        Physics.RagdollPart3D(0,body,local_transform:Physics.Transform3D(Math.Vec3(0.5,0.0,0.0)),
+            body_offset:Physics.Transform3D(Math.Vec3(0.5,0.0,0.0)),joint:joint),
+        Physics.RagdollPart3D(1,body,local_transform:Physics.Transform3D(Math.Vec3(1.0,0.0,0.0)),
+            body_offset:Physics.Transform3D(Math.Vec3(0.5,0.0,0.0)),joint:joint)
+    ],self_collision:false)
+    var base=Math.Quat();if frame==1 { base=Math.Quat.angle_axis(0.6,Math.Vec3(1.0,2.0,-1.0).normalized()) }
+    let axis=base.rotate(Math.Vec3(1.0,0.0,0.0))
+    var ragdoll=world.create_ragdoll(settings,Physics.Transform3D(Math.Vec3(0.0,3.0,0.0),base))
+    var step=0
+    while step<=rate*4 {
+        if step==0 || step==rate*2 { observe("ragdollimpulse",ragdoll,rate,side,frame,step) }
+        if step==0 { ragdoll.body(2).apply_angular_impulse(axis.multiply(0.6*side as float)) }
+        if step==rate*2 { ragdoll.body(2).apply_angular_impulse(axis.multiply(-0.6*side as float)) }
+        observe("ragdolllimit",ragdoll,rate,side,frame,step)
+        if step<rate*4 { world.step(1.0/rate) }
+        step++
+    }
+    var stale=ragdoll.body(2);world.destroy_ragdoll(ragdoll)
+    assert(!stale.is_valid() && world.body_count()==0 && world.swing_twist_constraint_count()==0)
+    var fresh=world.create_ragdoll(settings);assert(!stale.same_body(fresh.body(2)))
+    world.destroy_ragdoll(fresh);assert(world.body_count()==0)
+}
+func main() { var sides:int[]=[-1,1];for rate in [60,120] { for side in sides { for frame in [0,1] { run_limits(rate,side,frame) } } } }
