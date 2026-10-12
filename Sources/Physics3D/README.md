@@ -1200,3 +1200,24 @@ The impact envelope allows one step of travel at 7.5 m/s plus Jolt's default
 0.05 m/s. Each engine/mode rejects 24 corrupted observations. This qualifies
 these two passive recipes, without claiming identical contact trajectories,
 general ragdoll impacts, active limits or motorized pose tracking.
+
+## Ragdoll pose motors
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/RagdollMotorsRun.py` from the
+workspace or Spec group root. A fixed root and two sphere bodies (radius 0.5 m,
+mass 1 kg, isotropic inertia 0.2 kg·m²) have rotated body offsets, noncommuting
+rest rotations and gravity −9.81 Y. Each 13-second recipe follows one target,
+reverses at four seconds, returns to neutral at eight seconds and releases
+motors at twelve seconds, at 60/120 Hz. Both worlds use 12 velocity and
+16 position iterations; no contacts participate. Motors use 120 N·m per axis,
+400 N·m/rad stiffness and 40 N·m·s/rad damping.
+
+The witness contains 9,368 rows per engine/mode. Independent reconstruction
+checks body offsets, joint rotations, relative angular speeds and anchor gaps.
+Anchor, settled target error and final speed bounds are 2 cm, 0.08 rad and
+0.15 m/s or rad/s respectively. Torques stay within their budgets and vanish
+after release; the passive chain must move again. Each engine/mode rejects
+32 corrupt witnesses. The final half-second of each powered phase is compared
+with native Jolt `Ragdoll.DriveToPoseUsingMotors` (orientation 0.03 rad,
+position 5 cm, relative angular speed 0.05 rad/s). This qualifies these settled
+poses, without claiming contact or full transient trajectory parity.

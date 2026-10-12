@@ -1,0 +1,48 @@
+use GFX.Physics
+use STD.Math
+
+func motor_settings() Physics.Ragdoll3DSettings {
+    let root=Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed ..collision_filter=Physics.CollisionFilter3D(mask_bits:0)
+    let body=Physics.RigidBody3DSettings() ..mass_properties=Physics.MassProperties3D(1.0,Math.Vec3(0.2))
+        ..allow_sleep=false ..collision_filter=Physics.CollisionFilter3D(mask_bits:0)
+    let joint=Physics.SwingTwistConstraint3DSettings() ..minimum_twist=-0.8 ..maximum_twist=0.8
+        ..swing_limits=Physics.SwingLimits3D.cone(Math.Vec2(0.8))
+    return Physics.Ragdoll3DSettings([
+        Physics.RagdollPart3D(-1,root,body_offset:Physics.Transform3D(Math.Vec3(0.1),Math.Quat.angle_axis(0.2,Math.Vec3(0.0,1.0,0.0)))),
+        Physics.RagdollPart3D(0,body,local_transform:Physics.Transform3D(Math.Vec3(0.0,-0.5,0.0),Math.Quat.angle_axis(0.4,Math.Vec3(0.0,0.0,1.0))),
+            body_offset:Physics.Transform3D(Math.Vec3(0.0,-0.4,0.0),Math.Quat.angle_axis(0.3,Math.Vec3(1.0,0.0,0.0))),joint:joint),
+        Physics.RagdollPart3D(1,body,local_transform:Physics.Transform3D(Math.Vec3(0.0,-0.8,0.0),Math.Quat.angle_axis(-0.3,Math.Vec3(0.0,1.0,0.0))),
+            body_offset:Physics.Transform3D(Math.Vec3(0.0,-0.3,0.0),Math.Quat.angle_axis(-0.2,Math.Vec3(0.0,0.0,1.0))),joint:joint)
+    ],self_collision:false)
+}
+func target(settings:Physics.Ragdoll3DSettings,side:float) Physics.Transform3D[] {
+    let delta=Math.Quat.angle_axis(0.25*side,Math.Vec3(0.0,0.0,1.0)).multiply(Math.Quat.angle_axis(0.2*side,Math.Vec3(1.0,0.0,0.0)))
+    return [Physics.Transform3D(Math.Vec3(0.0,3.0,0.0),Math.Quat.angle_axis(0.6,Math.Vec3(1.0,2.0,-1.0).normalized())),
+        Physics.Transform3D(settings.part(1).local_transform.position,settings.part(1).local_transform.rotation.multiply(delta)),
+        Physics.Transform3D(settings.part(2).local_transform.position,settings.part(2).local_transform.rotation.multiply(delta.conjugated()))]
+}
+func run_motors(rate:int,side:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..position_iterations=16)
+    var settings=motor_settings()
+    let base=Math.Quat.angle_axis(0.6,Math.Vec3(1.0,2.0,-1.0).normalized())
+    var ragdoll=world.create_ragdoll(settings,Physics.Transform3D(Math.Vec3(0.0,3.0,0.0),base))
+    var step=0
+    while step<=rate*13 {
+        if step==0 || step==rate*4 || step==rate*8 {
+            var direction=side as float
+            if step==rate*4 { direction=-direction }
+            if step==rate*8 { direction=0.0 }
+            ragdoll.drive_to_local_pose(target(settings,direction),120.0,400.0,40.0)
+        }
+        if step==rate*12 { ragdoll.stop_motors() }
+        for part in [1,2] {
+            var body=ragdoll.body(part);var joint=ragdoll.joint(part)!
+            let p=body.position();let q=body.rotation();let v=body.linear_velocity();let w=body.angular_velocity()
+            let o=joint.orientation();let a=joint.angular_speed();let m=joint.motor_torque();let e=joint.anchor_error()
+            print("ragdollmotor $(rate) $(side) $(step) $(part) $(p.x) $(p.y) $(p.z) $(q.x) $(q.y) $(q.z) $(q.w) $(v.x) $(v.y) $(v.z) $(w.x) $(w.y) $(w.z) $(o.x) $(o.y) $(o.z) $(o.w) $(a.x) $(a.y) $(a.z) $(m.x) $(m.y) $(m.z) $(e.x) $(e.y) $(e.z)")
+        }
+        if step<rate*13 { world.step(1.0/rate as float) }
+        step++
+    }
+}
+func main() { var rates:int[]=[60,120];var sides:int[]=[-1,1];for rate in rates { for side in sides { run_motors(rate,side) } } }
