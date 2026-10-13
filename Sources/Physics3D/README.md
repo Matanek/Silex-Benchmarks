@@ -1280,3 +1280,32 @@ does not establish instantaneous reaction, arbitrary impact or trajectory parity
 Parser, mechanics, command timing and window-comparison guards reject corrupt
 witnesses. `--check-only` rechecks retained outputs. The package consumer also
 tests independent instances and recreation.
+
+## Free ragdoll combined stops
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/RagdollCombinedLimitsRun.py`
+from the workspace or Spec group root. Three free 2 kg spheres of radius
+0.25 m and isotropic inertia 0.2 kg·m² form a two-joint chain with a
+0.3/0.45 rad elliptical swing cone and −0.2/+0.35 rad twist limits. The leaf
+receives an oblique ±(0.2, 0.3, −0.2) kg·m²/s angular impulse at zero and its
+opposite at two seconds. Each case lasts four seconds, with 60/120 Hz, two
+world orientations and both signs. There is no gravity, collision, motor,
+sleeping or damping. Silex uses 16 position passes; Jolt uses 24 velocity
+and 16 position passes, one substep and a single-threaded job system.
+
+Each native engine/mode emits 8,712 observations, including actual before/after
+impulse snapshots. The controller independently reconstructs relative swing,
+twist and anchors. Budgets are 0.01 m anchor error, 0.08 rad angular excess,
+0.0001 kg·m/s linear momentum, 0.02 kg·m²/s angular momentum and 0.001 m
+center drift. Passive kinetic energy may increase by at most 0.001 J per step
+and 0.005 J from the phase's post-impulse state. Impulse work is checked
+separately. Both joints exercise both swing directions, their cone and both
+twist stops across the complete case set.
+
+Windows [1.5, 2) and [3.5, 4] seconds compare center/momentum within these
+same bounds and mean kinetic energy within 0.05 J. This qualifies global
+physical balances, without claiming equal individual poses or velocities
+at every limit impact. Parser, mechanics, impulse timing and parity guards
+reject corrupted witnesses; `--check-only` rechecks retained outputs. The
+public package consumer also checks an unaffected second instance and
+destruction/recreation. General external contact composition remains open.
