@@ -1309,3 +1309,55 @@ at every limit impact. Parser, mechanics, impulse timing and parity guards
 reject corrupted witnesses; `--check-only` rechecks retained outputs. The
 public package consumer also checks an unaffected second instance and
 destruction/recreation. General external contact composition remains open.
+
+## Mobile ragdoll motors with floor departure and return
+
+`RagdollMobileContactRun.py` compares three freely moving spheres, two clamped
+planar swing targets and a frictionless floor. Both joints use a 0.6 rad cone
+and −0.2/+0.35 rad twist bounds. The spheres have radius 0.25 m, mass 2 kg and
+isotropic inertia 0.2 kg·m²; centers initially lie at X=0/1/2 m and Y=1 m,
+with midpoint anchors. There is no body damping, restitution, sleep or
+internal collision. Gravity is −9.81 m/s² along Y. Motors use 30 N·m per axis,
+stiffness 80 and damping 15.
+
+After a passive fall, the chain receives neutral targets at 2 s, opposing
+±0.8 rad swing targets at 4 s, reversed targets at 7 s, then motor release
+and a 4 N·s upward impulse on each sphere at 10 s. The run ends at 12 s.
+Commands preserve every body pose and velocity, except the declared +2 m/s
+vertical launch. There are eight configurations: 60/120 Hz, both target signs
+and world yaw 0/0.7 rad.
+
+From the Spec's `Worktree/` root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/RagdollMobileContactRun.py --mode both
+```
+
+Silex explicitly selects 48 velocity iterations per stage and 16 position
+passes; Jolt uses 24 velocity iterations, 16 position passes, one substep,
+one worker, normal warm starting and 1e−6 m penetration slop. Silex has two
+velocity-solving stages within each timestep. These budgets do not imply
+equivalent algorithmic work. Default Silex worlds retain 12 velocity iterations.
+The initial witness at 12 was rejected: mean anchor reactions differed by up
+to 1.468 N against the fixed 1 N bound despite close geometry. Increasing only
+position passes did not change the output; velocity convergence required the
+explicit larger budget. The rejection and convergence experiments are retained
+in the Spec's Task114 evidence. No performance result is claimed.
+
+Every step checks anchors below 0.02 m, penetration below 0.02 m, angular excess
+below 0.08 rad, motor torque below 30.001 N·m per axis, finite velocities below
+40 and reconstructed frames within 0.0001. Individual horizontal impulse
+balances and measured Silex floor impulses have a 0.0002 kg·m/s residual bound.
+Global horizontal momentum, horizontal centroid and vertical angular momentum
+are bounded; a global angular balance uses the individual normal impulses.
+Jolt's normals are inferred from individual linear balances using its public
+anchor reactions, while Silex's are measured. The two provenances stay explicit.
+
+The fixed half-second windows preceding 4/7/10 s compare relative orientations
+within 0.04 rad, centroid-relative positions within 0.05 m, mean angular velocity
+vectors within 0.05 rad/s, mean anchor forces within 1 N and total mean floor
+force within 1 N. Both engines must detach every member during 10.15–10.3 s and
+regain floor contact during 11.5–12 s. Per-step forces and impact trajectories
+are not compared or declared equivalent. Corruption guards reject missing,
+duplicate, nonfinite, inconsistent and altered observations. Results are written
+to `.silex/physics3d-oracle/ragdoll-mobile-contact-qualification.json`.
