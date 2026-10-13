@@ -1244,3 +1244,39 @@ Parser, mechanics, event timing and parity guards reject corrupted witnesses.
 The controller also supports `--check-only` to recheck retained outputs.
 This qualifies an axial passive stop composition, without claiming identical
 transient impact trajectories, combined swing or floor contacts.
+
+## Bounded ragdoll targets against a floor
+
+Run `python3 Silex-Benchmarks/Sources/Physics3D/RagdollContactRun.py` from the
+workspace or Spec group root. A fixed root anchors a 2 kg sphere with radius
+0.25 m, isotropic inertia 0.2 kg·m² and a 1 m offset. Under gravity, three
+combined swing/twist targets exceed the circular 0.6 rad cone and asymmetric
+−0.2/+0.35 rad twist stops. They press downward, lift, then return; after
+12 seconds motors stop and the member receives a 0.2 kg·m²/s angular impulse.
+Each run lasts 14 seconds. Torque is bounded at 30 N·m per axis, stiffness is
+80 and damping 15. Floor/no-floor cases, two horizontal orientations, both
+lateral signs and 60/120 Hz produce 20,304 observations per native engine/mode.
+
+Silex uses 16 position passes. Native Jolt uses 12 velocity and 16 position
+passes, one substep/worker, default warm start and penetration slop 1e−6 m to
+compare the same contact surface height. There is no body damping, sleeping,
+friction or restitution. Jolt's normal impulse is inferred from linear momentum
+and joint reaction; Silex's measured contact impulse is independently checked
+against that balance (0.0002 kg·m/s). A projected angular balance in established
+contact windows checks the vertical joint force independently of the inferred
+normal (0.0002 kg·m²/s); twist limit torque has no component on the floor
+tilt axis, and swing remains inside its cone. Every step checks geometry, anchor error
+(0.02 m), limit excess (0.08 rad), penetration (0.02 m) and torque (30.001 N·m).
+Commands preserve poses/velocities except the declared angular impulse.
+
+The last half-second before each 4/8/12 second command is fixed in advance.
+Geometry is compared at every observation within these windows (0.04 rad,
+0.05 m). Relative angular velocity vectors are averaged (0.05 rad/s); joint
+and normal impulses are summed and divided by the covered duration (1 N).
+Instantaneous velocity/force comparison fails near simultaneous active stops
+and remains an explicit diagnostic in the qualification JSON. Increasing Jolt
+velocity iterations did not remove that difference. Passing window averages
+does not establish instantaneous reaction, arbitrary impact or trajectory parity.
+Parser, mechanics, command timing and window-comparison guards reject corrupt
+witnesses. `--check-only` rechecks retained outputs. The package consumer also
+tests independent instances and recreation.
