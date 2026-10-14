@@ -1361,3 +1361,49 @@ regain floor contact during 11.5–12 s. Per-step forces and impact trajectories
 are not compared or declared equivalent. Corruption guards reject missing,
 duplicate, nonfinite, inconsistent and altered observations. Results are written
 to `.silex/physics3d-oracle/ragdoll-mobile-contact-qualification.json`.
+
+
+## Spatial ragdoll motors on triangular supports
+
+`RagdollSpatialContactRun.py` extends the mobile-contact recipe with a second
+constraint frame yawed by 0.6 rad and body centers (0,1,0), (1,1,0), (1.7,1,0.7)
+m. Anchors lie at the midpoints. Body offsets preserve initial body rotations
+while the constraint axes differ. Jolt SkeletonPose rotations describe bodies;
+the Silex ragdoll pose describes joint frames, so their conversion is explicit.
+
+Each target is swing*twist. At 4 s, the first joint requests 0.4*sign rad around
+(0,0.6,0.8) and 0.15*sign rad twist; the second requests -0.4*sign around
+(0,0.8,0.6) and -0.12*sign twist. Targets are neutral at 2 s and reversed at
+7 s. Motors stop at 10 s: each body receives (0,4,0) N·s and the leaf also
+receives (1.2*sign,0,2) N·s rotated by the initial world yaw. The run ends
+at 12 s. All other geometry, material, solver and motor settings match the
+mobile-contact recipe above. Eight configurations cover 60/120 Hz, both signs
+and yaw 0/0.7 rad, in native Debug/Release on macOS ARM64.
+
+From the Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/RagdollSpatialContactRun.py --mode both
+```
+
+The same numerical bounds apply, with angular balance measured about the center
+of mass (0.02 kg·m²/s per step). Global Y angular momentum, horizontal momentum
+and horizontal centroid account for the declared oblique impulse. Silex normal
+impulses are measured; Jolt normals are inferred from individual linear balances.
+A projected vertical position correction changes orbital momentum about a fixed
+origin when the group moves horizontally, so equivalence of that orbital balance
+at impacts is not claimed.
+
+In the half-second windows preceding 4/7/10 s, both engines must settle below
+0.15 m/s and rad/s. Geometry is compared after centering and expressing it in
+the root body's frame; mean angular velocity and anchor reaction vectors use
+the same frame. Bounds remain 0.04 rad, 0.05 m, 0.05 rad/s and 1 N, with total
+mean normal force within 1 N. Each joint must exercise twist above 0.03 rad
+and both swing quaternion components above 0.025. Contact departure/return,
+commands that do not place bodies and 42 evidence-corruption guards are checked.
+
+The initially collinear support was rejected: both engines retain a slow mode
+in the proposed resting windows. Its evidence is retained in the Spec; passing
+the triangular fixture does not qualify that rejected fixture. There is no
+performance comparison or general trajectory/impact claim. Results are stored
+in `.silex/physics3d-oracle/ragdoll-spatial-contact-qualification.json`.

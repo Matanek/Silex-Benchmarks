@@ -1,0 +1,71 @@
+use GFX.Physics
+use STD.Math
+
+func settings() Physics.Ragdoll3DSettings {
+    let body=Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2))
+        ..allow_sleep=false ..friction=0.0 ..restitution=0.0
+    let bend=Math.Quat.angle_axis(0.6,Math.Vec3(0.0,1.0,0.0))
+    let joint=Physics.SwingTwistConstraint3DSettings() ..swing_limits=Physics.SwingLimits3D.cone(Math.Vec2(0.6))
+        ..minimum_twist=-0.2 ..maximum_twist=0.35
+    return Physics.Ragdoll3DSettings([
+        Physics.RagdollPart3D(-1,body),
+        Physics.RagdollPart3D(0,body,local_transform:Physics.Transform3D(Math.Vec3(0.5,0.0,0.0)),
+            body_offset:Physics.Transform3D(Math.Vec3(0.5,0.0,0.0)),joint:joint),
+        Physics.RagdollPart3D(1,body,local_transform:Physics.Transform3D(Math.Vec3(0.85,0.0,0.35),bend),
+            body_offset:Physics.Transform3D(bend.conjugated().rotate(Math.Vec3(0.35,0.0,0.35)),bend.conjugated()),joint:joint)
+    ],self_collision:false)
+}
+func observe(label:str,world:Physics.World3D,ragdoll:Physics.Ragdoll3D,rate:int,side:int,frame:int,step:int) {
+    var contacts:Physics.Contact3D[]=[];world.write_contacts(contacts)
+    for part in [0,1,2] {
+        var body=ragdoll.body(part)
+        let p=body.position();let q=body.rotation();let v=body.linear_velocity();let w=body.angular_velocity()
+        var o=Math.Quat();var m=Math.Vec3();var f=Math.Vec3();var e=Math.Vec3()
+        if part>0 { var joint=ragdoll.joint(part)!;o=joint.orientation();m=joint.motor_torque();f=joint.reaction_force();e=joint.anchor_error() }
+        var impulse=0.0;var count=0
+        for contact in contacts {
+            if contact.first_body().same_body(body) || contact.second_body().same_body(body) {
+                var applied=contact.normal().multiply(contact.normal_impulse()).add(contact.tangent_impulse())
+                if contact.first_body().same_body(body) { applied=applied.negated() }
+                assert(Math.abs(applied.x)+Math.abs(applied.z)<0.00001)
+                impulse+=applied.y;count++
+            }
+        }
+        print("$(label) $(rate) $(side) $(frame) $(step) $(part) $(p.x) $(p.y) $(p.z) $(q.x) $(q.y) $(q.z) $(q.w) $(v.x) $(v.y) $(v.z) $(w.x) $(w.y) $(w.z) $(o.x) $(o.y) $(o.z) $(o.w) $(m.x) $(m.y) $(m.z) $(f.x) $(f.y) $(f.z) $(e.x) $(e.y) $(e.z) $(impulse) $(count) 1")
+    }
+}
+func run_spatial_contact(rate:int,side:int,frame:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..position_iterations=16 ..velocity_iterations=48)
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=Physics.Shape3D.plane(Physics.Plane3D()) ..friction=0.0 ..restitution=0.0)
+    let base=Math.Quat.angle_axis(0.7*frame as float,Math.Vec3(0.0,1.0,0.0));var config=settings()
+    var ragdoll=world.create_ragdoll(config,Physics.Transform3D(Math.Vec3(0.0,1.0,0.0),base))
+    var step=0;observe("spatialcontact",world,ragdoll,rate,side,frame,step)
+    while step<rate*12 {
+        if step==rate*2 || step==rate*4 || step==rate*7 || step==rate*10 {
+            observe("spatialbefore",world,ragdoll,rate,side,frame,step)
+            if step==rate*10 {
+                ragdoll.stop_motors();for part in [0,1,2] { ragdoll.body(part).apply_impulse(Math.Vec3(0.0,4.0,0.0)) }
+                ragdoll.body(2).apply_impulse(base.rotate(Math.Vec3(1.2*side as float,0.0,2.0)))
+            } else {
+                var angle=0.0
+                if step==rate*4 { angle=0.4*side as float }
+                if step==rate*7 { angle=-0.4*side as float }
+                let bend=Math.Quat.angle_axis(0.6,Math.Vec3(0.0,1.0,0.0))
+                let first=Math.Quat.angle_axis(angle,Math.Vec3(0.0,0.6,0.8)).multiply(Math.Quat.angle_axis(0.375*angle,Math.Vec3(1.0,0.0,0.0)))
+                let second=Math.Quat.angle_axis(-angle,Math.Vec3(0.0,0.8,0.6)).multiply(Math.Quat.angle_axis(-0.3*angle,Math.Vec3(1.0,0.0,0.0)))
+                ragdoll.drive_to_local_pose([Physics.Transform3D(rotation:base),
+                    Physics.Transform3D(Math.Vec3(0.5,0.0,0.0),first),
+                    Physics.Transform3D(Math.Vec3(0.85,0.0,0.35),bend.multiply(second))],30.0,80.0,15.0)
+            }
+            observe("spatialafter",world,ragdoll,rate,side,frame,step)
+        }
+        world.step(1.0/rate);step++
+        observe("spatialcontact",world,ragdoll,rate,side,frame,step)
+    }
+    var stale=ragdoll.body(2);world.destroy_ragdoll(ragdoll);assert(!stale.is_valid())
+    var fresh=world.create_ragdoll(config);assert(!stale.same_body(fresh.body(2)));world.destroy_ragdoll(fresh)
+    assert(world.body_count()==1 && world.swing_twist_constraint_count()==0)
+}
+func main() { var sides:int[]=[-1,1];for rate in [60,120] { for side in sides { for frame in [0,1] { run_spatial_contact(rate,side,frame) } } } }
