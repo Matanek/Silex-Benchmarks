@@ -179,3 +179,20 @@ linear/angular velocities with analytic values and pinned Jolt’s
 `DriveToPoseUsingKinematics`. Jolt is explicitly stopped after one second to
 match Silex’s finite-duration target. Contact onset and instantaneous impulses
 are excluded; tolerances and negative guards live in `RagdollKinematicRun.py`.
+
+### Four wheel suspensions
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleSuspensionRun.py --mode both
+```
+
+A 100 kg chassis drops on four 10000 N/m, 1000 N·s/m suspensions, jumps after a
+500 N·s impulse and returns to rest. A second recipe exercises compression stops
+under a sustained 20000 N load. Pinned Jolt uses its real `VehicleConstraint`,
+ray collision tester and zero-traction wheeled controller. Both engines use
+12 velocity / 4 position iterations at 60/120 Hz. Geometry, trajectories,
+phase mean support forces and independent linear/angular impulse balances are
+checked; loaded hard-stop instantaneous trajectories are excluded. The harness
+records complete samples, input settings, tolerances and corrupt-witness guards.
