@@ -242,3 +242,33 @@ velocity tolerance; ratio/angle comparisons and phase means apply only when
 their denominators exceed that tolerance. Near-stop instantaneous or mean slip
 ratio parity is not claimed. Full samples and conditioning counts are retained.
 This is correctness evidence, without powertrain or performance claims.
+
+### Engine, clutch and transmission
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehiclePowertrainRun.py --mode both
+```
+
+Eleven recipes cover analytic free rotors, neutral and open clutch, powered
+forward/reverse travel and braking, a rotated steering chassis, open/limited
+axle and center differentials, automatic shifts/reversal, and wheels back-driving
+an engine from a faster initial roll. Each native mode produces 8302 samples
+per engine and 61 corruption guards. Both use 12 velocity / 4 position iterations,
+one worker, no substeps and 60/120 Hz. Silex retains pre/post integration passes.
+An independent dense coupling solve checks the engine/wheel residual; body
+impulse balances and analytic flight complement actual Jolt observations.
+Wheel drive/brake torques are not exposed directly by Jolt and are not invented
+as raw observations; Silex consumer tests check those snapshots independently.
+
+Chassis/wheel trajectories and RPM retain fixed instantaneous tolerances.
+Slip formulas are recomputed for all samples. Contact velocity components are
+compared instantaneously while both contacts move above the predefined velocity
+scale, and as paired one-second phase means everywhere, including near rest.
+Near-rest instantaneous contact velocity parity is not claimed. Raw maxima and
+conditioning counts remain available. Slip ratios retain their speed-conditioned
+comparison. Angular comparison uses a speed scale derived from velocity accuracy
+and the required angle accuracy; lower-speed angles retain formula checks only.
+These are correctness fixtures, without performance claims or complete coverage
+of the other vehicle families.
