@@ -1,0 +1,37 @@
+use GFX.Physics
+use STD.Math
+
+func run_case(kind:int,rate:int) {
+    var gravity=Math.Vec3(0.0,-9.81,0.0);var height=0.875475;var seconds=3
+    var damping=0.0;var rotation=Math.Quat();var velocity=Math.Vec3(0.0,0.0,3.0)
+    if kind==1 { velocity=Math.Vec3(3.0,0.0,0.0) }
+    if kind==2 { velocity=Math.Vec3(2.0,0.0,3.0) }
+    if kind==3 { velocity=Math.Vec3();gravity=Math.Vec3();height=3.0;seconds=1;damping=0.2 }
+    if kind==4 { seconds=4 }
+    if kind==5 { rotation=Math.Quat.angle_axis(Math.half_pi(),Math.Vec3.up());velocity=Math.Vec3(3.0,0.0,0.0) }
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=gravity)
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=Physics.Shape3D.plane(Physics.Plane3D()) ..friction=1.0)
+    var wheels:Physics.Wheel3DSettings[]=[];let sides:int[]=[-1,1]
+    for x in sides { for z in sides { wheels.append(Physics.Wheel3DSettings(Math.Vec3(0.6*x as float,0.0,z as float),tire:Physics.Tire3DSettings(angular_damping:damping))) } }
+    var vehicle=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(1.4,0.4,2.4)))
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,height,0.0),rotation) ..linear_velocity=velocity
+            ..allow_sleep=false ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,wheels))
+    if kind==3 { for i in [0,1,2,3] { vehicle.set_wheel_angular_velocity(i,10.0*(i+1) as float) } }
+    var step=0
+    while step<=rate*seconds {
+        var body=vehicle.chassis();let p=body.position();let v=body.linear_velocity();let q=body.rotation();let w=body.angular_velocity()
+        var line="tires $(kind) $(rate) $(step) $(p.x) $(p.y) $(p.z) $(v.x) $(v.y) $(v.z) $(q.x) $(q.y) $(q.z) $(q.w) $(w.x) $(w.y) $(w.z)"
+        for i in [0,1,2,3] {
+            var wheel=vehicle.wheel(i);var contact=0;if wheel.support()!=null { contact=1 }
+            line+=" $(wheel.length) $(wheel.normal_force) $(wheel.angular_velocity) $(wheel.rotation_angle) $(wheel.longitudinal_slip) $(wheel.lateral_slip) $(wheel.longitudinal_force) $(wheel.lateral_force) $(contact)"
+        }
+        print(line)
+        if step==rate*seconds { break }
+        if kind==4 && step==rate { body.apply_impulse(Math.Vec3(0.0,500.0,0.0)) }
+        world.step(1.0/rate as float);step++
+    }
+}
+func main() { for kind in [0,1,2,3,4,5] { for rate in [60,120] { run_case(kind,rate) } } }

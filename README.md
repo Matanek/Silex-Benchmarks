@@ -196,3 +196,24 @@ ray collision tester and zero-traction wheeled controller. Both engines use
 phase mean support forces and independent linear/angular impulse balances are
 checked; loaded hard-stop instantaneous trajectories are excluded. The harness
 records complete samples, input settings, tolerances and corrupt-witness guards.
+
+### Passive tire rolling and lateral grip
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleTiresRun.py --mode both
+```
+
+Six recipes exercise forward and rotated rolling, lateral and diagonal drift,
+free wheel damping and a jump while moving. Pinned Jolt uses the real wheeled
+controller with zero engine torque and a neutral manual transmission. Both
+engines use 12 velocity / 4 position iterations, one worker, no substeps and
+60/120 Hz; Silex retains its pre/post-integration solver passes. Each engine
+produces 3072 observations in each native Debug/Release mode. Every step checks
+chassis/wheel impulse balances, force caps and angular integration. Trajectories
+and rotations have fixed per-observable tolerances. Slips are independently
+recomputed, compared instantaneously above 0.1, and compared by phase means
+near zero; instantaneous near-zero slip parity is not claimed. All 49 numeric
+channels plus missing, duplicate and nonfinite rows have corruption guards.
+This is correctness evidence, without performance or full driving claims.
