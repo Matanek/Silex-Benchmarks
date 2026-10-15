@@ -163,3 +163,19 @@ to [Baselines](Sources/Boids2D/Baselines/2026-09-14-092230-615615-macos-arm64.lo
 for the date, time, operating system and architecture. All three executables
 must finish with code 0; a complete but nonstationary capture returns 2 from
 the runner and remains available for inspection.
+
+### Kinematic ragdoll poses and release
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/RagdollKinematicRun.py --mode both
+```
+
+Three offset members rotate/translate, then a coherent translated chain resumes
+simulation with its current velocity. A kinematic member pushes an external
+sphere. At 60/120 Hz, five fixed samples compare mass centers, quaternions and
+linear/angular velocities with analytic values and pinned Jolt’s
+`DriveToPoseUsingKinematics`. Jolt is explicitly stopped after one second to
+match Silex’s finite-duration target. Contact onset and instantaneous impulses
+are excluded; tolerances and negative guards live in `RagdollKinematicRun.py`.

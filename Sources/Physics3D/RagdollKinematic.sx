@@ -1,0 +1,52 @@
+use GFX.Physics
+use STD.Math
+
+func offset(part:int) Physics.Transform3D {
+    if part==0 { return Physics.Transform3D(Math.Vec3(0.2,0.0,0.0),Math.Quat.angle_axis(0.3,Math.Vec3.up())) }
+    if part==1 { return Physics.Transform3D(Math.Vec3(0.0,0.2,0.0),Math.Quat.angle_axis(0.2,Math.Vec3(1.0,0.0,0.0))) }
+    return Physics.Transform3D(Math.Vec3(0.0,0.0,0.1))
+}
+func run_case(kind:int,rate:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    var body=Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.25))
+        ..mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.2),Math.Vec3(0.1,-0.2,0.3))
+        ..collision_filter=Physics.CollisionFilter3D(mask_bits:0) ..allow_sleep=false ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0
+    var parts:Physics.RagdollPart3D[]=[]
+    var desired:Physics.Transform3D[]=[]
+    for i in [0,1,2] {
+        var parent=i-1;var local_pose=Physics.Transform3D(Math.Vec3(1.0,0.0,0.0))
+        if i==0 { local_pose=Physics.Transform3D(Math.Vec3(0.0,3.0,0.0)) }
+        parts.append(Physics.RagdollPart3D(parent,body,local_transform:local_pose,body_offset:offset(i)))
+        var rotation=Math.Quat.identity();var shift=Math.Vec3(2.0,0.0,0.0)
+        if kind==0 { rotation=Math.Quat.angle_axis(0.6,Math.Vec3.up());shift=Math.Vec3(1.0,0.0,0.5) }
+        desired.append(Physics.Transform3D(Math.Vec3(i as float,3.0,0.0).add(shift),rotation))
+    }
+    if kind==2 {
+        body.mass_properties=Physics.MassProperties3D(2.0,Math.Vec3(0.05));body.collision_filter=Physics.CollisionFilter3D()
+        parts=[Physics.RagdollPart3D(-1,body)];desired=[Physics.Transform3D(Math.Vec3(1.0,0.0,0.0))]
+    }
+    var ragdoll=world.create_ragdoll(Physics.Ragdoll3DSettings(parts,self_collision:false))
+    var members:Physics.RigidBody3D[]=[]
+    var i=0;while i<ragdoll.part_count() { members.append(ragdoll.body(i));i++ }
+    if kind==2 {
+        body.transform=Physics.Transform3D(Math.Vec3(0.75,0.0,0.0));members.append(world.create_rigid_body(body))
+    }
+    ragdoll.move_to_pose(desired,1.0)
+    var stage=0;var step=0
+    while step<=rate*5/4 {
+        if step==0 || step==rate/4 || step==rate/2 || step==rate*3/4 || step==rate*5/4 {
+            i=0
+            for member in members {
+                let p=member.world_center_of_mass();let q=member.rotation();let v=member.linear_velocity();let w=member.angular_velocity()
+                print("kinematic $(kind) $(rate) $(stage) $(i) $(p.x) $(p.y) $(p.z) $(q.x) $(q.y) $(q.z) $(q.w) $(v.x) $(v.y) $(v.z) $(w.x) $(w.y) $(w.z)")
+                i++
+            }
+            stage++
+        }
+        if kind==1 && step==rate/4 { ragdoll.resume_simulation() }
+        if step==rate*5/4 { break }
+        world.step(1.0/rate as float);step++
+    }
+    world.destroy_ragdoll(ragdoll)
+}
+func main() { for kind in [0,1,2] { for rate in [60,120] { run_case(kind,rate) } } }
