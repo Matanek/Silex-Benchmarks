@@ -217,3 +217,28 @@ recomputed, compared instantaneously above 0.1, and compared by phase means
 near zero; instantaneous near-zero slip parity is not claimed. All 49 numeric
 channels plus missing, duplicate and nonfinite rows have corruption guards.
 This is correctness evidence, without performance or full driving claims.
+
+### Steering and wheel brakes
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleControlsRun.py --mode both
+```
+
+Eight recipes exercise weak braking, locking in both travel directions, rear
+handbraking, mirrored turns, a rotated chassis with steering/braking, and free
+rotors slowed in flight. Jolt uses its real wheeled controller with zero engine
+torque and a neutral transmission. Both engines use 12 velocity / 4 position
+iterations, one worker, no substeps and 60/120 Hz; Silex retains pre/post-integration
+passes. Each native mode produces 5416 observations per engine and 60 corrupt
+witness guards. Wheel/chassis impulse balances, torque and friction caps,
+steering signs, symmetry and free-flight analytic rotation are checked.
+
+The Jolt brake torque column is inferred from public rotor velocities and
+longitudinal impulses; it is not an independently measured torque. Slips are
+recomputed within each engine. Contact slip velocities retain the predefined
+velocity tolerance; ratio/angle comparisons and phase means apply only when
+their denominators exceed that tolerance. Near-stop instantaneous or mean slip
+ratio parity is not claimed. Full samples and conditioning counts are retained.
+This is correctness evidence, without powertrain or performance claims.
