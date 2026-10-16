@@ -1,0 +1,38 @@
+use GFX.Physics
+use STD.Math
+
+func run_case(kind:int,rate:int) {
+    var world=Physics.World3D()
+    var friction=0.0;if kind==3 { friction=1.0 }
+    var width=20.0;if kind==2 || kind==3 { width=1.0 }
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(width,1.0,20.0)))
+        ..transform=Physics.Transform3D(Math.Vec3(0.0,-0.5,0.0)) ..friction=friction)
+    var wheels:Physics.Wheel3DSettings[]=[]
+    var tire:Physics.Tire3DSettings?=null
+    if kind==3 { tire=Physics.Tire3DSettings(longitudinal_friction:Physics.TireFrictionCurve3D([Math.Vec2(0.0,0.0)]),
+        lateral_friction:Physics.TireFrictionCurve3D([Math.Vec2(0.0,1.5)])) }
+    let sides:float[]=[-1.0,1.0]
+    for x in sides { for z in sides { wheels.append(Physics.Wheel3DSettings(Math.Vec3(0.6*x,0.0,z),contact:Physics.WheelContact3D.sphere(0.3),tire:tire)) } }
+    var height=1.4;var seconds=6;if kind==1 { height=0.7;seconds=3 }
+    var vehicle=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(1.4,0.4,2.4)))
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,height,0.0)) ..allow_sleep=false
+            ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,wheels))
+    var step=0
+    while step<=rate*seconds {
+        var body=vehicle.chassis();let p=body.position();let v=body.linear_velocity();let q=body.rotation();let w=body.angular_velocity()
+        var line="sphere_motion $(kind) $(rate) $(step) $(p.x) $(p.y) $(p.z) $(v.x) $(v.y) $(v.z) $(q.x) $(q.y) $(q.z) $(q.w) $(w.x) $(w.y) $(w.z)"
+        for i in [0,1,2,3] { var wheel=vehicle.wheel(i);var contact=0;if wheel.support()!=null { contact=1 }
+            let point=wheel.contact_point;let normal=wheel.contact_normal;let lateral=wheel.lateral_direction
+            line+=" $(wheel.length) $(wheel.normal_force) $(contact) $(point.x) $(point.y) $(point.z) $(normal.x) $(normal.y) $(normal.z) $(wheel.lateral_force) $(lateral.x) $(lateral.y) $(lateral.z)" }
+        print(line)
+        if step==rate*seconds { break }
+        if kind==0 && step==rate*2 { body.apply_impulse(Math.Vec3(0.0,500.0,0.0)) }
+        if kind==1 { body.apply_force(Math.Vec3(0.0,-20000.0,0.0)) }
+        world.step(1.0/rate as float);step++
+    }
+    world.destroy_wheeled_vehicle(vehicle);assert(!vehicle.is_valid() && world.body_count()==1)
+}
+func main() { for kind in [0,1,2,3] { for rate in [60,120] { run_case(kind,rate) } } }

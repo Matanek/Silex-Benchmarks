@@ -272,3 +272,29 @@ comparison. Angular comparison uses a speed scale derived from velocity accuracy
 and the required angle accuracy; lower-speed angles retain formula checks only.
 These are correctness fixtures, without performance claims or complete coverage
 of the other vehicle families.
+
+
+## Spherical wheel contacts
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleSphereContactsRun.py --mode both
+```
+
+The real pinned Jolt `VehicleCollisionTesterCastSphere` supplies 38 geometric
+observations per engine/mode: flat and tilted supports, edge/corner reach,
+sphere/capsule supports, filtering, initial overlap and compounds. Four
+`VehicleConstraint` recipes add 3,788 dynamic observations at 60/120 Hz:
+flat drop/jump, hard loading, bare edges, and the same edges with lateral grip.
+Actual wheel normal and lateral impulses close independent linear/angular
+balances; 12 geometry and 68 motion corruptions are rejected per engine/mode.
+
+Full trajectory comparison covers soft flat support and gripped edges. Hard
+stops use geometry and phase means, as in the ray witness. Bare-edge symmetry
+is unstable even in Jolt after a 1e-6 m perturbation: only the initial 1.5 s
+trajectory is compared, while full impulse balances remain checked. The pinned
+Jolt infinite-plane implementation returns an off-plane contact point when
+rotated; that recipe compares length and normal, and an equivalent tilted box
+face qualifies the physical point. Raw points remain preserved. This fixture
+does not claim tire-width/cylinder support or performance parity.
