@@ -1407,3 +1407,35 @@ in the proposed resting windows. Its evidence is retained in the Spec; passing
 the triangular fixture does not qualify that rejected fixture. There is no
 performance comparison or general trajectory/impact claim. Results are stored
 in `.silex/physics3d-oracle/ragdoll-spatial-contact-qualification.json`.
+
+
+## Cylindrical wheel contacts and width
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleCylinderContactsRun.py --mode both
+```
+
+The real pinned Jolt `VehicleCollisionTesterCastCylinder` uses sharp cylinders
+(convex radius fraction zero). Each engine/mode emits 42 geometric contacts
+and 2,164 dynamic states at 60/120 Hz: width reach/miss, corner, camber,
+steering, transformed/inclined faces, filters, compound and initial overlap,
+then flat-floor jump and four wide wheels on a narrow support. The 100 kg
+chassis has isotropic inertia 100, no damping/sleeping, four radius-.3 m,
+width-.4 m wheels at x=±.6/z=±1, lengths .2/.6 m and springs 10000/1000;
+both engines use 12/4 iterations, one worker and no substeps.
+
+Tolerance: geometry/boundaries 2e-4, position .01 m, velocity .05 m/s,
+quaternion .005, suspension .01 m, impulse balances .05 N·s/N·m·s, rest
+height .002 m and mean weight 1 N. Contact-line points need not be identical:
+each is checked on both boundaries. Angular velocity compares fixed
+quarter-second means at .05 rad/s; instantaneous landing differences are
+retained and not qualified. All per-step balances use actual observed points,
+normals and forces. Jolt’s rotated infinite-plane point is off-plane; an
+equivalent tilted box proves the physical point. Jolt’s sharp-corner normal
+has about .011 radial error; Silex’s analytic normal and both contact
+boundaries remain checked at the original tolerance. The raw Jolt value is
+retained without claiming normal parity for that corner. Missing, duplicate,
+non-finite and channel-corrupted witnesses must be rejected. No FPS or whole
+vehicle-family qualification is implied.

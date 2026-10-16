@@ -1,0 +1,75 @@
+use GFX.Physics
+use STD.Math
+
+func ground(world:Physics.World3D, shape:Physics.Shape3D, position:Math.Vec3=Math.Vec3(),
+    rotation:Math.Quat=Math.Quat.identity(), sensor:bool=false, excluded:bool=false) Physics.RigidBody3D
+{
+    var settings=Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=shape ..transform=Physics.Transform3D(position,rotation) ..is_sensor=sensor
+    if excluded { settings.collision_filter=Physics.CollisionFilter3D(category_bits:2,mask_bits:0) }
+    return world.create_rigid_body(settings)
+}
+func box(size:Math.Vec3) Physics.Shape3D { return Physics.Shape3D.box(Physics.Box3D(size)) }
+func run_case(kind:int,rate:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3())
+    var bodies:Physics.RigidBody3D[]=[];var origin=Math.Vec3(0.0,0.8,0.0);var width=0.4
+    let edge=box(Math.Vec3(1.0,0.1,2.0));let wide=box(Math.Vec3(5.0,0.1,5.0))
+    if kind==0 || kind==16 || kind==17 || kind==19 || kind==20 {
+        bodies.append(ground(world,wide,Math.Vec3(0.0,-0.05,0.0)))
+        if kind==16 { width=0.8 }
+        if kind==17 { origin.y=1.2 }
+    } else if kind==18 {
+        let rotation=Math.Quat.angle_axis(Math.radians(20.0),Math.Vec3(0.0,0.0,1.0))
+        bodies.append(ground(world,box(Math.Vec3(20.0,1.0,20.0)),rotation.rotate(Math.Vec3(0.0,-0.5,0.0)),rotation))
+    } else if kind==1 {
+        bodies.append(ground(world,Physics.Shape3D.plane(Physics.Plane3D()),rotation:Math.Quat.angle_axis(Math.radians(20.0),Math.Vec3(0.0,0.0,1.0))))
+    } else if kind==2 || kind==4 || kind==5 || kind==14 || kind==15 {
+        origin=Math.Vec3(0.65,0.75,0.0)
+        if kind==4 { width=0.1 }
+        if kind==5 { origin=Math.Vec3(0.79,0.6,0.0) }
+        var rotation=Math.Quat.identity()
+        if kind==15 { rotation=Math.Quat.angle_axis(0.4,Math.Vec3.up());origin=rotation.rotate(origin) }
+        bodies.append(ground(world,edge,Math.Vec3(0.0,-0.05,0.0),rotation))
+        if kind==5 { bodies.append(ground(world,wide,Math.Vec3(0.0,-0.2,0.0))) }
+    } else if kind==3 {
+        origin=Math.Vec3(0.65,0.75,0.65)
+        bodies.append(ground(world,box(Math.Vec3(1.0,0.1,1.0)),Math.Vec3(0.0,-0.05,0.0)))
+    } else if kind==6 {
+        origin=Math.Vec3(0.5,0.8,0.0);bodies.append(ground(world,Physics.Shape3D.sphere(Physics.Sphere3D(0.4))))
+    } else if kind==7 {
+        origin=Math.Vec3(0.3,0.9,0.0);width=0.4
+        bodies.append(ground(world,Physics.Shape3D.capsule(Physics.Capsule3D(0.3,0.3))))
+    } else if kind==8 || kind==13 {
+        origin=Math.Vec3(0.79,0.6,0.0)
+        var children:Physics.CompoundChild3D[]=[Physics.CompoundChild3D(1,edge,Physics.Transform3D(Math.Vec3(0.0,-0.05,0.0))),
+            Physics.CompoundChild3D(2,wide,Physics.Transform3D(Math.Vec3(0.0,-0.2,0.0)))]
+        if kind==13 {
+            origin=Math.Vec3(0.0,0.2,0.0)
+            children=[Physics.CompoundChild3D(1,wide,Physics.Transform3D(Math.Vec3(0.0,-0.05,0.0))),
+                Physics.CompoundChild3D(2,wide,Physics.Transform3D(Math.Vec3(0.0,0.05,0.0)))]
+        }
+        bodies.append(ground(world,Physics.Shape3D.compound(Physics.Compound3D(children))))
+    } else if kind==9 || kind==10 || kind==11 || kind==12 {
+        bodies.append(ground(world,wide,Math.Vec3(0.0,-0.05,0.0)))
+        bodies.append(ground(world,wide,Math.Vec3(0.0,0.05,0.0),sensor:kind==9,excluded:kind==10))
+        if kind==11 { bodies[1].set_enabled(false) }
+        if kind==12 { origin.y=0.2 }
+    }
+    var contact=Physics.WheelContact3D.cylinder(width);if kind==14 { contact=Physics.WheelContact3D.ray }
+    var rotation=Math.Quat.identity();if kind==15 { rotation=Math.Quat.angle_axis(0.4,Math.Vec3.up()) }
+    var tire:Physics.Tire3DSettings?=null
+    if kind==20 { tire=Physics.Tire3DSettings(up:Math.Quat.angle_axis(0.4,Math.Vec3(0.0,0.0,1.0)).rotate(Math.Vec3.up())) }
+    var vehicle=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.01))
+            ..transform=Physics.Transform3D(origin,rotation) ..allow_sleep=false
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..linear_damping=0.0 ..angular_damping=0.0,
+        [Physics.Wheel3DSettings(Math.Vec3(),contact:contact,tire:tire,maximum_steering_angle:0.6,maximum_slope_angle:0.0)]))
+    if kind==19 { vehicle.set_controls(steering:-1.0) }
+    world.step(1.0/rate as float)
+    let wheel=vehicle.wheel(0);var support=0;var index=0
+    for body in bodies { if let hit=wheel.support() { if hit.same_body(body) { support=index+1 } } index++ }
+    let p=wheel.contact_point;let n=wheel.contact_normal;var present=0;if support>0 { present=1 }
+    print("cylinder_contact $(kind) $(rate) 0 $(present) $(wheel.length) $(p.x) $(p.y) $(p.z) $(n.x) $(n.y) $(n.z) $(support)")
+}
+func main() { for kind in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20] { for rate in [60,120] { run_case(kind,rate) } } }
