@@ -1439,3 +1439,41 @@ boundaries remain checked at the original tolerance. The raw Jolt value is
 retained without claiming normal parity for that corner. Missing, duplicate,
 non-finite and channel-corrupted witnesses must be rejected. No FPS or whole
 vehicle-family qualification is implied.
+
+
+## Paired anti-roll suspension bars
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleAntiRollRun.py --mode both
+```
+
+The pinned Jolt VehicleConstraint couples two disjoint wheel pairs after
+contact detection. Five recipes compare absent, zero-stiffness and 1000 N/m
+bars: heave/jump, opposite 40 N·m roll loads, a free dynamic support and
+missing left contacts. At 60/120 Hz each engine/mode emits 10,425 states.
+The 100 kg chassis has isotropic inertia 100 kg·m² and four radius-0.3 m
+wheels at x=±0.6/z=±1 m, travel 0.2/0.77985 m, springs 1200 N/m and
+damping 160 N·s/m.
+Both engines use 12 velocity/4 position iterations, one Jolt worker, no
+substeps, sleep, chassis damping or tires.
+
+Every step checks unilateral support forces, contact points on the wheel
+rays, the actual implicit spring/bias law and linear/angular impulse balance
+(.05 N·s/N·m·s); dynamic total momentum and reactions are bounded by 0.01.
+Pose/velocity/rotation/angular velocity/suspension parity bounds are
+.02 m/.08 m/s/.015 rad/.08 rad/s/.02 m; fixed one-second window force means
+compare within 10 N, rest height within .003 m and total mean support within 2 N.
+Opposite loads must mirror and bars must reduce loaded roll by at least 20%.
+Zero stiffness and missing support preserve all fields within 1e-6.
+
+Symmetric heave preserves pose and ordinary fields within 1e-6, with a
+separate 1e-3 N bound only for wheel forces: single-precision left/right
+length differences around 1.4e-7 m produce a real bias response below .00045 N.
+The independent spring law and all original balance/parity bounds remain
+unchanged. 67 corrupt/missing/duplicate/nonfinite evidence checks per engine
+and mode protect the qualification. This reproduces Jolt's spring bias, whose
+effective transfer also depends on damping and time step; it does not claim
+a time-step independent torsion spring, general tire-contact parity, maximum
+body-angle limitation or a performance gain.
