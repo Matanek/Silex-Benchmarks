@@ -1,0 +1,70 @@
+use GFX.Physics
+use STD.Math
+
+func body_row(body:Physics.RigidBody3D) str {
+    let p=body.position();let v=body.linear_velocity();let q=body.rotation();let w=body.angular_velocity()
+    return " $(p.x) $(p.y) $(p.z) $(v.x) $(v.y) $(v.z) $(q.x) $(q.y) $(q.z) $(q.w) $(w.x) $(w.y) $(w.z)"
+}
+func run_case(kind:int,enabled:int,rate:int) {
+    var world=Physics.World3D();var up=Math.Vec3.up();var vertical=up
+    var rotation=Math.Quat.angle_axis(0.9,Math.Vec3(0.0,0.0,1.0));var velocity=Math.Vec3()
+    if kind==0 { velocity=Math.Vec3(0.0,0.0,1.0) }
+    if kind==1 { rotation=Math.Quat.angle_axis(-0.9,Math.Vec3(0.0,0.0,1.0));velocity=Math.Vec3(0.0,0.0,-1.0) }
+    if kind==2 { rotation=Math.Quat.angle_axis(0.8,Math.Vec3(1.0,0.0,1.0).normalized());velocity=Math.Vec3(0.0,1.0,0.0) }
+    if kind==3 { rotation=Math.Quat();velocity=Math.Vec3(0.0,2.0,0.0) }
+    if kind==5 { rotation=Math.Quat.angle_axis(0.2,Math.Vec3(0.0,0.0,1.0)) }
+    if kind==6 { up=Math.Vec3(0.0,0.0,1.0);vertical=up;rotation=Math.Quat.angle_axis(0.8,Math.Vec3(0.0,0.0,1.0)).multiply(Math.Quat.angle_axis(-Math.half_pi(),Math.Vec3.right())) }
+    if kind==7 { rotation=Math.Quat.angle_axis(Math.pi()-0.001,Math.Vec3(0.0,0.0,1.0)) }
+    if kind==8 { rotation=Math.Quat(1.0,0.0,0.0,0.0) }
+    var height=50.0;var limit=0.5
+    if kind==10 {
+        height=0.875475;rotation=Math.Quat();limit=0.0025
+        world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+            ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(20.0,1.0,20.0)))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,-0.5,0.0)) ..friction=0.0)
+    }
+    if enabled==0 { limit=Math.pi() }
+    var wheels:Physics.Wheel3DSettings[]=[];let sides:float[]=[-1.0,1.0]
+    for x in sides { for z in sides { wheels.append(Physics.Wheel3DSettings(Math.Vec3(x*0.6,0.0,z),maximum_length:0.77985,stiffness:1200.0,damping:160.0)) } }
+    var bars:Physics.VehicleAntiRollBar3DSettings[]=[]
+    if kind==10 { bars=[Physics.VehicleAntiRollBar3DSettings(0,2),Physics.VehicleAntiRollBar3DSettings(1,3)] }
+    var vehicle=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.05))
+        ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+        ..transform=Physics.Transform3D(Math.Vec3(0.0,height,0.0),rotation)
+        ..allow_sleep=false ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,
+        wheels,anti_roll_bars:bars,maximum_tilt_angle:limit,up:up))
+    var body=vehicle.chassis();body.set_angular_velocity(velocity)
+    var total=2*rate;if kind==10 { total=4*rate }
+    var step=0;while step<=total {
+        var line="tilt $(kind) $(enabled) $(rate) $(step)"+body_row(body)
+        for i in [0,1,2,3] { var wheel=vehicle.wheel(i);var contact=0;if wheel.support()!=null { contact=1 }
+            line+=" $(wheel.length) $(wheel.normal_force) $(contact)" }
+        line+=" $(vertical.x) $(vertical.y) $(vertical.z) $(vehicle.maximum_tilt_angle())";print(line)
+        if step==total { break }
+        if kind==4 && enabled==1 {
+            if step==rate/2 { vehicle.set_maximum_tilt_angle(Math.pi()) }
+            if step==rate*3/2 { vehicle.set_maximum_tilt_angle(0.35) }
+        }
+        if kind==5 {
+            if step==rate/2 { world.set_gravity(Math.Vec3(-9.81,0.0,0.0)) }
+            if step==rate { world.set_gravity(Math.Vec3()) }
+        }
+        if kind==9 && step==rate/2 { body.set_transform(Physics.Transform3D(body.position(),Math.Quat(1.0,0.0,0.0,0.0))) }
+        var torque=Math.Vec3()
+        if step>=rate/2 && step<rate*3/2 {
+            if kind==0 { torque=Math.Vec3(0.0,0.0,50.0) }
+            if kind==1 { torque=Math.Vec3(0.0,0.0,-50.0) }
+            if kind==2 { torque=Math.Vec3(1.0,0.0,1.0).normalized().multiply(50.0) }
+            if kind==3 { torque=Math.Vec3(0.0,2.0,0.0) }
+            if kind==4 { torque=Math.Vec3(0.0,0.0,100.0) }
+        }
+        if kind==10 && step>=rate/4 && step<rate*3/4 { torque=Math.Vec3(0.0,0.0,40.0) }
+        if kind==10 && step==rate { body.apply_impulse(Math.Vec3(0.0,500.0,0.0)) }
+        body.apply_torque(torque)
+        let gravity=world.gravity();if gravity.length()>0.0 { vertical=gravity.normalized().negated() }
+        world.step(1.0/rate as float);step++
+    }
+    world.destroy_wheeled_vehicle(vehicle);assert(!vehicle.is_valid())
+}
+func main() { for kind in [0,1,2,3,4,5,6,7,8,9,10] { for enabled in [0,1] { for rate in [60,120] { run_case(kind,enabled,rate) } } } }

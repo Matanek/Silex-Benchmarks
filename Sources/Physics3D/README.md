@@ -1477,3 +1477,26 @@ and mode protect the qualification. This reproduces Jolt's spring bias, whose
 effective transfer also depends on damping and time step; it does not claim
 a time-step independent torsion spring, general tire-contact parity, maximum
 body-angle limitation or a performance gain.
+
+## Vehicle tilt cone
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleTiltLimitRun.py --mode both
+```
+
+Eleven recipes compare free and limited vehicles at 60/120 Hz: mirrored and
+diagonal flight, free yaw, runtime limits, rotated then zero gravity, local up,
+near and exact inversion, remembered-axis recovery, and suspension/anti-roll
+coupling from a level start under a 40 N·m load followed by a jump, with a
+.0025 rad cone to isolate the supported angular row. The fresh exact antipode is
+characterized as a Jolt singularity, not advertised as automatic self-righting.
+The combined fixture excludes large free toppling after a 500 N·m load, whose
+stop-impact velocity parity remains unqualified.
+
+Free-flight linear momentum and unilateral angular projection are checked
+independently. Fixed tolerances distinguish free flight from the composed contact
+case; corrupt, duplicate, missing and non-finite rows must fail. Position and
+velocity are compared per step in both native modes. This campaign does not
+establish all vehicle impacts or a motorcycle balance controller.
