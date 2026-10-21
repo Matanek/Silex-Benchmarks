@@ -1,0 +1,63 @@
+use GFX.Physics
+use STD.Math
+
+func vector(value:Math.Vec3) str { return "$(value.x) $(value.y) $(value.z)" }
+func make(world:Physics.World3D,scenario:int) Physics.TrackedVehicle3D {
+    var wheels:Physics.TrackedWheel3DSettings[]=[];var i=0
+    while i<6 {
+        var x= -0.6;if i>=3 { x=0.6 }
+        var radius=0.3;if scenario==11 { radius=0.2+0.1*(i%3) as float }
+        wheels.append(Physics.TrackedWheel3DSettings(Math.Vec3(x,0.0,(i%3-1) as float),radius:radius));i++
+    }
+    var mode=Physics.VehicleTransmissionMode3D.manual;if scenario==12 || scenario==13 { mode=Physics.VehicleTransmissionMode3D.automatic }
+    var minimum=1000.0;if scenario==10 { minimum=0.0 }
+    var left_brake=50.0;var right_brake=50.0
+    if scenario==8 { left_brake=5000.0;right_brake=5000.0 }
+    if scenario==15 { right_brake=1000.0 }
+    var vehicle=world.create_tracked_vehicle(Physics.TrackedVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(1.4,0.4,2.4)))
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,3.0,0.0)) ..allow_sleep=false
+            ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,wheels,
+        Physics.VehicleTrack3DSettings(0,[0,1,2],inertia:10.0,angular_damping:0.5,maximum_brake_torque:left_brake,differential_ratio:3.0),
+        Physics.VehicleTrack3DSettings(3,[3,4,5],inertia:20.0,angular_damping:0.5,maximum_brake_torque:right_brake,differential_ratio:4.0),
+        engine:Physics.VehicleEngine3DSettings(maximum_torque:12.0,minimum_rpm:minimum,maximum_rpm:6000.0,inertia:0.5,angular_damping:0.2,torque_curve:[Math.Vec2(0.0,1.0)]),
+        transmission:Physics.VehicleTransmission3DSettings(mode:mode,gear_ratios:[1.0,0.5],reverse_gear_ratios:[-1.0,-0.5],shift_up_rpm:1200.0,shift_down_rpm:600.0)))
+    if mode==Physics.VehicleTransmissionMode3D.manual {
+        var gear=1;if scenario==4 { gear= -1 }
+if scenario==5 { gear=0 }
+        var clutch=1.0;if scenario==6 { clutch=0.0 }
+        vehicle.set_transmission(gear,clutch:clutch)
+    }
+    var left=0.0;var right=0.0
+    if scenario==5 || scenario==6 || scenario==7 || scenario==8 || scenario==15 { left=20.0;right=40.0 }
+    if scenario==9 { left=1000.0;right=1000.0 }
+    vehicle.set_track_angular_velocity(Physics.VehicleTrackSide3D.left,left)
+    vehicle.set_track_angular_velocity(Physics.VehicleTrackSide3D.right,right)
+    return vehicle
+}
+func command(vehicle:Physics.TrackedVehicle3D,scenario:int,step:int,rate:int) {
+    var throttle=0.5;var left=1.0;var right=1.0;var brake=0.0
+    if scenario==1 { left=0.5 }
+    if scenario==2 { left= -1.0 }
+    if scenario==3 { left= -0.5;right= -1.0 }
+    if scenario==4 || scenario==13 { throttle= -0.5 }
+    if scenario==7 || scenario==8 || scenario==15 { throttle=0.0;brake=1.0;if scenario==7 { brake=0.25 } }
+    if scenario==14 && step>=rate { left= -1.0 }
+    vehicle.set_controls(throttle:throttle,left_ratio:left,right_ratio:right,brake:brake)
+}
+func run(scenario:int,rate:int) {
+    var world=Physics.World3D(Physics.World3DSettings() ..gravity=Math.Vec3());var vehicle=make(world,scenario)
+    var step=0
+    while step<=rate*2 {
+        var body=vehicle.chassis();let pose=body.transform();let power=vehicle.powertrain()
+        let left=vehicle.track(Physics.VehicleTrackSide3D.left);let right=vehicle.track(Physics.VehicleTrackSide3D.right)
+        var text="tracked-air $(scenario) $(rate) $(step) $(vector(pose.position)) $(vector(body.linear_velocity())) $(pose.rotation.x) $(pose.rotation.y) $(pose.rotation.z) $(pose.rotation.w) $(vector(body.angular_velocity())) $(power.engine_rpm) $(power.gear) $(power.clutch) $(left.angular_velocity) $(right.angular_velocity)"
+        for i in [0,1,2,3,4,5] { let wheel=vehicle.wheel(i);text+=" $(wheel.angular_velocity) $(wheel.rotation_angle)" }
+        print(text);if step==rate*2 { break }
+        command(vehicle,scenario,step,rate);world.step(1.0/rate as float);step++
+    }
+    world.destroy_tracked_vehicle(vehicle)
+}
+func main() { var scenario=0;while scenario<16 { for rate in [60,120] { run(scenario,rate) }
+scenario++ } }

@@ -1,0 +1,50 @@
+use GFX.Physics
+use STD.Math
+
+func vector(value:Math.Vec3) str { return "$(value.x) $(value.y) $(value.z)" }
+func make(world:Physics.World3D,scenario:int) Physics.TrackedVehicle3D {
+    var wheels:Physics.TrackedWheel3DSettings[]=[];var i=0
+    var longitudinal=1.0;var lateral=0.15;if scenario==5 { longitudinal=0.0;lateral=0.0 }
+    while i<6 {
+        var x= -0.6;if i>=3 { x=0.6 }
+        wheels.append(Physics.TrackedWheel3DSettings(Math.Vec3(x,0.0,(i%3-1) as float),longitudinal_friction:longitudinal,lateral_friction:lateral));i++
+    }
+    var vehicle=world.create_tracked_vehicle(Physics.TrackedVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(1.4,0.4,2.4)))
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,1.15,0.0)) ..allow_sleep=false
+            ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,wheels,
+        Physics.VehicleTrack3DSettings(0,[0,1,2],inertia:2.0,angular_damping:0.0,maximum_brake_torque:1500.0,differential_ratio:6.0),
+        Physics.VehicleTrack3DSettings(3,[3,4,5],inertia:2.0,angular_damping:0.0,maximum_brake_torque:1500.0,differential_ratio:6.0),
+        engine:Physics.VehicleEngine3DSettings(maximum_torque:15.0,minimum_rpm:1000.0,maximum_rpm:6000.0,inertia:0.5,angular_damping:0.0,torque_curve:[Math.Vec2(0.0,1.0)]),
+        transmission:Physics.VehicleTransmission3DSettings(mode:Physics.VehicleTransmissionMode3D.manual,gear_ratios:[1.0],reverse_gear_ratios:[-1.0],shift_up_rpm:1200.0,shift_down_rpm:600.0)))
+    var gear=1;if scenario==1 { gear= -1 }
+vehicle.set_transmission(gear);return vehicle
+}
+func command(vehicle:Physics.TrackedVehicle3D,scenario:int,step:int,rate:int) {
+    var throttle=0.0;var left=1.0;var right=1.0;var brake=1.0
+    if step>=rate*2 && step<rate*4 { throttle=0.8;brake=0.0;if scenario==1 { throttle= -0.8 } }
+    if scenario==2 { left=0.5 }
+    if scenario==3 { right=0.5 }
+    if scenario==4 { left= -1.0 }
+    vehicle.set_controls(throttle:throttle,left_ratio:left,right_ratio:right,brake:brake)
+}
+func run(scenario:int,rate:int) {
+    var world=Physics.World3D()
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed ..shape=Physics.Shape3D.plane(Physics.Plane3D()) ..friction=1.0)
+    var vehicle=make(world,scenario);var step=0
+    while step<=rate*8 {
+        var body=vehicle.chassis();let pose=body.transform();let power=vehicle.powertrain()
+        let left=vehicle.track(Physics.VehicleTrackSide3D.left);let right=vehicle.track(Physics.VehicleTrackSide3D.right)
+        var text="tracked-ground $(scenario) $(rate) $(step) $(vector(pose.position)) $(vector(body.linear_velocity())) $(pose.rotation.x) $(pose.rotation.y) $(pose.rotation.z) $(pose.rotation.w) $(vector(body.angular_velocity())) $(power.engine_rpm) $(power.gear) $(power.clutch) $(left.angular_velocity) $(right.angular_velocity)"
+        for i in [0,1,2,3,4,5] {
+            let wheel=vehicle.wheel(i);var touching=0;if wheel.support()!=null { touching=1 }
+            text+=" $(wheel.length) $(wheel.normal_force) $(wheel.angular_velocity) $(wheel.rotation_angle) $(wheel.longitudinal_force) $(wheel.lateral_force) $(touching) $(vector(wheel.contact_point)) $(vector(wheel.contact_normal)) $(vector(wheel.longitudinal_direction))"
+        }
+        print(text);if step==rate*8 { break }
+        command(vehicle,scenario,step,rate);world.step(1.0/rate as float);step++
+    }
+    world.destroy_tracked_vehicle(vehicle)
+}
+func main() { var scenario=0;while scenario<6 { for rate in [60,120] { run(scenario,rate) }
+scenario++ } }

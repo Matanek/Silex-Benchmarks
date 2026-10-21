@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import math
+import struct
 from pathlib import Path
 from Run import BUILD, GROUP, HERE, REFERENCE, build_oracle, checked, fail, verified_source
 
@@ -27,7 +28,7 @@ def parse(raw):
         if len(fields) != 34 or fields[0] != 'tracked-air':
             fail('invalid tracked-air row')
         key = tuple(map(int, fields[1:4]))
-        values = tuple(map(float, fields[4:]))
+        values = tuple(struct.unpack('f', struct.pack('f', float(value)))[0] for value in fields[4:])
         if key not in KEYS or key in rows or not all(map(math.isfinite, values)):
             fail('invalid tracked-air key or value')
         rows[key] = values

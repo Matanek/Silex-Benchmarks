@@ -1581,3 +1581,51 @@ side ratios and a zero-throttle airborne fixture.
 This is a **Jolt reference qualification**. It does not establish a Silex track
 API, ground driving, contact behavior or a visible vehicle demo. Those require
 the corresponding Silex consumer and contact witnesses.
+
+## Silex tracked driving against Jolt
+
+From the group/workspace root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/TrackedGroundRun.py --mode both
+```
+
+`TrackedAir.sx` adds the public SDK counterpart of the sixteen airborne cases.
+`TrackedGroundOracle.cpp` and `TrackedGround.sx` add six plane/ray-contact cases:
+forward, reverse, mirrored skid steering, counter-rotating pivot and zero grip.
+The 100 kg chassis has six 0.3 m wheels and two 2 kg·m² tracks, differentials 6,
+a manual ±1 gearbox, constant 15 N·m engine torque and 1500 N·m track brakes.
+Grip is longitudinal 1 and lateral 0.15 (or zero), support friction 1. Each
+8 s case lands with brakes for 2 s, drives at 80% for 2 s, then brakes for 4 s.
+Higher torque can overturn this reference itself; no contact-free stopping is
+claimed. Both engines use one worker, one substep and 12/4 solver iterations.
+
+The runner rebuilds both engines in Native Debug/Release, checks 5,792 air and
+8,652 ground states per engine/mode, and rejects 37 airborne plus 121 ground
+corruptions per engine/mode (632 total). It retains raw rows and hashes, applies
+independent step balances and commands, compares the main chassis pointwise at
+0.05 m / 0.1 m/s / 0.02 rad / 0.15 rad/s, and requires recovery to six supports,
+163.5 N per wheel, 981 N total and 0.88365 m chassis height. A Jolt initial
+height perturbation of 1 µm must pass those same main comparison bounds first.
+Ground impulse residual limits are 0.1 N·s and 0.1 N·m·s; angular/belt recurrence
+limits are 1e-4 and engine RPM 0.02. Over command-aligned one-second windows,
+resultant force/torque bounds are 20 N/30 N·m, mean normal load per wheel 20 N,
+and wheel rotation increments 0.1 rad. Opposite curves check pointwise pose
+and mean velocities at the same velocity bounds: contact-order conditioning
+in Jolt itself exceeds the instantaneous velocity limit. Main Silex/Jolt parity
+still checks all four chassis channels pointwise. Raw individual tangential
+load differences are retained, but such sharing is not unique and not qualified.
+
+Jolt refreshes wheel speed during contact solving only for supported wheels;
+unsupported observations retain its post-collision/pre-contact value. The SDK
+publishes final belt speed for every wheel instead. The checker verifies each
+observation at its actual boundary. Angles in both engines integrate the old
+track speed. Shortest lossless Silex and nine-digit C++ outputs are decoded
+back into binary32 before recurrence checks, avoiding a float64 text-decoding
+artifact. No numerical tolerance was raised for either distinction.
+
+Debug/Release raw outputs are byte-identical for these cases. The scope is
+macOS ARM64, ideal two-track coupling, ray contacts and a plane; this campaign
+does not qualify articulated track links, volumetric track contacts, every
+terrain, anti-roll/tilt combinations or performance. Output report:
+`.silex/physics3d-oracle/tracked-driving-qualification.json`.
