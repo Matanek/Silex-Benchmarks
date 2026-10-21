@@ -1546,3 +1546,38 @@ The original curve with zero friction at zero slip showed sensitivity even
 between two Jolt runs with a one-micrometre initial-height perturbation.
 General terrain, strict instantaneous braking parity and vehicle cost campaigns
 remain separate qualifications.
+
+## Track coupling in flight
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/TrackedVehicleRun.py
+```
+
+`TrackedVehicleOracle.cpp` exercises the pinned Jolt `TrackedVehicleController`
+with two tracks and six suspended wheels in zero gravity, without ground.
+Sixteen cases at 60/120 Hz cover equal/different side ratios, counter-rotation,
+reverse gear, neutral/open clutch, finite and strong braking, overspeed,
+zero engine idle, unequal wheel radii, automatic forward/reverse engagement,
+a mid-run ratio reversal and unequal track brakes. Each mode emits 5,792 states.
+
+The Python checker evaluates scalar step recurrences and separate invariants:
+stationary chassis, common linear belt speed, wheel angle integration before
+motor torque, engine/clutch bounds and a finite-torque stopping bound. It rejects
+37 corrupt witnesses per mode and compares Debug/Release output. The angular
+step residual is bounded by 0.0001 rad/s, wrapped wheel angle residual by
+0.0001 rad and engine RPM error by 0.02. These are step checks against the
+preceding observed state, rather than a claim about accumulated roundoff.
+
+The ideal track controller uses its own inertia-weighted synchronization and
+sets connected engine RPM from the tracks. It is not the automotive implicit
+clutch model; no general engine/rotor energy conservation is asserted. A zero
+idle engine with stationary tracks does not start this ideal coupled system.
+The strong-brake case must stop within `max_initial_speed * max_inertia /
+minimum_brake_torque`, here 0.16 s. This is a bound for these equal positive
+side ratios and a zero-throttle airborne fixture.
+
+This is a **Jolt reference qualification**. It does not establish a Silex track
+API, ground driving, contact behavior or a visible vehicle demo. Those require
+the corresponding Silex consumer and contact witnesses.
