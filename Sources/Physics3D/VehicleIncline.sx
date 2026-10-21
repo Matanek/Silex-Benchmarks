@@ -1,0 +1,53 @@
+use GFX.Physics
+use STD.Math
+use STD.Process
+
+func run_case(sign:int,contact_kind:int,grip:int,rate:int,soft:bool) {
+    let rotation=Math.Quat.angle_axis(-0.2*sign as float,Math.Vec3.right())
+    var world=Physics.World3D()
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=Physics.Shape3D.plane(Physics.Plane3D(rotation.rotate(Math.Vec3.up()))) ..friction=1.0)
+    let friction=Physics.TireFrictionCurve3D([Math.Vec2(0.0,grip as float)])
+    let tire=Physics.Tire3DSettings(angular_damping:0.0,longitudinal_friction:friction,lateral_friction:friction)
+    var contact=Physics.WheelContact3D.ray
+    if contact_kind==1 { contact=Physics.WheelContact3D.sphere(0.3) }
+    if contact_kind==2 { contact=Physics.WheelContact3D.cylinder(0.4) }
+    var maximum=0.6;var stiffness=10000.0;var damping=1000.0
+    if soft { maximum=0.77985;stiffness=1200.0;damping=160.0 }
+    var tag="incline";if soft { tag="incline-soft" }
+    var wheels:Physics.Wheel3DSettings[]=[];let sides:float[]=[-1.0,1.0]
+    for x in sides { for z in sides {
+        wheels.append(Physics.Wheel3DSettings(Math.Vec3(0.6*x,0.0,z),tire:tire,contact:contact,maximum_length:maximum,stiffness:stiffness,damping:damping))
+    } }
+    var vehicle=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(1.4,0.4,2.4)))
+            ..transform=Physics.Transform3D(rotation.rotate(Math.Vec3(0.0,1.15,0.0)),rotation)
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..allow_sleep=false ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,wheels,
+        engine:Physics.VehicleEngine3DSettings(maximum_torque:40.0,minimum_rpm:0.0,angular_damping:0.0,torque_curve:[Math.Vec2(0.0,1.0)]),
+        transmission:Physics.VehicleTransmission3DSettings(mode:Physics.VehicleTransmissionMode3D.manual,gear_ratios:[1.0],reverse_gear_ratios:[-1.0]),
+        differentials:[Physics.VehicleDifferential3DSettings(0,2,ratio:3.0,engine_torque_ratio:0.5),Physics.VehicleDifferential3DSettings(1,3,ratio:3.0,engine_torque_ratio:0.5)]))
+    vehicle.set_transmission(sign)
+    var step=0
+    while step<=rate*8 {
+        var body=vehicle.chassis();let p=body.position();let v=body.linear_velocity();let q=body.rotation();let w=body.angular_velocity()
+        var line="$(tag) $(sign) $(contact_kind) $(grip) $(rate) $(step) $(p.x) $(p.y) $(p.z) $(v.x) $(v.y) $(v.z) $(q.x) $(q.y) $(q.z) $(q.w) $(w.x) $(w.y) $(w.z)"
+        for i in [0,1,2,3] {
+            var wheel=vehicle.wheel(i);var support=0;if wheel.support()!=null { support=1 }
+            let point=wheel.contact_point;let normal=wheel.contact_normal;let forward=wheel.longitudinal_direction
+            line+=" $(wheel.length) $(wheel.normal_force) $(wheel.angular_velocity) $(wheel.rotation_angle) $(wheel.longitudinal_force) $(wheel.lateral_force) $(support) $(point.x) $(point.y) $(point.z) $(normal.x) $(normal.y) $(normal.z) $(forward.x) $(forward.y) $(forward.z)"
+        }
+        let power=vehicle.powertrain();line+=" $(power.engine_rpm) $(power.gear) $(power.clutch)";print(line)
+        if step==rate*8 { break }
+        var throttle=0.0;var brake=1.0
+        if step>=rate*2 && step<rate*5 { throttle=0.8*sign as float;brake=0.0 }
+        vehicle.set_controls(throttle:throttle,brake:brake)
+        world.step(1.0/rate as float);step++
+    }
+    world.destroy_wheeled_vehicle(vehicle);assert(!vehicle.is_valid() && world.body_count()==1)
+}
+func main() {
+    var soft=false;for argument in Process.arguments() { if argument=="--soft" { soft=true } }
+    let signs:int[]=[-1,1]
+    for sign in signs { for contact in [0,1,2] { for grip in [0,1] { for rate in [60,120] { run_case(sign,contact,grip,rate,soft) } } } }
+}

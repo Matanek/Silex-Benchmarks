@@ -1500,3 +1500,49 @@ independently. Fixed tolerances distinguish free flight from the composed contac
 case; corrupt, duplicate, missing and non-finite rows must fail. Position and
 velocity are compared per step in both native modes. This campaign does not
 establish all vehicle impacts or a motorcycle balance controller.
+
+## Powered incline with constant tire friction
+
+From the workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleInclineRun.py --mode both
+```
+
+The fixture compares uphill propulsion and braking on mirrored 0.2 rad slopes,
+with ray, sphere and 40 cm cylinder contacts at 60/120 Hz. It uses a 100 kg
+chassis, 100 kg·m² inertia, a 40 N·m engine, manual forward/reverse gearing and
+four driven wheels. Both engines use 12 velocity and 4 position iterations,
+one worker and no substeps, sleep or chassis damping. Each run receives two
+seconds with brakes, three seconds at 80% throttle uphill, then three seconds
+with brakes. The soft preset uses 1200 N/m, 160 N·s/m and .77985 m travel;
+the firm preset uses 10000 N/m, 1000 N·s/m and .6 m travel.
+
+Tire coefficients are explicitly constant 1 or 0. The 48 configurations produce
+34,608 states per engine and native mode. The plane normal is stored in the
+primitive with an identity floor body, avoiding the rotated-plane cast-point
+limitation of the pinned Jolt version. Contact points and normals are checked
+against this analytic plane.
+
+Independent checks cover chassis linear/angular impulses, a dense five-variable
+engine/rotor balance, wheel-angle integration, gravity-only sliding without grip,
+uphill progress, stopping, four recovered supports, suspension height and mean
+normal weight. Bounds are .1 N·s/N·m·s per step, .002 m/s and .005 m for the
+gravity analytic, .05 m/s stopped speed, .003 m resting height and 2 N normal
+weight. Mirrored runs use the same comparisons. Each engine/preset/mode rejects
+26 missing, duplicate, nonfinite, corrupt or incorrectly calibrated witnesses.
+
+Without grip, pose/velocity/orientation/rotor comparisons are per step, except
+cylindrical angular velocities: a line of valid contact points requires
+quarter-second means, bounded by .05 rad/s. With grip, orientation is compared
+per step; one-second windows aligned on the commands compare displacement,
+mean linear/angular velocity, mean rotor velocity and unwrapped wheel-angle
+increments. Their bounds are .05 m, .1 m/s, .15 rad/s, .25 rad/s and .1 rad;
+orientation uses normalized quaternion angular distance bounded by .02 rad.
+Instantaneous differences remain in the report.
+
+This fixture does not qualify variable friction curves near a braked stop.
+The original curve with zero friction at zero slip showed sensitivity even
+between two Jolt runs with a one-micrometre initial-height perturbation.
+General terrain, strict instantaneous braking parity and vehicle cost campaigns
+remain separate qualifications.
