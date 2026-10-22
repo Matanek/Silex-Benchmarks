@@ -61,7 +61,7 @@ int runMotorcycle(int kind, int rate) {
     floorSettings.mFriction = 1;
     const auto floor = bodies.CreateAndAddBody(floorSettings, JPH::EActivation::DontActivate);
     JPH::BodyID ramp;
-    if (kind != 0) {
+    if (kind == 1) {
         JPH::RefConst<JPH::BoxShape> rampShape = new JPH::BoxShape(JPH::Vec3(4, 0.2f, 4.5f), 0);
         JPH::BodyCreationSettings rampSettings(rampShape, JPH::RVec3(0, 1.0514218f, 16.5f), JPH::Quat::sRotation(JPH::Vec3::sAxisX(), -0.28f), JPH::EMotionType::Static, 0);
         rampSettings.mFriction = 1;
@@ -103,11 +103,11 @@ int runMotorcycle(int kind, int rate) {
     settings.mController = control;
     for (float z : { 1.25f, -0.75f }) {
         JPH::Ref<JPH::WheelSettingsWV> wheel = new JPH::WheelSettingsWV;
-        wheel->mPosition = JPH::Vec3(0, 0.2f, z);
+        wheel->mPosition = JPH::Vec3(0, 0.1f, z);
         wheel->mRadius = 0.3f;
         wheel->mSuspensionMinLength = 0.2f;
         wheel->mSuspensionMaxLength = 0.9f;
-        wheel->mSuspensionSpring = JPH::SpringSettings(JPH::ESpringMode::StiffnessAndDamping, 5000, 500);
+        wheel->mSuspensionSpring = JPH::SpringSettings(JPH::ESpringMode::StiffnessAndDamping, 2500, 350);
         wheel->mMaxSteerAngle = z > 0 ? 0.6f : 0;
         wheel->mMaxBrakeTorque = 300; wheel->mMaxHandBrakeTorque = 0;
         wheel->mLongitudinalFriction.Clear(); wheel->mLongitudinalFriction.AddPoint(0, 1);
@@ -144,7 +144,10 @@ int runMotorcycle(int kind, int rate) {
         std::cout << ' ' << controller->IsLeanControllerEnabled() << ' ' << controller->IsLeanSteeringLimitEnabled() << ' ' << input << ' ' << crashed << ' ' << (kind != 5) << ' ' << appliedThrottle << ' ' << slope << '\n';
         if (step == total) break;
         float throttle = 0, desired = 0, brake = 0.35f;
-        if (step >= 2 * rate && step < 8 * rate) { throttle = 0.4f; brake = 0; }
+        if (step >= 2 * rate && step < 8 * rate) {
+            throttle = 0.4f; brake = 0;
+            if (kind == 3 && step < 4 * rate) throttle = 0.1f;
+        }
         const auto forward = q * JPH::Vec3::sAxisZ();
         const float up = (q * JPH::Vec3::sAxisY()).GetY();
         if (up < 0.3f) crashed = true;
@@ -159,10 +162,11 @@ int runMotorcycle(int kind, int rate) {
             const auto horizontal = JPH::Vec3(forward.GetX(), 0, forward.GetZ());
             if (horizontal.LengthSq() > 1.0e-6f) slope = JPH::ATan2(-normal.Dot(horizontal.Normalized()), normal.GetY());
         }
-        const float margin = throttle > 0.4f ? 0.35f : 0.12f;
-        const float width = throttle > 0.4f ? 0.15f : 0.06f;
+        const float pace = JPH::Clamp((abs(bodies.GetLinearVelocity(chassis).Dot(forward)) - 8.0f) / 6.0f, 0.0f, 1.0f);
+        const float margin = 0.4f - 0.28f * pace;
+        const float width = throttle > 0.4f ? 0.15f - 0.09f * pace : 0.12f - 0.06f * pace;
         const float target = JPH::min(0.65f, slope + margin);
-        const float horizon = throttle > 0.4f ? 0.30f : 0.18f;
+        const float horizon = 0.30f;
         throttle *= JPH::Clamp((target - pitch - horizon * pitchRate) / width, 0.0f, 1.0f);
         if (crashed) { throttle = 0; brake = 0.35f; desired = 0; controller->EnableLeanController(false); }
         const float speed = abs(bodies.GetLinearVelocity(chassis).Dot(forward));
@@ -178,7 +182,7 @@ int runMotorcycle(int kind, int rate) {
     }
     world.RemoveStepListener(vehicle); world.RemoveConstraint(vehicle); vehicle = nullptr;
     bodies.RemoveBody(chassis); bodies.DestroyBody(chassis);
-    if (kind != 0) { bodies.RemoveBody(ramp); bodies.DestroyBody(ramp); }
+    if (kind == 1) { bodies.RemoveBody(ramp); bodies.DestroyBody(ramp); }
     bodies.RemoveBody(floor); bodies.DestroyBody(floor);
     return 0;
 }
@@ -196,7 +200,7 @@ int main() {
     JPH::RegisterDefaultAllocator(); JPH::Factory::sInstance = new JPH::Factory; JPH::RegisterTypes();
     std::cout.precision(9);
     int result = 0;
-    for (int kind = 0; kind < 2 && result == 0; ++kind) for (int rate : { 60, 120 }) {
+    for (int kind : { 0, 1, 3 }) for (int rate : { 60, 120 }) {
         result = Physics3D::runMotorcycle(kind, rate); if (result != 0) break;
     }
     JPH::UnregisterTypes(); delete JPH::Factory::sInstance; JPH::Factory::sInstance = nullptr;

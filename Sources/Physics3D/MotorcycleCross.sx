@@ -12,10 +12,10 @@ func make(world:Physics.World3D,kind:int) Physics.Motorcycle3D {
             ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
             ..transform=Physics.Transform3D(Math.Vec3(0.0,1.2,0.0)) ..allow_sleep=false
             ..linear_damping=0.05 ..angular_damping=0.3 ..friction=0.8,
-        Physics.Wheel3DSettings(Math.Vec3(0.0,0.2,1.25),tire:tire,maximum_steering_angle:0.6,
-            maximum_brake_torque:300.0,maximum_handbrake_torque:0.0,minimum_length:0.2,maximum_length:0.9,stiffness:5000.0,damping:500.0,maximum_slope_angle:Math.half_pi()-0.000001),
-        Physics.Wheel3DSettings(Math.Vec3(0.0,0.2,-0.75),tire:tire,
-            maximum_brake_torque:300.0,maximum_handbrake_torque:0.0,minimum_length:0.2,maximum_length:0.9,stiffness:5000.0,damping:500.0,maximum_slope_angle:Math.half_pi()-0.000001),
+        Physics.Wheel3DSettings(Math.Vec3(0.0,0.1,1.25),tire:tire,maximum_steering_angle:0.6,
+            maximum_brake_torque:300.0,maximum_handbrake_torque:0.0,minimum_length:0.2,maximum_length:0.9,stiffness:2500.0,damping:350.0,maximum_slope_angle:Math.half_pi()-0.000001),
+        Physics.Wheel3DSettings(Math.Vec3(0.0,0.1,-0.75),tire:tire,
+            maximum_brake_torque:300.0,maximum_handbrake_torque:0.0,minimum_length:0.2,maximum_length:0.9,stiffness:2500.0,damping:350.0,maximum_slope_angle:Math.half_pi()-0.000001),
         balance:Physics.MotorcycleBalance3DSettings(maximum_lean_angle:0.5,stiffness:5000.0,damping:1000.0),
         engine:Physics.VehicleEngine3DSettings(maximum_torque:120.0,minimum_rpm:0.0,maximum_rpm:6000.0,inertia:0.05,
             angular_damping:0.0,torque_curve:[Math.Vec2(0.0,1.0)]),
@@ -41,9 +41,11 @@ class Rider {
             let horizontal=Math.Vec3(forward.x,0.0,forward.z)
             if horizontal.length_squared()>0.000001 { self.slope=Math.atan2(-normal.dot(horizontal.normalized()),normal.y) }
         }
-        var margin=0.12;var width=0.06;if requested>0.4 { margin=0.35;width=0.15 }
+        let pace=Math.clamp((Math.abs(body.linear_velocity().dot(forward))-8.0)/6.0,0.0,1.0)
+        let margin=0.4-0.28*pace
+        var width=0.12-0.06*pace;if requested>0.4 { width=0.15-0.09*pace }
         let target=Math.min(0.65,self.slope+margin)
-        var horizon=0.18;if requested>0.4 { horizon=0.30 }
+        let horizon=0.30
         var throttle=requested*Math.clamp((target-pitch-horizon*pitch_rate)/width,0.0,1.0)
         var desired=steering;var braking=brake
         if self.crashed { throttle=0.0;braking=0.35;desired=0.0;bike.set_balance_enabled(false) }
@@ -59,14 +61,17 @@ class Rider {
 }
 func command(bike:Physics.Motorcycle3D,rider:Rider,kind:int,step:int,rate:int) {
     var throttle=0.0;var brake=0.35
-    if step>=2*rate && step<8*rate { throttle=0.4;brake=0.0 }
+    if step>=2*rate && step<8*rate {
+        throttle=0.4;brake=0.0
+        if kind==3 && step<4*rate { throttle=0.1 }
+    }
     rider.drive(bike,throttle,0.0,brake,rate)
 }
 func run(kind:int,rate:int) {
     var world=Physics.World3D()
     world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
         ..shape=Physics.Shape3D.plane(Physics.Plane3D()) ..friction=1.0)
-    if kind!=0 {
+    if kind==1 {
         world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
             ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(8.0,0.4,9.0)))
             ..transform=Physics.Transform3D(Math.Vec3(0.0,1.0514218,16.5),Math.Quat.angle_axis(-0.28,Math.Vec3.right())) ..friction=1.0)
@@ -89,4 +94,4 @@ func run(kind:int,rate:int) {
     }
     world.destroy_motorcycle(bike)
 }
-func main() { for kind in [0,1] { for rate in [60,120] { run(kind,rate) } } }
+func main() { for kind in [0,1,3] { for rate in [60,120] { run(kind,rate) } } }
