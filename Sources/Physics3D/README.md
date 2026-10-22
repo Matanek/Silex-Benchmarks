@@ -1629,3 +1629,40 @@ macOS ARM64, ideal two-track coupling, ray contacts and a plane; this campaign
 does not qualify articulated track links, volumetric track contacts, every
 terrain, anti-roll/tilt combinations or performance. Output report:
 `.silex/physics3d-oracle/tracked-driving-qualification.json`.
+
+## Motorcycle balance reference
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/MotorcycleReferenceRun.py --mode both
+```
+
+`MotorcycleOracle.cpp` exercises the actual pinned Jolt `MotorcycleController`:
+16 four-second recipes at 60/120 Hz, a 100 kg chassis with isotropic inertia
+100 kg·m², two inline 0.3 m ray-contact wheels, suspension travel 0.2–0.6 m,
+stiffness 10000 N/m and damping 1000 N·s/m. The engine has zero torque and a
+single rear-wheel differential. Balance tests start at ±0.2 rad roll with zero
+tire friction. Coasting turns start at 5 m/s with longitudinal/lateral grip
+1/0.15; high-speed steering tests are airborne at ±20 m/s. Variants cover
+assistance off/on, integral gain 250, a 400 N·s upward impulse, smoothing 0
+versus 0.8, a 0.05 rad target cone, disabled steering limit, 30° caster and
+gravity 3 versus 9.81 m/s². Solver settings are one worker, one substep, 12/4.
+
+The observer reads protected controller state without changing Jolt sources.
+The checker reconstructs the target from the **previous** wheel impulses,
+checks PID angular impulses and contact-weighted linear compensation, and
+requires both loaded wheel contacts before a balance impulse. Integral decay
+is `max(0,1−4*dt)` **per solver call**, matching this revision; smoothing is
+also per step rather than independent of the update rate. The assist is an
+external chassis actuator and does not apply an opposite torque to supports.
+Disabled balance must fall, re-enabled balance must recover, the jump must
+lose/regain support, and both the smoothing and target-cone cases must produce
+a distinct response. Steering is independently checked against wheelbase,
+forward speed squared, gravity and caster.
+
+The fixed bounds are 3e-6 rad steering, 3e-4 target-vector distance, 0.1 N·m·s
+PID impulse (including the conditioning of ACos near float32 unit alignment),
+3e-6 m/s compensated velocity, 3e-6 integrated error plus 0.001*dt for the
+ill-conditioned angle, 0.005 N·s frame linear balance and 3e-5 m position step.
+Nineteen corruptions per mode must be rejected. Raw records and the report
+`motorcycle-reference-qualification.json` stay in `.silex/physics3d-oracle/`.
+This is a **Jolt reference**, with no Silex motorcycle or performance claim.
