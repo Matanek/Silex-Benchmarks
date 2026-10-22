@@ -1703,3 +1703,32 @@ Silex retains the signed wheel convention: the limit bounds amplitude even
 with a negative maximum angle or reversed axis. These cases are checked
 analytically. The pinned Jolt controller lets these representations bypass
 its limit; parity recipes use Jolt's positive conventions.
+
+## Powered motorcycle driving
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/MotorcycleDrivingRun.py --mode both
+```
+
+Six eight-second recipes at 60/120 Hz qualify a rectangular 100 kg chassis:
+straight acceleration, mirrored curves, zero grip, and the same 150 N·m·s
+roll impulse with balance enabled/disabled. The shared fixture uses a constant
+20 N·m engine, 0–6000 RPM, 0.05 kg·m² engine inertia, a manual 3:1 gear and
+3.42:1 rear drive. After two seconds landing on the brakes, powered recipes
+use 80% throttle for two seconds, then four seconds braking with the clutch
+open. Each wheel has 300 N·m brake capacity; the brake input is 0.35. This is
+an ideal engine configuration for qualification, not a calibrated production
+motorcycle. There is no imposed chassis velocity or pose animation.
+
+Both engines produce 8,652 states per mode. Checks cover engine/wheel angular
+recurrences (1e-4 N·m·s), wheel angle increments (1e-4 rad), steering (3e-6 rad),
+straight-driving vertical/forward contact momentum (0.005 N·s), curve symmetry, powered departure,
+braking, recovered supports and unassisted falling. Twenty-two corruptions are
+rejected per mode. The body parity budgets remain 0.05 m / 0.1 m/s / 0.02 rad /
+0.15 rad/s and engine speed 0.02 RPM. For the disabled push, pointwise parity
+stops permanently when either center first falls below 0.45 m, before chassis
+impact; the later fall event and bounded state remain required. No rebound
+trajectory parity, arbitrary terrain/detector or performance claim is made.
+Raw records and `motorcycle-driving-qualification.json` remain under
+`.silex/physics3d-oracle/`. The plane slope-filter convention is the same as in
+the balance fixture above.
