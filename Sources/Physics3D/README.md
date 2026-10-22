@@ -1666,3 +1666,40 @@ ill-conditioned angle, 0.005 N·s frame linear balance and 3e-5 m position step.
 Nineteen corruptions per mode must be rejected. Raw records and the report
 `motorcycle-reference-qualification.json` stay in `.silex/physics3d-oracle/`.
 This is a **Jolt reference**, with no Silex motorcycle or performance claim.
+
+## Public Silex motorcycle balance
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/MotorcycleRun.py --mode both
+```
+
+`Motorcycle.sx` constructs the same sixteen recipes through `Motorcycle3D`.
+The runner checks 11,552 public states per mode, previous-contact target
+construction, speed-dependent steering, PID and compensated momentum balances.
+Native Debug/Release outputs are identical. Main pose/velocity parity uses
+0.05 m / 0.1 m/s / 0.02 rad / 0.15 rad/s. For unassisted falling, pointwise
+comparison ends once either center first drops below 0.2 m; later rebound
+angles are not conditioned, while the fall event and bounded states remain
+required. This leaves 11,009 pointwise states.
+
+The Silex wheel slope filter is relative to the suspension direction, whereas
+Jolt's ray tester uses world up. The plane fixture explicitly selects
+`pi/2-1e-6` on Silex to keep equivalent geometric contacts during the fall.
+This changes neither SDK defaults nor numerical tolerances. Balance geometry
+is assembled once per positive step so later constraint visits retain the
+same target error and angular response. Smoothing and unsupported integral
+decay retain their respective step/solver-call timing; private integral values
+are not claimed identical between engines with different solver call counts.
+
+The consumer rejects sixteen record/physics/parity corruptions per mode.
+The independent bounds remain 3e-6 rad steering, 3e-4 target distance,
+0.1 N·m·s PID impulse, 0.005 N·s linear balance and 3e-5 m position step.
+This initial qualification uses zero engine torque and ray contacts on a plane;
+composed powered driving, every detector/terrain and performance remain outside
+this report. Raw states and `motorcycle-qualification.json` stay under
+`.silex/physics3d-oracle/`.
+
+Silex retains the signed wheel convention: the limit bounds amplitude even
+with a negative maximum angle or reversed axis. These cases are checked
+analytically. The pinned Jolt controller lets these representations bypass
+its limit; parity recipes use Jolt's positive conventions.

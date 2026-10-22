@@ -1,0 +1,65 @@
+use GFX.Physics
+use STD.Math
+
+func vector(value:Math.Vec3) str { return "$(value.x) $(value.y) $(value.z)" }
+func settings(kind:int) Physics.Motorcycle3DSettings {
+    let airborne=kind>=8 && kind<=12
+    let coasting=kind==6 || kind==7 || kind>=13
+    var height=0.85095;if airborne { height=100.0 }
+    var roll=0.0;if kind<6 { roll=0.2 } if kind==1 { roll= -0.2 }
+    var speed=0.0;if coasting { speed=5.0 } if airborne { speed=20.0 } if kind==9 { speed= -20.0 }
+    var longitudinal=0.0;var lateral=0.0;if coasting { longitudinal=1.0;lateral=0.15 }
+    let tire=Physics.Tire3DSettings(
+        longitudinal_friction:Physics.TireFrictionCurve3D([Math.Vec2(0.0,longitudinal)]),
+        lateral_friction:Physics.TireFrictionCurve3D([Math.Vec2(0.0,lateral)]))
+    var caster=Math.Vec3.up();if kind==11 { caster=Math.Vec3(0.0,0.866025403784,0.5) }
+    var integral=0.0;if kind==4 || kind==5 { integral=250.0 }
+    var smoothing=0.8;if kind==13 { smoothing=0.0 }
+    var maximum=Math.pi()/4.0;if kind>=14 { maximum=0.05 }
+    return Physics.Motorcycle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.sphere(Physics.Sphere3D(0.05))
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,height,0.0),Math.Quat.angle_axis(roll,Math.Vec3(0.0,0.0,1.0)))
+            ..linear_velocity=Math.Vec3(0.0,0.0,speed) ..allow_sleep=false
+            ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,
+        Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,1.0),tire:tire,maximum_steering_angle:0.6,steering_axis:caster,maximum_slope_angle:Math.half_pi()-0.000001),
+        Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,-1.0),tire:tire,steering_axis:caster,maximum_slope_angle:Math.half_pi()-0.000001),
+        engine:Physics.VehicleEngine3DSettings(maximum_torque:0.0),
+        balance:Physics.MotorcycleBalance3DSettings(maximum_lean_angle:maximum,integral_gain:integral,smoothing:smoothing))
+}
+func run(kind:int,rate:int) {
+    var world_settings=Physics.World3DSettings();if kind==12 { world_settings.gravity=Math.Vec3(0.0,-3.0,0.0) }
+    var world=Physics.World3D(world_settings)
+    if kind<8 || kind>12 {
+        world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+            ..shape=Physics.Shape3D.plane(Physics.Plane3D()) ..friction=1.0)
+    }
+    var bike=world.create_motorcycle(settings(kind));bike.set_balance_enabled(kind!=2)
+    bike.set_steering_limit_enabled(kind!=10 && kind!=15)
+    var step=0
+    while step<=rate*4 {
+        var body=bike.chassis();let pose=body.transform();let target=bike.lean_target()
+        var text="motorcycle-silex $(kind) $(rate) $(step) $(vector(pose.position)) $(vector(body.linear_velocity())) $(pose.rotation.x) $(pose.rotation.y) $(pose.rotation.z) $(pose.rotation.w) $(vector(body.angular_velocity())) $(vector(target))"
+        for index in [0,1] {
+            let wheel=bike.wheel(index);var touching=0;if wheel.support()!=null { touching=1 }
+            var normal=Math.Vec3();var lateral=Math.Vec3();var lateral_impulse=0.0
+            if touching==1 { normal=wheel.contact_normal;lateral=wheel.lateral_direction;lateral_impulse=wheel.lateral_force/rate as float }
+            text+=" $(wheel.steering_angle) $(wheel.length) $(wheel.normal_force) $(touching) $(vector(normal)) $(vector(lateral)) $(lateral_impulse) $(vector(wheel.contact_point))"
+        }
+        var balance=0;var limited=0;if bike.balance_enabled() { balance=1 } if bike.steering_limit_enabled() { limited=1 }
+        text+=" $(balance) $(limited)";print(text)
+        if step==rate*4 { break }
+        if kind==3 { if step==rate { bike.set_balance_enabled(false) } if step==rate*2 { bike.set_balance_enabled(true) } }
+        if kind==4 && step>=rate && step<rate*2 { body.apply_torque(Math.Vec3(0.0,0.0,30.0)) }
+        if kind==5 && step==rate { body.apply_impulse(Math.Vec3(0.0,400.0,0.0)) }
+        var steering=0.0
+        if (kind==6 || kind==7 || kind>=13) && step>=rate && step<rate*3 {
+            steering=0.35;if kind==7 { steering= -0.35 }
+        }
+        if kind>=8 && kind<=12 { steering=0.75;if kind==9 { steering= -0.75 } }
+        bike.set_controls(steering:steering)
+        world.step(1.0/rate as float);step++
+    }
+    world.destroy_motorcycle(bike)
+}
+func main() { var kind=0;while kind<16 { for rate in [60,120] { run(kind,rate) } kind++ } }
