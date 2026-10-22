@@ -1732,3 +1732,38 @@ trajectory parity, arbitrary terrain/detector or performance claim is made.
 Raw records and `motorcycle-driving-qualification.json` remain under
 `.silex/physics3d-oracle/`. The plane slope-filter convention is the same as in
 the balance fixture above.
+
+## Responsive motorcycle handling
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/MotorcycleHandlingRun.py --mode both
+```
+
+This separate profile qualifies the interactive motorcycle after prolonged
+turn reversals exposed overturning in both engines. The earlier balance and
+20 N·m driving fixtures remain unchanged. It retains 100 kg / isotropic
+100 kg·m² inertia and the same suspension, with an 80 N·m engine, wheels at
++1.25/−0.75 m, body friction 0.8 and linear/angular damping 0.05/0.3 s⁻¹.
+Jolt receives `c/(1+c*dt)`, so its Taylor damping produces the same discrete
+factor as Silex's rational `1/(1+c*dt)`; this is not an SDK change.
+
+Application controls bound steering before smoothing (0.3 s full reversal),
+modulate throttle from pitch and pitch rate, and latch throttle/roll-rider
+cutout after a fall. They impose no body pose or pitch impulse for the wheelie.
+Six 16-second recipes at 60/120 Hz emit 17,292 states per engine/mode:
+acceleration/braking, mirrored slaloms, a physical rear-wheel ride, assisted
+push recovery followed by collision, and a fall without the roll rider.
+
+Checks cover input recurrences, clutch/cutout, tires, wheel angles and independent
+engine/wheel angular-momentum equations (1e-4 N·m·s), actual front contact loss
+with loaded rear support, and return to rest during driving. Fallen bodies
+must retain cutout and vary by less than 2 cm / 0.05 rad over the final two
+seconds; tiny contact rocking is not treated as perpetual rolling. Body parity
+retains 0.05 m / 0.1 m/s / 0.02 rad / 0.15 rad/s. The forced collision at 4 s
+ends pointwise comparison for that recipe; passive-fall comparison ends at the
+first crash or center below 0.45 m. Later proof concerns events and settling,
+not chaotic rebound trajectories. Accumulated RPM difference is reported;
+engine correctness uses the independent angular-momentum recurrence rather
+than claiming the old 20 N·m profile's 0.02 RPM history bound for this new rider.
+Twenty-five corruptions must be rejected per mode. Raw states and
+`motorcycle-handling-qualification.json` remain in `.silex/physics3d-oracle/`.

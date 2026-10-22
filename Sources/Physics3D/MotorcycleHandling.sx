@@ -1,0 +1,81 @@
+use GFX.Physics
+use STD.Math
+
+func vector(value:Math.Vec3) str { return "$(value.x) $(value.y) $(value.z)" }
+func make(world:Physics.World3D,kind:int) Physics.Motorcycle3D {
+    let grip=1.0
+    let tire=Physics.Tire3DSettings(
+        longitudinal_friction:Physics.TireFrictionCurve3D([Math.Vec2(0.0,grip)]),
+        lateral_friction:Physics.TireFrictionCurve3D([Math.Vec2(0.0,grip)]))
+    var bike=world.create_motorcycle(Physics.Motorcycle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(0.4,0.5,1.6)))
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,1.05,0.0)) ..allow_sleep=false
+            ..linear_damping=0.05 ..angular_damping=0.3 ..friction=0.8,
+        Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,1.25),tire:tire,maximum_steering_angle:0.6,
+            maximum_brake_torque:300.0,maximum_handbrake_torque:0.0,maximum_slope_angle:Math.half_pi()-0.000001),
+        Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,-0.75),tire:tire,
+            maximum_brake_torque:300.0,maximum_handbrake_torque:0.0,maximum_slope_angle:Math.half_pi()-0.000001),
+        balance:Physics.MotorcycleBalance3DSettings(maximum_lean_angle:0.5,stiffness:5000.0,damping:1000.0),
+        engine:Physics.VehicleEngine3DSettings(maximum_torque:80.0,minimum_rpm:0.0,maximum_rpm:6000.0,inertia:0.05,
+            angular_damping:0.0,torque_curve:[Math.Vec2(0.0,1.0)]),
+        transmission:Physics.VehicleTransmission3DSettings(mode:Physics.VehicleTransmissionMode3D.manual,gear_ratios:[3.0])))
+    bike.set_balance_enabled(kind!=5);bike.set_transmission(1,clutch:0.0);return bike
+}
+
+class Rider {
+    var steering:float=0.0
+    var crashed:bool=false
+    var throttle:float=0.0
+    func drive(bike:Physics.Motorcycle3D,requested:float,steering:float,brake:float,rate:int) {
+        var body=bike.chassis();let q=body.rotation();let forward=q.rotate(Math.Vec3(0.0,0.0,1.0))
+        if q.rotate(Math.Vec3.up()).y<0.3 { self.crashed=true }
+        let pitch=Math.asin(Math.clamp(forward.y,-1.0,1.0))
+        let pitch_rate= -body.angular_velocity().dot(q.rotate(Math.Vec3.right()))
+        var throttle=requested*Math.clamp((0.25-pitch-0.15*pitch_rate)/0.15,0.0,1.0)
+        var desired=steering;var braking=brake
+        if self.crashed { throttle=0.0;braking=0.35;desired=0.0;bike.set_balance_enabled(false) }
+        let speed=body.linear_velocity().dot(forward)
+        var cap=0.35
+        if bike.steering_limit_enabled() { cap=Math.min(cap,Math.asin(Math.clamp(2.0*Math.tan(0.5)*9.81/Math.max(0.000001,speed*speed),0.0,1.0))/0.6) }
+        desired=Math.clamp(desired,-cap,cap);self.steering=Math.clamp(self.steering,-cap,cap)
+        let increment=2.0*cap/(0.3*rate as float)
+        self.steering+=Math.clamp(desired-self.steering,-increment,increment);self.throttle=throttle
+        var clutch=0.0;if throttle>0.0 { clutch=1.0 }
+        bike.set_transmission(1,clutch:clutch);bike.set_controls(steering:self.steering,throttle:throttle,brake:braking)
+    }
+}
+func command(bike:Physics.Motorcycle3D,rider:Rider,kind:int,step:int,rate:int) {
+    var throttle=0.0;var steering=0.0;var brake=0.35;var until=8;if kind==0 { until=4 }
+    if kind<3 && step>=2*rate && step<until*rate { throttle=0.4;brake=0.0 }
+    if (kind==1 || kind==2) && step>=4*rate && step<8*rate {
+        steering=0.35;if (step/rate)%2!=0 { steering= -steering } if kind==2 { steering= -steering }
+    }
+    if kind==3 && step>=2*rate && step<5*rate { throttle=1.0;brake=0.0 }
+    if kind>=4 && step==2*rate { var body=bike.chassis();body.apply_angular_impulse(Math.Vec3(0.0,0.0,150.0)) }
+    if kind==4 && step==4*rate { var body=bike.chassis();body.apply_angular_impulse(Math.Vec3(-360.0,0.0,0.0)) }
+    rider.drive(bike,throttle,steering,brake,rate)
+}
+func run(kind:int,rate:int) {
+    var world=Physics.World3D()
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=Physics.Shape3D.plane(Physics.Plane3D()) ..friction=1.0)
+    var bike=make(world,kind);var rider=Rider();var step=0
+    while step<=rate*16 {
+        var body=bike.chassis();let pose=body.transform();let target=bike.lean_target();let power=bike.powertrain()
+        var text="motorcycle-handling $(kind) $(rate) $(step) $(vector(pose.position)) $(vector(body.linear_velocity())) $(pose.rotation.x) $(pose.rotation.y) $(pose.rotation.z) $(pose.rotation.w) $(vector(body.angular_velocity())) $(vector(target)) $(power.engine_rpm) $(power.gear) $(power.clutch)"
+        for index in [0,1] {
+            let wheel=bike.wheel(index);var touching=0;if wheel.support()!=null { touching=1 }
+            var point=Math.Vec3();var normal=Math.Vec3();var longitudinal=Math.Vec3()
+            if touching==1 { point=wheel.contact_point;normal=wheel.contact_normal;longitudinal=wheel.longitudinal_direction }
+            text+=" $(wheel.steering_angle) $(wheel.length) $(wheel.normal_force) $(touching) $(wheel.angular_velocity) $(wheel.rotation_angle) $(wheel.longitudinal_force) $(wheel.lateral_force) $(vector(point)) $(vector(normal)) $(vector(longitudinal))"
+        }
+        var balance=0;var limited=0;if bike.balance_enabled() { balance=1 } if bike.steering_limit_enabled() { limited=1 }
+        var requested=1;if kind==5 { requested=0 }
+        var crashed=0;if rider.crashed { crashed=1 }
+        print(text+" $(balance) $(limited) $(rider.steering) $(crashed) $(requested) $(rider.throttle)");if step==rate*16 { break }
+        command(bike,rider,kind,step,rate);world.step(1.0/rate as float);step++
+    }
+    world.destroy_motorcycle(bike)
+}
+func main() { for kind in [0,1,2,3,4,5] { for rate in [60,120] { run(kind,rate) } } }
