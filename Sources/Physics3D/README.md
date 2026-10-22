@@ -1801,3 +1801,39 @@ remain under `.silex/physics3d-oracle/`.
 This qualifies one straight ramp with ray supports and the existing rider
 profile. It does not qualify arbitrary terrain, all wheel detectors, racing
 or motocross handling, or performance. The earlier plane fixtures are unchanged.
+
+
+## Cross motorcycle power, suspension and steeper ramp
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/MotorcycleCrossRun.py --mode both
+```
+
+This separate profile retains the earlier road fixtures and uses 120 N·m,
+5000 N/m springs, 500 N·s/m damping and 0.2–0.9 m suspension lengths. Mounts
+are 0.2 m above the chassis center, keeping its center of mass low enough for
+usable powered driving with the increased travel. The 100 kg / isotropic
+100 kg·m² chassis, tire radius, gearing and roll rider gains are unchanged.
+The fixed ramp is 8 × 0.4 × 9 m at (0, 1.0514218, 16.5) m, rotated −0.28 rad
+about X: approximately 16° with a 2.49 m exit height.
+
+Normal throttle is limited by pitch relative to the mean normal of loaded
+supports, retained during flight. This prevents confusing the slope itself
+with unwanted wheelies. Its relative pitch margin/transition width are
+0.12/0.06 rad, with 0.18 s pitch-rate prediction and a 0.65 rad absolute bound.
+The interactive full-throttle request uses a larger 0.35/0.15 rad margin/window with 0.30 s prediction;
+these two benchmark recipes use the normal 40% request from 2–8 s, then brake
+until 16 s. The controller changes throttle only; it imposes no pose, launch
+impulse or aerial pitch correction.
+
+The flat control and ramp at 60/120 Hz emit 5,764 states per engine/mode.
+Independent checks include the support-slope memory, throttle recurrence,
+120 N·m engine/wheel angular momentum, finite ramp/ray geometry, free-flight
+gravity/damping and final supported weight. All-state body parity includes
+landing, with the same 0.05 m / 0.1 m/s / 0.02 rad / 0.15 rad/s budgets as the
+road fixture. The chassis reaches approximately 4.02 m and remains unsupported
+for 1.08 s, then settles. Twenty-nine corruptions per mode must be rejected;
+Native Debug/Release states are identical for each engine. Raw records and
+`motorcycle-cross-qualification.json` remain in `.silex/physics3d-oracle/`.
+This is a physically tuned example profile, not a calibrated real motocross
+motorcycle or qualification of arbitrary terrain, detectors or performance.
