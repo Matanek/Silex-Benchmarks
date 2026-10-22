@@ -1767,3 +1767,37 @@ engine correctness uses the independent angular-momentum recurrence rather
 than claiming the old 20 N·m profile's 0.02 RPM history bound for this new rider.
 Twenty-five corruptions must be rejected per mode. Raw states and
 `motorcycle-handling-qualification.json` remain in `.silex/physics3d-oracle/`.
+
+## Motorcycle ramp traversal and landing
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/MotorcycleRampRun.py --mode both
+```
+
+The responsive 80 N·m motorcycle profile traverses a finite box ramp, compared
+with an otherwise identical flat control. The ramp is 8 × 0.4 × 6.03 m, centered
+at (0, 0.1, 15) m and rotated −0.1 rad about X, with friction 1 and no Jolt box
+convex radius. The initial two seconds use the brakes, followed by four seconds
+at 40% requested throttle, then braking until 16 seconds. The existing pitch
+and pitch-rate throttle governor is retained. No body pose, launch impulse or
+imposed driving velocity is used.
+
+Two recipes at 60/120 Hz produce 5,764 states per engine and mode. The motorcycle
+uses both ramp contacts, then spends approximately 0.48 seconds with neither
+wheel supported, lands and returns to two loaded supports at rest. Native
+Debug/Release records are identical for each engine. Pointwise body parity
+keeps 0.05 m / 0.1 m/s / 0.02 rad / 0.15 rad/s over **every state, including the
+landing**; event times and peak height retain 0.1 s / 0.1 m bounds.
+
+Independent checks reconstruct suspension rays from beginning-of-step chassis
+poses, constrain contact points/normals to the finite ramp top or floor, check
+tire capacities and engine/wheel angular-momentum recurrences (1e−4 N·m·s),
+and require the final supported weight. Unsupported steps satisfy gravity and
+rational damping within 0.005 N·s and position integration within 3e−5 m.
+No wheel contact forces remain during flight. Twenty-eight corruptions per
+mode must be rejected. Raw records and `motorcycle-ramp-qualification.json`
+remain under `.silex/physics3d-oracle/`.
+
+This qualifies one straight ramp with ray supports and the existing rider
+profile. It does not qualify arbitrary terrain, all wheel detectors, racing
+or motocross handling, or performance. The earlier plane fixtures are unchanged.
