@@ -1850,3 +1850,26 @@ pointwise Jolt qualification. An exploratory four-second full-throttle wheelie
 exceeds the existing pointwise body budgets as lateral roll/yaw drift develops.
 Its reference parity remains unqualified; the three normal-throttle recipes
 retain the original budgets on every state, including landing.
+
+
+## Tracked vehicles on a finite ramp
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/TrackedRampRun.py --mode both
+```
+
+Run from the workspace root or the Spec Worktree group. The six-wheel manual
+vehicle keeps the `TrackedGround.sx` physical settings and compares a flat
+control with a finite box ramp. The sequence settles for2s, drives at80% for5s,
+and brakes at4% for7s before recovering all six supports at rest. Moderate
+braking isolates the obstacle: full braking from about58km/h overturns the
+Jolt reference at120Hz and is not qualified by this recipe.
+
+Checks cover body position/velocity, momentum balances, suspension-ray
+geometry, track speeds and wheel rotations, engine RPM, and command-aligned
+force/torque/normal-load windows. Position integration is exact in unsupported
+flight; under contact, the solvers may further correct velocity after pose
+integration. Raw records and `tracked-ramp-qualification.json` are written
+under `.silex/physics3d-oracle/`. See the [French explanation](TrackedRamp.fr.md).
+Articulated links, volumetric track contacts, automatic ground shifting and
+general terrain remain outside this witness.
