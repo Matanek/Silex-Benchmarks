@@ -330,3 +330,10 @@ boundaries remain checked at the original tolerance. The raw Jolt value is
 retained without claiming normal parity for that corner. Missing, duplicate,
 non-finite and channel-corrupted witnesses must be rejected. No FPS or whole
 vehicle-family qualification is implied.
+
+## Automatic tracked shifting
+
+[Automatic tracked shifting](Sources/Physics3D/TrackedAutomatic.md) compares
+forward/reverse gear changes, braking to neutral and supported/airborne
+upshift inhibition against pinned Jolt.
+[Protocole français](Sources/Physics3D/TrackedAutomatic.fr.md).
