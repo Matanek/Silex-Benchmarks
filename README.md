@@ -337,3 +337,9 @@ vehicle-family qualification is implied.
 forward/reverse gear changes, braking to neutral and supported/airborne
 upshift inhibition against pinned Jolt.
 [Protocole français](Sources/Physics3D/TrackedAutomatic.fr.md).
+
+## Automatic tracked ramp traversal
+
+[Automatic tracked ramp traversal](Sources/Physics3D/TrackedAutomaticRamp.md)
+compares ascent, flight, landing and gear changes on a finite box with the
+matching flat control. [Protocole français](Sources/Physics3D/TrackedAutomaticRamp.fr.md).
