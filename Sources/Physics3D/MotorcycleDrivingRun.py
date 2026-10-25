@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Qualify powered motorcycles, braking, mirrored turns and assisted/unassisted pushes."""
 import argparse
+from MotorcycleLeanOracle import build_motorcycle_oracle
 import hashlib
 import json
 import math
@@ -152,22 +153,23 @@ def self_test(raw,rows,reference):
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--mode',choices=('Debug','Release','both'),default='both');parser.add_argument('--archive',type=Path);args=parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--mode',choices=('Debug','Release','both'),default='both');parser.add_argument('--archive',type=Path);parser.add_argument('--stable-lean',action='store_true',help='Explicit atan2 variant of the pinned motorcycle controller; original source stays intact');args=parser.parse_args()
     if Path.cwd().resolve()!=GROUP: fail(f'run from workspace or Spec group root: {GROUP}')
     source,digest=verified_source(args.archive)
+    output_stem='motorcycle-driving'+('-stable-lean' if args.stable_lean else '')
     record=dict(schema=1,fixture='motorcycle-driving-v1',oracle_revision=REFERENCE,archive_sha256=digest,parity=PARITY,rpm=RPM,rotor=ROTOR,scope='Ray contacts on plane, ideal 20 Nm engine, manual rear drive; unassisted chassis impact only bounded, no bounce parity or performance claim.',modes={})
     for mode in ('Debug','Release') if args.mode=='both' else (args.mode,):
-        oracle=build_oracle(source,mode,HERE/'MotorcycleDrivingOracle.cpp','motorcycle-driving-oracle')
+        oracle,adapter=build_motorcycle_oracle(source,mode,HERE/'MotorcycleDrivingOracle.cpp','motorcycle-driving-oracle',stable=args.stable_lean)
         binary=build_silex(mode,'MotorcycleDriving.sx','motorcycle-driving-silex',True)
-        raw_jolt=checked([str(oracle)]);(BUILD/f'motorcycle-driving-jolt-{mode.lower()}.txt').write_text(raw_jolt);reference=parse(raw_jolt)
-        raw=checked([str(binary)]);(BUILD/f'motorcycle-driving-silex-{mode.lower()}.txt').write_text(raw);rows=parse(raw)
-        result=dict(states=len(rows),jolt=qualify(reference),silex=qualify(rows),parity=compare(rows,reference),guards=self_test(raw,rows,reference),sha256=hashlib.sha256(raw.encode()).hexdigest(),jolt_sha256=hashlib.sha256(raw_jolt.encode()).hexdigest())
-        record['modes'][mode]=result;(BUILD/'motorcycle-driving-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
+        raw_jolt=checked([str(oracle)]);(BUILD/f'{output_stem}-jolt-{mode.lower()}.txt').write_text(raw_jolt);reference=parse(raw_jolt)
+        raw=checked([str(binary)]);(BUILD/f'{output_stem}-silex-{mode.lower()}.txt').write_text(raw);rows=parse(raw)
+        result=dict(oracle_adapter=adapter,states=len(rows),jolt=qualify(reference),silex=qualify(rows),parity=compare(rows,reference),guards=self_test(raw,rows,reference),sha256=hashlib.sha256(raw.encode()).hexdigest(),jolt_sha256=hashlib.sha256(raw_jolt.encode()).hexdigest())
+        record['modes'][mode]=result;(BUILD/f'{output_stem}-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
         print(f'{mode}: motorcycle propulsion, braking, turns and balance pushes verified',flush=True)
     if args.mode=='both':
         for engine in ('jolt','silex'):
-            if (BUILD/f'motorcycle-driving-{engine}-debug.txt').read_bytes()!=(BUILD/f'motorcycle-driving-{engine}-release.txt').read_bytes(): fail(f'{engine} driving Debug/Release differ')
-        record['debug_release_identical']=True;(BUILD/'motorcycle-driving-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
+            if (BUILD/f'{output_stem}-{engine}-debug.txt').read_bytes()!=(BUILD/f'{output_stem}-{engine}-release.txt').read_bytes(): fail(f'{engine} driving Debug/Release differ')
+        record['debug_release_identical']=True;(BUILD/f'{output_stem}-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
 
 
 if __name__=='__main__': main()

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Qualify cross motorcycle power, long-travel suspension and steeper jump."""
 import argparse
+from MotorcycleLeanOracle import build_motorcycle_oracle
 import hashlib
 import json
 import math
@@ -182,21 +183,22 @@ def self_test(raw,rows,reference):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--mode',choices=('Debug','Release','both'),default='both');p.add_argument('--archive',type=Path);args=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--mode',choices=('Debug','Release','both'),default='both');p.add_argument('--archive',type=Path);p.add_argument('--stable-lean',action='store_true',help='Explicit atan2 variant of the pinned motorcycle controller; original source stays intact');args=p.parse_args()
     if Path.cwd().resolve()!=GROUP: fail(f'run from workspace or Spec group root: {GROUP}')
     source,digest=verified_source(args.archive)
+    output_stem='motorcycle-cross'+('-stable-lean' if args.stable_lean else '')
     record=dict(schema=1,fixture='motorcycle-cross-v2',oracle_revision=REFERENCE,archive_sha256=digest,body_parity=PARITY,scope='100kg/I100,120Nm cross rider,2500N/m,350Ns/m,.2-.9m,mountY.1; held Z from rest, Z at moderate speed, plane and box8x.4x9 at(0,1.0514218,16.5),rotationX=-.28rad,ray supports. W prolonged full-throttle pointwise parity remains unqualified. No arbitrary terrain/detector or performance claim.',modes={})
     for mode in ('Debug','Release') if args.mode=='both' else (args.mode,):
-        j=build_oracle(source,mode,HERE/'MotorcycleCrossOracle.cpp','motorcycle-cross-oracle');b=build_silex(mode,'MotorcycleCross.sx','motorcycle-cross-silex',True)
+        j,adapter=build_motorcycle_oracle(source,mode,HERE/'MotorcycleCrossOracle.cpp','motorcycle-cross-oracle',stable=args.stable_lean);b=build_silex(mode,'MotorcycleCross.sx','motorcycle-cross-silex',True)
         raw_j=checked([str(j)]);raw=checked([str(b)])
-        for engine,text in [('jolt',raw_j),('silex',raw)]: (BUILD/f'motorcycle-cross-{engine}-{mode.lower()}.txt').write_text(text)
+        for engine,text in [('jolt',raw_j),('silex',raw)]: (BUILD/f'{output_stem}-{engine}-{mode.lower()}.txt').write_text(text)
         reference=parse(raw_j);rows=parse(raw)
-        record['modes'][mode]=dict(states=len(rows),jolt=qualify(reference),silex=qualify(rows),parity=compare(rows,reference),guards=self_test(raw,rows,reference),sha256=hashlib.sha256(raw.encode()).hexdigest(),jolt_sha256=hashlib.sha256(raw_j.encode()).hexdigest())
-        (BUILD/'motorcycle-cross-qualification.json').write_text(json.dumps(record,indent=2)+'\n');print(mode,'ramp, ballistic flight and landing qualified',flush=True)
+        record['modes'][mode]=dict(oracle_adapter=adapter,states=len(rows),jolt=qualify(reference),silex=qualify(rows),parity=compare(rows,reference),guards=self_test(raw,rows,reference),sha256=hashlib.sha256(raw.encode()).hexdigest(),jolt_sha256=hashlib.sha256(raw_j.encode()).hexdigest())
+        (BUILD/f'{output_stem}-qualification.json').write_text(json.dumps(record,indent=2)+'\n');print(mode,'ramp, ballistic flight and landing qualified',flush=True)
     if args.mode=='both':
         for engine in ('jolt','silex'):
-            if (BUILD/f'motorcycle-cross-{engine}-debug.txt').read_bytes()!=(BUILD/f'motorcycle-cross-{engine}-release.txt').read_bytes(): fail(f'{engine} ramp Native Debug/Release differ')
-        record['debug_release_identical']=True;(BUILD/'motorcycle-cross-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
+            if (BUILD/f'{output_stem}-{engine}-debug.txt').read_bytes()!=(BUILD/f'{output_stem}-{engine}-release.txt').read_bytes(): fail(f'{engine} ramp Native Debug/Release differ')
+        record['debug_release_identical']=True;(BUILD/f'{output_stem}-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
 
 
 if __name__=='__main__': main()

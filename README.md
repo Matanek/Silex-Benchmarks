@@ -351,3 +351,12 @@ stationary support, lateral/longitudinal carrying and free track rolling.
 [Protocole français](Sources/Physics3D/TrackedPlatform.fr.md).
 
 - [Tracks on a finite-mass support](Sources/Physics3D/TrackedDynamicPlatform.md) · [Français](Sources/Physics3D/TrackedDynamicPlatform.fr.md) — reciprocal impulses, two masses and free rolling.
+
+## Tracks on rotating platforms
+
+[Rotating-platform qualification](Sources/Physics3D/TrackedRotatingPlatform.md) compares opposite yaw transport, locked tracks and free rolling. [Protocole français](Sources/Physics3D/TrackedRotatingPlatform.fr.md).
+
+[Precise motorcycle lean oracle](Sources/Physics3D/MotorcycleLeanOracle.md)
+documents the explicit `--stable-lean` variant, original-reference provenance
+and independent small-angle torque check.
+[Guide français](Sources/Physics3D/MotorcycleLeanOracle.fr.md).

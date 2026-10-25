@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Qualify a responsive motorcycle scene profile and its physical rider controls."""
 import argparse
+from MotorcycleLeanOracle import build_motorcycle_oracle
 import hashlib
 import json
 import math
@@ -153,20 +154,21 @@ def self_test(raw,rows,reference):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--mode',choices=('Debug','Release','both'),default='both');p.add_argument('--archive',type=Path);args=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--mode',choices=('Debug','Release','both'),default='both');p.add_argument('--archive',type=Path);p.add_argument('--stable-lean',action='store_true',help='Explicit atan2 variant of the pinned motorcycle controller; original source stays intact');args=p.parse_args()
     if Path.cwd().resolve()!=GROUP: fail(f'run from workspace or Spec group root: {GROUP}')
     source,digest=verified_source(args.archive)
+    output_stem='motorcycle-handling'+('-stable-lean' if args.stable_lean else '')
     record=dict(schema=1,fixture='motorcycle-handling-v1',oracle_revision=REFERENCE,archive_sha256=digest,body_parity=PARITY,rotor_recurrence=ROTOR,scope='100kg/I100,80Nm,shifted wheelbase,plane rays; application input smoothing,pitch governor,latched crash cutout. Jolt coefficient c/(1+c*dt) matches Silex rational damping. No calibrated real motorcycle or arbitrary terrain claim.',modes={})
     for mode in ('Debug','Release') if args.mode=='both' else (args.mode,):
-        j=build_oracle(source,mode,HERE/'MotorcycleHandlingOracle.cpp','motorcycle-handling-oracle');b=build_silex(mode,'MotorcycleHandling.sx','motorcycle-handling-silex',True)
-        raw_j=checked([str(j)]);raw=checked([str(b)]);(BUILD/f'motorcycle-handling-jolt-{mode.lower()}.txt').write_text(raw_j);(BUILD/f'motorcycle-handling-silex-{mode.lower()}.txt').write_text(raw)
+        j,adapter=build_motorcycle_oracle(source,mode,HERE/'MotorcycleHandlingOracle.cpp','motorcycle-handling-oracle',stable=args.stable_lean);b=build_silex(mode,'MotorcycleHandling.sx','motorcycle-handling-silex',True)
+        raw_j=checked([str(j)]);raw=checked([str(b)]);(BUILD/f'{output_stem}-jolt-{mode.lower()}.txt').write_text(raw_j);(BUILD/f'{output_stem}-silex-{mode.lower()}.txt').write_text(raw)
         reference=parse(raw_j);rows=parse(raw)
-        record['modes'][mode]=dict(states=len(rows),jolt=qualify(reference),silex=qualify(rows),parity=compare(rows,reference),guards=self_test(raw,rows,reference),sha256=hashlib.sha256(raw.encode()).hexdigest(),jolt_sha256=hashlib.sha256(raw_j.encode()).hexdigest())
-        (BUILD/'motorcycle-handling-qualification.json').write_text(json.dumps(record,indent=2)+'\n');print(mode,'handling, wheelie and crash cutout qualified',flush=True)
+        record['modes'][mode]=dict(oracle_adapter=adapter,states=len(rows),jolt=qualify(reference),silex=qualify(rows),parity=compare(rows,reference),guards=self_test(raw,rows,reference),sha256=hashlib.sha256(raw.encode()).hexdigest(),jolt_sha256=hashlib.sha256(raw_j.encode()).hexdigest())
+        (BUILD/f'{output_stem}-qualification.json').write_text(json.dumps(record,indent=2)+'\n');print(mode,'handling, wheelie and crash cutout qualified',flush=True)
     if args.mode=='both':
         for engine in ('jolt','silex'):
-            if (BUILD/f'motorcycle-handling-{engine}-debug.txt').read_bytes()!=(BUILD/f'motorcycle-handling-{engine}-release.txt').read_bytes(): fail(f'{engine} handling Native Debug/Release differ')
-        record['debug_release_identical']=True;(BUILD/'motorcycle-handling-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
+            if (BUILD/f'{output_stem}-{engine}-debug.txt').read_bytes()!=(BUILD/f'{output_stem}-{engine}-release.txt').read_bytes(): fail(f'{engine} handling Native Debug/Release differ')
+        record['debug_release_identical']=True;(BUILD/f'{output_stem}-qualification.json').write_text(json.dumps(record,indent=2)+'\n')
 
 
 if __name__=='__main__': main()
