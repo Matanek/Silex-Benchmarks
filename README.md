@@ -349,3 +349,5 @@ matching flat control. [Protocole français](Sources/Physics3D/TrackedAutomaticR
 [Moving-platform qualification](Sources/Physics3D/TrackedPlatform.md) compares
 stationary support, lateral/longitudinal carrying and free track rolling.
 [Protocole français](Sources/Physics3D/TrackedPlatform.fr.md).
+
+- [Tracks on a finite-mass support](Sources/Physics3D/TrackedDynamicPlatform.md) · [Français](Sources/Physics3D/TrackedDynamicPlatform.fr.md) — reciprocal impulses, two masses and free rolling.
