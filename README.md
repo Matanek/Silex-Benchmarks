@@ -343,3 +343,9 @@ upshift inhibition against pinned Jolt.
 [Automatic tracked ramp traversal](Sources/Physics3D/TrackedAutomaticRamp.md)
 compares ascent, flight, landing and gear changes on a finite box with the
 matching flat control. [Protocole français](Sources/Physics3D/TrackedAutomaticRamp.fr.md).
+
+## Tracks on moving platforms
+
+[Moving-platform qualification](Sources/Physics3D/TrackedPlatform.md) compares
+stationary support, lateral/longitudinal carrying and free track rolling.
+[Protocole français](Sources/Physics3D/TrackedPlatform.fr.md).
