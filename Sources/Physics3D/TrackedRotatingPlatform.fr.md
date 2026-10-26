@@ -48,3 +48,44 @@ miroir réduit distingue cette correction d'une simple hausse d'itérations.
 Cette preuve porte sur ce support cinématique, ces vitesses et ces rayons.
 La rotation dynamique générale, les terrains généraux et la rectitude prolongée
 restent à qualifier. Voir aussi le [support de masse finie](TrackedDynamicPlatform.fr.md).
+
+## Combiner translation et rotation
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/TrackedRotatingPlatformRun.py --mode both --combined --stable-brakes
+```
+
+Cette variante ajoute ±2 m/s le long de Z aux rotations ±0.25 rad/s autour de Y,
+entre2 et4s. Le support se trouve finalement en(0,−0.2,±4), tourné de±0.5rad.
+Le contrôle0 reste immobile. Le cas3 libère les bandes seulement pendant le
+mouvement2..4s et serre explicitement les freins à partir de4s pour éprouver
+l'arrêt. Sans drapeau, le cas3 historique reste libre tout au long du parcours.
+Les deux moteurs reçoivent exactement la même recette par variante.
+
+La vitesse attendue au centre du châssis combine les deux termes :
+`v_support + ω_support × (position_châssis − position_support)`.
+Les points de contact sont contrôlés dans le repère translaté et tourné du
+support au début du pas. Les bilans d'impulsion du châssis restent exprimés dans
+le monde. Miroir, freins/roulement, fenêtres de forces et retour au repos gardent
+les seuils ci-dessus ; aucun budget n'est augmenté pour cette composition.
+
+Le préfixe et l'identité de fixture deviennent `tracked-combined-platform-v1`
+(le préfixe brut omet `-v1`). Traces et rapport restent séparés, sous
+`.silex/physics3d-oracle/tracked-combined-platform-*`. Schéma et comparateurs sont
+partagés avec la rotation seule, sans seconde copie de la physique. La commande utilise explicitement la variante `--stable-brakes` : une copie
+du seul bloc de bornes de friction des chenilles bloquées conserve une plage
+symétrique pour l’impulsion accumulée. Capacités, couples et branche libre
+restent identiques. L’archive, le contrôleur et les bibliothèques originaux
+restent intacts ; le rapport consigne delta, empreintes et liaison. Sans ce
+drapeau, la référence reste originale et son miroir combiné échoue à l’arrêt.
+Les sorties de la variante portent le suffixe `-stable-brakes`, séparé des
+résultats originaux. L’adaptation des petits angles moto n’intervient pas.
+Cette variante qualifie la composition cinématique fixée, sans revendiquer
+la rotation des supports de masse finie ou les terrains arbitraires.
+
+Le contrôle analytique ne prend pas l’autre moteur pour cible : en régime
+adhérent, la somme des efforts horizontaux vaut en moyenne
+`100 · ω × (ω × r)` à2N près, la charge981N à2N près et le couple moyen reste
+sous2Nm. Il vérifie également la vitesse relative en chaque contact et les
+bandes bloquées. Le [corpus des freins](TrackedBrakeCorpus.fr.md) exerce les
+parcours antérieurs avec la même variante explicite.

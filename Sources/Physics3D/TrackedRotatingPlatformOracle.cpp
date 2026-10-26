@@ -30,7 +30,7 @@ void writeVector(JPH::Vec3Arg value) {
 
 // -----------------------------------------------------------------------------
 
-int runTrackedRotatingPlatform(int scenario, int rate) {
+int runTrackedRotatingPlatform(int scenario, int rate, bool combined) {
     JPH::BroadPhaseLayerInterfaceTable broadPhase(1, 1);
     broadPhase.MapObjectToBroadPhaseLayer(0, JPH::BroadPhaseLayer(0));
     JPH::ObjectLayerPairFilterTable pairFilter(1);
@@ -106,7 +106,7 @@ int runTrackedRotatingPlatform(int scenario, int rate) {
     JPH::TempAllocatorImpl allocator(1024 * 1024);
     JPH::JobSystemSingleThreaded jobs(JPH::cMaxPhysicsJobs);
     for (int step = 0; step <= rate * 6; ++step) {
-        std::cout << "tracked-rotating-platform " << scenario << ' ' << rate << ' ' << step;
+        std::cout << (combined ? "tracked-combined-platform " : "tracked-rotating-platform ") << scenario << ' ' << rate << ' ' << step;
         writeVector(JPH::Vec3(bodies.GetPosition(chassis)));
         writeVector(bodies.GetLinearVelocity(chassis));
         const auto rotation = bodies.GetRotation(chassis);
@@ -132,7 +132,11 @@ int runTrackedRotatingPlatform(int scenario, int rate) {
         float spin = 0;
         if (scenario > 0 && step >= 2 * rate && step < 4 * rate) spin = scenario == 2 ? -0.25f : 0.25f;
         bodies.SetAngularVelocity(platform, JPH::Vec3(0, spin, 0));
-        driver->SetDriverInput(0, 1, 1, scenario == 3 ? 0.0f : 1.0f);
+        float speed = 0;
+        if (combined && spin != 0) speed = scenario == 2 ? -2.0f : 2.0f;
+        bodies.SetLinearVelocity(platform, JPH::Vec3(0, 0, speed));
+        const bool free = scenario == 3 && (!combined || (step >= 2 * rate && step < 4 * rate));
+        driver->SetDriverInput(0, 1, 1, free ? 0.0f : 1.0f);
         if (world.Update(1.0f / rate, 1, &allocator, &jobs) != JPH::EPhysicsUpdateError::None) return 4;
     }
     world.RemoveStepListener(vehicle);
@@ -149,8 +153,10 @@ int runTrackedRotatingPlatform(int scenario, int rate) {
 
 } // namespace Physics3D
 
-int main(int argc, char**) {
-    if (argc != 1) return 2;
+int main(int argc, char** argv) {
+    bool combined = false;
+    if (argc == 2 && std::string_view(argv[1]) == "--combined") combined = true;
+    else if (argc != 1) return 2;
 #ifdef JPH_ENABLE_ASSERTS
     JPH::AssertFailed = [](const char* expression, const char*, const char*, JPH::uint) {
         std::cerr << "Jolt assertion: " << expression << '\n';
@@ -165,7 +171,7 @@ int main(int argc, char**) {
     std::cout.precision(9);
     int result = 0;
     for (int scenario = 0; scenario < 4 && result == 0; ++scenario) for (int rate : { 60, 120 }) {
-        if (result == 0) result = Physics3D::runTrackedRotatingPlatform(scenario, rate);
+        if (result == 0) result = Physics3D::runTrackedRotatingPlatform(scenario, rate, combined);
     }
     JPH::UnregisterTypes();
     JPH::Factory::sInstance = nullptr;

@@ -360,3 +360,9 @@ stationary support, lateral/longitudinal carrying and free track rolling.
 documents the explicit `--stable-lean` variant, original-reference provenance
 and independent small-angle torque check.
 [Guide français](Sources/Physics3D/MotorcycleLeanOracle.fr.md).
+
+[Combined support motion](Sources/Physics3D/TrackedRotatingPlatform.md#combine-translation-and-rotation)
+adds simultaneous translation and rotation through the explicit `--combined`
+protocol, preserving the pure-rotation witness and its limits.
+
+- [Tracked brake corpus](Sources/Physics3D/TrackedBrakeCorpus.md) / [Corpus des freins chenillés](Sources/Physics3D/TrackedBrakeCorpus.fr.md) : seven historical contact fixtures with the explicit stable-brakes Jolt variant.

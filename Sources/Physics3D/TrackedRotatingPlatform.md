@@ -46,3 +46,40 @@ increasing iterations.
 This proof covers this kinematic support, these speeds and ray contacts.
 General dynamic rotation, general terrain and prolonged straight driving remain
 unqualified. See also the [finite-mass support](TrackedDynamicPlatform.md).
+
+## Combine translation and rotation
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/TrackedRotatingPlatformRun.py --mode both --combined --stable-brakes
+```
+
+This variant adds ±2 m/s along Z to the ±0.25 rad/s rotations around Y from2 to4s.
+The support ends at(0,−0.2,±4), rotated by±0.5rad. Control0 stays stationary.
+Case3 frees the tracks only during the2..4s motion and explicitly brakes them
+again from4s to test stopping. Without the flag, historical case3 remains free
+throughout the workload. Both engines receive exactly the same recipe per variant.
+
+The expected velocity at the chassis center combines both terms:
+`v_support + ω_support × (chassis_position − support_position)`.
+Contact points are checked in the support's translated and rotated frame at the
+beginning of the step. Chassis impulse balances stay in world space. Mirror,
+braking/rolling, force windows and final rest retain the bounds above; this
+composition increases no tolerance.
+
+The prefix and fixture identity become `tracked-combined-platform-v1` (the raw
+prefix omits `-v1`). Separate traces and report are stored under
+`.silex/physics3d-oracle/tracked-combined-platform-*`. Schema and comparators
+are shared with pure rotation, without a second copy of the physics. The
+explicit `--stable-brakes` variant changes only the locked-track accumulated
+friction bounds in a separately identified controller copy. The pinned archive,
+controller and libraries stay intact; capacities, torques and free tracks are
+unchanged. Without this flag, the original combined reference fails its stopping
+mirror. Variant outputs use a separate `-stable-brakes` suffix and record patch,
+hashes and linkage. The motorcycle tiny-angle adaptation is not involved. This variant qualifies the fixed kinematic composition,
+without claiming finite-mass rotating supports or arbitrary terrain.
+
+An independent analytical check uses the required centripetal resultant
+`100 · ω × (ω × r)` with a2N mean force budget,981±2N support load and2Nm
+mean resultant torque budget. It also checks contact-point slip and locked
+belts. The [brake corpus](TrackedBrakeCorpus.md) exercises the previous
+tracked fixtures with the same explicit variant.
