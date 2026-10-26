@@ -366,3 +366,5 @@ adds simultaneous translation and rotation through the explicit `--combined`
 protocol, preserving the pure-rotation witness and its limits.
 
 - [Tracked brake corpus](Sources/Physics3D/TrackedBrakeCorpus.md) / [Corpus des freins chenillés](Sources/Physics3D/TrackedBrakeCorpus.fr.md) : seven historical contact fixtures with the explicit stable-brakes Jolt variant.
+
+- [Finite-mass rotating support](Sources/Physics3D/TrackedDynamicRotation.md) / [Réaction du support tournant](Sources/Physics3D/TrackedDynamicRotation.fr.md) : angular momentum exchange, orbital inertia, mirrors and locked/free tracks.
