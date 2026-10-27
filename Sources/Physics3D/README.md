@@ -1873,3 +1873,20 @@ integration. Raw records and `tracked-ramp-qualification.json` are written
 under `.silex/physics3d-oracle/`. See the [French explanation](TrackedRamp.fr.md).
 Articulated links, volumetric track contacts, automatic ground shifting and
 general terrain remain outside this witness.
+
+## Suspension preload and spring units
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleSuspensionSettingsRun.py --mode both
+```
+
+Nine 6 s cases at 60/120 Hz use the original pinned Jolt and 12/4 solver
+iterations: default suspension with jump/recovery, 1 cm preload, 3 Hz/0.8 damping
+ratio with 100/200 kg chassis, normalized coefficients, selected central force
+points with initial roll, ordinary contact leveling, combined frequency/preload
+and a 20 kN overload. Chassis state, four lengths/loads/support flags, analytic
+rest heights and per-step linear/angular momentum balance are checked.
+The central force point must preserve roll and generate no angular momentum.
+Each engine rejects 232 structural/channel corruptions per mode. Results and
+raw traces are written to `.silex/physics3d-oracle/vehicle-suspension-settings-*`.
+This witness does not qualify arbitrary tuning, terrain, grip or performance.

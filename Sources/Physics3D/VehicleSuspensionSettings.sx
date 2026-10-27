@@ -1,0 +1,37 @@
+use GFX.Physics
+use STD.Math
+
+func run_case(kind:int,rate:int) {
+    var mass=100.0;if kind==3 { mass=200.0 }
+    var preload=0.0;if kind==1 || kind==7 { preload=0.01 }
+    var spring:Physics.SuspensionSpring3D?=null
+    if kind==2 || kind==3 || kind==7 { spring=Physics.SuspensionSpring3D.frequency(3.0,0.8) }
+    if kind==4 { spring=Physics.SuspensionSpring3D.mass_normalized(400.0,40.0) }
+    var force_point:Math.Vec3?=null;if kind==5 || kind==8 { force_point=Math.Vec3() }
+    var rotation=Math.Quat();if kind==5 || kind==6 { rotation=Math.Quat.angle_axis(0.12,Math.Vec3(0.0,0.0,1.0)) }
+    var world=Physics.World3D()
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed ..shape=Physics.Shape3D.plane(Physics.Plane3D()) ..friction=0.0)
+    var wheels:Physics.Wheel3DSettings[]=[]
+    let sides:float[]=[-1.0,1.0]
+    for x in sides { for z in sides { wheels.append(Physics.Wheel3DSettings(Math.Vec3(0.6*x,0.0,z),preload_length:preload,force_point:force_point,spring:spring)) } }
+    var height=1.4;var seconds=6;if kind==8 { height=0.7 }
+    var vehicle=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(
+        Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(1.4,0.4,2.4)))
+            ..mass_properties=Physics.MassProperties3D(mass,Math.Vec3(mass))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,height,0.0),rotation) ..allow_sleep=false
+            ..linear_damping=0.0 ..angular_damping=0.0 ..friction=0.0,wheels))
+    var step=0
+    while step<=rate*seconds {
+        var body=vehicle.chassis();let p=body.position();let v=body.linear_velocity();let q=body.rotation();let w=body.angular_velocity()
+        var line="suspension-settings $(kind) $(rate) $(step) $(p.x) $(p.y) $(p.z) $(v.x) $(v.y) $(v.z) $(q.x) $(q.y) $(q.z) $(q.w) $(w.x) $(w.y) $(w.z)"
+        for i in [0,1,2,3] { var wheel=vehicle.wheel(i);var contact=0;if wheel.support()!=null { contact=1 }
+            line+=" $(wheel.length) $(wheel.normal_force) $(contact)" }
+        print(line)
+        if step==rate*seconds { break }
+        if kind==0 && step==rate*2 { body.apply_impulse(Math.Vec3(0.0,500.0,0.0)) }
+        if kind==8 { body.apply_force(Math.Vec3(0.0,-20000.0,0.0)) }
+        world.step(1.0/rate as float);step++
+    }
+    world.destroy_wheeled_vehicle(vehicle);assert(!vehicle.is_valid() && world.body_count()==1)
+}
+func main() { for kind in [0,1,2,3,4,5,6,7,8] { for rate in [60,120] { run_case(kind,rate) } } }
