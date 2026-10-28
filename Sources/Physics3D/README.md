@@ -1947,3 +1947,45 @@ lengths, forces and independent balances remain checked for the same profile.
 `compare` stays strict by default; the runner explicitly selects this declared
 reference scope and reports that full angular parity is unqualified. No Jolt
 patch or increased tolerance is used for either limitation.
+
+## Continuous vehicle driving with changing grip
+
+`VehicleDriveCompositionRun.py` composes the public car, tracked vehicle and
+motorcycle facades over 36 uninterrupted 12-second curves. Ray, sphere and
+cylinder contacts, mirrored steering and 60/120 Hz share identical recipes:
+settle, accelerate, steer both ways, set the real support friction to zero and
+restore it, brake, reverse, then brake again. Car/motorcycle tire curves vary
+with slip. The reference composes only the two previously accepted lean-angle
+and accumulated track-brake adaptations, preserving original source/library
+hashes and both binaries. This is an internal tool without a window.
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleDriveCompositionRun.py
+```
+
+Run from the workspace or Spec group with the matching compiler on PATH.
+Each engine/mode emits 38,916 body and 129,720 wheel records. Complete finite
+schemas, commands, material transitions, contact geometry, tire capacities,
+rotor observation timing, band identity and per-step momentum are checked.
+Motorcycle momentum includes the balance actuator's linear compensation.
+Disconnected, unpowered engine speed must remain constant within 0.001 RPM.
+
+Ray/sphere body responses, half-second resultant forces/moments, rotor speeds
+and connected-engine RPM retain budgets 0.05 m / 0.1 m/s / 0.02 rad / 0.15 rad/s,
+20 N / 30 Nm / 0.25 rad/s / 2 RPM. These driving and stopping profiles are
+qualified for all three families. Track rotor comparisons use band speeds;
+Jolt can retain an earlier wheel snapshot after contact loss.
+
+The report explicitly keeps three limits visible. Cylinder composed responses
+are measured without comparative qualification: Jolt alone exceeds the original
+budgets under a common 0.1 mm translation or mirrored inputs, and the cylinder's
+line-contact point is non-unique. The wide-cylinder motorcycle also retains
+low-speed oscillation in both engines, so its 0.05 m/s repose criterion remains
+red. Absolute engine RPM after disengaging the clutch can retain a small prior
+difference; it is measured separately while its free-speed evolution stays
+strict. `qualify` and `compare` remain strict by default; the campaign explicitly
+selects this scope and reports `full_parity: false`. Independent contact,
+capacity and momentum checks remain active for every cylinder curve. No new
+Jolt patch, tire model or raised comparison tolerance hides these limitations.
+Debug/Release traces must match byte for byte. Deliberate corruptions exercise
+both strict checks and the visibility of declared limits after positive controls.

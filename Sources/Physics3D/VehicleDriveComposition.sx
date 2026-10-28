@@ -1,0 +1,114 @@
+use GFX.Physics
+use STD.Math
+
+func drive_phase(step:int,rate:int) int {
+    if step<3*rate/2 { return 0 }
+    if step<7*rate/2 { return 1 }
+    if step<9*rate/2 { return 2 }
+    if step<11*rate/2 { return 3 }
+    if step<8*rate { return 4 }
+    if step<10*rate { return 5 }
+    return 6
+}
+func components(value:Math.Vec3) str { return "$(value.x) $(value.y) $(value.z)" }
+class DriveVehicle {
+    private var car:Physics.WheeledVehicle3D?=null
+    private var tracks:Physics.TrackedVehicle3D?=null
+    private var bike:Physics.Motorcycle3D?=null
+    init(world:Physics.World3D,family:int,detector:int) {
+        var contact=Physics.WheelContact3D.ray
+        if detector==1 { contact=Physics.WheelContact3D.sphere(0.3) }
+        if detector==2 { contact=Physics.WheelContact3D.cylinder(0.4) }
+        var size=Math.Vec3(1.4,0.4,2.4);var height=1.15
+        if family==2 { size=Math.Vec3(0.4,0.5,1.6);height=1.05 }
+        let body=Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(size))
+            ..transform=Physics.Transform3D(Math.Vec3(0.0,height,0.0))
+            ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0))
+            ..linear_damping=0.0 ..angular_damping=0.0 ..allow_sleep=false ..friction=0.0
+        let engine=Physics.VehicleEngine3DSettings(maximum_torque:20.0,minimum_rpm:0.0,maximum_rpm:6000.0,
+            inertia:0.5,angular_damping:0.0,torque_curve:[Math.Vec2(0.0,1.0)])
+        let tire=Physics.Tire3DSettings(angular_damping:0.0)
+        let sides:float[]=[-0.6,0.6];let stations:float[]=[-1.0,1.0]
+        if family==0 {
+            var wheels:Physics.Wheel3DSettings[]=[]
+            for x in sides { for z in stations {
+                var steering=0.0;if z>0.0 { steering=0.5 }
+                wheels.append(Physics.Wheel3DSettings(Math.Vec3(x,0.0,z),contact:contact,tire:tire,
+                    maximum_steering_angle:steering,maximum_brake_torque:300.0))
+            } }
+            self.car=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(body,wheels,engine:engine,
+                transmission:Physics.VehicleTransmission3DSettings(mode:Physics.VehicleTransmissionMode3D.manual,gear_ratios:[1.0],reverse_gear_ratios:[-1.0]),
+                differentials:[Physics.VehicleDifferential3DSettings(0,2,ratio:3.0,limited_slip_ratio:null)],differential_limited_slip_ratio:null))
+            self.car!.set_transmission(1,clutch:0.0)
+        } else if family==1 {
+            var wheels:Physics.TrackedWheel3DSettings[]=[]
+            for x in sides { for z in stations {
+                wheels.append(Physics.TrackedWheel3DSettings(Math.Vec3(x,0.0,z),contact:contact,
+                    longitudinal_friction:1.0,lateral_friction:0.15))
+            } }
+            self.tracks=world.create_tracked_vehicle(Physics.TrackedVehicle3DSettings(body,wheels,
+                Physics.VehicleTrack3DSettings(0,[0,1],inertia:2.0,angular_damping:0.0,maximum_brake_torque:1500.0,differential_ratio:6.0),
+                Physics.VehicleTrack3DSettings(2,[2,3],inertia:2.0,angular_damping:0.0,maximum_brake_torque:1500.0,differential_ratio:6.0),
+                engine:Physics.VehicleEngine3DSettings(maximum_torque:15.0,minimum_rpm:1000.0,maximum_rpm:6000.0,
+                    inertia:0.5,angular_damping:0.0,torque_curve:[Math.Vec2(0.0,1.0)]),
+                transmission:Physics.VehicleTransmission3DSettings(mode:Physics.VehicleTransmissionMode3D.manual,gear_ratios:[1.0],reverse_gear_ratios:[-1.0])))
+            self.tracks!.set_transmission(1,clutch:0.0)
+        } else {
+            self.bike=world.create_motorcycle(Physics.Motorcycle3DSettings(body,
+                Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,1.0),contact:contact,tire:tire,maximum_steering_angle:0.6,
+                    maximum_brake_torque:300.0,maximum_slope_angle:Math.half_pi()-0.000001),
+                Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,-1.0),contact:contact,tire:tire,
+                    maximum_brake_torque:300.0,maximum_slope_angle:Math.half_pi()-0.000001),engine:engine,drive_ratio:1.0,
+                transmission:Physics.VehicleTransmission3DSettings(mode:Physics.VehicleTransmissionMode3D.manual,gear_ratios:[3.0],reverse_gear_ratios:[-3.0])))
+            self.bike!.set_transmission(1,clutch:0.0)
+        }
+    }
+    func chassis() Physics.RigidBody3D { if let v=self.car { return v.chassis() }if let v=self.tracks { return v.chassis() }return self.bike!.chassis() }
+    func count() int { if self.bike!=null { return 2 }return 4 }
+    func wheel(i:int) Physics.VehicleWheelState3D { if let v=self.car { return v.wheel(i) }if let v=self.tracks { return v.wheel(i) }return self.bike!.wheel(i) }
+    func powertrain() Physics.VehiclePowertrainState3D { if let v=self.car { return v.powertrain() }if let v=self.tracks { return v.powertrain() }return self.bike!.powertrain() }
+    func lean() Math.Vec3 { if let v=self.bike { return v.lean_target() }return Math.Vec3() }
+    func bands() Math.Vec3 {
+        if let v=self.tracks { return Math.Vec3(v.track(Physics.VehicleTrackSide3D.left).angular_velocity,v.track(Physics.VehicleTrackSide3D.right).angular_velocity,0.0) }
+        return Math.Vec3()
+    }
+    func command(phase:int,sign:float) {
+        var throttle=0.0;var brake=0.7;var steering=0.0;var clutch=0.0;var gear=1
+        if phase==1 || phase==2 || phase==3 || phase==5 { throttle=0.6;brake=0.0;clutch=1.0 }
+        if phase==2 { throttle=0.5;steering=0.25*sign }
+        if phase==3 { throttle=0.5;steering= -0.25*sign }
+        if phase>=5 { gear= -1 }
+        if phase==5 { throttle= -0.45 }
+        if let v=self.car { v.set_transmission(gear,clutch:clutch);v.set_controls(throttle:throttle,steering:steering,brake:brake) }
+        if let v=self.bike { v.set_transmission(gear,clutch:clutch);v.set_controls(throttle:throttle,steering:steering,brake:brake) }
+        if let v=self.tracks {
+            var left=1.0;var right=1.0
+            if steering>0.0 { left=0.75 }if steering<0.0 { right=0.75 }
+            v.set_transmission(gear,clutch:clutch);v.set_controls(throttle:throttle,left_ratio:left,right_ratio:right,brake:brake)
+        }
+    }
+    func destroy(world:Physics.World3D) { if let v=self.car { world.destroy_wheeled_vehicle(v) }if let v=self.tracks { world.destroy_tracked_vehicle(v) }if let v=self.bike { world.destroy_motorcycle(v) } }
+}
+func run(family:int,detector:int,sign:int,rate:int) {
+    var world=Physics.World3D()
+    var ground=world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(200.0,1.0,200.0)))
+        ..transform=Physics.Transform3D(Math.Vec3(0.0,-0.5,0.0)) ..friction=1.0 ..restitution=0.0)
+    var vehicle=DriveVehicle(world,family,detector);var step=0
+    while step<=12*rate {
+        var body=vehicle.chassis();let p=body.position();let v=body.linear_velocity();let q=body.rotation();let w=body.angular_velocity()
+        let power=vehicle.powertrain();let lean=vehicle.lean();let bands=vehicle.bands();var previous=0;if step>0 { previous=step-1 }
+        print("drive-body $(family) $(detector) $(sign) $(rate) $(step) $(components(p)) $(components(v)) $(q.x) $(q.y) $(q.z) $(q.w) $(components(w)) $(power.engine_rpm) $(power.gear) $(power.clutch) $(power.engine_torque) $(ground.friction()) $(drive_phase(previous,rate)) $(components(lean)) $(bands.x) $(bands.y)")
+        var index=0;while index<vehicle.count() {
+            let wheel=vehicle.wheel(index);var hit=0;if let support=wheel.support() { assert(support.same_body(ground));hit=1 }
+            print("drive-wheel $(family) $(detector) $(sign) $(rate) $(step) $(index) $(wheel.length) $(wheel.normal_force) $(wheel.angular_velocity) $(wheel.rotation_angle) $(wheel.longitudinal_slip) $(wheel.lateral_slip) $(wheel.longitudinal_force) $(wheel.lateral_force) $(hit) $(wheel.steering_angle) $(components(wheel.contact_point)) $(components(wheel.contact_normal)) $(components(wheel.longitudinal_direction))")
+            index++
+        }
+        if step==12*rate { break }
+        if step==9*rate/2 { ground.set_material(0.0,0.0) }
+        if step==5*rate { ground.set_material(1.0,0.0) }
+        vehicle.command(drive_phase(step,rate),sign as float);world.step(1.0/rate as float);step++
+    }
+    vehicle.destroy(world);world.destroy_rigid_body(ground);assert(world.body_count()==0)
+}
+func main() { let signs:int[]=[-1,1];for family in [0,1,2] { for detector in [0,1,2] { for sign in signs { for rate in [60,120] { run(family,detector,sign,rate) } } } } }
