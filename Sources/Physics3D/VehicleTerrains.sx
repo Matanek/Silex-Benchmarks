@@ -1,0 +1,91 @@
+use GFX.Physics
+use STD.Math
+
+// Each family is constructed and observed exclusively through its public API.
+class VehicleProbe {
+    private var car:Physics.WheeledVehicle3D?=null
+    private var tracks:Physics.TrackedVehicle3D?=null
+    private var motorcycle:Physics.Motorcycle3D?=null
+    init(world:Physics.World3D,family:int,settings:Physics.RigidBody3DSettings,contact:Physics.WheelContact3D) {
+        let zero=Physics.TireFrictionCurve3D([Math.Vec2(0.0,0.0)])
+        let tire=Physics.Tire3DSettings(longitudinal_friction:zero,lateral_friction:zero,angular_damping:0.0)
+        let sides:float[]=[-0.6,0.6];let stations:float[]=[-1.0,1.0]
+        if family==0 {
+            var wheels:Physics.Wheel3DSettings[]=[]
+            for x in sides { for z in stations { wheels.append(Physics.Wheel3DSettings(Math.Vec3(x,0.0,z),contact:contact,tire:tire)) } }
+            self.car=world.create_wheeled_vehicle(Physics.WheeledVehicle3DSettings(settings,wheels))
+        } else if family==1 {
+            var wheels:Physics.TrackedWheel3DSettings[]=[]
+            for x in sides { for z in stations { wheels.append(Physics.TrackedWheel3DSettings(Math.Vec3(x,0.0,z),contact:contact,longitudinal_friction:0.0,lateral_friction:0.0)) } }
+            self.tracks=world.create_tracked_vehicle(Physics.TrackedVehicle3DSettings(settings,wheels,
+                Physics.VehicleTrack3DSettings(0,[0,1],angular_damping:0.0),Physics.VehicleTrack3DSettings(2,[2,3],angular_damping:0.0),
+                engine:Physics.VehicleEngine3DSettings(maximum_torque:0.0),
+                transmission:Physics.VehicleTransmission3DSettings(mode:Physics.VehicleTransmissionMode3D.manual)))
+            self.tracks!.set_transmission(0)
+        } else {
+            self.motorcycle=world.create_motorcycle(Physics.Motorcycle3DSettings(settings,
+                Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,1.0),contact:contact,tire:tire),
+                Physics.Wheel3DSettings(Math.Vec3(0.0,0.0,-1.0),contact:contact,tire:tire)))
+            self.motorcycle!.set_balance_enabled(false)
+        }
+    }
+    func chassis() Physics.RigidBody3D { if let v=self.car { return v.chassis() }if let v=self.tracks { return v.chassis() }return self.motorcycle!.chassis() }
+    func count() int { if self.motorcycle!=null { return 2 }return 4 }
+    func wheel(i:int) Physics.VehicleWheelState3D { if let v=self.car { return v.wheel(i) }if let v=self.tracks { return v.wheel(i) }return self.motorcycle!.wheel(i) }
+    func destroy(world:Physics.World3D) { if let v=self.car { world.destroy_wheeled_vehicle(v) }if let v=self.tracks { world.destroy_tracked_vehicle(v) }if let v=self.motorcycle { world.destroy_motorcycle(v) } }
+}
+func terrain_shape(terrain:int) Physics.Shape3D {
+    if terrain==3 {
+        let a=Math.Vec3(-20.0,0.0,-20.0);let b=Math.Vec3(-20.0,0.0,20.0)
+        let c=Math.Vec3(20.0,0.0,-20.0);let d=Math.Vec3(20.0,0.0,20.0)
+        return Physics.Shape3D.mesh(Physics.TriangleMesh3D([Physics.Triangle3D(a,b,c),Physics.Triangle3D(c,b,d)]))
+    }
+    if terrain==4 {
+        let heights:float[]=[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+        return Physics.Shape3D.mesh(Physics.TriangleMesh3D.from_height_grid(4,4,heights,40.0/3.0,40.0/3.0))
+    }
+    var size=Math.Vec3(40.0,1.0,40.0);if terrain==1 { size=Math.Vec3(200.0,1.0,200.0) }
+    if terrain==2 { size.x=20.5 }
+    return Physics.Shape3D.box(Physics.Box3D(size))
+}
+func run_case(family:int,detector:int,terrain:int,rate:int,motion:int) {
+    var config=Physics.World3DSettings();if motion==0 || terrain==5 { config.gravity=Math.Vec3() }
+    var world=Physics.World3D(config);var rotation=Math.Quat.identity()
+    if terrain==1 { rotation=Math.Quat.angle_axis(0.15,Math.Vec3(1.0,0.0,0.0)) }
+    var support_settings=Physics.RigidBody3DSettings() ..body_type=Physics.BodyType3D.fixed
+        ..shape=terrain_shape(terrain) ..friction=0.0 ..linear_damping=0.0 ..angular_damping=0.0 ..allow_sleep=false
+    var support_position=Math.Vec3(0.0,-0.5,0.0)
+    if terrain==2 { support_position.x= -9.75 }
+    if terrain==3 { support_position=Math.Vec3() }
+    if terrain==4 { support_position=Math.Vec3(-20.0,0.0,-20.0) }
+    support_settings.transform=Physics.Transform3D(rotation.rotate(support_position),rotation)
+    if terrain==5 { support_settings.body_type=Physics.BodyType3D.dynamic;support_settings.mass_properties=Physics.MassProperties3D(1000.0,Math.Vec3(10000.0)) }
+    var support=world.create_rigid_body(support_settings)
+    var origin=Math.Vec3(0.0,0.8,0.0);if motion==1 { origin.y=1.4;if terrain==5 { origin.y=0.75 } }
+    if terrain==2 && family==2 { origin.x=0.6 }
+    var initial_velocity=Math.Vec3();if motion==1 { initial_velocity=Math.Vec3(0.0,0.0,2.0) }
+    var body=Physics.RigidBody3DSettings() ..shape=Physics.Shape3D.box(Physics.Box3D(Math.Vec3(1.4,0.4,2.4)))
+        ..transform=Physics.Transform3D(rotation.rotate(origin),rotation) ..linear_velocity=rotation.rotate(initial_velocity)
+        ..mass_properties=Physics.MassProperties3D(100.0,Math.Vec3(100.0)) ..friction=0.0 ..allow_sleep=false
+        ..linear_damping=0.0 ..angular_damping=0.0
+    var contact=Physics.WheelContact3D.ray;if detector==1 { contact=Physics.WheelContact3D.sphere(0.3) }if detector==2 { contact=Physics.WheelContact3D.cylinder(0.4) }
+    var vehicle=VehicleProbe(world,family,body,contact);var step=0;var last=1;if motion==1 { last=6*rate }
+    while step<=last {
+            var chassis=vehicle.chassis();let position=chassis.position();let velocity=chassis.linear_velocity();let q=chassis.rotation();let omega=chassis.angular_velocity()
+            let sp=support.position();let sv=support.linear_velocity();let sq=support.rotation();let sw=support.angular_velocity()
+            print("terrain-body $(family) $(detector) $(terrain) $(rate) $(motion) $(step) $(position.x) $(position.y) $(position.z) $(velocity.x) $(velocity.y) $(velocity.z) $(q.x) $(q.y) $(q.z) $(q.w) $(omega.x) $(omega.y) $(omega.z) $(sp.x) $(sp.y) $(sp.z) $(sv.x) $(sv.y) $(sv.z) $(sq.x) $(sq.y) $(sq.z) $(sq.w) $(sw.x) $(sw.y) $(sw.z)")
+            var index=0;while index<vehicle.count() {
+                let wheel=vehicle.wheel(index);let point=wheel.contact_point;let normal=wheel.contact_normal;var hit=0;if let target=wheel.support() { if target.same_body(support) { hit=1 } else { panic("unexpected terrain support") } }
+                print("terrain-wheel $(family) $(detector) $(terrain) $(rate) $(motion) $(step) $(index) $(wheel.length) $(wheel.normal_force) $(hit) $(point.x) $(point.y) $(point.z) $(normal.x) $(normal.y) $(normal.z)");index++
+            }
+        if step==last { break }
+        world.step(1.0/rate as float);step++
+    }
+    vehicle.destroy(world);world.destroy_rigid_body(support);assert(world.body_count()==0)
+}
+func main() {
+    for family in [0,1,2] { for detector in [0,1,2] { for terrain in [0,1,2,3,4,5] { for rate in [60,120] {
+        run_case(family,detector,terrain,rate,0)
+        if terrain!=2 { run_case(family,detector,terrain,rate,1) }
+    } } } }
+}

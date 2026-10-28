@@ -1890,3 +1890,60 @@ The central force point must preserve roll and generate no angular momentum.
 Each engine rejects 232 structural/channel corruptions per mode. Results and
 raw traces are written to `.silex/physics3d-oracle/vehicle-suspension-settings-*`.
 This witness does not qualify arbitrary tuning, terrain, grip or performance.
+
+## Vehicle contacts across terrain and controller families
+
+`VehicleTerrains.sx` and `VehicleTerrainsOracle.cpp` construct a car, two-track
+vehicle and motorcycle through their public controller APIs. Each uses ray,
+sphere and cylinder wheel contacts on a flat box, an inclined box, a box edge,
+a two-triangle mesh, a height grid and a free support of finite mass. Propulsion,
+tire friction and motorcycle balance are disabled to isolate contacts and
+suspension. This fixture is an internal qualification tool, with no window.
+
+From the Spec worktree group, with the matching development compiler supporting
+`round_float<T>` on PATH:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/VehicleTerrainsRun.py
+```
+
+The 198 curves include one-step analytical geometry and six-second traversals
+at 60/120 Hz with 12 velocity and 4 position iterations. Each engine and mode
+reports 48,906 body states and 163,020 wheel states. Checks cover complete finite
+records, both Silex contact boundaries, support identity, unilateral reactions,
+per-body impulse balances, repose and crossing mesh/grid seams. The original
+pinned Jolt source is used without a new adaptation.
+
+Position, linear velocity and orientation budgets remain 0.05 m, 0.1 m/s and
+0.02 rad. Angular velocity is checked pointwise within 0.15 rad/s except during
+moving cylinder contacts: their non-unique line contacts retain the earlier
+quarter-second mean criterion of 0.05 rad/s. Instantaneous cylinder differences
+are reported separately without qualification. Initial planar normals are
+checked analytically. Silex also retains the analytical face normal during
+traversals; reference moving-cylinder normals must be unit vectors and satisfy
+the actual contact/force balances. Resting loads are averaged over the final
+second. Wheel lengths and contact boundaries retain a 0.003 m budget.
+
+On a free support, cumulative linear momentum and center-of-mass motion are
+checked. Angular reactions are checked per step, including both bodies; the
+cumulative angular momentum error from float32 position integration is reported
+without qualification. This fixture does not establish arbitrary long-duration
+angular conservation or motorized driving with variable adhesion. Debug and
+Release outputs must match byte for byte; 324 deliberate record/state
+corruptions exercise the checker in each engine and mode, after positive controls
+for the same profiles. Six comparison corruptions also verify that declared
+reference limits preserve every qualified channel; a positive control ensures
+the unqualified angular channel remains visible in the report.
+
+The original Jolt witness has two explicit limits in this composition. Its moving
+cylinder contact position can lie outside the wheel boundary on the height grid;
+that reference channel is measured with violation counts, without qualification.
+Silex and the initial geometry remain subject to the 0.003 m boundary check.
+The unassisted motorcycle with cylinder contacts on the grid also has no qualified
+angular-response parity: a common 0.1 mm translation of terrain and chassis can
+change Jolt's own quarter-second angular response by more than 0.05 rad/s.
+The report retains that channel separately. Position, velocity, orientation,
+lengths, forces and independent balances remain checked for the same profile.
+`compare` stays strict by default; the runner explicitly selects this declared
+reference scope and reports that full angular parity is unqualified. No Jolt
+patch or increased tolerance is used for either limitation.
