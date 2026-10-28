@@ -1966,7 +1966,8 @@ python3 Silex-Benchmarks/Sources/Physics3D/VehicleDriveCompositionRun.py
 Run from the workspace or Spec group with the matching compiler on PATH.
 Each engine/mode emits 38,916 body and 129,720 wheel records. Complete finite
 schemas, commands, material transitions, contact geometry, tire capacities,
-rotor observation timing, band identity and per-step momentum are checked.
+rotor observation timing, band identity, per-step momentum and semi-implicit
+pose integration are checked.
 Motorcycle momentum includes the balance actuator's linear compensation.
 Disconnected, unpowered engine speed must remain constant within 0.001 RPM.
 

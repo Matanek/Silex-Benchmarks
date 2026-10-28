@@ -61,7 +61,7 @@ def resultant(data,key):
 
 def qualify(data,curves=CURVES,*,reference=False,allow_profile_limits=False):
     bodies,wheels=data
-    worst={name:0. for name in ('linear_impulse','angular_impulse','wheel_angle','surface','wheel_boundary','unqualified_reference_boundary','capacity','band_speed','zero_grip_speed','unqualified_wide_cylinder_motorcycle_stop')}
+    worst={name:0. for name in ('linear_impulse','angular_impulse','wheel_angle','surface','wheel_boundary','unqualified_reference_boundary','capacity','band_speed','zero_grip_speed','position_step','unqualified_wide_cylinder_motorcycle_stop')}
     for curve in sorted(curves):
         family,detector,sign,rate=curve;n=count(family)
         for step in range(12*rate+1):
@@ -122,6 +122,9 @@ def qualify(data,curves=CURVES,*,reference=False,allow_profile_limits=False):
                     error=abs(omega-b[22+i//2]);worst['band_speed']=max(worst['band_speed'],error)
                     if error>1e-4:fail('driving track and wheel speed differ')
             if not step:continue
+            position_error=norm(sub(sub(b[:3],old[:3]),scale(b[3:6],1/rate)))
+            worst['position_step']=max(worst['position_step'],position_error)
+            if position_error>3e-5:fail('driving semi-implicit position step')
             if clutch==0. and abs(b[13]-old[13])>.001:fail('disconnected unpowered engine RPM changed')
             total,moment=resultant(data,key)
             compensation=(0.,0.,0.)
@@ -227,6 +230,9 @@ def self_test(raw,data,*,reference=False):
     for curve in sorted(CURVES):
         # Positive controls cover exactly the profiles whose mutations follow.
         qualify(data,{curve},reference=reference,allow_profile_limits=True)
+        final=(*curve,12*curve[3]);changed=list(bodies[final]);changed[0]+=.1
+        mutated=bodies.copy();mutated[final]=tuple(changed)
+        reject(lambda:qualify((mutated,wheels),{curve},reference=reference,allow_profile_limits=True))
         key=(*curve,2*curve[3]);wheel_key=(*key,0)
         for channel,value in ((1,5.),(3,100.),(6,2.),(13,9000.),(14,2.),(15,.5),(16,99.),(17,.5),(18,9.)):
             changed=list(bodies[key]);changed[channel]=value;mutated=bodies.copy();mutated[key]=tuple(changed)
