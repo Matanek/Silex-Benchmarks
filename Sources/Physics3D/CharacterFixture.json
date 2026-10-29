@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "id": "character-modes-v1",
+  "oracle_revision": "e77f175595e64cb44218cc9d9d56fc365ad0e36a",
+  "capsule_radius": 0.3,
+  "capsule_half_height": 0.55,
+  "character_mass": 70.0,
+  "push_force": 100.0,
+  "body_inertia": [1.0, 1.0, 1.0],
+  "cases": {
+    "virtual_weak_push": {"delta": 0.1, "start_x": 0.198, "velocity_x": 0.01, "body_mass": 10.0, "absolute_tolerance": 0.0001},
+    "virtual_capped_push": {"delta": 0.1, "start_x": 0.0, "velocity_x": 10.0, "body_mass": 10.0, "absolute_tolerance": 0.0001},
+    "virtual_weight": {"delta": 0.016666666666666666, "velocity_y": -0.3, "body_mass": 10.0, "gravity": 9.81, "absolute_tolerance": 0.0001},
+    "physical_collision": {"delta": 0.01, "start_x": -0.6, "velocity_x": 1.0, "body_mass": 30.0, "absolute_tolerance": 0.0001},
+    "physical_rest": {"steps": 180, "delta": 0.008333333333333333, "absolute_tolerance": 0.005},
+    "capsule_resize": {"crouch_half_height": 0.15, "ceiling_y": 1.1, "absolute_tolerance": 0.0001}
+  }
+}

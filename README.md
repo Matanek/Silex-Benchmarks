@@ -370,3 +370,5 @@ protocol, preserving the pure-rotation witness and its limits.
 - [Finite-mass rotating support](Sources/Physics3D/TrackedDynamicRotation.md) / [Réaction du support tournant](Sources/Physics3D/TrackedDynamicRotation.fr.md) : angular momentum exchange, orbital inertia, mirrors and locked/free tracks.
 
 [Extended tracked driving](Sources/Physics3D/TrackedAutomaticLong.md) · [Conduite chenillée prolongée](Sources/Physics3D/TrackedAutomaticLong.fr.md): explicit48/4 convergence profile,176m launch/braking, original12/4 limit retained.
+
+The [character mode qualification](Sources/Physics3D/Characters.md) compares the physical and virtual SDK modes against pinned Jolt and analytical balances.

@@ -1,0 +1,71 @@
+use GFX.Physics
+use STD.Math
+
+func virtual_push(start:float, velocity:float, label:str) {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var ball = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.5))
+        ..transform = Physics.Transform3D(Math.Vec3(1.0, 0.852, 0.0))
+        ..mass_properties = Physics.MassProperties3D(10.0, Math.Vec3(1.0)) ..allow_sleep = false)
+    var actor = world.create_virtual_character(position:Math.Vec3(start, 0.852, 0.0))
+    actor.move(world, Math.Vec3(velocity * 0.1, 0.0, 0.0), 0.1)
+    print("$(label)_vx=$(ball.linear_velocity().x)")
+    print("$(label)_spin=$(ball.angular_velocity().length())")
+}
+func virtual_weight() {
+    var world = Physics.World3D()
+    var platform = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(6.0, 0.2, 6.0)))
+        ..transform = Physics.Transform3D(Math.Vec3(0.0, -0.1, 0.0))
+        ..mass_properties = Physics.MassProperties3D(10.0, Math.Vec3(1.0)) ..allow_sleep = false)
+    var actor = world.create_virtual_character(position:Math.Vec3(0.0, 0.852, 0.0))
+    actor.move(world, Math.Vec3(0.0, -0.3 / 60.0, 0.0), 1.0 / 60.0)
+    assert(actor.is_grounded())
+    print("weight_vy=$(platform.linear_velocity().y)")
+}
+func physical_collision() {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var actor = world.create_physical_character(Physics.PhysicalCharacter3DSettings() ..friction = 0.0,
+        Math.Vec3(-0.6, 0.0, 0.0))
+    var ball = world.create_rigid_body(Physics.RigidBody3DSettings()
+        ..shape = Physics.Shape3D.sphere(Physics.Sphere3D(0.3)) ..friction = 0.0
+        ..mass_properties = Physics.MassProperties3D(30.0, Math.Vec3(1.0)) ..allow_sleep = false)
+    actor.set_linear_velocity(Math.Vec3(1.0, 0.0, 0.0))
+    world.step(0.01)
+    print("physical_vx=$(actor.linear_velocity().x)")
+    print("physical_body_vx=$(ball.linear_velocity().x)")
+    print("physical_spin=$(actor.body().angular_velocity().length())")
+}
+func physical_rest() {
+    var world = Physics.World3D()
+    world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(20.0, 0.2, 20.0)))
+        ..transform = Physics.Transform3D(Math.Vec3(0.0, -0.1, 0.0)))
+    var actor = world.create_physical_character(position:Math.Vec3(0.0, 1.2, 0.0))
+    var step = 0
+    while step < 180 { world.step(1.0 / 120.0); step++ }
+    assert(actor.is_grounded())
+    print("rest_y=$(actor.position().y)")
+    print("rest_vy=$(actor.linear_velocity().y)")
+    print("rest_normal_y=$(actor.ground_normal().y)")
+}
+func resize() {
+    var world = Physics.World3D(Physics.World3DSettings() ..gravity = Math.Vec3())
+    var ceiling = world.create_rigid_body(Physics.RigidBody3DSettings() ..body_type = Physics.BodyType3D.fixed
+        ..shape = Physics.Shape3D.box(Physics.Box3D(Math.Vec3(4.0, 0.2, 4.0)))
+        ..transform = Physics.Transform3D(Math.Vec3(0.0, 1.1, 0.0)))
+    var actor = world.create_physical_character(Physics.PhysicalCharacter3DSettings() ..capsule = Physics.Capsule3D(0.3, 0.15),
+        Math.Vec3(0.0, 0.452, 0.0))
+    let before = actor.position()
+    assert(!actor.try_resize(world, Physics.Capsule3D(0.3, 0.55)) && actor.position() == before)
+    print("resize_blocked=1")
+    world.destroy_rigid_body(ceiling)
+    assert(actor.try_resize(world, Physics.Capsule3D(0.3, 0.55)))
+    print("resize_feet=$(actor.position().y - 0.85)")
+    print("resize_mass=$(actor.body().mass_properties().mass)")
+}
+func main() {
+    virtual_push(0.198, 0.01, "weak")
+    virtual_push(0.0, 10.0, "capped")
+    virtual_weight(); physical_collision(); physical_rest(); resize()
+}
