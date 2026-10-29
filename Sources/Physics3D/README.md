@@ -1990,3 +1990,43 @@ capacity and momentum checks remain active for every cylinder curve. No new
 Jolt patch, tire model or raised comparison tolerance hides these limitations.
 Debug/Release traces must match byte for byte. Deliberate corruptions exercise
 both strict checks and the visibility of declared limits after positive controls.
+
+
+## Edited terrains and loaded mixed constraints
+
+`TerrainConstraintsRun.py` checks the package consumer
+`Packages/GFX.Physics/Tests/Consumer/Tests/TerrainConstraintQualification3D.sx`
+against `TerrainConstraintsOracle.cpp` and analytical controls. Run from the
+workspace or Spec group root:
+
+```sh
+python3 Silex-Benchmarks/Sources/Physics3D/TerrainConstraintsRun.py --self-test
+python3 Silex-Benchmarks/Sources/Physics3D/TerrainConstraintsRun.py --mode both
+```
+
+The foundation harness must have prepared the pinned Jolt Debug/Release libraries.
+This runner verifies that cache configuration and compiles only its small oracle;
+it never silently rebuilds Jolt. It keeps source/library/binary hashes, effective
+package resolution, raw outputs and verified status under
+`.silex/physics3d-oracle/terrain-constraints-qualification.json`.
+
+The common protocol fixes 52 observations: edited heightfield heights, normals,
+ray fractions and holes; SixDOF-guided 2/8 kg pulley masses with ground contact;
+and a motorized path with an obliquely hinged load, wall contact, reversal and
+body removal. SDK mutations clear incompatible reactions and invalidate incident
+handles; Jolt explicitly removes its constraints before deleting a body.
+
+Velocity budget is 24 passes at 1/60 s. Position budgets are 8 for the planar
+pulley and loaded path, and 48 for the spatial ratio-2 pulley. At 8 position
+passes the spatial impact retains 2.2 cm residual in Silex and 3.2 cm in Jolt;
+that configuration fails the unchanged 1 cm bound. It is preserved as a budget
+limit, not qualified by widening the tolerance. Equilibrium positions, cable
+forces and lateral guide reactions have independent analytical expectations.
+Impact phase equality is not required; the path's one-second average vertical
+support is 58.86 N within 1 N. Output guards reject missing/duplicate/non-finite
+fields and perturb every observation.
+
+The same Silex main also checks all seven convex volume families against an
+analytical plane represented by a 65 × 65 grid, including hole identity, queries,
+contacts and registered character support. This is functional qualification;
+it makes no global throughput or frame-rate comparison with Jolt.
