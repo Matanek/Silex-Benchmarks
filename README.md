@@ -372,3 +372,5 @@ protocol, preserving the pure-rotation witness and its limits.
 [Extended tracked driving](Sources/Physics3D/TrackedAutomaticLong.md) · [Conduite chenillée prolongée](Sources/Physics3D/TrackedAutomaticLong.fr.md): explicit48/4 convergence profile,176m launch/braking, original12/4 limit retained.
 
 The [character mode qualification](Sources/Physics3D/Characters.md) compares the physical and virtual SDK modes against pinned Jolt and analytical balances.
+
+[Soft bodies and cloth](Sources/Physics3D/SoftBodies.md) qualify five CPU constraint families and deformable surfaces against pinned Jolt, with public-consumer lifetime, rendering and worker checks. [Protocole français](Sources/Physics3D/SoftBodies.fr.md).
